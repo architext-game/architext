@@ -1,0 +1,16 @@
+version: '3'
+
+
+services:
+  mud:
+    build: ./server/
+    ports:
+      - "1234:1234"
+    depends_on:
+      - mud-db
+
+  mud-db:
+    image: mongo
+    restart: always
+    volumes:
+      - ./volumes/mud-db:/data/db

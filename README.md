@@ -1,2 +1,2 @@
-# sandbox_mud
-A text based game where you can build and do whatever you want
+# Sandbox-MUD
+A multiplayer text game featuring a world that you can shape from within
