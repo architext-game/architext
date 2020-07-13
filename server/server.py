@@ -52,6 +52,7 @@ Escribe "construir" para comenzar a construir una habitación adyacente a donde 
 
 
     def show_current_room(self):
+        self.user.room.reload()
         title = self.user.room.name
         description = self.user.room.description if self.user.room.description else "Esta sala no tiene descripción."
         if len(self.user.room.exits) > 0:
