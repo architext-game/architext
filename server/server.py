@@ -9,11 +9,11 @@ class Session:
         self.process_message = self.process_user_name
         self.user = None
         self.current_interaction_state = {}
-        self.send_to_client("You are connected. What is your name?\n\r")
+        self.send_to_client("Estás conectado. ¿Cómo te llamas?\n\r")
 
     def disconnect(self):
         if self.user is not None:
-            self.send_to_others_in_room("Whoop! {} has disappeared.".format(self.user.name))
+            self.send_to_others_in_room("¡Whoop! {} se ha esfumado.".format(self.user.name))
             self.user.disconnect()
 
     def send_to_client(self, message):
@@ -31,59 +31,59 @@ class Session:
             self.server.send_message(user.client_id, message)
 
     def say_in_room(self, message):
-        message_to_clients = '{} says "{}"'.format(self.user.name, message)
+        message_to_clients = '{} dice "{}"'.format(self.user.name, message)
         self.send_to_room(message_to_clients)
 
     def shout(self, message):
         for user in User.objects:
-            self.server.send_message(user.client_id, '{} shouts "{}"'.format(self.user.name, message))
+            self.server.send_message(user.client_id, '{} grita "{}"'.format(self.user.name, message))
 
     def show_help(self):
         help = (
-"""Welcome to this realm, where you have the power to shape reality.\r
-Type "look" to look at your surroundings.\r
-Type "say something" to communicate to people nearby.\r
-Type "shout something" to communicate to everyone.\r
-Type "emote something" to make something happen in your room.\r
-Type "go exit" to travel trough an exit.\r
-Type "build" to start building a room adjacent to your current location.\r
+"""Bienvenido a este mundo, donde tienes el poder de dar forma a la realidad.\r
+Escribe "mirar" para mirar a tu alrededor.\r
+Escribe "decir hola" para decir "hola" a quienes tengas cerca..\r
+Escribe "gritar HOLA" para que te oiga todo el mundo.\r
+Escribe "emote Hay un terremoto" para producir un mini terremoto en tu habitación.\r
+Escribe "ir puerta" para cruzar una puerta.\r
+Escribe "construir" para comenzar a construir una habitación adyacente a donde estás..\r
 """)
         self.send_to_client(help)
 
 
     def show_current_room(self):
         title = self.user.room.name
-        description = self.user.room.description if self.user.room.description else "This room has no description."
+        description = self.user.room.description if self.user.room.description else "Esta sala no tiene descripción."
         if len(self.user.room.exits) > 0:
-            exits = '    '+('\n\r    '.join(["<{}> leads to {}".format(exit, room.name) for exit, room in self.user.room.exits.items()]))
-            exits = "Exits:\n\r{}    ".format(exits)
+            exits = '    '+('\n\r    '.join(["<{}> lleva a {}".format(exit, room.name) for exit, room in self.user.room.exits.items()]))
+            exits = "Salidas:\n\r{}    ".format(exits)
         else:
-            exits = "There is no way to exit this room (but you may be the first to build it)."
-        players_here = '\n\r'.join(['{} is here.'.format(user.name) for user in User.objects(room=self.user.room, client_id__ne=None) if user != self.user])
-        message = "You are in {}.\n\r{}\n\r{}\n\r{}".format(title, description, exits, players_here)
+            exits = "No hay ningún camino para salir de esta habitación (pero podrías ser el primero en crear uno)."
+        players_here = '\n\r'.join(['{} está aquí.'.format(user.name) for user in User.objects(room=self.user.room, client_id__ne=None) if user != self.user])
+        message = "Estás en {}.\n\r{}\n\r{}\n\r{}".format(title, description, exits, players_here)
         self.send_to_client(message)
 
     def process_user_name(self, name):
         if User.objects(name=name):
             self.user = User.objects(name=name).first()
             self.user.connect(self.session_id)
-            self.send_to_client("Welcome back {}.".format(name))
+            self.send_to_client("Bienvenido de nuevo {}.".format(name))
         else:
             lobby = Room.objects(name='lobby').first()
             self.user = User(name=name, room=lobby)
             self.user.connect(self.session_id)
-            self.send_to_client("Welcome {}".format(name))
+            self.send_to_client('Bienvenido {}. Si es tu primera vez, escribe "ayuda" para ver una pequeña guía.'.format(name))
 
-        self.send_to_others_in_room("Puf! {} appears here.".format(name))
+        self.send_to_others_in_room("¡Puf! {} apareció.".format(name))
         self.show_current_room()
         self.process_message = self.process_regular_command
 
     def go(self, exit):
         origin_room = self.user.room
-        self.send_to_others_in_room("{} leaves through {}.".format(self.user.name, exit))
+        self.send_to_others_in_room("{} se marcha por {}.".format(self.user.name, exit))
         self.user.move(exit)
         there_exit = [exit for exit, room in self.user.room.exits.items() if room == origin_room][0]
-        self.send_to_others_in_room("{} arrives from {}.".format(self.user.name, there_exit))
+        self.send_to_others_in_room("{} llega desde {}.".format(self.user.name, there_exit))
         self.show_current_room()
 
     def process_regular_command(self, message):
@@ -94,9 +94,9 @@ Type "build" to start building a room adjacent to your current location.\r
             first_word = splitted_message[0]
             rest = ""
         
-        if first_word == 'look':
+        if first_word == 'mirar':
             self.show_current_room()
-        elif first_word == 'go':
+        elif first_word == 'ir':
             exit = rest
             if exit in self.user.room.exits:
                 self.go(exit)
@@ -106,52 +106,52 @@ Type "build" to start building a room adjacent to your current location.\r
                         exit = room_exit
                 self.go(exit)
             elif [exit in room_exit for room_exit in self.user.room.exits.keys()].count(True) > 1:
-                self.send_to_client('There is more than one exit with that name. Be more specific!')
+                self.send_to_client('Hay más de una salida con ese nombre. Sé más específico.')
             else:
-                self.send_to_client("You can't find that exit.")
-        elif first_word == 'say':
+                self.send_to_client("No puedes encontrar esa salida.")
+        elif first_word == 'decir':
             self.say_in_room(rest)
-        elif first_word == 'shout':
+        elif first_word == 'gritar':
             self.shout(rest)
-        elif first_word == 'build':
-            self.send_to_client("Room building started! Enter the name of the new room.")
+        elif first_word == 'construir':
+            self.send_to_client("Comienzas a construir una habitación. ¿Cómo quieres llamarla?")
             self.process_message = self.process_room_name
-        elif first_word == 'help':
+        elif first_word == 'ayuda':
             self.show_help()
         elif first_word == 'emote':
             self.send_to_room(rest)
         else:
-            self.send_to_client("I don't understand that.")
+            self.send_to_client("No te entiendo.")
 
     
     def process_room_name(self, message):
         if not message:
-            self.send_to_client("You have to give your room a name!")
+            self.send_to_client("Tienes que poner un nombre a tu habitación. Prueba otra vez.")
         else:
             self.current_interaction_state['new_room_name'] = message
-            self.send_to_client("Now enter a description for your room")
+            self.send_to_client("Ahora introduce una descripción para tu nueva sala, para que todo el mundo sepa cómo es.")
             self.process_message = self.process_room_description 
 
     def process_room_description(self, message):
         self.current_interaction_state['new_room_description'] = message
         current_room = self.user.room.name
         new_room = self.current_interaction_state['new_room_name']
-        self.send_to_client("How would you like to call the exit from {} to {}?".format(current_room, new_room))
+        self.send_to_client("Cómo quieres llamar a la salida desde {} a {}?".format(current_room, new_room))
         self.process_message = self.process_here_exit_name 
 
     def process_here_exit_name(self, message):
         if not message:
-            self.send_to_client("You have to give it a name! Write it now.")
+            self.send_to_client("Tienes que poner un nombre a tu habitación. Prueba otra vez.")
         else:
             self.current_interaction_state['here_exit_name'] = message
             current_room = self.user.room.name
             new_room = self.current_interaction_state['new_room_name']
-            self.send_to_client("How would you like to call the exit from {} to {}?".format(new_room, current_room))
+            self.send_to_client("Cómo quieres llamar a la salida desde {} a {}?".format(new_room, current_room))
             self.process_message = self.process_there_exit_name 
 
     def process_there_exit_name(self, message):
         if not message:
-            self.send_to_client("You have to give it a name! Write it now.")
+            self.send_to_client("Tienes que poner un nombre a tu habitación. Prueba otra vez.")
         else:
             self.current_interaction_state['there_exit_name'] = message
             self.user.room.create_adjacent_room(
@@ -160,7 +160,7 @@ Type "build" to start building a room adjacent to your current location.\r
                 exit_from_here = self.current_interaction_state['here_exit_name'],
                 exit_from_there = self.current_interaction_state['there_exit_name']
             )
-            self.send_to_client("Congrats! You have finished your new shiny room!")
+            self.send_to_client("¡Enhorabuena! Tu nueva habitación está lista.")
             self.process_message = self.process_regular_command
 
 
@@ -193,7 +193,7 @@ if __name__ == "__main__":
         database_connect()
 
     if not Room.objects(name='lobby'):
-        lobby = Room(name='lobby', description='This is where everything starts. Write "help" if you need guidance.')
+        lobby = Room(name='lobby', description='Esta es la semilla desde la que florece un nuevo mundo. Escribe ayuda si no sabes qué hacer.')
 
 
     server = TelnetServer()
