@@ -166,6 +166,7 @@ Escribe "construir" para comenzar a construir una habitación adyacente a donde 
                 exit_from_there = self.current_interaction_state['there_exit_name']
             )
             self.send_to_client("¡Enhorabuena! Tu nueva habitación está lista.")
+            self.send_to_others_in_room("Los ojos de {} se ponen en blanco un momento. Una nueva salida aparece en la habitación.".format(self.user.name))
             self.process_message = self.process_regular_command
 
 
