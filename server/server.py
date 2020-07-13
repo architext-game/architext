@@ -164,19 +164,36 @@ Type "build" to start building a room adjacent to your current location.\r
             self.process_message = self.process_regular_command
 
 
-def database_connect():
-    mongoengine.connect('sandboxmud', host='mud-db')
+def database_connect(uri=None):
+    if uri:
+        mongoengine.connect(host=uri)
+    else:
+        mongoengine.connect('sandboxmud', host='mud-db')
 
 def client_ids_cleanup():
     for user in User.objects(client_id__ne=None):
         user.disconnect()
 
 if __name__ == "__main__":
-    database_connect()
+    import sys, getopt
+
+    command_line_args = sys.argv[1:]
+    
+    try:
+       opts, args = getopt.getopt(command_line_args,"d:")
+    except getopt.GetoptError:
+        sys.exit(2)
+    
+    connected = False
+    for opt, arg in opts:
+        if opt == "-d":
+            database_connect(arg)
+            connected = True
+    if not connected:
+        database_connect()
 
     if not Room.objects(name='lobby'):
         lobby = Room(name='lobby', description='This is where everything starts. Write "help" if you need guidance.')
-        lobby.save()
 
 
     server = TelnetServer()
