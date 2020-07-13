@@ -87,14 +87,18 @@ Escribe "construir" para comenzar a construir una habitación adyacente a donde 
         self.show_current_room()
 
     def process_regular_command(self, message):
+        first_word = ""
+        rest = ""
+
         splitted_message = message.split(maxsplit=1)
         if len(splitted_message) == 2:
             first_word, rest = splitted_message
-        else:
+        elif len(splitted_message) == 1:
             first_word = splitted_message[0]
-            rest = ""
         
-        if first_word == 'mirar':
+        if first_word == "":
+            pass
+        elif first_word == 'mirar':
             self.show_current_room()
         elif first_word == 'ir':
             exit = rest
