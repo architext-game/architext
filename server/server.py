@@ -32,7 +32,7 @@ class Session:
 
     def say_in_room(self, message):
         message_to_clients = '{} says "{}"'.format(self.user.name, message)
-        self.send_to_others_in_room(message_to_clients)
+        self.send_to_room(message_to_clients)
 
     def shout(self, message):
         for user in User.objects:
