@@ -1,15 +1,31 @@
 import mongoengine
-from entities import Room, User
 from telnetserver import TelnetServer
+from entities import Room, User
+import verbs as v
 
 class Session:
+    verbs = [v.Build, v.Emote, v.Go, v.Help, v.Login, v.Look, v.Remodel, v.Say, v.Shout]
+
     def __init__(self, session_id, server):
         self.session_id   = session_id
         self.server = server
-        self.process_message = self.process_user_name
+        self.current_verb = v.Login(self)
         self.user = None
-        self.current_interaction_state = {}
         self.send_to_client("Estás conectado. ¿Cómo te llamas?\n\r")
+
+    def process_message(self, message):
+        if self.current_verb is None:
+            for verb in self.verbs:
+                if verb.can_process(message):
+                    self.current_verb = verb(self)
+                    break
+
+        if self.current_verb is not None:
+            self.current_verb.process(message)
+            if self.current_verb.command_finished():
+                self.current_verb = None
+        else:
+            self.send_to_client("No te entiendo.")
 
     def disconnect(self):
         if self.user is not None:
@@ -30,186 +46,10 @@ class Session:
         for user in users_in_this_room:
             self.server.send_message(user.client_id, message)
 
-    def say_in_room(self, message):
-        message_to_clients = '{} dice "{}"'.format(self.user.name, message)
-        self.send_to_room(message_to_clients)
-
-    def shout(self, message):
+    def send_to_all(self, message):
         for user in User.objects:
-            self.server.send_message(user.client_id, '{} grita "{}"'.format(self.user.name, message))
+            self.server.send_message(user.client_id, message)
 
-    def show_help(self):
-        help = (
-"""Bienvenido a este mundo, donde tienes el poder de dar forma a la realidad.\r
-Escribe "mirar" para mirar a tu alrededor.\r
-Escribe "decir hola" para decir "hola" a quienes tengas cerca..\r
-Escribe "gritar HOLA" para que te oiga todo el mundo.\r
-Escribe "emote sonríe" para sonreír. ¡O hacer lo que se te ocurra describir!\r
-Escribe "ir puerta" para cruzar una puerta.\r
-Escribe "construir" para comenzar a construir una habitación adyacente a donde estás..\r
-""")
-        self.send_to_client(help)
-
-
-    def show_current_room(self):
-        self.user.room.reload()
-        title = self.user.room.name
-        description = self.user.room.description if self.user.room.description else "Esta sala no tiene descripción."
-        if len(self.user.room.exits) > 0:
-            exits = '  '+('\n\r  '.join(["{}".format(exit) for exit in self.user.room.exits.keys()]))
-            exits = "Salidas:\n\r{}".format(exits)
-        else:
-            exits = "No hay ningún camino para salir de esta habitación (pero podrías ser el primero en crear uno)."
-        players_here = '\n\r'.join(['{} está aquí.'.format(user.name) for user in User.objects(room=self.user.room, client_id__ne=None) if user != self.user])
-        message = "Estás en {}.\n\r{}\n\r{}\n\r{}".format(title, description, exits, players_here)
-        self.send_to_client(message)
-
-    def process_user_name(self, name):
-        if User.objects(name=name):
-            self.user = User.objects(name=name).first()
-            self.user.connect(self.session_id)
-            self.send_to_client("Bienvenido de nuevo {}.".format(name))
-        else:
-            lobby = Room.objects(name='lobby').first()
-            self.user = User(name=name, room=lobby)
-            self.user.connect(self.session_id)
-            self.send_to_client('Bienvenido {}. Si es tu primera vez, escribe "ayuda" para ver una pequeña guía.'.format(name))
-
-        self.send_to_others_in_room("¡Puf! {} apareció.".format(name))
-        self.show_current_room()
-        self.process_message = self.process_regular_command
-
-    def go(self, exit):
-        origin_room = self.user.room
-        self.send_to_others_in_room("{} se marcha por {}.".format(self.user.name, exit))
-        self.user.move(exit)
-        there_exit = [exit for exit, room in self.user.room.exits.items() if room == origin_room][0]
-        self.send_to_others_in_room("{} llega desde {}.".format(self.user.name, there_exit))
-        self.show_current_room()
-
-    def process_regular_command(self, message):
-        first_word = ""
-        rest = ""
-
-        splitted_message = message.split(maxsplit=1)
-        if len(splitted_message) == 2:
-            first_word, rest = splitted_message
-        elif len(splitted_message) == 1:
-            first_word = splitted_message[0]
-        
-        if first_word == "":
-            pass
-        elif first_word == 'mirar':
-            self.show_current_room()
-        elif first_word == 'ir':
-            exit = rest
-            if exit in self.user.room.exits:
-                self.go(exit)
-            elif [exit in room_exit for room_exit in self.user.room.exits.keys()].count(True) == 1:
-                for room_exit in self.user.room.exits.keys():
-                    if exit in room_exit:
-                        exit = room_exit
-                self.go(exit)
-            elif [exit in room_exit for room_exit in self.user.room.exits.keys()].count(True) > 1:
-                self.send_to_client('Hay más de una salida con ese nombre. Sé más específico.')
-            else:
-                self.send_to_client("No puedes encontrar esa salida.")
-        elif first_word == 'decir':
-            self.say_in_room(rest)
-        elif first_word == 'gritar':
-            self.shout(rest)
-        elif first_word == 'construir':
-            self.send_to_client("Comienzas a construir una habitación. ¿Cómo quieres llamarla?")
-            self.process_message = self.process_room_name
-        elif first_word == 'ayuda':
-            self.show_help()
-        elif first_word == 'emote':
-            self.send_to_room(self.user.name + " " + rest)
-        elif first_word == 'reformar':
-            message =  "Vas a editar la habitación en la que te encuentras ({}).\n\rIntroduce el número correspondiente a la propiedad que quieres modificar.\n\r".format(self.user.room.name)
-            properties = ['0 - Nombre', '1 - Descripción'] + ['{} - Salida a {}.'.format(number+2, other_room.name) for number, other_room in enumerate(self.user.room.exits.values())]
-            properties_string = "\n\r".join(properties)
-            message = message + properties_string 
-            self.send_to_client(message)
-            self.process_message = self.process_reform_option
-        else:
-            self.send_to_client("No te entiendo.")
-
-
-    def process_reform_option(self, message):
-        try:
-            message = int(message)
-        except:
-            pass
-        max_number = 1 + len(self.user.room.exits)
-        if 0 <= message <= max_number:
-            self.current_interaction_state['option_number'] = message
-            self.process_message = self.process_reform_value
-            self.send_to_client('Ahora introduce el nuevo valor para esa propiedad.')
-        else:
-            self.send_to_client("Introduce el número correspondiente a una de las opciones.")
-        
-    def process_reform_value(self, message): 
-        option = self.current_interaction_state['option_number']
-        if message:
-            if option == 0:
-                self.user.room.name = message
-            elif option == 1:
-                self.user.room.description = message
-            else:
-                exit_number = option - 2
-                exit = list(self.user.room.exits.keys())[exit_number]
-                room = self.user.room.exits.pop(exit)
-                self.user.room.exits[message] = room
-            self.user.room.save()
-            self.process_message = self.process_regular_command
-            self.send_to_client('Reforma completada con éxito.')
-        else:
-            self.send_to_client('Debes introducir el nuevo valor.')
-
-    
-    def process_room_name(self, message):
-        if not message:
-            self.send_to_client("Tienes que poner un nombre a tu habitación. Prueba otra vez.")
-        else:
-            self.current_interaction_state['new_room_name'] = message
-            self.send_to_client("Ahora introduce una descripción para tu nueva sala, para que todo el mundo sepa cómo es.")
-            self.process_message = self.process_room_description 
-
-    def process_room_description(self, message):
-        self.current_interaction_state['new_room_description'] = message
-        current_room = self.user.room.name
-        new_room = self.current_interaction_state['new_room_name']
-        self.send_to_client("Cómo quieres llamar a la salida desde {} a {}? Si no se te ocurre nada, puedes dejarlo en blanco.".format(current_room, new_room))
-        self.process_message = self.process_here_exit_name 
-
-    def process_here_exit_name(self, message):
-        if not message:
-            default_message = "Un camino que lleva a {}".format(self.current_interaction_state['new_room_name'])
-            self.current_interaction_state['here_exit_name'] =  default_message
-        else:
-            self.current_interaction_state['here_exit_name'] = message
-        
-        current_room = self.user.room.name
-        new_room = self.current_interaction_state['new_room_name']
-        self.send_to_client("Cómo quieres llamar a la salida desde {} a {}? Si no se te ocurre nada, puedes dejarlo en blanco.".format(new_room, current_room))
-        self.process_message = self.process_there_exit_name 
-
-    def process_there_exit_name(self, message):
-        if not message:
-            default_message = "Un camino que lleva a {}".format(self.user.room.name)
-            self.current_interaction_state['there_exit_name'] =  default_message
-        else:
-            self.current_interaction_state['there_exit_name'] = message
-        self.user.room.create_adjacent_room(
-            there_name = self.current_interaction_state['new_room_name'],
-            there_description = self.current_interaction_state['new_room_description'],
-            exit_from_here = self.current_interaction_state['here_exit_name'],
-            exit_from_there = self.current_interaction_state['there_exit_name']
-        )
-        self.send_to_client("¡Enhorabuena! Tu nueva habitación está lista.")
-        self.send_to_others_in_room("Los ojos de {} se ponen en blanco un momento. Una nueva salida aparece en la habitación.".format(self.user.name))
-        self.process_message = self.process_regular_command
 
 
 def database_connect(uri=None):
