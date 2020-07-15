@@ -8,3 +8,5 @@ from .remodel import Remodel
 from .say import Say
 from .shout import Shout
 from .verb import Verb
+from .craft import Craft
+from .edit_item import EditItem

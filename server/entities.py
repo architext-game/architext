@@ -1,9 +1,19 @@
 import mongoengine
 
+class Item(mongoengine.Document):
+    name        = mongoengine.StringField(required=True)
+    description = mongoengine.StringField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.save()
+
+
 class Room(mongoengine.Document):
     name        = mongoengine.StringField(required=True)
     description = mongoengine.StringField()
     exits       = mongoengine.DictField()
+    items       = mongoengine.ListField(mongoengine.ReferenceField(Item))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -20,6 +30,11 @@ class Room(mongoengine.Document):
         new_room = Room(name=there_name, description=there_description, exits={exit_from_there: self})
         self._add_exit(exit_from_here, new_room)
         return new_room
+
+    def add_item(self, item):
+        self.items.append(item)
+        self.save()
+
 
 class User(mongoengine.Document):
     name = mongoengine.StringField(required=True)
