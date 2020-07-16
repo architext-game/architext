@@ -23,7 +23,8 @@ class Look(Verb):
             for item in items_in_room:
                 if item.name == item_name:
                     item.reload()
-                    self.session.send_to_client("{}: {}".format(item_name, item.description))
+                    item_description = item.description if item.description else 'no tiene nada de especial.'
+                    self.session.send_to_client("{}: {}".format(item_name, item_description))
                     break
         elif len(items_he_may_be_reffering_to) == 0:
             self.session.send_to_client("No ves eso por aquí.".format(partial_item_name))
@@ -39,7 +40,10 @@ class Look(Verb):
             exits = "Salidas:\n\r{}".format(exits)
         else:
             exits = "No hay ningún camino para salir de esta habitación (pero podrías ser el primero en crear uno)."
-        items = 'Aquí hay:\n\r  '+('\n\r  '.join(["{}".format(item.name) for item in self.session.user.room.items]))
+        if [item for item in self.session.user.room.items if item.visible]:
+            items = 'Ves '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if item.visible]))
+        else:
+            items = ''
         players_here = '\n\r'.join(['{} está aquí.'.format(user.name) for user in User.objects(room=self.session.user.room, client_id__ne=None) if user != self.session.user])
         message = "Estás en {}.\n\r{}\n\r{}\n\r{}{}".format(title, description, exits, players_here,items)
         self.session.send_to_client(message)

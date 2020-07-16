@@ -3,6 +3,7 @@ import mongoengine
 class Item(mongoengine.Document):
     name        = mongoengine.StringField(required=True)
     description = mongoengine.StringField()
+    visible     = mongoengine.BooleanField(default=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
