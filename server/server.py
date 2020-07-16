@@ -63,7 +63,7 @@ def client_ids_cleanup():
         user.disconnect()
 
 if __name__ == "__main__":
-    import sys, getopt
+    import sys, getopt, time
 
     command_line_args = sys.argv[1:]
     
@@ -104,3 +104,5 @@ if __name__ == "__main__":
         for sender_client, message in server.get_messages(): 
             if sender_client in sessions:
                 sessions[sender_client].process_message(message)
+
+        time.sleep(0.2)
