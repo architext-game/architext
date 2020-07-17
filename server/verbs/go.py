@@ -1,5 +1,6 @@
 from .verb import Verb
 from .look import Look 
+import util
 
 class Go(Verb):
     command = 'ir '
@@ -7,16 +8,14 @@ class Go(Verb):
     def process(self, message):
         command_length = len(self.command)
         partial_exit_name = message[command_length:]
-        if partial_exit_name in self.session.user.room.exits:
-                self.go(exit)
-        elif [partial_exit_name in room_exit for room_exit in self.session.user.room.exits.keys()].count(True) == 1:
-                for room_exit in self.session.user.room.exits.keys():
-                    if partial_exit_name in room_exit:
-                        exit_name = room_exit
-                self.go(exit_name)
-        elif [exit in room_exit for room_exit in self.session.user.room.exits.keys()].count(True) > 1:
+        available_exits = list(self.session.user.room.exits.keys())
+        possible_meanings = util.possible_meanings(partial_exit_name, available_exits)
+        if len(possible_meanings) == 1:
+            selected_exit = possible_meanings[0]
+            self.go(selected_exit)
+        elif len(possible_meanings) > 1:
             self.session.send_to_client('Hay más de una salida con ese nombre. Sé más específico.')
-        else:
+        elif len(possible_meanings) == 0:
             self.session.send_to_client("No puedes encontrar esa salida.")
 
         self.finished = True

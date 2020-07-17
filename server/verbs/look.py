@@ -1,5 +1,5 @@
 from .verb import Verb
-from .util import possible_meanings
+from util import possible_meanings
 from entities import User
 
 class Look(Verb):
