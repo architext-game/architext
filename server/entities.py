@@ -10,14 +10,30 @@ class Item(mongoengine.Document):
         self.save()
 
 
+class World(mongoengine.Document):
+    next_room_id = mongoengine.IntField(required=True, default=0)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.save()
+
 class Room(mongoengine.Document):
+    # mongoengine fields
     name        = mongoengine.StringField(required=True)
     description = mongoengine.StringField()
     exits       = mongoengine.DictField()
     items       = mongoengine.ListField(mongoengine.ReferenceField(Item))
+    alias       = mongoengine.StringField(unique=True)
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        if 'alias' in kwargs:
+            super().__init__(*args, **kwargs)
+        else:
+            world = World.objects[0]
+            default_alias = str(world.next_room_id)
+            super().__init__(alias=default_alias, *args, **kwargs)
+            world.next_room_id = world.next_room_id + 1
+            world.save()
         self.save()
 
     def _add_exit(self, exit, room_at_the_other_side):

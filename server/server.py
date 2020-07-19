@@ -1,6 +1,6 @@
 import mongoengine
 from telnetserver import TelnetServer
-from entities import Room, User
+from entities import Room, User, World, Item
 import verbs as v
 
 class Session:
@@ -79,6 +79,12 @@ if __name__ == "__main__":
             connected = True
     if not connected:
         database_connect()
+
+    if not World.objects:
+        Item.drop_collection()
+        User.drop_collection()
+        Room.drop_collection()
+        new_world = World()
 
     if not Room.objects(name='lobby'):
         lobby = Room(name='lobby', description='Esta es la semilla desde la que florece un nuevo mundo. Escribe ayuda si no sabes qué hacer.')
