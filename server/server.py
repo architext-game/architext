@@ -4,7 +4,7 @@ from entities import Room, User, World, Item
 import verbs as v
 
 class Session:
-    verbs = [v.Build, v.Emote, v.Go, v.Help, v.Login, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem]
+    verbs = [v.Build, v.Emote, v.Go, v.Help, v.Login, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect]
 
     def __init__(self, session_id, server):
         self.session_id   = session_id

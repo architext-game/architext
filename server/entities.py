@@ -52,6 +52,9 @@ class Room(mongoengine.Document):
         self.items.append(item)
         self.save()
 
+    def connect(self, exit_name, other_room):
+        self.exits[exit_name]=other_room
+        self.save()
 
 class User(mongoengine.Document):
     name = mongoengine.StringField(required=True)
