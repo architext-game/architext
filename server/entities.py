@@ -70,6 +70,10 @@ class User(mongoengine.Document):
             self.room = self.room.exits[exit]
             self.save()
 
+    def teleport(self, room):
+        self.room = room
+        self.save()
+
     def connect(self, client_id):
         self.client_id = client_id
         self.save()
