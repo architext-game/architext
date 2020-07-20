@@ -86,7 +86,7 @@ if __name__ == "__main__":
         Room.drop_collection()
         new_world = World()
 
-    if not Room.objects(name='lobby'):
+    if not Room.objects(alias='0'):
         lobby = Room(name='lobby', description='Esta es la semilla desde la que florece un nuevo mundo. Escribe ayuda si no sabes qué hacer.')
 
 

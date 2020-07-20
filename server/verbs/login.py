@@ -13,7 +13,7 @@ class Login(Verb):
             self.session.user.connect(self.session.session_id)
             self.session.send_to_client("Bienvenido de nuevo {}.".format(name))
         else:
-            lobby = Room.objects(name='lobby').first()
+            lobby = Room.objects(alias='0').first()
             self.session.user = User(name=name, room=lobby)
             self.session.user.connect(self.session.session_id)
             self.session.send_to_client('Bienvenido {}. Si es tu primera vez, escribe "ayuda" para ver una pequeña guía.'.format(name))

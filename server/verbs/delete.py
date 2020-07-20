@@ -10,6 +10,8 @@ class DeleteRoom(Verb):
 
         if len([user for user in entities.User.objects(room=room_to_delete) if user.client_id != None]) > 1:
             self.session.send_to_client("No puedes borrar la sala si hay mas gente conectada aquí.")
+        if room_to_delete.alias == "0":
+            self.session.send_to_client('No puedes eliminar la sala inicial. Prueba a editarla si no te gusta :-)')
         else:
             connected_rooms = room_to_delete.exits.values()
 
