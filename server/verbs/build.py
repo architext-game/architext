@@ -35,15 +35,17 @@ class Build(Verb):
 
     def process_here_exit_name(self, message):
         if not message:
-            default_message = "Un camino que lleva a {}".format(self.new_room_name)
-            self.exit_from_here =  default_message
+            message = "Un camino que lleva a {}".format(self.new_room_name)
+
+        if message in self.session.user.room.exits.keys():
+            self.session.send_to_client('Ya hay una salida con el nombre "{}". Prueba con otro.'.format(message))
         else:
             self.exit_from_here = message
         
-        current_room = self.session.user.room.name
-        new_room = self.new_room_name
-        self.session.send_to_client("Cómo quieres llamar a la salida desde {} a {}? Si no se te ocurre nada, puedes dejarlo en blanco.".format(new_room, current_room))
-        self.current_process_function = self.process_there_exit_name
+            current_room = self.session.user.room.name
+            new_room = self.new_room_name
+            self.session.send_to_client("Cómo quieres llamar a la salida desde {} a {}? Si no se te ocurre nada, puedes dejarlo en blanco.".format(new_room, current_room))
+            self.current_process_function = self.process_there_exit_name
 
     def process_there_exit_name(self, message):
         if not message:
