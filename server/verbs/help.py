@@ -26,12 +26,12 @@ CONSTRUCCIÓN AVANZADA
   - "info" para ver toda la información de la habitación donde estás.
   - "info <nombre del objeto> para ver la info de un objeto de tu habitación.
   - "conectar" para conectar la sala donde estás con otra sala.
-    - (Necesitarás el alias de la sala, usa el comando "info")
+      (Necesitarás el alias de la sala, usa el comando "info")
   - "eliminarsala" para borrar la sala donde estás. SIN REMEDIO.
   - "eliminarsalida <nombre de la salida>" para borrar una salida.
   - "eliminarobjeto <nombre del objeto>" para borrar un objeto.
   - "tp <alias de la sala>" para transportarte a cualquier sala.
-    - (El alias puedes consultarlo con el comando "info")
+      (El alias puedes consultarlo con el comando "info")
 """)
         self.session.send_to_client(help)
 

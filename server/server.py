@@ -87,7 +87,7 @@ if __name__ == "__main__":
         new_world = World()
 
     if not Room.objects(alias='0'):
-        lobby = Room(name='lobby', description='Esta es la semilla desde la que florece un nuevo mundo. Escribe ayuda si no sabes qué hacer.')
+        lobby = Room(name='El Inicio', description='Esta sala es donde nacen los novatos. A partir de aquí se abren las puertas a diferentes mundos. Si no sabes moverte, escribe "ayuda" y descubrirás todo lo que puedes hacer.')
 
 
     server = TelnetServer()

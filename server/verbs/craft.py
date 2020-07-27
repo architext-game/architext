@@ -15,7 +15,7 @@ class Craft(Verb):
         self.current_process_function(message)
 
     def process_first_message(self, message):
-        self.session.send_to_client("Comienzas a frabricar un objeto. ¿Cómo quieres llamarlo?")
+        self.session.send_to_client("Comienzas a fabricar un objeto. ¿Cómo quieres llamarlo?")
         self.current_process_function = self.process_item_name
 
     def process_item_name(self, message):
