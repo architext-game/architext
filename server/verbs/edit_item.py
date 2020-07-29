@@ -1,6 +1,8 @@
 from .verb import Verb
 
 class EditItem(Verb):
+    """This verb allows users to edit the description of an item that is in their current room"""
+
     command = 'editar '
 
     def __init__(self, session):
@@ -19,7 +21,7 @@ class EditItem(Verb):
             self.current_process_function = self.process_item_description
         else:
             self.session.send_to_client("No encuentras ese objeto.")
-            self.finished = True
+            self.finish_interaction()
 
     def process_item_description(self, message):
         for item in self.session.user.room.items:
@@ -28,4 +30,4 @@ class EditItem(Verb):
                 item.save()
                 break
         self.session.send_to_client("Hecho.")
-        self.finished = True
+        self.finish_interaction()

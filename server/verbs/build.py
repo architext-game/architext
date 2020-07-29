@@ -1,6 +1,10 @@
 from .verb import Verb
 
 class Build(Verb):
+    """This verb allows the user to create a new room connected to his current location.
+    All the user need to know is the command he should write to start creation. That
+    command will start a text wizard that drives him across the creation process.
+    """
     command = 'construir'
 
     def __init__(self, session):
@@ -62,4 +66,4 @@ class Build(Verb):
         )
         self.session.send_to_client("¡Enhorabuena! Tu nueva habitación está lista.")
         self.session.send_to_others_in_room("Los ojos de {} se ponen en blanco un momento. Una nueva salida aparece en la habitación.".format(self.session.user.name))
-        self.finished = True
+        self.finish_interaction()

@@ -1,7 +1,9 @@
 from .verb import Verb
-from entities import Item
+import entities
 
 class Craft(Verb):
+    """This verb allows users to create items that are placed in their current room"""
+
     command = 'fabricar'
 
     def __init__(self, session):
@@ -42,7 +44,7 @@ class Craft(Verb):
             self.session.send_to_client('No te entiendo. Responde "si" o "no".')
             return
 
-        new_item = Item(
+        new_item = entities.Item(
             name=self.new_item_name, 
             description=self.new_item_description, 
             visible=self.new_item_visibility
@@ -50,4 +52,4 @@ class Craft(Verb):
         self.session.user.room.add_item(new_item)
         self.session.send_to_client("¡Objeto creado!")
         self.session.send_to_others_in_room("{} acaba de crear algo aquí.".format(self.session.user.name))
-        self.finished = True
+        self.finish_interaction()

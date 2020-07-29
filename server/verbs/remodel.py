@@ -1,6 +1,10 @@
+# Issue: directly changes room values, and calls save() method.
+
 from .verb import Verb
 
 class Remodel(Verb):
+    """Lets players edit every aspect of a room"""
+
     command = 'reformar'
 
     def __init__(self, session):
@@ -46,6 +50,6 @@ class Remodel(Verb):
                 self.session.user.room.exits[message] = room
             self.session.user.room.save()
             self.session.send_to_client('Reforma completada con éxito.')
-            self.finished = True
+            self.finish_interaction()
         else:
             self.session.send_to_client('Debes introducir el nuevo valor.')

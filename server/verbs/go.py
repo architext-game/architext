@@ -3,6 +3,8 @@ from .look import Look
 import util
 
 class Go(Verb):
+    """Allows the user to travel between rooms, using their exits."""
+
     command = 'ir '
 
     def process(self, message):
@@ -18,7 +20,7 @@ class Go(Verb):
         elif len(possible_meanings) == 0:
             self.session.send_to_client("No puedes encontrar esa salida.")
 
-        self.finished = True
+        self.finish_interaction()
 
     def go(self, exit):
         origin_room = self.session.user.room

@@ -2,6 +2,11 @@ from .verb import Verb
 import entities
 
 class DeleteRoom(Verb):
+    """This verb allows users to delete their current room.
+    A room where there are other connected players cannot be deleted.
+    Also, the initial room (with alias 0) cannot be deleted.
+    Note that rooms may be left disconnected after the use of this command"""
+
     command = 'eliminarsala'
 
     def process(self, message):
@@ -36,9 +41,12 @@ class DeleteRoom(Verb):
             room_to_delete.delete()
             self.session.send_to_client("Sala eliminada. Espero que no hayas dejado muchas salas desconectadas.")
             
-        self.finished = True
+        self.finish_interaction()
 
 class DeleteExit(Verb):
+    """With this verb users can delete an exit of their current room. Since (for now) exits are allways two-way, it also
+    deletes the exit from the other room"""
+
     command = 'eliminarsalida '
 
     def process(self, message):
@@ -51,7 +59,7 @@ class DeleteExit(Verb):
         else:
             self.session.send_to_client("No existe esa salida.")
 
-        self.finished = True
+        self.finish_interaction()
 
     def delete_exit(self, exit_here):
         this_room = self.session.user.room
@@ -68,6 +76,8 @@ class DeleteExit(Verb):
         other_room.save()
 
 class DeleteItem(Verb):
+    """By using this verb users can delete items that are in their current room"""
+
     command = 'eliminarobjeto '
 
     def process(self, message):
@@ -87,5 +97,5 @@ class DeleteItem(Verb):
             self.session.user.room.save()
             selected_item.delete()
             self.session.send_to_client("Eliminado")
-        self.finished = True
+        self.finish_interaction()
 

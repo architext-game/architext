@@ -3,6 +3,9 @@ from util import possible_meanings
 from entities import User
 
 class Info(Verb):
+    """Shows all info of a room or item. This command is designed for creators, since it shows
+    info that should be secret."""
+
     command = 'info'
 
     def process(self, message):
@@ -11,7 +14,7 @@ class Info(Verb):
             self.show_item_info(message[command_length:])
         else:
             self.show_current_room_info()
-        self.finished = True
+        self.finish_interaction()
 
     def show_item_info(self, partial_item_name):
         items_in_room = self.session.user.room.items

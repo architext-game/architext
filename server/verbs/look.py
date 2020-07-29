@@ -3,6 +3,8 @@ from util import possible_meanings
 from entities import User
 
 class Look(Verb):
+    """Shows room and items info to players"""
+
     command = 'mirar'
 
     def process(self, message):
@@ -11,7 +13,7 @@ class Look(Verb):
             self.show_item(message[command_length:])
         else:
             self.show_current_room()
-        self.finished = True
+        self.finish_interaction()
 
     def show_item(self, partial_item_name):
         items_in_room = self.session.user.room.items

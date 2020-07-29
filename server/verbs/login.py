@@ -1,20 +1,28 @@
 from .verb import Verb
 from .look import Look
-from entities import User, Room
+import entities
 
 class Login(Verb):
+    """This is the first verb that a session starts with, and handles user log-in.
+    After that, users can't use this verb, and it should not be in the session's verb list.
+    """
+
+    def __init__(self, session):
+        super().__init__(session)
+        self.session.send_to_client("Estás conectado. ¿Cómo te llamas?\n\r")
+
     def process(self, message):
         self.process_user_name(message)
-        self.finished = True
+        self.finish_interaction()
 
     def process_user_name(self, name):
-        if User.objects(name=name):
-            self.session.user = User.objects(name=name).first()
+        if entities.User.objects(name=name):
+            self.session.user = entities.User.objects(name=name).first()
             self.session.user.connect(self.session.session_id)
             self.session.send_to_client("Bienvenido de nuevo {}.".format(name))
         else:
-            lobby = Room.objects(alias='0').first()
-            self.session.user = User(name=name, room=lobby)
+            lobby = entities.Room.objects(alias='0').first()
+            self.session.user = entities.User(name=name, room=lobby)
             self.session.user.connect(self.session.session_id)
             self.session.send_to_client('Bienvenido {}. Si es tu primera vez, escribe "ayuda" para ver una pequeña guía.'.format(name))
 

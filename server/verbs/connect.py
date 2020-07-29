@@ -2,6 +2,9 @@ from .verb import Verb
 import entities
 
 class Connect(Verb):
+    """This verb allow users to connect two existing rooms. One is the room where the user is located,
+    The other room is specified through its alias"""
+
     command = 'conectar'
 
     def __init__(self, session):
@@ -53,4 +56,4 @@ class Connect(Verb):
 
             self.session.send_to_client("Salas conectadas")
             self.session.send_to_others_in_room("Los ojos de {} se ponen en blanco un momento. Una nueva salida aparece en la habitación.".format(self.session.user.name))
-            self.finished = True
+            self.finish_interaction()
