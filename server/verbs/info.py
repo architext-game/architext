@@ -40,7 +40,7 @@ class Info(Verb):
         description = self.session.user.room.description
         alias = self.session.user.room.alias
         if len(self.session.user.room.exits) > 0:
-            exits = '  '+('\n\r  '.join(['"{}" lleva a "{}"'.format(exit, room.name) for exit, room in self.session.user.room.exits.items()]))
+            exits = '  '+('\n\r  '.join(['"{}" lleva a "{}"'.format(exit.name, exit.destination.name) for exit in self.session.user.room.exits]))
             exits = "Salidas:\n\r{}".format(exits)
         else:
             exits = "No tiene salidas."

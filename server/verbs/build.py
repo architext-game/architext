@@ -41,7 +41,7 @@ class Build(Verb):
         if not message:
             message = "camino a {}".format(self.new_room_name)
 
-        if message in self.session.user.room.exits.keys():
+        if message in [exit.name for exit in self.session.user.room.exits]:
             self.session.send_to_client('Ya hay una salida con el nombre "{}". Prueba con otro.'.format(message))
         else:
             self.exit_from_here = message

@@ -38,7 +38,7 @@ class Look(Verb):
         title = self.session.user.room.name + "\n"
         description = self.session.user.room.description + "\n" if self.session.user.room.description else "Esta sala no tiene descripción.\n"
         if len(self.session.user.room.exits) > 0:
-            exits = (', '.join(["{}".format(exit) for exit in self.session.user.room.exits.keys()]))
+            exits = (', '.join(["{}".format(exit.name) for exit in self.session.user.room.exits]))
             exits = "Salidas: {}.\n".format(exits)
         else:
             exits = ""

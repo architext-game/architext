@@ -18,20 +18,23 @@ class DeleteRoom(Verb):
         if room_to_delete.alias == "0":
             self.session.send_to_client('No puedes eliminar la sala inicial. Prueba a editarla si no te gusta :-)')
         else:
-            connected_rooms = room_to_delete.exits.values()
+            connected_rooms = [exit.destination for exit in room_to_delete.exits]
 
             for connected_room in connected_rooms:
-                exits_to_pop = []
-                for exit_there, destination in connected_room.exits.items():
-                    if destination == room_to_delete:
-                        exits_to_pop.append(exit_there)
-                for exit_to_pop in exits_to_pop:
-                    connected_room.exits.pop(exit_to_pop)
-                if exits_to_pop:
+                exits_to_remove = []
+                for exit_there in connected_room.exits:
+                    if exit_there.destination == room_to_delete:
+                        exits_to_remove.append(exit_there)
+                for exit_to_remove in exits_to_remove:
+                    connected_room.exits.remove(exit_to_remove)
+                if exits_to_remove:
                     connected_room.save()
             
             for item in room_to_delete.items:
                 item.delete()
+
+            for exit in room_to_delete.exits:
+                exit.delete()
 
             room_to_escape_from_oblivion = entities.Room.objects.first()
             self.session.user.teleport(room_to_escape_from_oblivion)
@@ -51,29 +54,27 @@ class DeleteExit(Verb):
 
     def process(self, message):
         command_length = len(self.command)
-        exit = message[command_length:]
+        exit_name = message[command_length:]
 
-        if exit in self.session.user.room.exits.keys():
-            self.delete_exit(exit)
+        if exit_name in [exit.name for exit in self.session.user.room.exits]:
+            self.delete_exit(exit_name)
             self.session.send_to_client("Borrada.")
         else:
             self.session.send_to_client("No existe esa salida.")
 
         self.finish_interaction()
 
-    def delete_exit(self, exit_here):
+    def delete_exit(self, exit_here_name):
         this_room = self.session.user.room
-        other_room = self.session.user.room.exits[exit_here]
+        other_room = self.session.user.room.get_exit(exit_here_name).destination
         
-        this_room.exits.pop(exit_here)
+        this_room.delete_exit(exit_here_name)
 
-        for exit_there, room in other_room.exits.items():
-            if room == this_room:
-                other_room.exits.pop(exit_there)
+        for exit_there in other_room.exits:
+            if exit_there.destination == this_room:
+                other_room.delete_exit(exit_there.name)
                 break
-        
-        this_room.save()
-        other_room.save()
+            
 
 class DeleteItem(Verb):
     """By using this verb users can delete items that are in their current room"""
