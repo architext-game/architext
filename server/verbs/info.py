@@ -39,23 +39,31 @@ class Info(Verb):
         room_name = self.session.user.room.name
         description = self.session.user.room.description
         alias = self.session.user.room.alias
+
         if len(self.session.user.room.exits) > 0:
             exits = '  '+('\n\r  '.join(['"{}" lleva a "{}"'.format(exit.name, exit.destination.name) for exit in self.session.user.room.exits]))
             exits = "Salidas:\n\r{}".format(exits)
         else:
             exits = "No tiene salidas."
-        if [item for item in self.session.user.room.items if item.visible]:
-            visible_items = 'Objetos visibles: '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if item.visible]))
+
+        if [item for item in self.session.user.room.items if item.listed()]:
+            listed_items = 'Objetos listados: '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if item.listed()]))
         else:
-            visible_items = 'No hay objetos visibles.'
-        if [item for item in self.session.user.room.items if not item.visible]:
-            invisible_items = 'Objetos invisibles: '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if not item.visible]))
+            listed_items = 'No hay objetos listados.'
+
+        if [item for item in self.session.user.room.items if not item.obvious()]:
+            obvious_items = 'Objetos visibles: '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if item.obvious()]))
         else:
-            invisible_items = 'No hay objetos invisibles'
+            obvious_items = 'No hay objetos visibles.'
+
+        if [item for item in self.session.user.room.items if not item.hidden()]:
+            hidden_items = 'Objetos ocultos: '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if item.hidden()]))
+        else:
+            hidden_items = 'No hay objetos ocultos'
         
         players_online = ', '.join(['"{}"'.format(user.name) for user in User.objects(room=self.session.user.room, client_id__ne=None)])
         players_offline = ', '.join(['"{}"'.format(user.name) for user in User.objects(room=self.session.user.room, client_id=None)])
-        message = 'Nombre de la sala: "{name}"\nAlias: "{alias}"\nDescripción: "{description}"\n{exits}\n{visible_items}\n{invisible_items}\nJugadores online aquí: {online}\nJugadores offline aquí: {offline}'.format(
-            name=room_name, alias=alias, description=description, exits=exits, visible_items=visible_items, invisible_items=invisible_items, online=players_online, offline=players_offline
+        message = 'Nombre de la sala: "{name}"\nAlias: "{alias}"\nDescripción: "{description}"\n{exits}\n{listed_items}\n{obvious_items}\n{hidden_items}\nJugadores online aquí: {online}\nJugadores offline aquí: {offline}'.format(
+            name=room_name, alias=alias, description=description, exits=exits, listed_items=listed_items, obvious_items=obvious_items, hidden_items=hidden_items, online=players_online, offline=players_offline
         )
         self.session.send_to_client(message)

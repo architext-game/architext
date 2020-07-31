@@ -32,16 +32,18 @@ class Craft(Verb):
 
     def process_item_description(self, message):
         self.new_item_description = message
-        self.session.send_to_client('¿Quieres que tu objeto aparezca en la lista de objetos presentes en la sala? (Responde "si" o "no")')
+        self.session.send_to_client('¿Cuál es la visibilidad del objeto? Escribe:\n  "visible" si nombraste el objeto en la descripción de la sala.\n  "listado" para que se nombre automáticamente al mirar la sala.\n  "oculto" para que los jugadores tengan que encontrarlo por otros medios.')
         self.process = self.process_visibility
 
     def process_visibility(self, message):
-        if message.lower() in ['sí', 'si', 's']:
-            self.new_item_visibility = True
-        elif message.lower() in ['no', 'n']:
-            self.new_item_visibility = False
+        if message.lower() in ['visible', 'v', 'vi']:
+            self.new_item_visibility = 'obvious'
+        elif message.lower() in ['listado', 'l', 'li']:
+            self.new_item_visibility = 'listed'
+        elif message.lower() in ['oculto', 'o', 'oc']:
+            self.new_item_visibility = 'hidden'
         else:
-            self.session.send_to_client('No te entiendo. Responde "si" o "no".')
+            self.session.send_to_client('No te entiendo. Responde "visible", "listado" u "oculto".')
             return
 
         new_item = entities.Item(

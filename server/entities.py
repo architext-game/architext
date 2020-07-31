@@ -15,11 +15,20 @@ import mongoengine
 class Item(mongoengine.Document):
     name        = mongoengine.StringField(required=True)
     description = mongoengine.StringField(default='No tiene nada de especial.')
-    visible     = mongoengine.BooleanField(default=True)
+    visible     = mongoengine.StringField(choices=['listed', 'hidden', 'obvious'], default='listed')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.save()
+
+    def obvious(self):
+        return self.visible == 'obvious'
+    
+    def listed(self):
+        return self.visible == 'listed'
+
+    def hidden(self):
+        return self.visible == 'hidden'
 
 
 class World(mongoengine.Document):

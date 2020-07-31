@@ -42,8 +42,8 @@ class Look(Verb):
             exits = "Salidas: {}.\n".format(exits)
         else:
             exits = ""
-        if [item for item in self.session.user.room.items if item.visible]:
-            items = 'Ves: '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if item.visible]))
+        if [item for item in self.session.user.room.items if item.listed()]:
+            items = 'Ves: '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if item.listed()]))
             items = items + '.\n'
         else:
             items = ''
