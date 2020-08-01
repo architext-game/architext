@@ -37,16 +37,21 @@ class Look(Verb):
         self.session.user.room.reload()
         title = self.session.user.room.name + "\n"
         description = self.session.user.room.description + "\n" if self.session.user.room.description else "Esta sala no tiene descripción.\n"
-        if len(self.session.user.room.exits) > 0:
-            exits = (', '.join(["{}".format(exit.name) for exit in self.session.user.room.exits]))
+
+        listed_exits = [exit.name for exit in self.session.user.room.exits if exit.listed()]
+        if len(listed_exits) > 0:
+            exits = (', '.join(listed_exits))
             exits = "Salidas: {}.\n".format(exits)
         else:
             exits = ""
-        if [item for item in self.session.user.room.items if item.listed()]:
-            items = 'Ves: '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if item.listed()]))
+
+        listed_items = [item.name for item in self.session.user.room.items if item.listed()]
+        if len(listed_items) > 0:
+            items = 'Ves: '+(', '.join(listed_items))
             items = items + '.\n'
         else:
             items = ''
+
         players_here = '\n'.join(['{} está aquí.'.format(user.name) for user in User.objects(room=self.session.user.room, client_id__ne=None) if user != self.session.user])
         players_here = players_here + '\n' if players_here != '' else ''
         message = ("""{title}{description}{items}{players_here}{exits}"""
