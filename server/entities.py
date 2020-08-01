@@ -49,6 +49,7 @@ class World(mongoengine.Document):
 class Exit(mongoengine.Document):
     name = mongoengine.StringField(required=True)
     destination = mongoengine.ReferenceField('Room', required=True)
+    description = mongoengine.StringField(default='No tiene nada de especial.')
     visible = mongoengine.StringField(choices=['listed', 'hidden', 'obvious'], default='listed')
 
     def __init__(self, *args, **kwargs):

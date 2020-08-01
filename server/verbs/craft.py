@@ -25,6 +25,8 @@ class Craft(Verb):
             self.session.send_to_client("Tienes que poner un nombre a tu objeto. Prueba otra vez.")
         elif message in [item.name for item in self.session.user.room.items]:
             self.session.send_to_client("Ese objeto ya está en esta sala. Prueba a ponerle otro nombre")
+        elif message in [exit.name for exit in self.session.user.room.exits]:
+            self.session.send_to_client("Ya hay una salida con el nombre que quieres poner al objeto. Prueba con otro.")
         else:
             self.new_item_name = message
             self.session.send_to_client("Ahora introduce una descripción para tu nuevo objeto, para que todo el mundo sepa cómo es.")

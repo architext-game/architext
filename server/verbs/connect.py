@@ -37,6 +37,8 @@ class Connect(Verb):
         
         if message in [exit.name for exit in self.session.user.room.exits]:
             self.session.send_to_client('Ya hay una salida con el nombre "{}". Prueba con otro.'.format(message))
+        elif message in [item.name for item in self.session.user.room.items]:
+            self.session.send_to_client('Ya hay un objeto con el nombre "{}". Prueba con otro.'.format(message))
         else:
             self.exit_from_here = message
             self.session.send_to_client("¿Cómo quieres llamar a la salida desde la otra habitación? Puedes dejarlo en blanco para un nombre autogenerado.")
@@ -48,6 +50,8 @@ class Connect(Verb):
         
         if message in [exit.name for exit in self.other_room.exits]:
             self.session.send_to_client('Ya hay una salida con el nombre "{}". Prueba con otro.'.format(message))
+        elif message in [item.name for item in self.other_room.items]:
+            self.session.send_to_client('Ya hay un objeto con el nombre "{}". Prueba con otro.'.format(message))
         else:
             self.exit_from_there = message
 
