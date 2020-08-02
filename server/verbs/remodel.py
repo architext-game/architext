@@ -17,7 +17,7 @@ class Remodel(Verb):
 
     def process_first_message(self, message):
         message =  "Vas a editar la habitación en la que te encuentras ({}).\n\rIntroduce el número correspondiente a la propiedad que quieres modificar.\n\r".format(self.session.user.room.name)
-        properties = ['0 - Nombre', '1 - Descripción'] + ['{} - Salida a {}.'.format(number+2, exit.destination.name) for number, exit in enumerate(self.session.user.room.exits)]
+        properties = ['0 - Nombre', '1 - Descripción']
         properties_string = "\n\r".join(properties)
         message = message + properties_string 
         self.session.send_to_client(message)
@@ -27,8 +27,10 @@ class Remodel(Verb):
         try:
             message = int(message)
         except:
-            pass
-        max_number = 1 + len(self.session.user.room.exits)
+            self.session.send_to_client('Debes introducir un número.')
+            return
+
+        max_number = 1
         if 0 <= message <= max_number:
             self.option_number = message
             self.session.send_to_client('Ahora introduce el nuevo valor para esa propiedad.')
@@ -45,11 +47,6 @@ class Remodel(Verb):
             elif option == 1:
                 self.session.user.room.description = message
                 self.session.user.room.save()
-            else:
-                exit_number = option - 2
-                exit = self.session.user.room.exits[exit_number]
-                exit.name = message
-                exit.save()
             self.session.send_to_client('Reforma completada con éxito.')
             self.finish_interaction()
         else:
