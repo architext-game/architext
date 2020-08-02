@@ -33,7 +33,7 @@ class Connect(Verb):
 
     def process_here_exit_name(self, message):
         if not message:
-            message = "camino a {}".format(self.other_room.name)
+            message = "a {}".format(self.other_room.name)
         
         if message in [exit.name for exit in self.session.user.room.exits]:
             self.session.send_to_client('Ya hay una salida con el nombre "{}". Prueba con otro.'.format(message))
@@ -46,7 +46,7 @@ class Connect(Verb):
 
     def process_there_exit_name(self, message):
         if not message:
-            message = "camino a {}".format(self.session.user.room.name)
+            message = "a {}".format(self.session.user.room.name)
         
         if message in [exit.name for exit in self.other_room.exits]:
             self.session.send_to_client('Ya hay una salida con el nombre "{}". Prueba con otro.'.format(message))
