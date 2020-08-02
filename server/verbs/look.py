@@ -48,7 +48,7 @@ class Look(Verb):
     def show_current_room(self):
         self.session.user.room.reload()
         title = self.session.user.room.name + "\n"
-        description = self.session.user.room.description + "\n" if self.session.user.room.description else "Esta sala no tiene descripción.\n"
+        description = self.session.user.room.description + "\n"
 
         listed_exits = [exit.name for exit in self.session.user.room.exits if exit.listed()]
         if len(listed_exits) > 0:
@@ -59,7 +59,7 @@ class Look(Verb):
 
         listed_items = [item.name for item in self.session.user.room.items if item.listed()]
         if len(listed_items) > 0:
-            items = 'Ves: '+(', '.join(listed_items))
+            items = 'Ves '+(', '.join(listed_items))
             items = items + '.\n'
         else:
             items = ''
