@@ -1,6 +1,8 @@
 from .verb import Verb
 
 class Help(Verb):
+    """Shows a help message to the user"""
+
     command = 'ayuda'
 
     def process(self, message):
@@ -35,4 +37,4 @@ CONSTRUCCIÓN AVANZADA
 """)
         self.session.send_to_client(help)
 
-        self.finished = True
+        self.finish_interaction()

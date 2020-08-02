@@ -2,6 +2,9 @@ from .verb import Verb
 import entities
 
 class Connect(Verb):
+    """This verb allow users to connect two existing rooms. One is the room where the user is located,
+    The other room is specified through its alias"""
+
     command = 'conectar'
 
     def __init__(self, session):
@@ -30,10 +33,12 @@ class Connect(Verb):
 
     def process_here_exit_name(self, message):
         if not message:
-            message = "camino a {}".format(self.other_room.name)
+            message = "a {}".format(self.other_room.name)
         
-        if message in self.session.user.room.exits.keys():
+        if message in [exit.name for exit in self.session.user.room.exits]:
             self.session.send_to_client('Ya hay una salida con el nombre "{}". Prueba con otro.'.format(message))
+        elif message in [item.name for item in self.session.user.room.items]:
+            self.session.send_to_client('Ya hay un objeto con el nombre "{}". Prueba con otro.'.format(message))
         else:
             self.exit_from_here = message
             self.session.send_to_client("¿Cómo quieres llamar a la salida desde la otra habitación? Puedes dejarlo en blanco para un nombre autogenerado.")
@@ -41,16 +46,18 @@ class Connect(Verb):
 
     def process_there_exit_name(self, message):
         if not message:
-            message = "camino a {}".format(self.session.user.room.name)
+            message = "a {}".format(self.session.user.room.name)
         
-        if message in self.other_room.exits.keys():
+        if message in [exit.name for exit in self.other_room.exits]:
             self.session.send_to_client('Ya hay una salida con el nombre "{}". Prueba con otro.'.format(message))
+        elif message in [item.name for item in self.other_room.items]:
+            self.session.send_to_client('Ya hay un objeto con el nombre "{}". Prueba con otro.'.format(message))
         else:
             self.exit_from_there = message
 
-            self.session.user.room.connect(other_room=self.other_room, exit_name=self.exit_from_here)
-            self.other_room.connect(other_room=self.session.user.room, exit_name=self.exit_from_there)
+            self.session.user.room.add_exit(destination=self.other_room, exit_name=self.exit_from_here)
+            self.other_room.add_exit(destination=self.session.user.room, exit_name=self.exit_from_there)
 
             self.session.send_to_client("Salas conectadas")
             self.session.send_to_others_in_room("Los ojos de {} se ponen en blanco un momento. Una nueva salida aparece en la habitación.".format(self.session.user.name))
-            self.finished = True
+            self.finish_interaction()

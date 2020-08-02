@@ -1,114 +1,88 @@
+"""
+Run this file to start your server. It does all initial setup and contains the game loop.
+"""
 import mongoengine
-from telnetserver import TelnetServer
-from entities import Room, User, World, Item
-import verbs as v
-
-class Session:
-    verbs = [v.Build, v.Emote, v.Go, v.Help, v.Login, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.Teleport, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.Info]
-
-    def __init__(self, session_id, server):
-        self.session_id   = session_id
-        self.server = server
-        self.current_verb = v.Login(self)
-        self.user = None
-        self.send_to_client("Estás conectado. ¿Cómo te llamas?\n\r")
-
-    def process_message(self, message):
-        if self.current_verb is None:
-            for verb in self.verbs:
-                if verb.can_process(message):
-                    self.current_verb = verb(self)
-                    break
-
-        if self.current_verb is not None:
-            self.current_verb.process(message)
-            if self.current_verb.command_finished():
-                self.current_verb = None
-        else:
-            self.send_to_client("No te entiendo.")
-
-    def disconnect(self):
-        if self.user is not None:
-            self.send_to_others_in_room("¡Whoop! {} se ha esfumado.".format(self.user.name))
-            self.user.disconnect()
-
-    def send_to_client(self, message):
-        self.server.send_message(self.session_id, "\n\r"+message)
-
-    def send_to_others_in_room(self, message):
-        users_in_this_room = User.objects(room=self.user.room)
-        for user in users_in_this_room:
-            if user != self.user:
-                self.server.send_message(user.client_id, message)
-
-    def send_to_room(self, message):
-        users_in_this_room = User.objects(room=self.user.room)
-        for user in users_in_this_room:
-            self.server.send_message(user.client_id, message)
-
-    def send_to_all(self, message):
-        for user in User.objects:
-            self.server.send_message(user.client_id, message)
-
-
+import telnetserver
+import entities
+import session
 
 def database_connect(uri=None):
+    """Connects to the mongodb database specified in docker-compose file,
+    or a custom provided URI.
+    """
     if uri:
         mongoengine.connect(host=uri)
     else:
         mongoengine.connect('sandboxmud', host='mud-db')
 
 def client_ids_cleanup():
-    for user in User.objects(client_id__ne=None):
+    """Cleans client connection id in the database, disconnecting everyone.
+    """
+    for user in entities.User.objects(client_id__ne=None):
         user.disconnect()
 
 if __name__ == "__main__":
+    # Server setup starts here
     import sys, getopt, time
 
+    connected_to_db = False
+
+    # Process commmand line args
     command_line_args = sys.argv[1:]
-    
     try:
        opts, args = getopt.getopt(command_line_args,"d:")
     except getopt.GetoptError:
+        print("Usage: python server.py [-d mongo_db_database_uri]\nIf you don't specify an URI, will try to connect to default docker-compose db.")
         sys.exit(2)
     
-    connected = False
+    # Try to connect to user-provided db
     for opt, arg in opts:
         if opt == "-d":
             database_connect(arg)
-            connected = True
-    if not connected:
+            connected_to_db = True
+    
+    # If not connected yet, try to connect to the default db specified in the docker-compose file
+    if not connected_to_db:
         database_connect()
 
-    if not World.objects:
-        Item.drop_collection()
-        User.drop_collection()
-        Room.drop_collection()
-        new_world = World()
+    # World setup if there isn't one in the db
+    if not entities.World.objects:
+        entities.Item.drop_collection()
+        entities.User.drop_collection()
+        entities.Room.drop_collection()
+        new_world = entities.World()
 
-    if not Room.objects(alias='0'):
-        lobby = Room(name='El Inicio', description='Esta sala es donde nacen los novatos. A partir de aquí se abren las puertas a diferentes mundos. Si no sabes moverte, escribe "ayuda" y descubrirás todo lo que puedes hacer.')
+    # First room setup, if there isn't one yet
+    if not entities.Room.objects(alias='0'):
+        lobby = entities.Room(name='El Inicio', description='Esta sala es donde nacen los novatos. A partir de aquí se abren las puertas a diferentes mundos. Si no sabes moverte, escribe "ayuda" y descubrirás todo lo que puedes hacer.')
 
+    # Server creation for telnet communication
+    server = telnetserver.TelnetServer()
 
-    server = TelnetServer()
+    # Dict of current session. Keys are ids provided by TelnetServer, values are the user's Session object.
     sessions = {}
 
+    # Ensure there isn't any connected players at this point.
     client_ids_cleanup()
 
+    # Start game loop
     while True:
-        server.update()
+        server.update()  # get new events
 
+        # Handle new connections
         for new_client in server.get_new_clients():
-            sessions[new_client] = Session(new_client, server)
+            sessions[new_client] = session.Session(new_client, server)
 
+        # Handle disconnects
         for disconnected_client in server.get_disconnected_clients():
             if disconnected_client in sessions:
                 session = sessions.pop(disconnected_client)
                 session.disconnect()
                 
-        # For each message a client has sent
+        # Let each session handle messages sent by his client
         for sender_client, message in server.get_messages(): 
             if sender_client in sessions:
                 sessions[sender_client].process_message(message)
 
+        # Sleep a bit. We don't want to be using 100% CPU time.
         time.sleep(0.2)

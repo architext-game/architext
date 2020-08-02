@@ -1,7 +1,9 @@
 from .verb import Verb
-from entities import Item
+import entities
 
 class Craft(Verb):
+    """This verb allows users to create items that are placed in their current room"""
+
     command = 'fabricar'
 
     def __init__(self, session):
@@ -23,6 +25,8 @@ class Craft(Verb):
             self.session.send_to_client("Tienes que poner un nombre a tu objeto. Prueba otra vez.")
         elif message in [item.name for item in self.session.user.room.items]:
             self.session.send_to_client("Ese objeto ya está en esta sala. Prueba a ponerle otro nombre")
+        elif message in [exit.name for exit in self.session.user.room.exits]:
+            self.session.send_to_client("Ya hay una salida con el nombre que quieres poner al objeto. Prueba con otro.")
         else:
             self.new_item_name = message
             self.session.send_to_client("Ahora introduce una descripción para tu nuevo objeto, para que todo el mundo sepa cómo es.")
@@ -30,19 +34,21 @@ class Craft(Verb):
 
     def process_item_description(self, message):
         self.new_item_description = message
-        self.session.send_to_client('¿Quieres que tu objeto aparezca en la lista de objetos presentes en la sala? (Responde "si" o "no")')
+        self.session.send_to_client('¿Cuál es la visibilidad del objeto? Escribe:\n  "visible" si nombraste el objeto en la descripción de la sala.\n  "listado" para que se nombre automáticamente al mirar la sala.\n  "oculto" para que los jugadores tengan que encontrarlo por otros medios.')
         self.process = self.process_visibility
 
     def process_visibility(self, message):
-        if message.lower() in ['sí', 'si', 's']:
-            self.new_item_visibility = True
-        elif message.lower() in ['no', 'n']:
-            self.new_item_visibility = False
+        if message.lower() in ['visible', 'v', 'vi']:
+            self.new_item_visibility = 'obvious'
+        elif message.lower() in ['listado', 'l', 'li']:
+            self.new_item_visibility = 'listed'
+        elif message.lower() in ['oculto', 'o', 'oc']:
+            self.new_item_visibility = 'hidden'
         else:
-            self.session.send_to_client('No te entiendo. Responde "si" o "no".')
+            self.session.send_to_client('No te entiendo. Responde "visible", "listado" u "oculto".')
             return
 
-        new_item = Item(
+        new_item = entities.Item(
             name=self.new_item_name, 
             description=self.new_item_description, 
             visible=self.new_item_visibility
@@ -50,4 +56,4 @@ class Craft(Verb):
         self.session.user.room.add_item(new_item)
         self.session.send_to_client("¡Objeto creado!")
         self.session.send_to_others_in_room("{} acaba de crear algo aquí.".format(self.session.user.name))
-        self.finished = True
+        self.finish_interaction()

@@ -1,6 +1,10 @@
 from .verb import Verb
 
 class Build(Verb):
+    """This verb allows the user to create a new room connected to his current location.
+    All the user need to know is the command he should write to start creation. That
+    command will start a text wizard that drives him across the creation process.
+    """
     command = 'construir'
 
     def __init__(self, session):
@@ -35,10 +39,12 @@ class Build(Verb):
 
     def process_here_exit_name(self, message):
         if not message:
-            message = "camino a {}".format(self.new_room_name)
+            message = "a {}".format(self.new_room_name)
 
-        if message in self.session.user.room.exits.keys():
+        if message in [exit.name for exit in self.session.user.room.exits]:
             self.session.send_to_client('Ya hay una salida con el nombre "{}". Prueba con otro.'.format(message))
+        elif message in [item.name for item in self.session.user.room.items]:
+            self.session.send_to_client('Ya hay un objeto con el nombre "{}". Prueba con otro.'.format(message))
         else:
             self.exit_from_here = message
         
@@ -49,7 +55,7 @@ class Build(Verb):
 
     def process_there_exit_name(self, message):
         if not message:
-            default_message = "camino a {}".format(self.session.user.room.name)
+            default_message = "a {}".format(self.session.user.room.name)
             self.exit_from_there =  default_message
         else:
             self.exit_from_there = message
@@ -62,4 +68,4 @@ class Build(Verb):
         )
         self.session.send_to_client("¡Enhorabuena! Tu nueva habitación está lista.")
         self.session.send_to_others_in_room("Los ojos de {} se ponen en blanco un momento. Una nueva salida aparece en la habitación.".format(self.session.user.name))
-        self.finished = True
+        self.finish_interaction()

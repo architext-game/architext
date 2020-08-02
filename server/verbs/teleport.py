@@ -4,6 +4,9 @@ import util
 import entities
 
 class Teleport(Verb):
+    """Allows a creator to travel between any two rooms, using the destination unique alias.
+    this command is intended to ease the creation process"""
+
     command = 'tp '
 
     def process(self, message):
@@ -18,7 +21,7 @@ class Teleport(Verb):
         elif len(query) == 0:
             self.session.send_to_client("NO hay ninguna sala con ese alias.")
 
-        self.finished = True
+        self.finish_interaction()
 
     def go(self, exit):
         origin_room = self.session.user.room
