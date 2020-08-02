@@ -26,6 +26,9 @@ class Go(Verb):
         origin_room = self.session.user.room
         self.session.send_to_others_in_room("{} se marcha por {}.".format(self.session.user.name, exit_name))
         self.session.user.move(exit_name)
-        there_exit = [exit.name for exit in self.session.user.room.exits if exit.destination == origin_room][0]
-        self.session.send_to_others_in_room("{} llega desde {}.".format(self.session.user.name, there_exit))
+        try:
+            there_exit = [exit.name for exit in self.session.user.room.exits if exit.destination == origin_room][0]
+            self.session.send_to_others_in_room("{} llega desde {}.".format(self.session.user.name, there_exit))
+        except:
+            self.session.send_to_others_in_room("{} llega desde algún lugar.".format(self.session.user.name))
         Look(self.session).show_current_room()
