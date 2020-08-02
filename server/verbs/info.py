@@ -21,18 +21,31 @@ class Info(Verb):
         names_of_items_in_room = [item.name for item in items_in_room]
         items_he_may_be_reffering_to = possible_meanings(partial_item_name, names_of_items_in_room)
 
-        if len(items_he_may_be_reffering_to) == 1:
-            item_name = items_he_may_be_reffering_to[0]
-            for item in items_in_room:
-                if item.name == item_name:
-                    item.reload()
-                    item_description = item.description if item.description else 'no tiene nada de especial.'
-                    self.session.send_to_client('Nombre del objeto: "{}"\nDescripción: "{}"\nVisible: {}'.format(item_name, item_description, item.visible))
-                    break
-        elif len(items_he_may_be_reffering_to) == 0:
+        exits_in_room = self.session.user.room.exits
+        names_of_exits_in_room = [exit.name for exit in exits_in_room]
+        exits_he_may_be_reffering_to = possible_meanings(partial_item_name, names_of_exits_in_room)
+
+        if len(items_he_may_be_reffering_to) + len(exits_he_may_be_reffering_to) == 1:
+            if len(items_he_may_be_reffering_to) == 1:
+                item_name = items_he_may_be_reffering_to[0]
+                for item in items_in_room:
+                    if item.name == item_name:
+                        item.reload()
+                        self.session.send_to_client('Nombre del objeto: "{}"\nDescripción: "{}"\nVisible: {}'.format(item.name, item.description, item.visible))
+                        break
+            else:
+                exit_name = exits_he_may_be_reffering_to[0]
+                for exit in exits_in_room:
+                    if exit.name == exit_name:
+                        exit.reload()
+                        self.session.send_to_client('Nombre de la salida: "{}"\nDescripción "{}"\nVisible: {}\nDestino: {} (Alias {})'.format(exit.name, exit.description, exit.visible, exit.destination.name, exit.destination.alias))
+                        break
+
+        elif len(items_he_may_be_reffering_to) + len(exits_he_may_be_reffering_to) == 0:
             self.session.send_to_client("No ves eso por aquí.".format(partial_item_name))
-        elif len(items_he_may_be_reffering_to) > 1:
+        elif len(items_he_may_be_reffering_to) + len(exits_he_may_be_reffering_to) > 1:
             self.session.send_to_client("¿A cuál te refieres? Sé más específico.")
+
     
     def show_current_room_info(self):
         self.session.user.room.reload()
@@ -45,36 +58,36 @@ class Info(Verb):
             listed_exits = '  '+('\n\r  '.join(['"{}" lleva a "{}"'.format(exit.name, exit.destination.name) for exit in listed_exits]))
             listed_exits = "Salidas listadas:\n\r{}".format(listed_exits)
         else:
-            listed_exits = "No tiene salidas listadas."
+            listed_exits = "Salidas listadas: NINGUNA"
 
         obvious_exits = [exit for exit in self.session.user.room.exits if exit.obvious()]
         if len(obvious_exits) > 0:
             obvious_exits = '  '+('\n\r  '.join(['"{}" lleva a "{}"'.format(exit.name, exit.destination.name) for exit in obvious_exits]))
             obvious_exits = "Salidas visibles:\n\r{}".format(obvious_exits)
         else:
-            obvious_exits = "No tiene salidas visibles."
+            obvious_exits = "Salidas visibles: NINGUNA"
 
         hidden_exits = [exit for exit in self.session.user.room.exits if exit.hidden()]
         if len(hidden_exits) > 0:
             hidden_exits = '  '+('\n\r  '.join(['"{}" lleva a "{}"'.format(exit.name, exit.destination.name) for exit in hidden_exits]))
             hidden_exits = "Salidas ocultas:\n\r{}".format(hidden_exits)
         else:
-            hidden_exits = "No tiene salidas ocultas."
+            hidden_exits = "Salidas ocultas: NINGUNA"
 
         if [item for item in self.session.user.room.items if item.listed()]:
             listed_items = 'Objetos listados: '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if item.listed()]))
         else:
-            listed_items = 'No hay objetos listados.'
+            listed_items = 'Objetos listados: NINGUNO'
 
         if [item for item in self.session.user.room.items if item.obvious()]:
             obvious_items = 'Objetos visibles: '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if item.obvious()]))
         else:
-            obvious_items = 'No hay objetos visibles.'
+            obvious_items = 'Objetos visibles: NINGUNO'
 
         if [item for item in self.session.user.room.items if item.hidden()]:
             hidden_items = 'Objetos ocultos: '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if item.hidden()]))
         else:
-            hidden_items = 'No hay objetos ocultos'
+            hidden_items = 'Objetos ocultos: NINGUNO'
         
         players_online = ', '.join(['"{}"'.format(user.name) for user in User.objects(room=self.session.user.room, client_id__ne=None)])
         players_offline = ', '.join(['"{}"'.format(user.name) for user in User.objects(room=self.session.user.room, client_id=None)])
