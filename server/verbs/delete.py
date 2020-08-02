@@ -58,7 +58,7 @@ class DeleteExit(Verb):
 
         if exit_name in [exit.name for exit in self.session.user.room.exits]:
             self.delete_exit(exit_name)
-            self.session.send_to_client("Borrada.")
+            self.session.send_to_client("Borrada la salida desde aquí hasta allí. Ojo, no he intentado borrar la salida desde allí hasta aquí. Si quieres hacerlo, vas para allá y lo haces desde allí.")
         else:
             self.session.send_to_client("No existe esa salida.")
 
@@ -69,11 +69,6 @@ class DeleteExit(Verb):
         other_room = self.session.user.room.get_exit(exit_here_name).destination
         
         this_room.delete_exit(exit_here_name)
-
-        for exit_there in other_room.exits:
-            if exit_there.destination == this_room:
-                other_room.delete_exit(exit_there.name)
-                break
             
 
 class DeleteItem(Verb):
