@@ -13,7 +13,7 @@ class Session:
     """
 
     # List of all verbs supported by the session, ordered by priority: if two verbs can handle the same message, the first will have preference.
-    verbs = [v.Build, v.Emote, v.Go, v.Help, v.Login, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.Teleport, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.Info]
+    verbs = [v.Build, v.Emote, v.Go, v.Help, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.Teleport, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.Info, v.Items, v.Exits]
 
     def __init__(self, session_id, server):
         self.server = server  # server used to send messages
