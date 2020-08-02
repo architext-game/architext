@@ -66,12 +66,12 @@ class Info(Verb):
         else:
             listed_items = 'No hay objetos listados.'
 
-        if [item for item in self.session.user.room.items if not item.obvious()]:
+        if [item for item in self.session.user.room.items if item.obvious()]:
             obvious_items = 'Objetos visibles: '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if item.obvious()]))
         else:
             obvious_items = 'No hay objetos visibles.'
 
-        if [item for item in self.session.user.room.items if not item.hidden()]:
+        if [item for item in self.session.user.room.items if item.hidden()]:
             hidden_items = 'Objetos ocultos: '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if item.hidden()]))
         else:
             hidden_items = 'No hay objetos ocultos'
