@@ -27,6 +27,7 @@ class DeleteRoom(Verb):
                         exits_to_remove.append(exit_there)
                 for exit_to_remove in exits_to_remove:
                     connected_room.exits.remove(exit_to_remove)
+                    exit_to_remove.delete()
                 if exits_to_remove:
                     connected_room.save()
             
