@@ -14,13 +14,13 @@ BÁSICAS
   - "mirar" para mirar a tu alrededor.
   - "mirar <nombre del objeto/salida>" para mirar de cerca un objeto o una salida.
   - "ir <salida>" para cruzar una salida.
-  - "decir <mensaje>" enviar un mensaje a todos los que estén en tu misma localización.
+  - "salidas" para ver las salidas OBVIAS de tu habitación.
+  - "objetos" para ver los objetos OBVIOS de tu habitación.
   
-AVANZADAS
+COMUNICACIÓN
+  - "decir <mensaje>" enviar un mensaje a todos los que estén en tu misma localización.
   - "gritar <mensaje>" para enviar un mensaje a todos.
   - "emote <acción>" para hacer una acción, y que todos los que están contigo lo vean.
-  - "salidas" para ver las salidas de tu habitación. Ojo: puede haber salidas ocultas.
-  - "objetos" para ver los objetos de tu habitación. Ojo: puede haber objetos ocultos.
 
 CONSTRUCCIÓN SENCILLA
   - "construir" para construir una habitación adyacente a donde estás.
