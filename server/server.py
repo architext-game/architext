@@ -76,8 +76,8 @@ if __name__ == "__main__":
         # Handle disconnects
         for disconnected_client in server.get_disconnected_clients():
             if disconnected_client in sessions:
-                session = sessions.pop(disconnected_client)
-                session.disconnect()
+                ended_session = sessions.pop(disconnected_client)
+                ended_session.disconnect()
                 
         # Let each session handle messages sent by his client
         for sender_client, message in server.get_messages(): 
