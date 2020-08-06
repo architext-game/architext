@@ -18,19 +18,8 @@ class DeleteRoom(Verb):
         if room_to_delete.alias == "0":
             self.session.send_to_client('No puedes eliminar la sala inicial. Prueba a editarla si no te gusta :-)')
         else:
-            connected_rooms = [exit.destination for exit in room_to_delete.exits]
+            # exits connecting to this room are implicitly removed from db and from exit lists in all rooms, due to its definition in entities.py
 
-            for connected_room in connected_rooms:
-                exits_to_remove = []
-                for exit_there in connected_room.exits:
-                    if exit_there.destination == room_to_delete:
-                        exits_to_remove.append(exit_there)
-                for exit_to_remove in exits_to_remove:
-                    connected_room.exits.remove(exit_to_remove)
-                    exit_to_remove.delete()
-                if exits_to_remove:
-                    connected_room.save()
-            
             for item in room_to_delete.items:
                 item.delete()
 

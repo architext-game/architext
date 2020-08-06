@@ -48,7 +48,7 @@ class World(mongoengine.Document):
 
 class Exit(mongoengine.Document):
     name = mongoengine.StringField(required=True)
-    destination = mongoengine.ReferenceField('Room', required=True)
+    destination = mongoengine.ReferenceField('Room', required=True)  # reverse delete rule specified later due to circular rule
     description = mongoengine.StringField(default='No tiene nada de especial.')
     visible = mongoengine.StringField(choices=['listed', 'hidden', 'obvious'], default='listed')
 
@@ -70,7 +70,7 @@ class Room(mongoengine.Document):
     name        = mongoengine.StringField(required=True)
     alias       = mongoengine.StringField(required=True, unique=True)  # unique id of the room, not shown to users
     description = mongoengine.StringField(default='')
-    exits       = mongoengine.ListField(mongoengine.ReferenceField(Exit))
+    exits       = mongoengine.ListField(mongoengine.ReferenceField('Exit', reverse_delete_rule=mongoengine.PULL))  # deleted exits are auto-removed from the list
     items       = mongoengine.ListField(mongoengine.ReferenceField(Item))
 
     def __init__(self, *args, **kwargs):
@@ -107,6 +107,11 @@ class Room(mongoengine.Document):
     def add_item(self, item):
         self.items.append(item)
         self.save()
+
+# make exits pointing to a deleted room to be deleted as well
+# can't specify it at class declaration because there is a circular delete rule:
+# deleted exits are removed from list of exits in a room
+Room.register_delete_rule(Exit, 'destination', mongoengine.CASCADE)
 
 
 class User(mongoengine.Document):
