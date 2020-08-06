@@ -12,8 +12,11 @@ class Login(Verb):
         self.session.send_to_client("Estás conectado. ¿Cómo te llamas?\n\r")
 
     def process(self, message):
-        self.process_user_name(message)
-        self.finish_interaction()
+        if self.is_a_valid_name(message):
+            self.process_user_name(message)
+            self.finish_interaction()
+        else:
+            self.session.send_to_client('Enter a valid name.')
 
     def process_user_name(self, name):
         if entities.User.objects(name=name):
@@ -28,3 +31,9 @@ class Login(Verb):
 
         self.session.send_to_others_in_room("¡Puf! {} apareció.".format(name))
         Look(self.session).show_current_room()
+
+    def is_a_valid_name(self, name):
+        if not name == '':
+            return True
+        else:
+            return False
