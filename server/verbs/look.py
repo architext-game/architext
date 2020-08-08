@@ -31,7 +31,8 @@ class Look(Verb):
                 for item in items_in_room:
                     if item.name == item_name:
                         item.reload()
-                        self.session.send_to_client(item.description)
+                        description = item.description if item.description else "No tiene nada de especial"
+                        self.session.send_to_client(description)
                         break
             else:
                 exit_name = exits_he_may_be_referring_to[0]
