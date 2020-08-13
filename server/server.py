@@ -5,6 +5,9 @@ import mongoengine
 import telnetserver
 import entities
 import session
+import util
+import atexit
+
 
 def database_connect(uri=None):
     """Connects to the mongodb database specified in docker-compose file,
@@ -26,6 +29,9 @@ if __name__ == "__main__":
     import sys, getopt, time
 
     connected_to_db = False
+    
+    # Sets up logger for main server logs
+    logger = util.setup_logger('server_logger', 'server.txt', console=True)
 
     # Process commmand line args
     command_line_args = sys.argv[1:]
@@ -65,6 +71,10 @@ if __name__ == "__main__":
     # Ensure there isn't any connected players at this point.
     client_ids_cleanup()
 
+    # Add exit handler: something that will be done when server stops
+    atexit.register(lambda: logger.info('server stopped'))
+
+    logger.info("server started")
     # Start game loop
     while True:
         server.update()  # get new events
@@ -86,3 +96,4 @@ if __name__ == "__main__":
 
         # Sleep a bit. We don't want to be using 100% CPU time.
         time.sleep(0.2)
+
