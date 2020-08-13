@@ -1,6 +1,8 @@
 from .verb import Verb
 from .look import Look
 import entities
+import util
+import logging
 
 class Login(Verb):
     """This is the first verb that a session starts with, and handles user log-in.
@@ -31,6 +33,15 @@ class Login(Verb):
 
         self.session.send_to_others_in_room("¡Puf! {} apareció.".format(name))
         Look(self.session).show_current_room()
+
+        server_logger = logging.getLogger('server_logger')
+        user_logger = util.setup_logger('user_'+name, 'user_'+name+'.txt')
+        self.session.set_logger(user_logger)
+        log_message = '{} has connected.'.format(name)
+        user_logger.info(log_message)
+        server_logger.info(log_message)
+        
+
 
     def is_a_valid_name(self, name):
         if not name == '':

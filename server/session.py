@@ -16,10 +16,12 @@ class Session:
     verbs = [v.Build, v.Emote, v.Go, v.Help, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.Teleport, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.Info, v.Items, v.Exits]
 
     def __init__(self, session_id, server):
+        self.logger = None  # logger for recording user interaction
         self.server = server  # server used to send messages
         self.session_id = session_id  # direction to send messages to our client
         self.current_verb = v.Login(self)  # verb that is currently handling interaction. It starts with the log-in process.
         self.user = None  # here we'll have an User entity once the log-in is completed.
+        
         
 
     def process_message(self, message):
@@ -27,6 +29,8 @@ class Session:
         It polls all verbs, using their can_process method to find a verb that can process the message.
         Then makes that verb the current_verb and lets it handle the message.
         """
+        if self.logger:
+            self.logger.info('client\n'+message)
         if self.current_verb is None:
             for verb in self.verbs:
                 if verb.can_process(message):
@@ -47,6 +51,8 @@ class Session:
 
     def send_to_client(self, message):
         self.server.send_message(self.session_id, "\n\r"+message)
+        if self.logger:
+            self.logger.info('server\n'+message)
 
     def send_to_others_in_room(self, message):
         users_in_this_room = entities.User.objects(room=self.user.room)
@@ -62,3 +68,6 @@ class Session:
     def send_to_all(self, message):
         for user in entities.User.objects:
             self.server.send_message(user.client_id, message)
+
+    def set_logger(self, logger):
+        self.logger = logger
