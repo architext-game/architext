@@ -11,11 +11,24 @@ The responsibilities of each entity are:
 
 import mongoengine
 
+class CustomVerb(mongoengine.Document):
+    commands = mongoengine.ListField(mongoengine.StringField())
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.save()
+        self.commands_iterator = iter(self.commands)
+
+    def get_next_message():
+        # returns the next message to be processed by the ghost session, or None, if there is none left.
+        return next(self.commands_iterator, None)
+
 
 class Item(mongoengine.Document):
     name        = mongoengine.StringField(required=True)
     description = mongoengine.StringField(default='No tiene nada de especial.')
     visible     = mongoengine.StringField(choices=['listed', 'hidden', 'obvious'], default='listed')
+    custom_verbs = mongoengine.ListField(mongoengine.ReferenceField(CustomVerb))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -30,9 +43,14 @@ class Item(mongoengine.Document):
     def hidden(self):
         return self.visible == 'hidden'
 
+    def add_custom_verb(custom_verb):
+        self.custom_verbs.append(custom_verb)
+        self.save()
+
 
 class World(mongoengine.Document):
     next_room_id = mongoengine.IntField(default=0)
+    custom_verbs = mongoengine.ListField(mongoengine.ReferenceField(CustomVerb))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -44,6 +62,10 @@ class World(mongoengine.Document):
         self.next_room_id = self.next_room_id + 1
         self.save()
         return id_to_serve
+
+    def add_custom_verb(custom_verb):
+        self.custom_verbs.append(custom_verb)
+        self.save()
 
 
 class Exit(mongoengine.Document):
@@ -72,6 +94,7 @@ class Room(mongoengine.Document):
     description = mongoengine.StringField(default='')
     exits       = mongoengine.ListField(mongoengine.ReferenceField('Exit', reverse_delete_rule=mongoengine.PULL))  # deleted exits are auto-removed from the list
     items       = mongoengine.ListField(mongoengine.ReferenceField(Item))
+    custom_verbs = mongoengine.ListField(mongoengine.ReferenceField(CustomVerb))
 
     def __init__(self, *args, **kwargs):
         if 'alias' in kwargs:
@@ -108,6 +131,10 @@ class Room(mongoengine.Document):
         self.items.append(item)
         self.save()
 
+    def add_custom_verb(custom_verb):
+        self.custom_verbs.append(custom_verb)
+        self.save()
+
 # make exits pointing to a deleted room to be deleted as well
 # can't specify it at class declaration because there is a circular delete rule:
 # deleted exits are removed from list of exits in a room
@@ -139,3 +166,5 @@ class User(mongoengine.Document):
     def disconnect(self):
         self.client_id = None
         self.save()
+
+
