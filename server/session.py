@@ -13,7 +13,7 @@ class Session:
     """
 
     # List of all verbs supported by the session, ordered by priority: if two verbs can handle the same message, the first will have preference.
-    verbs = [v.Build, v.Emote, v.Go, v.Help, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.Teleport, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.Info, v.Items, v.Exits]
+    verbs = [v.Build, v.Emote, v.Go, v.Help, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.Teleport, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.Info, v.Items, v.Exits, v.AddVerb]
 
     def __init__(self, session_id, server):
         self.logger = None  # logger for recording user interaction
@@ -22,7 +22,7 @@ class Session:
         self.current_verb = v.Login(self)  # verb that is currently handling interaction. It starts with the log-in process.
         self.user = None  # here we'll have an User entity once the log-in is completed.
         
-        
+
 
     def process_message(self, message):
         """This method processes a message sent by the client.
@@ -31,18 +31,50 @@ class Session:
         """
         if self.logger:
             self.logger.info('client\n'+message)
+        
+        # if there is no current verb, search for a verb in the standard verb list
         if self.current_verb is None:
             for verb in self.verbs:
                 if verb.can_process(message):
                     self.current_verb = verb(self)
                     break
-
+        
         if self.current_verb is not None:
             self.current_verb.process(message)
             if self.current_verb.command_finished():
                 self.current_verb = None
         else:
-            self.send_to_client("No te entiendo.")
+            custom_verb = self.search_for_custom_verb(message)
+            if custom_verb is not None:
+                self.execute_custom_verb(custom_verb)
+            else:
+                self.send_to_client("No te entiendo.")
+
+    def search_for_custom_verb(self, message):
+        if len(message.split(" ", 1)) == 2:  # if the message has the form "verb item"
+            target_verb_name, target_item_name = message.split(" ", 1)
+            suitable_item_found_in_room = next(filter(lambda i: i.name==target_item_name, self.user.room.items), None)
+            if suitable_item_found_in_room is not None:
+                suitable_verb_found_in_item = next(filter(lambda v: v.name==target_verb_name, suitable_item_found_in_room.custom_verbs), None)
+                if suitable_verb_found_in_item is not None:
+                    return suitable_verb_found_in_item
+        else:
+            suitable_verb_found_in_room = next(filter(lambda v: v.name==message, self.user.room.custom_verbs), None)
+            if suitable_verb_found_in_room is not None:
+                return suitable_verb_found_in_room
+            world = entities.World.objects[0]
+            suitable_verb_found_in_world = next(filter(lambda v: v.name==message, world.custom_verbs), None)
+            if suitable_verb_found_in_world is not None:
+                return suitable_verb_found_in_world
+        
+        return None
+            
+    def execute_custom_verb(self, custom_verb):
+        import ghost_session
+        ghost = ghost_session.GhostSession(self.server, self.user.room)
+        for message in custom_verb.commands:
+            ghost.process_message(message)
+        ghost.disconnect()
 
     def disconnect(self):
         if self.user is not None:

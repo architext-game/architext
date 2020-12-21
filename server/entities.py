@@ -12,16 +12,12 @@ The responsibilities of each entity are:
 import mongoengine
 
 class CustomVerb(mongoengine.Document):
+    name = mongoengine.StringField()
     commands = mongoengine.ListField(mongoengine.StringField())
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.save()
-        self.commands_iterator = iter(self.commands)
-
-    def get_next_message():
-        # returns the next message to be processed by the ghost session, or None, if there is none left.
-        return next(self.commands_iterator, None)
 
 
 class Item(mongoengine.Document):
@@ -43,7 +39,7 @@ class Item(mongoengine.Document):
     def hidden(self):
         return self.visible == 'hidden'
 
-    def add_custom_verb(custom_verb):
+    def add_custom_verb(self, custom_verb):
         self.custom_verbs.append(custom_verb)
         self.save()
 
@@ -63,7 +59,7 @@ class World(mongoengine.Document):
         self.save()
         return id_to_serve
 
-    def add_custom_verb(custom_verb):
+    def add_custom_verb(self, custom_verb):
         self.custom_verbs.append(custom_verb)
         self.save()
 
@@ -131,7 +127,7 @@ class Room(mongoengine.Document):
         self.items.append(item)
         self.save()
 
-    def add_custom_verb(custom_verb):
+    def add_custom_verb(self, custom_verb):
         self.custom_verbs.append(custom_verb)
         self.save()
 

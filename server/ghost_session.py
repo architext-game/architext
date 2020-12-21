@@ -23,9 +23,13 @@ class GhostSession(Session):
 
         # retrieve or create ghost user and put in in the right room.
         if entities.User.objects(name=GHOST_USER_NAME):
-            self.session.user = entities.User.objects(name=GHOST_USER_NAME).first()
-            self.session.user.connect(self.session.session_id)
-            self.session.user.teleport(start_room)
+            self.user = entities.User.objects(name=GHOST_USER_NAME).first()
+            self.user.connect(self.session_id)
+            self.user.teleport(start_room)
         else:
-            self.session.user = entities.User(name=GHOST_USER_NAME, room=start_room)
-            self.session.user.connect(self.session.session_id)
+            self.user = entities.User(name=GHOST_USER_NAME, room=start_room)
+            self.user.connect(self.session_id)
+
+    def disconnect(self):
+        if self.user is not None:
+            self.user.disconnect()
