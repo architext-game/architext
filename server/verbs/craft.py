@@ -55,5 +55,6 @@ class Craft(Verb):
         )
         self.session.user.room.add_item(new_item)
         self.session.send_to_client("¡Objeto creado!")
-        self.session.send_to_others_in_room("{} acaba de crear algo aquí.".format(self.session.user.name))
+        if not self.session.user.master_mode:
+            self.session.send_to_others_in_room("{} acaba de crear algo aquí.".format(self.session.user.name))
         self.finish_interaction()

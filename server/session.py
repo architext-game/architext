@@ -13,7 +13,7 @@ class Session:
     """
 
     # List of all verbs supported by the session, ordered by priority: if two verbs can handle the same message, the first will have preference.
-    verbs = [v.Build, v.Emote, v.Go, v.Help, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.Teleport, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.Info, v.Items, v.Exits, v.AddVerb]
+    verbs = [v.Build, v.Emote, v.Go, v.Help, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.Teleport, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.Info, v.Items, v.Exits, v.AddVerb, v.MasterMode]
 
     def __init__(self, session_id, server):
         self.logger = None  # logger for recording user interaction
@@ -78,7 +78,8 @@ class Session:
 
     def disconnect(self):
         if self.user is not None:
-            self.send_to_others_in_room("¡Whoop! {} se ha esfumado.".format(self.user.name))
+            if not self.user.master_mode:
+                self.send_to_others_in_room("¡Whoop! {} se ha esfumado.".format(self.user.name))
             self.user.disconnect()
 
     def send_to_client(self, message):

@@ -141,6 +141,7 @@ class User(mongoengine.Document):
     name = mongoengine.StringField(required=True)
     room = mongoengine.ReferenceField(Room, required=True)
     client_id = mongoengine.IntField(default=None)
+    master_mode = mongoengine.BooleanField(default=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -161,6 +162,14 @@ class User(mongoengine.Document):
 
     def disconnect(self):
         self.client_id = None
+        self.save()
+
+    def enter_master_mode(self):
+        self.master_mode = True
+        self.save()
+
+    def leave_master_mode(self):
+        self.master_mode = False
         self.save()
 
 

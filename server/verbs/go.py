@@ -29,17 +29,20 @@ class Go(Verb):
     def go(self, selected_exit):
         origin_room = self.session.user.room
 
-        if not selected_exit.hidden():
-            self.session.send_to_others_in_room("{} se marcha por {}.".format(self.session.user.name, selected_exit.name))
-        else:
-            self.session.send_to_others_in_room("{} se marcha hacia algún lugar.".format(self.session.user.name))
+        if not self.session.user.master_mode:
+            if not selected_exit.hidden():
+                self.session.send_to_others_in_room("{} se marcha por {}.".format(self.session.user.name, selected_exit.name))
+            else:
+                self.session.send_to_others_in_room("{} se marcha hacia algún lugar.".format(self.session.user.name))
         
         self.session.user.move(selected_exit.name)
 
         there_exit = [exit.name for exit in self.session.user.room.exits if exit.destination == origin_room and not exit.hidden()]
-        if there_exit:
-            self.session.send_to_others_in_room("{} llega desde {}.".format(self.session.user.name, there_exit[0]))
-        else:
-            self.session.send_to_others_in_room("{} llega desde algún lugar.".format(self.session.user.name))
+
+        if not self.session.user.master_mode:
+            if there_exit:
+                self.session.send_to_others_in_room("{} llega desde {}.".format(self.session.user.name, there_exit[0]))
+            else:
+                self.session.send_to_others_in_room("{} llega desde algún lugar.".format(self.session.user.name))
 
         Look(self.session).show_current_room()

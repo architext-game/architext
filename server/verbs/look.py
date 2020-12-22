@@ -65,7 +65,7 @@ class Look(Verb):
         else:
             items = ''
 
-        players_here = '\n'.join(['{} está aquí.'.format(user.name) for user in User.objects(room=self.session.user.room, client_id__ne=None) if user != self.session.user])
+        players_here = '\n'.join(['{} está aquí.'.format(user.name) for user in User.objects(room=self.session.user.room, client_id__ne=None, master_mode=False) if user != self.session.user])
         players_here = players_here + '\n' if players_here != '' else ''
         message = ("""{title}{description}{items}{players_here}{exits}"""
                     ).format(title=title, description=description, exits=exits, players_here=players_here, items=items)

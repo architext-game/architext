@@ -67,5 +67,6 @@ class Build(Verb):
             exit_from_there = self.exit_from_there
         )
         self.session.send_to_client("¡Enhorabuena! Tu nueva habitación está lista.")
-        self.session.send_to_others_in_room("Los ojos de {} se ponen en blanco un momento. Una nueva salida aparece en la habitación.".format(self.session.user.name))
+        if not self.session.user.master_mode:
+            self.session.send_to_others_in_room("Los ojos de {} se ponen en blanco un momento. Una nueva salida aparece en la habitación.".format(self.session.user.name))
         self.finish_interaction()

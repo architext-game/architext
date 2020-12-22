@@ -17,3 +17,4 @@ from .info import Info
 from .items import Items
 from .exits import Exits
 from .add_verb import AddVerb
+from .master_mode import MasterMode
