@@ -2,7 +2,7 @@ from .build import Build
 from .emote import Emote
 from .go import Go
 from .help import Help
-from  .login import Login
+from .login import Login
 from .look import Look
 from .remodel import Remodel
 from .say import Say
@@ -11,10 +11,11 @@ from .verb import Verb
 from .craft import Craft
 from .edit_item import EditItem
 from .connect import Connect
-from .teleport import Teleport
+from .teleport import TeleportClient, TeleportUser, TeleportAllInRoom, TeleportAllInWorld
 from .delete import DeleteExit, DeleteItem, DeleteRoom
 from .info import Info
 from .items import Items
 from .exits import Exits
 from .add_verb import AddVerb
 from .master_mode import MasterMode
+from .direct_text import TextToOne, TextToRoom, TextToRoomUnless, TextToWorld

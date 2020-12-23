@@ -2,3 +2,4 @@ volumes/
 server/verbs/__pycache__/
 server/logs/
 server/__pycache__/
+.vscode/

@@ -13,7 +13,7 @@ class Session:
     """
 
     # List of all verbs supported by the session, ordered by priority: if two verbs can handle the same message, the first will have preference.
-    verbs = [v.Build, v.Emote, v.Go, v.Help, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.Teleport, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.Info, v.Items, v.Exits, v.AddVerb, v.MasterMode]
+    verbs = [v.Build, v.Emote, v.Go, v.Help, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.TeleportClient, v.TeleportUser, v.TeleportAllInRoom, v.TeleportAllInWorld, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.Info, v.Items, v.Exits, v.AddVerb, v.MasterMode, v.TextToOne, v.TextToRoom, v.TextToRoomUnless, v.TextToWorld]
 
     def __init__(self, session_id, server):
         self.logger = None  # logger for recording user interaction
@@ -29,6 +29,10 @@ class Session:
         It polls all verbs, using their can_process method to find a verb that can process the message.
         Then makes that verb the current_verb and lets it handle the message.
         """
+        if self.user is not None:
+            self.user.reload()
+            self.user.room.reload()
+
         if self.logger:
             self.logger.info('client\n'+message)
         
@@ -87,11 +91,21 @@ class Session:
         if self.logger:
             self.logger.info('server\n'+message)
 
-    def send_to_others_in_room(self, message):
+    def send_to_user(self, user, message):
+        self.server.send_message(user.client_id, "\n\r"+message)
+
+    def send_to_room_except(self, exception_user, message):
         users_in_this_room = entities.User.objects(room=self.user.room)
         for user in users_in_this_room:
-            if user != self.user:
+            if user != exception_user:
                 self.server.send_message(user.client_id, message)
+
+    def send_to_others_in_room(self, message):
+        self.send_to_room_except(self.user, message)
+        """users_in_this_room = entities.User.objects(room=self.user.room)
+        for user in users_in_this_room:
+            if user != self.user:
+                self.server.send_message(user.client_id, message)"""
 
     def send_to_room(self, message):
         users_in_this_room = entities.User.objects(room=self.user.room)
@@ -100,6 +114,7 @@ class Session:
 
     def send_to_all(self, message):
         for user in entities.User.objects:
+            print(user.name)
             self.server.send_message(user.client_id, message)
 
     def set_logger(self, logger):
