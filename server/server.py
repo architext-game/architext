@@ -63,7 +63,7 @@ if __name__ == "__main__":
         lobby = entities.Room(name='El Inicio', description='Esta sala es donde nacen los novatos. A partir de aquí se abren las puertas a diferentes mundos. Si no sabes moverte, escribe "ayuda" y descubrirás todo lo que puedes hacer.')
 
     # Server creation for telnet communication
-    server = telnetserver.TelnetServer()
+    server = telnetserver.TelnetServer(error_policy='ignore')
 
     # Dict of current session. Keys are ids provided by TelnetServer, values are the user's Session object.
     sessions = {}
