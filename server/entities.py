@@ -23,7 +23,7 @@ class CustomVerb(mongoengine.Document):
 class Item(mongoengine.Document):
     name        = mongoengine.StringField(required=True)
     description = mongoengine.StringField(default='No tiene nada de especial.')
-    visible     = mongoengine.StringField(choices=['listed', 'hidden', 'obvious'], default='listed')
+    visible     = mongoengine.StringField(choices=['listed', 'hidden', 'obvious', 'takable'], default='listed')
     custom_verbs = mongoengine.ListField(mongoengine.ReferenceField(CustomVerb))
 
     def __init__(self, *args, **kwargs):
@@ -34,7 +34,7 @@ class Item(mongoengine.Document):
         return self.visible == 'obvious'
     
     def listed(self):
-        return self.visible == 'listed'
+        return self.visible == 'listed' or self.visible == 'takable'
 
     def hidden(self):
         return self.visible == 'hidden'
@@ -127,6 +127,10 @@ class Room(mongoengine.Document):
         self.items.append(item)
         self.save()
 
+    def remove_item(self, item):
+        self.items.remove(item)
+        self.save()
+
     def add_custom_verb(self, custom_verb):
         self.custom_verbs.append(custom_verb)
         self.save()
@@ -141,6 +145,7 @@ class User(mongoengine.Document):
     name = mongoengine.StringField(required=True)
     room = mongoengine.ReferenceField(Room, required=True)
     client_id = mongoengine.IntField(default=None)
+    inventory = mongoengine.ListField(mongoengine.ReferenceField(Item))
     master_mode = mongoengine.BooleanField(default=False)
 
     def __init__(self, *args, **kwargs):
@@ -154,6 +159,14 @@ class User(mongoengine.Document):
 
     def teleport(self, room):
         self.room = room
+        self.save()
+
+    def add_item_to_inventory(self, item):
+        self.inventory.append(item)
+        self.save()
+
+    def remove_item_from_inventory(self, item):
+        self.inventory.remove(item)
         self.save()
 
     def connect(self, client_id):

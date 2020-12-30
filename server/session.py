@@ -13,7 +13,7 @@ class Session:
     """
 
     # List of all verbs supported by the session, ordered by priority: if two verbs can handle the same message, the first will have preference.
-    verbs = [v.Build, v.Emote, v.Go, v.Help, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.TeleportClient, v.TeleportUser, v.TeleportAllInRoom, v.TeleportAllInWorld, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.Info, v.Items, v.Exits, v.AddVerb, v.MasterMode, v.TextToOne, v.TextToRoom, v.TextToRoomUnless, v.TextToWorld]
+    verbs = [v.Build, v.Emote, v.Go, v.Help, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.TeleportClient, v.TeleportUser, v.TeleportAllInRoom, v.TeleportAllInWorld, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.Info, v.Items, v.Exits, v.AddVerb, v.MasterMode, v.TextToOne, v.TextToRoom, v.TextToRoomUnless, v.TextToWorld, v.Take, v.Drop, v.Inventory]
 
     def __init__(self, session_id, server):
         self.logger = None  # logger for recording user interaction
@@ -57,9 +57,10 @@ class Session:
     def search_for_custom_verb(self, message):
         if len(message.split(" ", 1)) == 2:  # if the message has the form "verb item"
             target_verb_name, target_item_name = message.split(" ", 1)
-            suitable_item_found_in_room = next(filter(lambda i: i.name==target_item_name, self.user.room.items), None)
-            if suitable_item_found_in_room is not None:
-                suitable_verb_found_in_item = next(filter(lambda v: v.name==target_verb_name, suitable_item_found_in_room.custom_verbs), None)
+            candidate_items = self.user.room.items + self.user.inventory
+            suitable_item_found = next(filter(lambda i: i.name==target_item_name, candidate_items), None)
+            if suitable_item_found is not None:
+                suitable_verb_found_in_item = next(filter(lambda v: v.name==target_verb_name, suitable_item_found.custom_verbs), None)
                 if suitable_verb_found_in_item is not None:
                     return suitable_verb_found_in_item
         else:

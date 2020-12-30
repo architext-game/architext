@@ -1,5 +1,6 @@
 from .verb import Verb
 import entities
+import util
 
 class Craft(Verb):
     """This verb allows users to create items that are placed in their current room"""
@@ -21,20 +22,15 @@ class Craft(Verb):
         self.current_process_function = self.process_item_name
 
     def process_item_name(self, message):
-        if not message:
-            self.session.send_to_client("Tienes que poner un nombre a tu objeto. Prueba otra vez.")
-        elif message in [item.name for item in self.session.user.room.items]:
-            self.session.send_to_client("Ese objeto ya está en esta sala. Prueba a ponerle otro nombre")
-        elif message in [exit.name for exit in self.session.user.room.exits]:
-            self.session.send_to_client("Ya hay una salida con el nombre que quieres poner al objeto. Prueba con otro.")
-        else:
+        if util.valid_item_or_exit_name(self.session, message):
             self.new_item_name = message
             self.session.send_to_client("Ahora introduce una descripción para tu nuevo objeto, para que todo el mundo sepa cómo es.")
             self.current_process_function = self.process_item_description
+            
 
     def process_item_description(self, message):
         self.new_item_description = message
-        self.session.send_to_client('¿Cuál es la visibilidad del objeto? Escribe:\n  "visible" si nombraste el objeto en la descripción de la sala.\n  "listado" para que se nombre automáticamente al mirar la sala.\n  "oculto" para que los jugadores tengan que encontrarlo por otros medios.')
+        self.session.send_to_client('¿Cuál es la visibilidad del objeto? Escribe:\n  "visible" si nombraste el objeto en la descripción de la sala.\n  "listado" para que se nombre automáticamente al mirar la sala.\n  "oculto" para que los jugadores tengan que encontrarlo por otros medios.\n  "tomable" para que los jugadores puedan coger el objeto y llevarlo consigo. Será listado igual que un verbo listado, y no deberías nombrarlo en la descripción de la sala.')
         self.process = self.process_visibility
 
     def process_visibility(self, message):
@@ -44,8 +40,16 @@ class Craft(Verb):
             self.new_item_visibility = 'listed'
         elif message.lower() in ['oculto', 'o', 'oc']:
             self.new_item_visibility = 'hidden'
+        elif message.lower() in ['tomable', 't', 'to']:
+            # the name of a takable item should be unique across al other items
+            if util.valid_takable_item_name(self.session, self.new_item_name):
+                self.new_item_visibility = 'takable'
+            else:
+                self.session.send_to_client("Tendrás que empezar de nuevo.")
+                self.finish_interaction()
+                return
         else:
-            self.session.send_to_client('No te entiendo. Responde "visible", "listado" u "oculto".')
+            self.session.send_to_client('No te entiendo. Responde "visible", "listado", "oculto" o "tomable.')
             return
 
         new_item = entities.Item(

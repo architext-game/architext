@@ -19,7 +19,7 @@ class GhostSession(Session):
         GHOST_USER_NAME = special_words.GHOST_USER_NAME  # name of the ghost user
         PLACEHOLDER_SESSION_ID = -1  # with this invalid id, the server won't send messages meant to the session's client 
         super().__init__(PLACEHOLDER_SESSION_ID, server)  # normal session __init__. Assigns session id and server.
-        self.current_verb = None  # we want to not have an assigned verb at sesion creation.
+        self.current_verb = None  # we want to not have an assigned verb at session creation.
 
         # retrieve or create ghost user and put in in the right room.
         if entities.User.objects(name=GHOST_USER_NAME):

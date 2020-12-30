@@ -1,4 +1,5 @@
 from .verb import Verb
+import util
 import entities
 
 class Connect(Verb):
@@ -34,11 +35,11 @@ class Connect(Verb):
     def process_here_exit_name(self, message):
         if not message:
             message = "a {}".format(self.other_room.name)
+            while(not util.valid_item_or_exit_name(self.session, message)):
+                message = 'directo ' + message
         
-        if message in [exit.name for exit in self.session.user.room.exits]:
-            self.session.send_to_client('Ya hay una salida con el nombre "{}". Prueba con otro.'.format(message))
-        elif message in [item.name for item in self.session.user.room.items]:
-            self.session.send_to_client('Ya hay un objeto con el nombre "{}". Prueba con otro.'.format(message))
+        if not util.valid_item_or_exit_name(self.session, message):
+            self.session.send_to_client('Introduce otro nombre.'.format(message))
         else:
             self.exit_from_here = message
             self.session.send_to_client("¿Cómo quieres llamar a la salida desde la otra habitación? Puedes dejarlo en blanco para un nombre autogenerado.")
@@ -47,11 +48,11 @@ class Connect(Verb):
     def process_there_exit_name(self, message):
         if not message:
             message = "a {}".format(self.session.user.room.name)
+            while(not util.valid_item_or_exit_name(self.session, message, local_room=self.other_room)):
+                message = 'directo ' + message
         
-        if message in [exit.name for exit in self.other_room.exits]:
-            self.session.send_to_client('Ya hay una salida con el nombre "{}". Prueba con otro.'.format(message))
-        elif message in [item.name for item in self.other_room.items]:
-            self.session.send_to_client('Ya hay un objeto con el nombre "{}". Prueba con otro.'.format(message))
+        if not util.valid_item_or_exit_name(self.session, message, local_room=self.other_room):
+            self.session.send_to_client('Introduce otro nombre.'.format(message))
         else:
             self.exit_from_there = message
 
