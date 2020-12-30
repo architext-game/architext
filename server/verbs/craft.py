@@ -30,7 +30,7 @@ class Craft(Verb):
 
     def process_item_description(self, message):
         self.new_item_description = message
-        self.session.send_to_client('¿Cuál es la visibilidad del objeto? Escribe:\n  "visible" si nombraste el objeto en la descripción de la sala.\n  "listado" para que se nombre automáticamente al mirar la sala.\n  "oculto" para que los jugadores tengan que encontrarlo por otros medios.\n  "tomable" para que los jugadores puedan coger el objeto y llevarlo consigo. Será listado igual que un verbo listado, y no deberías nombrarlo en la descripción de la sala.')
+        self.session.send_to_client('¿Cuál es la visibilidad del objeto? Escribe:\n  "visible" si nombraste el objeto en la descripción de la sala.\n  "listado" para que se nombre automáticamente al mirar la sala.\n  "oculto" para que los jugadores tengan que encontrarlo por otros medios.\n  "cogible" para que los jugadores puedan coger el objeto y llevarlo consigo. Será listado igual que un verbo listado, y no deberías nombrarlo en la descripción de la sala.')
         self.process = self.process_visibility
 
     def process_visibility(self, message):
@@ -40,7 +40,7 @@ class Craft(Verb):
             self.new_item_visibility = 'listed'
         elif message.lower() in ['oculto', 'o', 'oc']:
             self.new_item_visibility = 'hidden'
-        elif message.lower() in ['tomable', 't', 'to']:
+        elif message.lower() in ['cogible', 'c', 'co']:
             # the name of a takable item should be unique across al other items
             if util.valid_takable_item_name(self.session, self.new_item_name):
                 self.new_item_visibility = 'takable'
@@ -49,7 +49,7 @@ class Craft(Verb):
                 self.finish_interaction()
                 return
         else:
-            self.session.send_to_client('No te entiendo. Responde "visible", "listado", "oculto" o "tomable.')
+            self.session.send_to_client('No te entiendo. Responde "visible", "listado", "oculto" o "cogible.')
             return
 
         new_item = entities.Item(

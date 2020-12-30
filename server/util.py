@@ -12,7 +12,7 @@ def possible_meanings(partial_string, list_of_options):
 
 def name_globaly_free(session, item_name, ignore_item=None):
     if item_name in [takable_item.name for takable_item in entities.Item.objects(visible='takable') if takable_item != ignore_item]:
-        session.send_to_client("En este mundo hay un objeto tomable con ese nombre. Debes elegir otro.")
+        session.send_to_client("En este mundo hay un objeto cogible con ese nombre. Debes elegir otro.")
         return False
     
     return True
@@ -48,11 +48,11 @@ def valid_takable_item_name(session, item_name, ignore_item=None):
         return False
 
     if item_name in [item.name for item in entities.Item.objects() if item != ignore_item]:
-        session.send_to_client("En este mundo hay un objeto con este nombre. Debes elegir otro, puesto que los nombres de los objetos tomables deben ser únicos.")
+        session.send_to_client("En este mundo hay un objeto con este nombre. Debes elegir otro, puesto que los nombres de los objetos cogibles deben ser únicos.")
         return False
 
     if item_name in [exit.name for exit in entities.Exit.objects() if exit != ignore_item]:
-        session.send_to_client("En este mundo hay una salida con este nombre. Debes elegir otro, puesto que los nombres de los objetos tomables deben ser únicos.")
+        session.send_to_client("En este mundo hay una salida con este nombre. Debes elegir otro, puesto que los nombres de los objetos cogibles deben ser únicos.")
         return False
 
     return True
