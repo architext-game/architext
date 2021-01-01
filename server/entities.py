@@ -69,6 +69,8 @@ class Exit(mongoengine.Document):
     destination = mongoengine.ReferenceField('Room', required=True)  # reverse delete rule specified later due to circular rule
     description = mongoengine.StringField(default='No tiene nada de especial.')
     visible = mongoengine.StringField(choices=['listed', 'hidden', 'obvious'], default='listed')
+    is_open = mongoengine.BooleanField(default=True)
+    key_names = mongoengine.ListField(mongoengine.StringField())
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -77,6 +79,22 @@ class Exit(mongoengine.Document):
     def obvious(self):
         return self.visible == 'obvious'
     
+    def add_key(self, item_name):
+        self.key_names.append(item_name)
+        self.save()
+
+    def remove_key(self, item_name):
+        self.key_names.remove(item_name)
+        self.save()
+
+    def open(self):
+        self.is_open = True
+        self.save()
+
+    def close(self):
+        self.is_open = False
+        self.save()
+
     def listed(self):
         return self.visible == 'listed'
 
