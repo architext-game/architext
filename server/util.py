@@ -10,8 +10,14 @@ def possible_meanings(partial_string, list_of_options):
         return [string for string in list_of_options if partial_string in string]
 
 
+def get_items_in_world():
+    items_in_world = []
+    for room in entities.Room.objects():
+        items_in_world = items_in_world + room.items
+    return items_in_world
+
 def name_globaly_free(session, item_name, ignore_item=None):
-    if item_name in [takable_item.name for takable_item in entities.Item.objects(visible='takable') if takable_item != ignore_item]:
+    if item_name in [takable_item.name for takable_item in get_items_in_world() if takable_item != ignore_item and takable_item.visible=='takable']:
         session.send_to_client("En este mundo hay un objeto cogible con ese nombre. Debes elegir otro.")
         return False
     
@@ -47,11 +53,11 @@ def valid_takable_item_name(session, item_name, ignore_item=None):
     if not valid_item_or_exit_name(session, item_name, ignore_item=ignore_item):
         return False
 
-    if item_name in [item.name for item in entities.Item.objects() if item != ignore_item]:
+    if item_name in [item.name for item in get_items_in_world() if item != ignore_item]:
         session.send_to_client("En este mundo hay un objeto con este nombre. Debes elegir otro, puesto que los nombres de los objetos cogibles deben ser únicos.")
         return False
 
-    if item_name in [exit.name for exit in entities.Exit.objects() if exit != ignore_item]:
+    if item_name in [exit.name for exit in get_items_in_world() if exit != ignore_item]:
         session.send_to_client("En este mundo hay una salida con este nombre. Debes elegir otro, puesto que los nombres de los objetos cogibles deben ser únicos.")
         return False
 

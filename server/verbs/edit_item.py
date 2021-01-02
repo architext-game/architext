@@ -44,7 +44,7 @@ class EditItem(Verb):
     def process_item_edit_option_number(self, message):
         try:
             message = int(message)
-        except:
+        except ValueError:
             self.session.send_to_client('Debes introducir un número.')
             return
 
@@ -63,7 +63,7 @@ class EditItem(Verb):
     def process_exit_edit_option_number(self, message):
         try:
             message = int(message)
-        except:
+        except ValueError:
             self.session.send_to_client('Debes introducir un número.')
             return
 

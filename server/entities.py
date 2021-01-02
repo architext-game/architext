@@ -19,6 +19,11 @@ class CustomVerb(mongoengine.Document):
         super().__init__(*args, **kwargs)
         self.save()
 
+    def clone(self):
+        new_custom_verb = CustomVerb(name=self.name, commands=self.commands.copy())
+        new_custom_verb.save()
+        return new_custom_verb
+
 
 class Item(mongoengine.Document):
     name        = mongoengine.StringField(required=True)
@@ -42,6 +47,13 @@ class Item(mongoengine.Document):
     def add_custom_verb(self, custom_verb):
         self.custom_verbs.append(custom_verb)
         self.save()
+
+    def clone(self):
+        new_item = Item(name=self.name, description=self.description, visible=self.visible)
+        for custom_verb in self.custom_verbs:
+            new_item.add_custom_verb(custom_verb.clone())
+        new_item.save()
+        return new_item
 
 
 class World(mongoengine.Document):
@@ -165,6 +177,7 @@ class User(mongoengine.Document):
     client_id = mongoengine.IntField(default=None)
     inventory = mongoengine.ListField(mongoengine.ReferenceField(Item))
     master_mode = mongoengine.BooleanField(default=False)
+    saved_items = mongoengine.ListField(mongoengine.ReferenceField(Item))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -185,6 +198,11 @@ class User(mongoengine.Document):
 
     def remove_item_from_inventory(self, item):
         self.inventory.remove(item)
+        self.save()
+
+    def save_item(self, item):
+        item_snapshot = item.clone()
+        self.saved_items.append(item_snapshot)
         self.save()
 
     def connect(self, client_id):
