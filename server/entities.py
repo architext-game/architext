@@ -30,6 +30,7 @@ class Item(mongoengine.Document):
     description = mongoengine.StringField(default='No tiene nada de especial.')
     visible     = mongoengine.StringField(choices=['listed', 'hidden', 'obvious', 'takable'], default='listed')
     custom_verbs = mongoengine.ListField(mongoengine.ReferenceField(CustomVerb))
+    is_snapshot = mongoengine.BooleanField(default=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

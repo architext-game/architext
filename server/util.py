@@ -11,10 +11,7 @@ def possible_meanings(partial_string, list_of_options):
 
 
 def get_items_in_world():
-    items_in_world = []
-    for room in entities.Room.objects():
-        items_in_world = items_in_world + room.items
-    return items_in_world
+    return entities.Item.objects(is_snapshot=False)
 
 def name_globaly_free(session, item_name, ignore_item=None):
     if item_name in [takable_item.name for takable_item in get_items_in_world() if takable_item != ignore_item and takable_item.visible=='takable']:
