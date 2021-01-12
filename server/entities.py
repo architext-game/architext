@@ -10,6 +10,7 @@ The responsibilities of each entity are:
 """
 
 import mongoengine
+import random
 
 class CustomVerb(mongoengine.Document):
     name = mongoengine.StringField()
@@ -26,15 +27,25 @@ class CustomVerb(mongoengine.Document):
 
 
 class Item(mongoengine.Document):
-    name        = mongoengine.StringField(required=True)
-    description = mongoengine.StringField(default='No tiene nada de especial.')
-    visible     = mongoengine.StringField(choices=['listed', 'hidden', 'obvious', 'takable'], default='listed')
+    item_id      = mongoengine.StringField(unique=True, required=True)
+    name         = mongoengine.StringField(required=True)
+    description  = mongoengine.StringField(default='No tiene nada de especial.')
+    visible      = mongoengine.StringField(choices=['listed', 'hidden', 'obvious', 'takable'], default='listed')
     custom_verbs = mongoengine.ListField(mongoengine.ReferenceField(CustomVerb))
-    is_snapshot = mongoengine.BooleanField(default=False)
+    is_snapshot  = mongoengine.BooleanField(default=False)
 
     def __init__(self, *args, **kwargs):
+        if 'item_id' not in kwargs:
+            kwargs['item_id'] = kwargs['name']
         super().__init__(*args, **kwargs)
-        self.save()
+        succesfully_saved = False
+        while not succesfully_saved:
+            try:
+                self.save()
+                succesfully_saved = True
+            except mongoengine.errors.NotUniqueError:
+                self.item_id = self.item_id + str(random.randrange(10))
+
 
     def obvious(self):
         return self.visible == 'obvious'
@@ -56,6 +67,11 @@ class Item(mongoengine.Document):
         new_item.save()
         return new_item
 
+    def create_snapshot(self):
+        snapshot = self.clone()
+        snapshot.is_snapshot = True
+        snapshot.save()
+        return snapshot
 
 class World(mongoengine.Document):
     next_room_id = mongoengine.IntField(default=0)
@@ -202,9 +218,10 @@ class User(mongoengine.Document):
         self.save()
 
     def save_item(self, item):
-        item_snapshot = item.clone()
+        item_snapshot = item.create_snapshot()
         self.saved_items.append(item_snapshot)
         self.save()
+        return item_snapshot
 
     def connect(self, client_id):
         self.client_id = client_id

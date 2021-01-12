@@ -30,7 +30,7 @@ class TextToRoom(Verb):
     def process(self, message):
         out_message = message[len(self.command):]
         self.session.send_to_room(out_message)
-        self.finish_interaction
+        self.finish_interaction()
 
 
 class TextToWorld(Verb):
