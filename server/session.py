@@ -78,8 +78,13 @@ class Session:
         import ghost_session
         ghost = ghost_session.GhostSession(self.server, self.user.room)
         for message in custom_verb.commands:
-            ghost.process_message(message)
+            formatted_message = self.format_custom_verb_message(message)
+            ghost.process_message(formatted_message)
         ghost.disconnect()
+
+    def format_custom_verb_message(self, message):
+        message = message.replace('.usuario', self.user.name)
+        return message
 
     def disconnect(self):
         if self.user is not None:

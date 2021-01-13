@@ -86,7 +86,7 @@ class AddVerb(Verb):
                 self.session.send_to_client("En tu lista hay un nombre de verbo inválido. Vuelve a probar.")
                 return
         self.verb_names = verb_names
-        self.session.send_to_client("Ahora introduce la primera acción que se realizará cuando se use el verbo. Puedes usar cualquier acción que puedas usar como jugador, será como si un jugador fantasma la realizase por ti.")
+        self.session.send_to_client("Ahora introduce la primera acción que se realizará cuando se use el verbo. Puedes usar cualquier acción que puedas usar como jugador, será como si un jugador fantasma la realizase por ti. Escribe .usuario para referirte al jugador que usa el verbo")
         self.current_process_function = self.process_command
 
     def process_command(self, message):
