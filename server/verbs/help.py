@@ -61,6 +61,12 @@ MODO DIRECTOR
  - "director" para entrar y salir del modo director. Que permite:
     > cruzar puertas cerradas
     > ser invisible a los demás jugadores
+
+TEXTO DIRECTO
+ - "textosala <texto>" para enviar el texto a todos los que estén en tu sala.
+ - "textomundo <texto>" para enviarlo a todos los que estén en el mundo.
+ - "textoa '<usuario>' <texto>" para enviarlo al usuario en concreto.
+ - "textomenos '<usuario>' <texto>" para enviarlo a todos en la sala, menos a usuario.
 """)
         self.session.send_to_client(help)
 
