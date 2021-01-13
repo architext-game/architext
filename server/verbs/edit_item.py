@@ -21,22 +21,18 @@ class EditItem(Verb):
         current_room = self.session.user.room
         message = message[len(self.command):]
 
-        if message in [item.name for item in current_room.items]:
-            for item in self.session.user.room.items:
-                if item.name == message:
-                    self.item_to_edit = item
-                    break
+        suitable_live_item_found = next(filter(lambda i: i.name==message, current_room.items), None)
+        suitable_saved_item_found = next(filter(lambda i: i.item_id==message, self.session.user.saved_items), None)
+        suitable_item_found = suitable_live_item_found if suitable_live_item_found is not None else suitable_saved_item_found
+
+        if suitable_item_found is not None:
+            self.item_to_edit = suitable_item_found
             self.session.send_to_client("Introduce el número correspondiente al atributo a eidtar.\n  [0] Nombre\n  [1] Descripción\n  [2] Visibilidad")
             self.current_process_function = self.process_item_edit_option_number
-
         elif message in [exit.name for exit in current_room.exits]:
-            for exit in self.session.user.room.exits:
-                if exit.name == message:
-                    self.exit_to_edit = exit
-                    break
+            self.exit_to_edit = next(filter(lambda e: e.name == message, current_room.exits))
             self.session.send_to_client("Introduce el número correspondiente al atributo a eidtar.\n  [0] Nombre\n  [1] Descripción\n  [2] Visibilidad\n  [3] Destino")
             self.current_process_function = self.process_exit_edit_option_number
-
         else:
             self.session.send_to_client("No encuentras ningún objeto ni salida con ese nombre.")
             self.finish_interaction()
