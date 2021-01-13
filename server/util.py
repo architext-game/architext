@@ -1,6 +1,7 @@
 import logging
 import entities
 import os
+import re
 
 
 def possible_meanings(partial_string, list_of_options):
@@ -29,6 +30,10 @@ def valid_item_or_exit_name(session, item_name, ignore_item=None, local_room=Non
     
     if not item_name:
         session.send_to_client("El nombre no puede estar vacío. Prueba otra vez.")
+        return False
+
+    if re.search("#\d+$", item_name):  # checks if name ends with #<number>
+        session.send_to_client("El nombre no puede terminar con #<numero>. Prueba otra vez.")
         return False
 
     if item_name in [item.name for item in local_room.items if item != ignore_item]:

@@ -10,7 +10,6 @@ The responsibilities of each entity are:
 """
 
 import mongoengine
-import random
 
 class CustomVerb(mongoengine.Document):
     names = mongoengine.ListField(mongoengine.StringField())
@@ -36,7 +35,8 @@ class Item(mongoengine.Document):
 
     def __init__(self, *args, **kwargs):
         if 'item_id' not in kwargs:
-            kwargs['item_id'] = kwargs['name']
+            id_number = 1
+            kwargs['item_id'] = "{}#{}".format(kwargs['name'], id_number)
         super().__init__(*args, **kwargs)
         succesfully_saved = False
         while not succesfully_saved:
@@ -44,7 +44,8 @@ class Item(mongoengine.Document):
                 self.save()
                 succesfully_saved = True
             except mongoengine.errors.NotUniqueError:
-                self.item_id = self.item_id + str(random.randrange(10))
+                id_number = id_number + 1
+                self.item_id = "{}#{}".format(self.name, id_number)
 
 
     def obvious(self):

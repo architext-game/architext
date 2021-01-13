@@ -57,7 +57,9 @@ class AddVerb(Verb):
         current_room = self.session.user.room
         target_item_name = message[len(self.item_command)+1:]
 
-        suitable_item_found = next(filter(lambda i: i.name==target_item_name, current_room.items), None)
+        suitable_live_item_found = next(filter(lambda i: i.name==target_item_name, current_room.items), None)
+        suitable_saved_item_found = next(filter(lambda i: i.item_id==target_item_name, self.session.user.saved_items), None)
+        suitable_item_found = suitable_live_item_found if suitable_live_item_found is not None else suitable_saved_item_found
         if suitable_item_found is not None:
             self.item = suitable_item_found
             self.session.send_to_client("Introduce el nombre del verbo a añadir al objeto (Ejemplos: usar, tocar, abrir, comer...) Puedes introducir varios separados por espacios.")
