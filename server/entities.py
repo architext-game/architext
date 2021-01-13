@@ -13,7 +13,7 @@ import mongoengine
 import random
 
 class CustomVerb(mongoengine.Document):
-    name = mongoengine.StringField()
+    names = mongoengine.ListField(mongoengine.StringField())
     commands = mongoengine.ListField(mongoengine.StringField())
 
     def __init__(self, *args, **kwargs):
@@ -21,7 +21,7 @@ class CustomVerb(mongoengine.Document):
         self.save()
 
     def clone(self):
-        new_custom_verb = CustomVerb(name=self.name, commands=self.commands.copy())
+        new_custom_verb = CustomVerb(names=self.names.copy(), commands=self.commands.copy())
         new_custom_verb.save()
         return new_custom_verb
 

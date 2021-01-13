@@ -35,7 +35,7 @@ class AddVerb(Verb):
         self.world = None  # world on which the verb will be added, if it is a world verb
         self.room = None   # room  on which the verb will be added, if it is a room verb
         self.item = None   # item  on which the verb will be added, if it is a item verb
-        self.verb_name = None
+        self.verb_names = None
         self.command_list = []
         self.current_process_function = self.process_first_message
 
@@ -60,29 +60,34 @@ class AddVerb(Verb):
         suitable_item_found = next(filter(lambda i: i.name==target_item_name, current_room.items), None)
         if suitable_item_found is not None:
             self.item = suitable_item_found
-            self.session.send_to_client("Introduce el nombre del verbo a añadir al objeto (Ejemplos: usar, tocar, abrir, comer...)")
-            self.current_process_function = self.process_verb_name
+            self.session.send_to_client("Introduce el nombre del verbo a añadir al objeto (Ejemplos: usar, tocar, abrir, comer...) Puedes introducir varios separados por espacios.")
+            self.current_process_function = self.process_verb_names
         else:
             self.session.send_to_client("No encuentras ningún objeto con ese nombre.")
             self.finish_interaction()
 
     def process_room_verb_creation(self, message):
         self.room = self.session.user.room
-        self.session.send_to_client("Introduce el nombre del verbo a añadir a la sala (Ejemplos: usar, tocar, abrir, comer...)")
-        self.current_process_function = self.process_verb_name
+        self.session.send_to_client("Introduce el nombre del verbo a añadir a la sala (Ejemplos: usar, tocar, abrir, comer...) Puedes introducir varios separados por espacios.")
+        self.current_process_function = self.process_verb_names
 
     def process_world_verb_creation(self, message):
         self.world = entities.World.objects[0]
-        self.session.send_to_client("Introduce el nombre del verbo a añadir al mundo (Ejemplos: usar, tocar, abrir, comer...)")
-        self.current_process_function = self.process_verb_name
+        self.session.send_to_client("Introduce el nombre del verbo a añadir al mundo (Ejemplos: usar, tocar, abrir, comer...) Puedes introducir varios separados por espacios.")
+        self.current_process_function = self.process_verb_names
 
-    def process_verb_name(self, message):
-        if self.is_valid_verb_name(message):
-            self.verb_name = message
-            self.session.send_to_client("Ahora introduce la primera acción que se realizará cuando se use el verbo. Puedes usar cualquier acción que puedas usar como jugador, será como si un jugador fantasma la realizase por ti.")
-            self.current_process_function = self.process_command
-        else:
-            self.session.send_to_client("Ese no es un nombre válido. No debe contener espacios ni pertenecer a otro verbo. Prueba con otro.")
+    def process_verb_names(self, message):
+        verb_names = message.split()
+        if len(verb_names) == 0:
+            self.session.send_to_client("Debes introducir algún nombre")
+            return
+        for name in verb_names:
+            if not self.is_valid_verb_name(message):                
+                self.session.send_to_client("En tu lista hay un nombre de verbo inválido. Vuelve a probar.")
+                return
+        self.verb_names = verb_names
+        self.session.send_to_client("Ahora introduce la primera acción que se realizará cuando se use el verbo. Puedes usar cualquier acción que puedas usar como jugador, será como si un jugador fantasma la realizase por ti.")
+        self.current_process_function = self.process_command
 
     def process_command(self, message):
         if message == '' and len(self.command_list) > 0:
@@ -95,16 +100,16 @@ class AddVerb(Verb):
             self.session.send_to_client("Ese comando no es válido. Prueba otra vez.")
 
     def build_verb(self):
-        new_verb = entities.CustomVerb(name=self.verb_name, commands=self.command_list)
+        new_verb = entities.CustomVerb(names=self.verb_names, commands=self.command_list)
         if self.item is not None:
             self.item.add_custom_verb(new_verb)
-            self.session.send_to_client('Verbo creado! Escribe "{} {}" para desatar su poder!'.format(self.verb_name, self.item.name))
+            self.session.send_to_client('Verbo creado! Escribe "{} {}" para desatar su poder!'.format(self.verb_names[0], self.item.name))
         elif self.room is not None:
             self.room.add_custom_verb(new_verb)
-            self.session.send_to_client('Verbo de sala creado! Escribe "{}" para desatar su poder!'.format(self.verb_name))
+            self.session.send_to_client('Verbo de sala creado! Escribe "{}" para desatar su poder!'.format(self.verb_names[0]))
         elif self.world is not None:
             self.world.add_custom_verb(new_verb)
-            self.session.send_to_client('Verbo de sala creado! Escribe "{}" para desatar su poder!'.format(self.verb_name))
+            self.session.send_to_client('Verbo de sala creado! Escribe "{}" para desatar su poder!'.format(self.verb_names[0]))
         else:
             raise RuntimeError("Unreachable code reached ¯\_(ツ)_/¯")
 

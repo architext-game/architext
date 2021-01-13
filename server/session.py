@@ -60,15 +60,15 @@ class Session:
             candidate_items = self.user.room.items + self.user.inventory
             suitable_item_found = next(filter(lambda i: i.name==target_item_name, candidate_items), None)
             if suitable_item_found is not None:
-                suitable_verb_found_in_item = next(filter(lambda v: v.name==target_verb_name, suitable_item_found.custom_verbs), None)
+                suitable_verb_found_in_item = next(filter(lambda v: target_verb_name in v.names, suitable_item_found.custom_verbs), None)
                 if suitable_verb_found_in_item is not None:
                     return suitable_verb_found_in_item
         else:
-            suitable_verb_found_in_room = next(filter(lambda v: v.name==message, self.user.room.custom_verbs), None)
+            suitable_verb_found_in_room = next(filter(lambda v: target_verb_name in v.names, self.user.room.custom_verbs), None)
             if suitable_verb_found_in_room is not None:
                 return suitable_verb_found_in_room
             world = entities.World.objects[0]
-            suitable_verb_found_in_world = next(filter(lambda v: v.name==message, world.custom_verbs), None)
+            suitable_verb_found_in_world = next(filter(lambda v: target_verb_name in v.names, world.custom_verbs), None)
             if suitable_verb_found_in_world is not None:
                 return suitable_verb_found_in_world
         
