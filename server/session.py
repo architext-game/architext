@@ -2,6 +2,7 @@
 """
 import entities
 import verbs as v
+import util
 
 class Session:
     """This class handles interaction with a single user, though it can send messages to other users as well, to inform them of the session's user actions.
@@ -58,8 +59,10 @@ class Session:
         if len(message.split(" ", 1)) == 2:  # if the message has the form "verb item"
             target_verb_name, target_item_name = message.split(" ", 1)
             candidate_items = self.user.room.items + self.user.inventory
-            suitable_item_found = next(filter(lambda i: i.name==target_item_name, candidate_items), None)
-            if suitable_item_found is not None:
+            items_they_may_be_referring_to = util.possible_meanings(target_item_name, [i.name for i in candidate_items])
+            if len(items_they_may_be_referring_to) == 1:
+                target_item_name = items_they_may_be_referring_to[0]
+                suitable_item_found = next(filter(lambda i: i.name==target_item_name, candidate_items))
                 suitable_verb_found_in_item = next(filter(lambda v: target_verb_name in v.names, suitable_item_found.custom_verbs), None)
                 if suitable_verb_found_in_item is not None:
                     return suitable_verb_found_in_item
