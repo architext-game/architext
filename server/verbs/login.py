@@ -1,5 +1,6 @@
 from .verb import Verb
 from .look import Look
+from special_words import GHOST_USER_NAME
 import entities
 import util
 import logging
@@ -31,6 +32,7 @@ class Login(Verb):
             self.session.user.connect(self.session.session_id)
             self.session.send_to_client('Bienvenido {}. Si es tu primera vez, escribe "ayuda" para ver una pequeña guía.'.format(name))
 
+        self.session.user.leave_master_mode()
         self.session.send_to_others_in_room("¡Puf! {} apareció.".format(name))
         Look(self.session).show_current_room()
 
@@ -44,7 +46,7 @@ class Login(Verb):
 
 
     def is_a_valid_name(self, name):
-        if not name == '':
+        if not name == '' and not name == GHOST_USER_NAME:
             return True
         else:
             return False

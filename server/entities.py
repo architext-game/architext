@@ -11,28 +11,72 @@ The responsibilities of each entity are:
 
 import mongoengine
 
-
-class Item(mongoengine.Document):
-    name        = mongoengine.StringField(required=True)
-    description = mongoengine.StringField(default='No tiene nada de especial.')
-    visible     = mongoengine.StringField(choices=['listed', 'hidden', 'obvious'], default='listed')
+class CustomVerb(mongoengine.Document):
+    names = mongoengine.ListField(mongoengine.StringField())
+    commands = mongoengine.ListField(mongoengine.StringField())
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.save()
 
+    def clone(self):
+        new_custom_verb = CustomVerb(names=self.names.copy(), commands=self.commands.copy())
+        new_custom_verb.save()
+        return new_custom_verb
+
+
+class Item(mongoengine.Document):
+    item_id      = mongoengine.StringField(unique=True, required=True)
+    name         = mongoengine.StringField(required=True)
+    description  = mongoengine.StringField(default='No tiene nada de especial.')
+    visible      = mongoengine.StringField(choices=['listed', 'hidden', 'obvious', 'takable'], default='listed')
+    custom_verbs = mongoengine.ListField(mongoengine.ReferenceField(CustomVerb))
+    is_snapshot  = mongoengine.BooleanField(default=False)
+
+    def __init__(self, *args, **kwargs):
+        if 'item_id' not in kwargs:
+            id_number = 1
+            kwargs['item_id'] = "{}#{}".format(kwargs['name'], id_number)
+        super().__init__(*args, **kwargs)
+        succesfully_saved = False
+        while not succesfully_saved:
+            try:
+                self.save()
+                succesfully_saved = True
+            except mongoengine.errors.NotUniqueError:
+                id_number = id_number + 1
+                self.item_id = "{}#{}".format(self.name, id_number)
+
+
     def obvious(self):
         return self.visible == 'obvious'
     
     def listed(self):
-        return self.visible == 'listed'
+        return self.visible == 'listed' or self.visible == 'takable'
 
     def hidden(self):
         return self.visible == 'hidden'
 
+    def add_custom_verb(self, custom_verb):
+        self.custom_verbs.append(custom_verb)
+        self.save()
+
+    def clone(self):
+        new_item = Item(name=self.name, description=self.description, visible=self.visible)
+        for custom_verb in self.custom_verbs:
+            new_item.add_custom_verb(custom_verb.clone())
+        new_item.save()
+        return new_item
+
+    def create_snapshot(self):
+        snapshot = self.clone()
+        snapshot.is_snapshot = True
+        snapshot.save()
+        return snapshot
 
 class World(mongoengine.Document):
     next_room_id = mongoengine.IntField(default=0)
+    custom_verbs = mongoengine.ListField(mongoengine.ReferenceField(CustomVerb))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -45,12 +89,18 @@ class World(mongoengine.Document):
         self.save()
         return id_to_serve
 
+    def add_custom_verb(self, custom_verb):
+        self.custom_verbs.append(custom_verb)
+        self.save()
+
 
 class Exit(mongoengine.Document):
     name = mongoengine.StringField(required=True)
     destination = mongoengine.ReferenceField('Room', required=True)  # reverse delete rule specified later due to circular rule
     description = mongoengine.StringField(default='No tiene nada de especial.')
     visible = mongoengine.StringField(choices=['listed', 'hidden', 'obvious'], default='listed')
+    is_open = mongoengine.BooleanField(default=True)
+    key_names = mongoengine.ListField(mongoengine.StringField())
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -59,6 +109,22 @@ class Exit(mongoengine.Document):
     def obvious(self):
         return self.visible == 'obvious'
     
+    def add_key(self, item_name):
+        self.key_names.append(item_name)
+        self.save()
+
+    def remove_key(self, item_name):
+        self.key_names.remove(item_name)
+        self.save()
+
+    def open(self):
+        self.is_open = True
+        self.save()
+
+    def close(self):
+        self.is_open = False
+        self.save()
+
     def listed(self):
         return self.visible == 'listed'
 
@@ -72,6 +138,7 @@ class Room(mongoengine.Document):
     description = mongoengine.StringField(default='')
     exits       = mongoengine.ListField(mongoengine.ReferenceField('Exit', reverse_delete_rule=mongoengine.PULL))  # deleted exits are auto-removed from the list
     items       = mongoengine.ListField(mongoengine.ReferenceField(Item))
+    custom_verbs = mongoengine.ListField(mongoengine.ReferenceField(CustomVerb))
 
     def __init__(self, *args, **kwargs):
         if 'alias' in kwargs:
@@ -108,6 +175,14 @@ class Room(mongoengine.Document):
         self.items.append(item)
         self.save()
 
+    def remove_item(self, item):
+        self.items.remove(item)
+        self.save()
+
+    def add_custom_verb(self, custom_verb):
+        self.custom_verbs.append(custom_verb)
+        self.save()
+
 # make exits pointing to a deleted room to be deleted as well
 # can't specify it at class declaration because there is a circular delete rule:
 # deleted exits are removed from list of exits in a room
@@ -118,6 +193,9 @@ class User(mongoengine.Document):
     name = mongoengine.StringField(required=True)
     room = mongoengine.ReferenceField(Room, required=True)
     client_id = mongoengine.IntField(default=None)
+    inventory = mongoengine.ListField(mongoengine.ReferenceField(Item))
+    master_mode = mongoengine.BooleanField(default=False)
+    saved_items = mongoengine.ListField(mongoengine.ReferenceField(Item))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -132,6 +210,20 @@ class User(mongoengine.Document):
         self.room = room
         self.save()
 
+    def add_item_to_inventory(self, item):
+        self.inventory.append(item)
+        self.save()
+
+    def remove_item_from_inventory(self, item):
+        self.inventory.remove(item)
+        self.save()
+
+    def save_item(self, item):
+        item_snapshot = item.create_snapshot()
+        self.saved_items.append(item_snapshot)
+        self.save()
+        return item_snapshot
+
     def connect(self, client_id):
         self.client_id = client_id
         self.save()
@@ -139,3 +231,13 @@ class User(mongoengine.Document):
     def disconnect(self):
         self.client_id = None
         self.save()
+
+    def enter_master_mode(self):
+        self.master_mode = True
+        self.save()
+
+    def leave_master_mode(self):
+        self.master_mode = False
+        self.save()
+
+

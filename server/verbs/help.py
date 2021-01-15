@@ -16,6 +16,12 @@ BÁSICAS
   - "ir <salida>" para cruzar una salida.
   - "salidas" para ver las salidas OBVIAS de tu habitación.
   - "objetos" para ver los objetos OBVIOS de tu habitación.
+
+AVANZADAS
+  - "coger <objeto>" coge un objeto. Nota: no todos pueden cogerse.
+  - "dejar <objeto>" deja un objeto de tu inventario en la sala actual.
+  - "inventario" muestras los objetos de tu inventario.
+  - "abrir <salida>" intenta abrir una salida cerrada. Deberás tener la llave en tu inventario.
   
 COMUNICACIÓN
   - "decir <mensaje>" enviar un mensaje a todos los que estén en tu misma localización.
@@ -38,6 +44,29 @@ CONSTRUCCIÓN AVANZADA
   - "eliminarobjeto <nombre del objeto>" para borrar un objeto. SIN REMEDIO.
   - "tp <alias de la sala>" para transportarte a cualquier sala.
       (El alias puedes consultarlo con el comando "info")
+
+CONSTRUCCIÓN INTERACTIVA
+  - "verboobjeto <objeto>" añade un verbo a un objeto.
+  - "verbosala" añade un verbo a la sala actual.
+  - "verbomundo" añade un verbo en todo el mundo.
+  - "guardar <objeto>" para guardar una copia de un objeto que esté en tu sala.
+  - "colocar <id del objeto>" para colocar un objeto previamente guardado.
+
+LLAVES
+  - "cierradirector <salida>" para cerrar una salida. No podrá cruzarse.
+  - "abredirector <salida>" para abrir una salida.
+  - "asignarllave <salida>" para hacer que un objeto pueda abrir una salida.
+
+MODO DIRECTOR
+ - "director" para entrar y salir del modo director. Que permite:
+    > cruzar puertas cerradas
+    > ser invisible a los demás jugadores
+
+TEXTO DIRECTO
+ - "textosala <texto>" para enviar el texto a todos los que estén en tu sala.
+ - "textomundo <texto>" para enviarlo a todos los que estén en el mundo.
+ - "textoa '<usuario>' <texto>" para enviarlo al usuario en concreto.
+ - "textomenos '<usuario>' <texto>" para enviarlo a todos en la sala, menos a usuario.
 """)
         self.session.send_to_client(help)
 

@@ -1,4 +1,5 @@
 from .verb import Verb
+import util
 import entities
 
 class EditItem(Verb):
@@ -20,22 +21,18 @@ class EditItem(Verb):
         current_room = self.session.user.room
         message = message[len(self.command):]
 
-        if message in [item.name for item in current_room.items]:
-            for item in self.session.user.room.items:
-                if item.name == message:
-                    self.item_to_edit = item
-                    break
+        suitable_live_item_found = next(filter(lambda i: i.name==message, current_room.items), None)
+        suitable_saved_item_found = next(filter(lambda i: i.item_id==message, self.session.user.saved_items), None)
+        suitable_item_found = suitable_live_item_found if suitable_live_item_found is not None else suitable_saved_item_found
+
+        if suitable_item_found is not None:
+            self.item_to_edit = suitable_item_found
             self.session.send_to_client("Introduce el número correspondiente al atributo a eidtar.\n  [0] Nombre\n  [1] Descripción\n  [2] Visibilidad")
             self.current_process_function = self.process_item_edit_option_number
-
         elif message in [exit.name for exit in current_room.exits]:
-            for exit in self.session.user.room.exits:
-                if exit.name == message:
-                    self.exit_to_edit = exit
-                    break
+            self.exit_to_edit = next(filter(lambda e: e.name == message, current_room.exits))
             self.session.send_to_client("Introduce el número correspondiente al atributo a eidtar.\n  [0] Nombre\n  [1] Descripción\n  [2] Visibilidad\n  [3] Destino")
             self.current_process_function = self.process_exit_edit_option_number
-
         else:
             self.session.send_to_client("No encuentras ningún objeto ni salida con ese nombre.")
             self.finish_interaction()
@@ -43,7 +40,7 @@ class EditItem(Verb):
     def process_item_edit_option_number(self, message):
         try:
             message = int(message)
-        except:
+        except ValueError:
             self.session.send_to_client('Debes introducir un número.')
             return
 
@@ -54,7 +51,7 @@ class EditItem(Verb):
             self.current_process_function = self.process_reform_value
         elif message == 2:
             self.option_number = message
-            self.session.send_to_client('¿Qué visibilidad prefieres?. Escribe:\n  "visible" si nombraste el objeto en la descripción de la sala.\n  "listado" para que se nombre automáticamente al mirar la sala.\n  "oculto" para que los jugadores tengan que encontrarlo por otros medios.')
+            self.session.send_to_client('¿Qué visibilidad prefieres? Escribe:\n  "visible" si nombraste el objeto en la descripción de la sala.\n  "listado" para que se nombre automáticamente al mirar la sala.\n  "oculto" para que los jugadores tengan que encontrarlo por otros medios.\n  "cogible" para que los jugadores puedan coger el objeto y llevarlo consigo. Será listado igual que un verbo listado, y no deberías nombrarlo en la descripción de la sala.')
             self.current_process_function = self.process_reform_value
         else:
             self.session.send_to_client("Introduce el número correspondiente a una de las opciones.")
@@ -62,7 +59,7 @@ class EditItem(Verb):
     def process_exit_edit_option_number(self, message):
         try:
             message = int(message)
-        except:
+        except ValueError:
             self.session.send_to_client('Debes introducir un número.')
             return
 
@@ -78,6 +75,14 @@ class EditItem(Verb):
         
         if message:
             if self.option_number == 0:  # edit name
+                if object_to_edit.visible == 'takable':
+                    if not util.valid_takable_item_name(self.session, message):
+                        self.finish_interaction()
+                        return
+                else:
+                    if not util.valid_item_or_exit_name(self.session, message):
+                        self.finish_interaction()
+                        return
                 object_to_edit.name = message
             elif self.option_number == 1:  # edit description
                 object_to_edit.description = message
@@ -88,8 +93,15 @@ class EditItem(Verb):
                     object_to_edit.visible = 'listed'
                 elif message.lower() in ['oculto', 'o', 'oc']:
                     object_to_edit.visible = 'hidden'
+                elif message.lower() in ['cogible', 'c', 'co']:
+                    if self.can_change_to_takable(self.item_to_edit):
+                        object_to_edit.visible = 'takable'
+                    else:
+                        self.session.send_to_client("Por lo tanto, no se puede asignar esa visibilidad a tu objeto. Prueba a cambiarle el nombre primero.")
+                        self.finish_interaction()
+                        return
                 else:
-                    self.session.send_to_client('No te entiendo. Responde "visible", "listado" u "oculto".')
+                    self.session.send_to_client('No te entiendo. Responde "visible", "listado", "oculto" o "cogible".')
                     return
             elif self.option_number == 3:  # edit exit's destination
                 if entities.Room.objects(alias=message):
@@ -103,3 +115,7 @@ class EditItem(Verb):
             self.finish_interaction()
         else:
             self.session.send_to_client('Debes introducir el nuevo valor')
+
+
+    def can_change_to_takable(self, item_to_change):
+        return util.valid_takable_item_name(self.session, item_to_change.name, ignore_item=item_to_change)

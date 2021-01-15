@@ -1,4 +1,5 @@
 from .verb import Verb
+import util
 
 class Build(Verb):
     """This verb allows the user to create a new room connected to his current location.
@@ -40,11 +41,11 @@ class Build(Verb):
     def process_here_exit_name(self, message):
         if not message:
             message = "a {}".format(self.new_room_name)
+            while(not util.valid_item_or_exit_name(self.session, message)):
+                message = 'directo ' + message
 
-        if message in [exit.name for exit in self.session.user.room.exits]:
-            self.session.send_to_client('Ya hay una salida con el nombre "{}". Prueba con otro.'.format(message))
-        elif message in [item.name for item in self.session.user.room.items]:
-            self.session.send_to_client('Ya hay un objeto con el nombre "{}". Prueba con otro.'.format(message))
+        if not util.valid_item_or_exit_name(self.session, message):
+            self.session.send_to_client('Introduce otro nombre.'.format(message))
         else:
             self.exit_from_here = message
         
@@ -56,8 +57,12 @@ class Build(Verb):
     def process_there_exit_name(self, message):
         if not message:
             default_message = "a {}".format(self.session.user.room.name)
+            while(not util.name_globaly_free(self.session, default_message)):
+                default_message = 'directo ' + default_message
             self.exit_from_there =  default_message
         else:
+            if not util.name_globaly_free(self.session, message):
+                return
             self.exit_from_there = message
 
         self.session.user.room.create_adjacent_room(
@@ -67,5 +72,6 @@ class Build(Verb):
             exit_from_there = self.exit_from_there
         )
         self.session.send_to_client("¡Enhorabuena! Tu nueva habitación está lista.")
-        self.session.send_to_others_in_room("Los ojos de {} se ponen en blanco un momento. Una nueva salida aparece en la habitación.".format(self.session.user.name))
+        if not self.session.user.master_mode:
+            self.session.send_to_others_in_room("Los ojos de {} se ponen en blanco un momento. Una nueva salida aparece en la habitación.".format(self.session.user.name))
         self.finish_interaction()
