@@ -62,15 +62,15 @@ class Session:
             if len(items_they_may_be_referring_to) == 1:
                 target_item_name = items_they_may_be_referring_to[0]
                 suitable_item_found = next(filter(lambda i: i.name==target_item_name, candidate_items))
-                suitable_verb_found_in_item = next(filter(lambda v: target_verb_name in v.names, suitable_item_found.custom_verbs), None)
+                suitable_verb_found_in_item = next(filter(lambda v: v.is_name(target_verb_name), suitable_item_found.custom_verbs), None)
                 if suitable_verb_found_in_item is not None:
                     return suitable_verb_found_in_item
         else:
-            suitable_verb_found_in_room = next(filter(lambda v: target_verb_name in v.names, self.user.room.custom_verbs), None)
+            suitable_verb_found_in_room = next(filter(lambda v: v.is_name(target_verb_name), self.user.room.custom_verbs), None)
             if suitable_verb_found_in_room is not None:
                 return suitable_verb_found_in_room
             world = entities.World.objects[0]
-            suitable_verb_found_in_world = next(filter(lambda v: target_verb_name in v.names, world.custom_verbs), None)
+            suitable_verb_found_in_world = next(filter(lambda v: v.is_name(target_verb_name), world.custom_verbs), None)
             if suitable_verb_found_in_world is not None:
                 return suitable_verb_found_in_world
         

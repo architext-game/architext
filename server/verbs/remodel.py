@@ -43,10 +43,9 @@ class Remodel(Verb):
         if message:
             if option == 0:
                 self.session.user.room.name = message
-                self.session.user.room.save()
             elif option == 1:
                 self.session.user.room.description = message
-                self.session.user.room.save()
+            self.session.user.room.save()
             self.session.send_to_client('Reforma completada con éxito.')
             self.finish_interaction()
         else:

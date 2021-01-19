@@ -1,6 +1,16 @@
 """This file defines all entities that exist within the game.
-They are each defined as a mongoengine.Document, so that its values are automatically saved
-and can be retrieved from mongodb database that server.py conects to on startup.
+They are each defined as a mongoengine. Document, so each instance of any of these classes
+represents a particular document in our MongoDB database. Multiple instances of the same
+document may be present at the same time. Thus, Entities should be treated with
+care in order to avoid possible inconsistencies. We should call the reload()
+method of each entity instance we have created prior to a possible change made from elsewere.
+In particular, this happens whenever a session gets a new message to process. At this point,
+other sessions may have altered the state of the world that the session knew. So the session
+must call reload() on every entity instance they reference.
+Also, we must ensure that every change to the state of an entity instance is saved to database.
+For that, we use the save() method. Every method of an entity that alters their state must include
+a call to self.save() after all the changes are made. When any change is made to the entity without
+the use of its own methods, save() must be called on the entity.
 
 The responsibilities of each entity are:
   - Make its fields accesible from the database
@@ -18,6 +28,9 @@ class CustomVerb(mongoengine.Document):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.save()
+
+    def is_name(self, verb_name):
+        return verb_name in self.names
 
     def clone(self):
         new_custom_verb = CustomVerb(names=self.names.copy(), commands=self.commands.copy())

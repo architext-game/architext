@@ -78,8 +78,7 @@ class DeleteItem(Verb):
         if selected_item is None:
             self.session.send_to_client("No está ese objeto.")
         else:
-            self.session.user.room.items.remove(selected_item)
-            self.session.user.room.save()
+            self.session.user.room.remove_item(selected_item)
             selected_item.delete()
             self.session.send_to_client("Eliminado")
         self.finish_interaction()
