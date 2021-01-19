@@ -30,7 +30,6 @@ class Look(Verb):
                 item_name = items_he_may_be_referring_to[0]
                 for item in lookable_items:
                     if item.name == item_name:
-                        item.reload()
                         description = item.description if item.description else "No tiene nada de especial"
                         self.session.send_to_client(description)
                         break
@@ -38,7 +37,6 @@ class Look(Verb):
                 exit_name = exits_he_may_be_referring_to[0]
                 for exit in exits_in_room:
                     if exit.name == exit_name:
-                        exit.reload()
                         self.session.send_to_client(exit.description)
                         break
         elif len(items_he_may_be_referring_to) + len(exits_he_may_be_referring_to) == 0:
@@ -47,7 +45,6 @@ class Look(Verb):
             self.session.send_to_client("¿A cuál te refieres? Sé más específico.")
     
     def show_current_room(self):
-        self.session.user.room.reload()
         title = self.session.user.room.name + "\n"
         description = self.session.user.room.description + "\n"
 

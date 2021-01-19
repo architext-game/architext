@@ -83,7 +83,6 @@ class World(mongoengine.Document):
         self.save()
 
     def get_unique_room_id(self):
-        self.reload()
         id_to_serve = str(self.next_room_id)
         self.next_room_id = self.next_room_id + 1
         self.save()

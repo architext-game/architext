@@ -32,7 +32,6 @@ class Session:
         """
         if self.user is not None:
             self.user.reload()
-            self.user.room.reload()
 
         if self.logger:
             self.logger.info('client\n'+message)

@@ -11,7 +11,6 @@ class DeleteRoom(Verb):
 
     def process(self, message):
         room_to_delete = self.session.user.room
-        room_to_delete.reload()
 
         if len([user for user in entities.User.objects(room=room_to_delete) if user.client_id != None]) > 1:
             self.session.send_to_client("No puedes borrar la sala si hay mas gente conectada aquí.")

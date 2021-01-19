@@ -30,14 +30,12 @@ class Info(Verb):
                 item_name = items_he_may_be_reffering_to[0]
                 for item in items_in_room:
                     if item.name == item_name:
-                        item.reload()
                         self.session.send_to_client('Nombre del objeto: "{}"\nDescripción: "{}"\nVisible: {}'.format(item.name, item.description, item.visible))
                         break
             else:
                 exit_name = exits_he_may_be_reffering_to[0]
                 for exit in exits_in_room:
                     if exit.name == exit_name:
-                        exit.reload()
                         self.session.send_to_client('Nombre de la salida: "{}"\nDescripción "{}"\nVisible: {}\nDestino: {} (Alias {})'.format(exit.name, exit.description, exit.visible, exit.destination.name, exit.destination.alias))
                         break
 
@@ -48,7 +46,6 @@ class Info(Verb):
 
     
     def show_current_room_info(self):
-        self.session.user.room.reload()
         room_name = self.session.user.room.name
         description = self.session.user.room.description
         alias = self.session.user.room.alias
