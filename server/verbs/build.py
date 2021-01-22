@@ -62,6 +62,7 @@ class Build(Verb):
             self.exit_from_there =  default_message
         else:
             if not util.name_globaly_free(self.session, message):
+                session.send_to_client("En este mundo hay un objeto cogible con ese nombre. Debes elegir otro.")
                 return
             self.exit_from_there = message
 
@@ -75,3 +76,13 @@ class Build(Verb):
         if not self.session.user.master_mode:
             self.session.send_to_others_in_room("Los ojos de {} se ponen en blanco un momento. Una nueva salida aparece en la habitación.".format(self.session.user.name))
         self.finish_interaction()
+
+    def make_exit_name_valid(self, exit_name):
+        is_valid = False
+        while not is_valid:
+            try:
+                entities.Exit.check_exit_name(exit_name, self.session.user.room)
+                is_valid = True
+            except (ItemNameClash, ExitNameClash, TakableItemNameClash):
+                exit_name = 'directo ' + exit_name
+        return exit_name

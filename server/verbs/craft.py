@@ -22,11 +22,12 @@ class Craft(Verb):
         self.current_process_function = self.process_item_name
 
     def process_item_name(self, message):
-        if util.valid_item_or_exit_name(self.session, message):
+        if entities.Item.name_is_valid(message, self.session.user.room):
             self.new_item_name = message
             self.session.send_to_client("Ahora introduce una descripción para tu nuevo objeto, para que todo el mundo sepa cómo es.")
             self.current_process_function = self.process_item_description
-            
+        else:
+            self.session.send_to_client("El nombre no es válido por algún motivo, será mejor que Óliver ponga un mensaje de error más concreto.")
 
     def process_item_description(self, message):
         self.new_item_description = message
@@ -42,7 +43,7 @@ class Craft(Verb):
             self.new_item_visibility = 'hidden'
         elif message.lower() in ['cogible', 'c', 'co']:
             # the name of a takable item should be unique across al other items
-            if util.valid_takable_item_name(self.session, self.new_item_name):
+            if entities.Item.name_is_valid(message, self.session.user.room, takable=True):
                 self.new_item_visibility = 'takable'
             else:
                 self.session.send_to_client("Tendrás que empezar de nuevo.")

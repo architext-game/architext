@@ -48,14 +48,14 @@ class Look(Verb):
         title = self.session.user.room.name + "\n"
         description = self.session.user.room.description + "\n"
 
-        listed_exits = [exit.name for exit in self.session.user.room.exits if exit.listed()]
+        listed_exits = [exit.name for exit in self.session.user.room.exits if exit.is_listed()]
         if len(listed_exits) > 0:
             exits = (', '.join(listed_exits))
             exits = "Salidas: {}.\n".format(exits)
         else:
             exits = ""
 
-        listed_items = [item.name for item in self.session.user.room.items if item.listed()]
+        listed_items = [item.name for item in self.session.user.room.items if item.is_listed()]
         if len(listed_items) > 0:
             items = 'Ves '+(', '.join(listed_items))
             items = items + '.\n'

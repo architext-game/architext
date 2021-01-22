@@ -75,14 +75,10 @@ class EditItem(Verb):
         
         if message:
             if self.option_number == 0:  # edit name
-                if object_to_edit.visible == 'takable':
-                    if not util.valid_takable_item_name(self.session, message):
-                        self.finish_interaction()
-                        return
-                else:
-                    if not util.valid_item_or_exit_name(self.session, message):
-                        self.finish_interaction()
-                        return
+                if not entities.Item.name_is_valid(message, self.session.user.room, self, self.is_takable()):
+                    self.session.send_to_client("Nombre inválido. Pon un mensaje más concreto, anda. TODO")
+                    self.finish_interaction()
+                    return
                 object_to_edit.name = message
             elif self.option_number == 1:  # edit description
                 object_to_edit.description = message
@@ -118,4 +114,4 @@ class EditItem(Verb):
 
 
     def can_change_to_takable(self, item_to_change):
-        return util.valid_takable_item_name(self.session, item_to_change.name, ignore_item=item_to_change)
+        return entities.Item.name_is_valid(item_to_change.name, self.session.user.room, ignore_item=item_to_change, takable=True)

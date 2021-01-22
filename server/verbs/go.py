@@ -31,10 +31,10 @@ class Go(Verb):
 
         origin_room = self.session.user.room
         self.session.user.move(selected_exit.name)
-        there_exit = [exit.name for exit in self.session.user.room.exits if exit.destination == origin_room and not exit.hidden()]
+        there_exit = [exit.name for exit in self.session.user.room.exits if exit.destination == origin_room and not exit.is_hidden()]
 
         if not self.session.user.master_mode:
-            if not selected_exit.hidden():
+            if not selected_exit.is_hidden():
                 self.session.send_to_others_in_room("{} se marcha por {}.".format(self.session.user.name, selected_exit.name))
             else:
                 self.session.send_to_others_in_room("{} se marcha hacia algún lugar.".format(self.session.user.name))

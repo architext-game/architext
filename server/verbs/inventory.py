@@ -12,7 +12,7 @@ class Take(Verb):
 
     def process(self, message):
         partial_name = message[len(self.command):]
-        names_of_takable_items = [item.name for item in self.session.user.room.items if item.visible=='takable']
+        names_of_takable_items = [item.name for item in self.session.user.room.items if item.is_takable()]
         items_they_may_be_referring_to = util.possible_meanings(partial_name, names_of_takable_items)
 
         if len(items_they_may_be_referring_to) < 1:

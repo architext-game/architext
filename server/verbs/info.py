@@ -50,39 +50,39 @@ class Info(Verb):
         description = self.session.user.room.description
         alias = self.session.user.room.alias
 
-        listed_exits = [exit for exit in self.session.user.room.exits if exit.listed()]
+        listed_exits = [exit for exit in self.session.user.room.exits if exit.is_listed()]
         if len(listed_exits) > 0:
             listed_exits = '  '+('\n\r  '.join(['"{}" lleva a "{}"'.format(exit.name, exit.destination.name) for exit in listed_exits]))
             listed_exits = "Salidas listadas:\n\r{}".format(listed_exits)
         else:
             listed_exits = "Salidas listadas: NINGUNA"
 
-        obvious_exits = [exit for exit in self.session.user.room.exits if exit.obvious()]
+        obvious_exits = [exit for exit in self.session.user.room.exits if exit.is_obvious()]
         if len(obvious_exits) > 0:
             obvious_exits = '  '+('\n\r  '.join(['"{}" lleva a "{}"'.format(exit.name, exit.destination.name) for exit in obvious_exits]))
             obvious_exits = "Salidas visibles:\n\r{}".format(obvious_exits)
         else:
             obvious_exits = "Salidas visibles: NINGUNA"
 
-        hidden_exits = [exit for exit in self.session.user.room.exits if exit.hidden()]
+        hidden_exits = [exit for exit in self.session.user.room.exits if exit.is_hidden()]
         if len(hidden_exits) > 0:
             hidden_exits = '  '+('\n\r  '.join(['"{}" lleva a "{}"'.format(exit.name, exit.destination.name) for exit in hidden_exits]))
             hidden_exits = "Salidas ocultas:\n\r{}".format(hidden_exits)
         else:
             hidden_exits = "Salidas ocultas: NINGUNA"
 
-        if [item for item in self.session.user.room.items if item.listed()]:
-            listed_items = 'Objetos listados: '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if item.listed()]))
+        if [item for item in self.session.user.room.items if item.is_listed()]:
+            listed_items = 'Objetos listados: '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if item.is_listed()]))
         else:
             listed_items = 'Objetos listados: NINGUNO'
 
-        if [item for item in self.session.user.room.items if item.obvious()]:
-            obvious_items = 'Objetos visibles: '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if item.obvious()]))
+        if [item for item in self.session.user.room.items if item.is_obvious()]:
+            obvious_items = 'Objetos visibles: '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if item.is_obvious()]))
         else:
             obvious_items = 'Objetos visibles: NINGUNO'
 
-        if [item for item in self.session.user.room.items if item.hidden()]:
-            hidden_items = 'Objetos ocultos: '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if item.hidden()]))
+        if [item for item in self.session.user.room.items if item.is_hidden()]:
+            hidden_items = 'Objetos ocultos: '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if item.is_hidden()]))
         else:
             hidden_items = 'Objetos ocultos: NINGUNO'
         

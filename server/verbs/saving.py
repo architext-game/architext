@@ -14,7 +14,7 @@ class PlaceItem(Verb):
         self.finish_interaction()
 
     def place(self, provided_item_id):
-        querry = entities.Item.objects(item_id=provided_item_id, is_snapshot=True)
+        querry = entities.Item.objects(item_id=provided_item_id, room=None)
 
         if len(querry) == 0:
             self.session.send_to_client("No hay ningún objeto guardado con el identificador '{}'.".format(provided_item_id))

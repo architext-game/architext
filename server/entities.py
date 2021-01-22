@@ -20,6 +20,9 @@ The responsibilities of each entity are:
 """
 
 import mongoengine
+import util
+import entities
+import re
 
 class CustomVerb(mongoengine.Document):
     names = mongoengine.ListField(mongoengine.StringField())
@@ -43,32 +46,96 @@ class Item(mongoengine.Document):
     name         = mongoengine.StringField(required=True)
     description  = mongoengine.StringField(default='No tiene nada de especial.')
     visible      = mongoengine.StringField(choices=['listed', 'hidden', 'obvious', 'takable'], default='listed')
-    custom_verbs = mongoengine.ListField(mongoengine.ReferenceField(CustomVerb))
-    is_snapshot  = mongoengine.BooleanField(default=False)
+    custom_verbs = mongoengine.ListField(mongoengine.ReferenceField('CustomVerb'))
+    room         = mongoengine.ReferenceField('Room', default=None)
 
     def __init__(self, *args, **kwargs):
-        if 'item_id' not in kwargs:
-            id_number = 1
-            kwargs['item_id'] = "{}#{}".format(kwargs['name'], id_number)
         super().__init__(*args, **kwargs)
-        succesfully_saved = False
-        while not succesfully_saved:
-            try:
-                self.save()
-                succesfully_saved = True
-            except mongoengine.errors.NotUniqueError:
-                id_number = id_number + 1
-                self.item_id = "{}#{}".format(self.name, id_number)
+        if self.id is None:  # if this is a newly created Item, instead of a pre-existing document being instantiated by mongoengine.
+            self.item_id = self.generate_item_id()
+            self.save()
 
+    def save(self):
+        self.ensure_i_am_valid()
+        super().save()
 
-    def obvious(self):
+    def generate_item_id(self):
+        id_number = 1
+        item_id = "{}#{}".format(self.name, id_number)
+        while len(entities.Item.objects(item_id=item_id)) > 0:
+            id_number = id_number + 1
+            item_id = "{}#{}".format(self.name, id_number)
+        return item_id
+
+    def ensure_i_am_valid(self):
+        name_conditions = self.get_name_validation_conditions(self.name,  self.room, self, self.is_takable())
+        for condition in name_conditions.values():
+            if not condition['condition']:
+                raise condition['exception']
+
+    @classmethod
+    def get_name_validation_conditions(cls, item_name, local_room=None, ignore_item=None, takable=False):
+        conditions_for_this_item = {}
+
+        snapshot_conditions = {
+            'name_is_not_empty': {
+                'condition': len(item_name)>0,
+                'exception': EmptyName()
+            },
+            'has_name_format': {
+                'condition': not re.search("#\d+$", item_name),
+                'exception': WrongNameFormat()
+            }
+        }        
+
+        conditions_for_this_item = {**conditions_for_this_item, **snapshot_conditions}
+
+        if local_room is not None:
+            item_conditions = {
+                'unique_in_room': {
+                    'condition': item_name not in [item.name for item in local_room.items+local_room.exits if item != ignore_item],
+                    'exception': RoomNameClash()
+                },
+                'there_is_no_takable_with_same_name': {
+                    'condition': item_name not in [takable_item.name for takable_item in entities.Item.get_items_in_world() if takable_item != ignore_item and takable_item.visible=='takable'],
+                    'exception': TakableItemNameClash()
+                }
+            }
+            conditions_for_this_item = {**conditions_for_this_item, **item_conditions}
+
+        if local_room is not None and takable:
+            takable_item_conditions = {
+                'name_is_globally_unique': {
+                    'condition': (
+                            item_name not in [item.name for item in entities.Item.get_items_in_world() if item != ignore_item]
+                            and item_name not in [item.name for item in entities.Exit.get_exits_in_world() if item != ignore_item]
+                        ),
+                    'exception': NameNotGloballyUnique()
+                }
+            }
+            conditions_for_this_item = {**conditions_for_this_item, **takable_item_conditions}
+
+        return conditions_for_this_item
+
+    @classmethod
+    def name_is_valid(cls, item_name, local_room, ignore_item=None, takable=False):
+        conditions = cls.get_name_validation_conditions(item_name, local_room, ignore_item, takable)
+        for condition in conditions.values():
+            if not condition['condition']:
+                return False
+        return True
+
+    def is_obvious(self):
         return self.visible == 'obvious'
     
-    def listed(self):
+    def is_listed(self):
         return self.visible == 'listed' or self.visible == 'takable'
 
-    def hidden(self):
+    def is_hidden(self):
         return self.visible == 'hidden'
+
+    def is_takable(self):
+        return self.visible == 'takable'
 
     def add_custom_verb(self, custom_verb):
         self.custom_verbs.append(custom_verb)
@@ -81,15 +148,14 @@ class Item(mongoengine.Document):
         new_item.save()
         return new_item
 
-    def create_snapshot(self):
-        snapshot = self.clone()
-        snapshot.is_snapshot = True
-        snapshot.save()
-        return snapshot
+    @classmethod
+    def get_items_in_world(cls):
+        return cls.objects(room__ne=None)
+
 
 class World(mongoengine.Document):
     next_room_id = mongoengine.IntField(default=0)
-    custom_verbs = mongoengine.ListField(mongoengine.ReferenceField(CustomVerb))
+    custom_verbs = mongoengine.ListField(mongoengine.ReferenceField('CustomVerb'))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -105,7 +171,7 @@ class World(mongoengine.Document):
         self.custom_verbs.append(custom_verb)
         self.save()
 
-
+# TODO CONTINUE LO DEJÉ AQUÍ. ESTOY REFACTORIZANDO LAS ENTIDADES PARA QUE NO SEAN TAN MIERDA. DEBERÍA TESTEAR LO QUE HE HECHO SO FAR ANTES DE SEGUIR
 class Exit(mongoengine.Document):
     name = mongoengine.StringField(required=True)
     destination = mongoengine.ReferenceField('Room', required=True)  # reverse delete rule specified later due to circular rule
@@ -118,7 +184,11 @@ class Exit(mongoengine.Document):
         super().__init__(*args, **kwargs)
         self.save()
 
-    def obvious(self):
+    @classmethod
+    def check_exit_name(cls, exit_name, local_room, ignore_item=None):
+        Item.check_item_name(cls, exit_name, local_room, ignore_item, takable=False)
+
+    def is_obvious(self):
         return self.visible == 'obvious'
     
     def add_key(self, item_name):
@@ -137,11 +207,15 @@ class Exit(mongoengine.Document):
         self.is_open = False
         self.save()
 
-    def listed(self):
+    def is_listed(self):
         return self.visible == 'listed'
 
-    def hidden(self):
+    def is_hidden(self):
         return self.visible == 'hidden'
+
+    @classmethod
+    def get_exits_in_world(cls):
+        return cls.objects()
         
 
 class Room(mongoengine.Document):
@@ -149,8 +223,8 @@ class Room(mongoengine.Document):
     alias       = mongoengine.StringField(required=True, unique=True)  # unique id of the room, not shown to users
     description = mongoengine.StringField(default='')
     exits       = mongoengine.ListField(mongoengine.ReferenceField('Exit', reverse_delete_rule=mongoengine.PULL))  # deleted exits are auto-removed from the list
-    items       = mongoengine.ListField(mongoengine.ReferenceField(Item))
-    custom_verbs = mongoengine.ListField(mongoengine.ReferenceField(CustomVerb))
+    items       = mongoengine.ListField(mongoengine.ReferenceField('Item'))
+    custom_verbs = mongoengine.ListField(mongoengine.ReferenceField('CustomVerb'))
 
     def __init__(self, *args, **kwargs):
         if 'alias' in kwargs:
@@ -184,10 +258,14 @@ class Room(mongoengine.Document):
         return new_room
 
     def add_item(self, item):
+        item.room = self
+        item.save()
         self.items.append(item)
         self.save()
 
     def remove_item(self, item):
+        item.room = None
+        item.save()
         self.items.remove(item)
         self.save()
 
@@ -203,11 +281,11 @@ Room.register_delete_rule(Exit, 'destination', mongoengine.CASCADE)
 
 class User(mongoengine.Document):
     name = mongoengine.StringField(required=True)
-    room = mongoengine.ReferenceField(Room, required=True)
+    room = mongoengine.ReferenceField('Room', required=True)
     client_id = mongoengine.IntField(default=None)
-    inventory = mongoengine.ListField(mongoengine.ReferenceField(Item))
+    inventory = mongoengine.ListField(mongoengine.ReferenceField('Item'))
     master_mode = mongoengine.BooleanField(default=False)
-    saved_items = mongoengine.ListField(mongoengine.ReferenceField(Item))
+    saved_items = mongoengine.ListField(mongoengine.ReferenceField('Item'))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -231,7 +309,7 @@ class User(mongoengine.Document):
         self.save()
 
     def save_item(self, item):
-        item_snapshot = item.create_snapshot()
+        item_snapshot = item.clone()
         self.saved_items.append(item_snapshot)
         self.save()
         return item_snapshot
@@ -253,3 +331,21 @@ class User(mongoengine.Document):
         self.save()
 
 
+class NameNotGloballyUnique(Exception):
+    """Raised when creating a takable item whose name is already present
+    it any item or exit of the world."""
+
+class EmptyName(Exception):
+    """Raised when creating an item with an empty name"""
+
+class WrongNameFormat(Exception):
+    """Raised when creating an item with a bad formatted name"""
+
+class RoomNameClash(Exception):
+    """Raised when creating an item with the same name of an exit at the
+    same room"""
+
+class TakableItemNameClash(Exception):
+    """Raised when creating an Item or Room that may be unique in their room,
+    but may cause problems in other ways. e.g. if there is a takable item with
+    that name somewhere else"""

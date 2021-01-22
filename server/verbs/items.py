@@ -5,7 +5,7 @@ class Items(Verb):
     command = 'objetos'
 
     def process(self, message):
-        items_names = [item.name for item in self.session.user.room.items if not item.hidden()]
+        items_names = [item.name for item in self.session.user.room.items if not item.is_hidden()]
 
         if items_names:
             out_message = 'Distingues fácilmente los siguientes objetos:\n  ' + '\n  '.join(items_names)
