@@ -49,11 +49,12 @@ class Item(mongoengine.Document):
     custom_verbs = mongoengine.ListField(mongoengine.ReferenceField('CustomVerb'))
     room         = mongoengine.ReferenceField('Room', default=None)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, save_on_creation=True, **kwargs):
         super().__init__(*args, **kwargs)
         if self.id is None:  # if this is a newly created Item, instead of a pre-existing document being instantiated by mongoengine.
             self.item_id = self.generate_item_id()
-            self.save()
+            if save_on_creation:
+                self.save()
 
     def save(self):
         self.ensure_i_am_valid()
@@ -171,7 +172,6 @@ class World(mongoengine.Document):
         self.custom_verbs.append(custom_verb)
         self.save()
 
-# TODO CONTINUE LO DEJÉ AQUÍ. ESTOY REFACTORIZANDO LAS ENTIDADES PARA QUE NO SEAN TAN MIERDA. DEBERÍA TESTEAR LO QUE HE HECHO SO FAR ANTES DE SEGUIR
 class Exit(mongoengine.Document):
     name = mongoengine.StringField(required=True)
     destination = mongoengine.ReferenceField('Room', required=True)  # reverse delete rule specified later due to circular rule
@@ -331,21 +331,24 @@ class User(mongoengine.Document):
         self.save()
 
 
-class NameNotGloballyUnique(Exception):
-    """Raised when creating a takable item whose name is already present
-    it any item or exit of the world."""
+class BadItem(Exception):
+    """Raised when saving an item that does not abide by the item prerequisites"""
 
-class EmptyName(Exception):
+class EmptyName(BadItem):
     """Raised when creating an item with an empty name"""
 
-class WrongNameFormat(Exception):
+class WrongNameFormat(BadItem):
     """Raised when creating an item with a bad formatted name"""
 
-class RoomNameClash(Exception):
+class RoomNameClash(BadItem):
     """Raised when creating an item with the same name of an exit at the
     same room"""
 
-class TakableItemNameClash(Exception):
+class TakableItemNameClash(BadItem):
     """Raised when creating an Item or Room that may be unique in their room,
     but may cause problems in other ways. e.g. if there is a takable item with
     that name somewhere else"""
+
+class NameNotGloballyUnique(BadItem):
+    """Raised when creating a takable item whose name is already present
+    it any item or exit of the world."""

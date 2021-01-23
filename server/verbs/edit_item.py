@@ -75,11 +75,29 @@ class EditItem(Verb):
         
         if message:
             if self.option_number == 0:  # edit name
-                if not entities.Item.name_is_valid(message, self.session.user.room, self, self.is_takable()):
-                    self.session.send_to_client("Nombre inválido. Pon un mensaje más concreto, anda. TODO")
+                object_to_edit.name = message
+                try:
+                    object_to_edit.ensure_i_am_valid()
+                except entities.NameNotGloballyUnique:
+                    self.session.send_to_client('Ya hay un objeto con ese nombre en este mundo. El objeto que tratas de editar es cogible, y por eso no puede compartir nombre con ningún otro objeto. Se cancela la edición.')
                     self.finish_interaction()
                     return
-                object_to_edit.name = message
+                except entities.EmptyName:
+                    self.session.send_to_client('No puedes poner un nombre vacío. Se cancela la edición.')
+                    self.finish_interaction()
+                    return
+                except entities.WrongNameFormat:
+                    self.session.send_to_client('El nombre no puede terminar con # y un número. Se cancela la edición.')
+                    self.finish_interaction()
+                    return
+                except entities.RoomNameClash:
+                    self.session.send_to_client('Ya hay un objeto o salida con ese nombre en esta sala. Se cancela la edición.')
+                    self.finish_interaction()
+                    return
+                except entities.TakableItemNameClash:
+                    self.session.send_to_client('Hay un objeto cogible con ese nombre en este mundo. Se cancela la edición.')
+                    self.finish_interaction()
+                    return
             elif self.option_number == 1:  # edit description
                 object_to_edit.description = message
             elif self.option_number == 2:  # edit visibility

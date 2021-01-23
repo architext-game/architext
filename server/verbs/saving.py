@@ -22,8 +22,16 @@ class PlaceItem(Verb):
         elif len(querry) == 1:
             selected_item_snapshot = querry[0]
             item_to_place = selected_item_snapshot.clone()
-            self.session.user.room.add_item(item_to_place)
-            self.session.send_to_client("Hecho!")
+            try:
+                self.session.user.room.add_item(item_to_place)
+            except entities.RoomNameClash:
+                self.session.send_to_client("En esta sala ya hay un objeto o salida con ese nombre.")
+            except entities.TakableItemNameClash:
+                self.session.send_to_client("El objeto no se puede colocar porque en el mundo hay un objeto cogible con ese nombre.")
+            except entities.NameNotGloballyUnique:
+                self.session.send_to_client("El objeto no se puede colocar, porque es cogible y ya hay un objeto con ese nombre en este mundo.")   
+            else:
+                self.session.send_to_client("Hecho!")
         else:
             raise Exception("There was more than one item with the same id!")
 

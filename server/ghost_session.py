@@ -1,8 +1,8 @@
-from session import Session
+import session
 import special_words
 import entities
 
-class GhostSession(Session):
+class GhostSession(session.Session):
     """This is a ghost session that the system uses to perform automated tasks
     like player defined verbs. The tasks are executed as normal messages that
     a ghost session processes as if it were a normal session. 

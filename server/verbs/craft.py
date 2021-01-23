@@ -9,9 +9,7 @@ class Craft(Verb):
 
     def __init__(self, session):
         super().__init__(session)
-        self.new_item_name = None
-        self.new_item_description = None
-        self.new_item_visibility = None
+        self.new_item = entities.Item(room=self.session.user.room, save_on_creation=False)
         self.current_process_function = self.process_first_message
 
     def process(self, message):
@@ -22,44 +20,46 @@ class Craft(Verb):
         self.current_process_function = self.process_item_name
 
     def process_item_name(self, message):
-        if entities.Item.name_is_valid(message, self.session.user.room):
-            self.new_item_name = message
+        self.new_item.name = message
+        try:
+            self.new_item.ensure_i_am_valid()
+        except entities.EmptyName:
+            self.session.send_to_client("El nombre no puede estar vacío. Prueba con otro.")
+        except entities.WrongNameFormat:
+            self.session.send_to_client("El nombre no puede acabar con # y un número. Prueba con otro.")
+        except entities.RoomNameClash:
+            self.session.send_to_client("Ya hay un objeto o salida con ese nombre en esta sala. Prueba con otro.")
+        except entities.TakableItemNameClash:
+            self.session.send_to_client("Hay en el mundo un objeto tomable con ese nombre. Los objetos tomables deben tener un nombre único en todo el mundo, así que prueba a poner otro.")
+        else:
             self.session.send_to_client("Ahora introduce una descripción para tu nuevo objeto, para que todo el mundo sepa cómo es.")
             self.current_process_function = self.process_item_description
-        else:
-            self.session.send_to_client("El nombre no es válido por algún motivo, será mejor que Óliver ponga un mensaje de error más concreto.")
-
+ 
     def process_item_description(self, message):
-        self.new_item_description = message
+        self.new_item.description = message
         self.session.send_to_client('¿Cuál es la visibilidad del objeto? Escribe:\n  "visible" si nombraste el objeto en la descripción de la sala.\n  "listado" para que se nombre automáticamente al mirar la sala.\n  "oculto" para que los jugadores tengan que encontrarlo por otros medios.\n  "cogible" para que los jugadores puedan coger el objeto y llevarlo consigo. Será listado igual que un verbo listado, y no deberías nombrarlo en la descripción de la sala.')
         self.process = self.process_visibility
 
     def process_visibility(self, message):
         if message.lower() in ['visible', 'v', 'vi']:
-            self.new_item_visibility = 'obvious'
+            self.new_item.visible = 'obvious'
         elif message.lower() in ['listado', 'l', 'li']:
-            self.new_item_visibility = 'listed'
+            self.new_item.visible = 'listed'
         elif message.lower() in ['oculto', 'o', 'oc']:
-            self.new_item_visibility = 'hidden'
+            self.new.item_visible = 'hidden'
         elif message.lower() in ['cogible', 'c', 'co']:
-            # the name of a takable item should be unique across al other items
-            if entities.Item.name_is_valid(message, self.session.user.room, takable=True):
-                self.new_item_visibility = 'takable'
-            else:
-                self.session.send_to_client("Tendrás que empezar de nuevo.")
-                self.finish_interaction()
-                return
+            self.new_item.visible = 'takable'
         else:
             self.session.send_to_client('No te entiendo. Responde "visible", "listado", "oculto" o "cogible.')
             return
 
-        new_item = entities.Item(
-            name=self.new_item_name, 
-            description=self.new_item_description, 
-            visible=self.new_item_visibility
-        )
-        self.session.user.room.add_item(new_item)
-        self.session.send_to_client("¡Objeto creado!")
-        if not self.session.user.master_mode:
-            self.session.send_to_others_in_room("{} acaba de crear algo aquí.".format(self.session.user.name))
+        try:
+            self.new_item.save()
+        except entities.NameNotGloballyUnique:
+            self.session.send_to_client("Ya hay en el mundo un objeto o una salida con este nombre. Los objetos cogibles deben tener un nombre totalmente único. Tendrás que empezar a crearlo de nuevo.")
+        else:
+            self.session.user.room.add_item(self.new_item)
+            self.session.send_to_client("¡Objeto creado!")
+            if not self.session.user.master_mode:
+                self.session.send_to_others_in_room("{} acaba de crear algo aquí.".format(self.session.user.name))
         self.finish_interaction()
