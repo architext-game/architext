@@ -1,6 +1,5 @@
 from .verb import Verb
 from .look import Look
-from special_words import GHOST_USER_NAME
 import entities
 import util
 import logging
@@ -46,7 +45,7 @@ class Login(Verb):
 
 
     def is_a_valid_name(self, name):
-        if not name == '' and not name == GHOST_USER_NAME:
+        if not name == '' and not name == util.GHOST_USER_NAME:
             return True
         else:
             return False

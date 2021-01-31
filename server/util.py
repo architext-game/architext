@@ -3,6 +3,8 @@ import entities
 import os
 import re
 
+# username to be used by the ghost session (see ghost_session.py)
+GHOST_USER_NAME = "-nadie-"
 
 def possible_meanings(partial_string, list_of_options):
     if partial_string in list_of_options:

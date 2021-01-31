@@ -1,5 +1,5 @@
 import session
-import special_words
+import util
 import entities
 
 class GhostSession(session.Session):
@@ -16,7 +16,7 @@ class GhostSession(session.Session):
     """
 
     def __init__(self, server, start_room):
-        GHOST_USER_NAME = special_words.GHOST_USER_NAME  # name of the ghost user
+        GHOST_USER_NAME = util.GHOST_USER_NAME  # name of the ghost user
         PLACEHOLDER_SESSION_ID = -1  # with this invalid id, the server won't send messages meant to the session's client 
         super().__init__(PLACEHOLDER_SESSION_ID, server)  # normal session __init__. Assigns session id and server.
         self.current_verb = None  # we want to not have an assigned verb at session creation.

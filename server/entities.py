@@ -20,7 +20,6 @@ The responsibilities of each entity are:
 """
 
 import mongoengine
-import util
 import entities
 import re
 
