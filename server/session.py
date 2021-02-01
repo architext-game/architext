@@ -14,7 +14,7 @@ class Session:
     """
 
     # List of all verbs supported by the session, ordered by priority: if two verbs can handle the same message, the first will have preference.
-    verbs = [v.Build, v.Emote, v.Go, v.Help, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.TeleportClient, v.TeleportUser, v.TeleportAllInRoom, v.TeleportAllInWorld, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.Info, v.Items, v.Exits, v.AddVerb, v.MasterMode, v.TextToOne, v.TextToRoom, v.TextToRoomUnless, v.TextToWorld, v.Take, v.Drop, v.Inventory, v.MasterOpen, v.MasterClose, v.AssignKey, v.Open, v.SaveItem, v.PlaceItem]
+    verbs = [v.Build, v.Emote, v.Go, v.Help, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.TeleportClient, v.TeleportUser, v.TeleportAllInRoom, v.TeleportAllInWorld, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.Info, v.Items, v.Exits, v.AddVerb, v.MasterMode, v.TextToOne, v.TextToRoom, v.TextToRoomUnless, v.TextToWorld, v.Take, v.Drop, v.Inventory, v.MasterOpen, v.MasterClose, v.AssignKey, v.Open, v.SaveItem, v.PlaceItem, v.CustomVerb]
 
     def __init__(self, session_id, server):
         self.logger = None  # logger for recording user interaction
@@ -36,10 +36,9 @@ class Session:
         if self.logger:
             self.logger.info('client\n'+message)
         
-        # if there is no current verb, search for a verb in the standard verb list
         if self.current_verb is None:
             for verb in self.verbs:
-                if verb.can_process(message):
+                if verb.can_process(message, self):
                     self.current_verb = verb(self)
                     break
         
@@ -48,45 +47,7 @@ class Session:
             if self.current_verb.command_finished():
                 self.current_verb = None
         else:
-            custom_verb = self.search_for_custom_verb(message)
-            if custom_verb is not None:
-                self.execute_custom_verb(custom_verb)
-            else:
-                self.send_to_client("No te entiendo.")
-
-    def search_for_custom_verb(self, message):
-        if len(message.split(" ", 1)) == 2:  # if the message has the form "verb item"
-            target_verb_name, target_item_name = message.split(" ", 1)
-            candidate_items = self.user.room.items + self.user.inventory
-            items_they_may_be_referring_to = util.possible_meanings(target_item_name, [i.name for i in candidate_items])
-            if len(items_they_may_be_referring_to) == 1:
-                target_item_name = items_they_may_be_referring_to[0]
-                suitable_item_found = next(filter(lambda i: i.name==target_item_name, candidate_items))
-                suitable_verb_found_in_item = next(filter(lambda v: v.is_name(target_verb_name), suitable_item_found.custom_verbs), None)
-                if suitable_verb_found_in_item is not None:
-                    return suitable_verb_found_in_item
-        else:
-            suitable_verb_found_in_room = next(filter(lambda v: v.is_name(target_verb_name), self.user.room.custom_verbs), None)
-            if suitable_verb_found_in_room is not None:
-                return suitable_verb_found_in_room
-            world = entities.World.objects[0]
-            suitable_verb_found_in_world = next(filter(lambda v: v.is_name(target_verb_name), world.custom_verbs), None)
-            if suitable_verb_found_in_world is not None:
-                return suitable_verb_found_in_world
-        
-        return None
-            
-    def execute_custom_verb(self, custom_verb):
-        import ghost_session
-        ghost = ghost_session.GhostSession(self.server, self.user.room)
-        for message in custom_verb.commands:
-            formatted_message = self.format_custom_verb_message(message)
-            ghost.process_message(formatted_message)
-        ghost.disconnect()
-
-    def format_custom_verb_message(self, message):
-        message = message.replace('.usuario', self.user.name)
-        return message
+            self.send_to_client("No te entiendo.")
 
     def disconnect(self):
         if self.user is not None:
@@ -127,3 +88,36 @@ class Session:
 
     def set_logger(self, logger):
         self.logger = logger
+
+
+class GhostSession(Session):
+    """This is a ghost session that the system uses to perform automated tasks
+    like player defined verbs. The tasks are executed as normal messages that
+    a ghost session processes as if it were a normal session. 
+
+    The differences whith a normal session are:
+     - A ghost session doesn't respond to the client that is issuing it
+       messages, because there is none.
+     - A ghost session belongs to the user specified in the field GHOST_USER_NAME.
+       This user cannot be used by normal sessions.
+     - A ghost session ends as soon as the automated task does.
+    """
+
+    def __init__(self, server, start_room):
+        GHOST_USER_NAME = util.GHOST_USER_NAME  # name of the ghost user
+        PLACEHOLDER_SESSION_ID = -1  # with this invalid id, the server won't send messages meant to the session's client 
+        super().__init__(PLACEHOLDER_SESSION_ID, server)  # normal session __init__. Assigns session id and server.
+        self.current_verb = None  # we want to not have an assigned verb at session creation.
+
+        # retrieve or create ghost user and put in in the right room.
+        if entities.User.objects(name=GHOST_USER_NAME):
+            self.user = entities.User.objects(name=GHOST_USER_NAME).first()
+            self.user.connect(self.session_id)
+            self.user.teleport(start_room)
+        else:
+            self.user = entities.User(name=GHOST_USER_NAME, room=start_room, master_mode=True)
+            self.user.connect(self.session_id)
+
+    def disconnect(self):
+        if self.user is not None:
+            self.user.disconnect()

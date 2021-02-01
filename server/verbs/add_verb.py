@@ -24,7 +24,7 @@ class AddVerb(Verb):
     world_command = 'verbomundo'  # command for adding verbs to worlds
 
     @classmethod
-    def can_process(cls, message):
+    def can_process(cls, message, session):
         if message.startswith(cls.item_command) or message.startswith(cls.room_command) or message.startswith(cls.world_command):
             return True
         else:

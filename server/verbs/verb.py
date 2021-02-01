@@ -15,7 +15,7 @@ class Verb():
     command = 'verb '
 
     @classmethod
-    def can_process(cls, message):
+    def can_process(cls, message, session):
         if message.startswith(cls.command):
             return True
         else:

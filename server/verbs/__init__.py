@@ -22,3 +22,4 @@ from .direct_text import TextToOne, TextToRoom, TextToRoomUnless, TextToWorld
 from .inventory import Take, Drop, Inventory
 from .keys import MasterClose, MasterOpen, AssignKey, Open
 from .saving import SaveItem, PlaceItem
+from .custom_verb import CustomVerb
