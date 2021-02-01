@@ -1,11 +1,9 @@
 """
 Run this file to start your server. It does all initial setup and contains the game loop.
 """
+import sandboxmud
 import mongoengine
 import telnetserver
-import entities
-import session
-import util
 import atexit
 
 
@@ -21,7 +19,7 @@ def database_connect(uri=None):
 def client_ids_cleanup():
     """Cleans client connection id in the database, disconnecting everyone.
     """
-    for user in entities.User.objects(client_id__ne=None):
+    for user in sandboxmud.entities.User.objects(client_id__ne=None):
         user.disconnect()
 
 if __name__ == "__main__":
@@ -31,7 +29,7 @@ if __name__ == "__main__":
     connected_to_db = False
     
     # Sets up logger for main server logs
-    logger = util.setup_logger('server_logger', 'server.txt', console=True)
+    logger = sandboxmud.util.setup_logger('server_logger', 'server.txt', console=True)
 
     # Process commmand line args
     command_line_args = sys.argv[1:]
@@ -52,15 +50,15 @@ if __name__ == "__main__":
         database_connect()
 
     # World setup if there isn't one in the db
-    if not entities.World.objects:
-        entities.Item.drop_collection()
-        entities.User.drop_collection()
-        entities.Room.drop_collection()
-        new_world = entities.World()
+    if not sandboxmud.entities.World.objects:
+        sandboxmud.entities.Item.drop_collection()
+        sandboxmud.entities.User.drop_collection()
+        sandboxmud.entities.Room.drop_collection()
+        new_world = sandboxmud.entities.World()
 
     # First room setup, if there isn't one yet
-    if not entities.Room.objects(alias='0'):
-        lobby = entities.Room(name='El Inicio', description='Esta sala es donde nacen los novatos. A partir de aquí se abren las puertas a diferentes mundos. Si no sabes moverte, escribe "ayuda" y descubrirás todo lo que puedes hacer.')
+    if not sandboxmud.entities.Room.objects(alias='0'):
+        lobby = sandboxmud.entities.Room(name='El Inicio', description='Esta sala es donde nacen los novatos. A partir de aquí se abren las puertas a diferentes mundos. Si no sabes moverte, escribe "ayuda" y descubrirás todo lo que puedes hacer.')
 
     # Server creation for telnet communication
     server = telnetserver.TelnetServer(error_policy='ignore')
@@ -81,7 +79,7 @@ if __name__ == "__main__":
 
         # Handle new connections
         for new_client in server.get_new_clients():
-            sessions[new_client] = session.Session(new_client, server)
+            sessions[new_client] = sandboxmud.session.Session(new_client, server)
 
         # Handle disconnects
         for disconnected_client in server.get_disconnected_clients():

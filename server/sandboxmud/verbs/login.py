@@ -1,7 +1,7 @@
 from .verb import Verb
 from .look import Look
-import entities
-import util
+from .. import entities
+from .. import util
 import logging
 
 class Login(Verb):

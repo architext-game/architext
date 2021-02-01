@@ -1,6 +1,6 @@
 from .verb import Verb
-import util
-import entities
+from .. import util
+from .. import entities
 
 class Connect(Verb):
     """This verb allow users to connect two existing rooms. One is the room where the user is located,

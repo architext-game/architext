@@ -1,6 +1,6 @@
 from .verb import Verb
-import util
-import entities
+from .. import util
+from .. import entities
 
 class EditItem(Verb):
     """This verb allows users to edit properties of an item or exit that is in their current room"""

@@ -1,5 +1,5 @@
 import logging
-import entities
+from . import entities
 import os
 import re
 

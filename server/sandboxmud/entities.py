@@ -20,8 +20,8 @@ The responsibilities of each entity are:
 """
 
 import mongoengine
-import entities
 import re
+
 
 class CustomVerb(mongoengine.Document):
     names = mongoengine.ListField(mongoengine.StringField())
@@ -62,7 +62,7 @@ class Item(mongoengine.Document):
     def generate_item_id(self):
         id_number = 1
         item_id = "{}#{}".format(self.name, id_number)
-        while len(entities.Item.objects(item_id=item_id)) > 0:
+        while len(Item.objects(item_id=item_id)) > 0:
             id_number = id_number + 1
             item_id = "{}#{}".format(self.name, id_number)
         return item_id
@@ -97,7 +97,7 @@ class Item(mongoengine.Document):
                     'exception': RoomNameClash()
                 },
                 'there_is_no_takable_with_same_name': {
-                    'condition': item_name not in [takable_item.name for takable_item in entities.Item.get_items_in_world() if takable_item != ignore_item and takable_item.visible=='takable'],
+                    'condition': item_name not in [takable_item.name for takable_item in Item.get_items_in_world() if takable_item != ignore_item and takable_item.visible=='takable'],
                     'exception': TakableItemNameClash()
                 }
             }
@@ -107,8 +107,8 @@ class Item(mongoengine.Document):
             takable_item_conditions = {
                 'name_is_globally_unique': {
                     'condition': (
-                            item_name not in [item.name for item in entities.Item.get_items_in_world() if item != ignore_item]
-                            and item_name not in [item.name for item in entities.Exit.get_exits_in_world() if item != ignore_item]
+                            item_name not in [item.name for item in Item.get_items_in_world() if item != ignore_item]
+                            and item_name not in [item.name for item in Exit.get_exits_in_world() if item != ignore_item]
                         ),
                     'exception': NameNotGloballyUnique()
                 }

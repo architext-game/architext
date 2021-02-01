@@ -1,8 +1,8 @@
 """Defines the Session class, used to handle user interaction.
 """
-import entities
-import verbs as v
-import util
+from . import entities
+from . import verbs as v
+from . import util
 
 class Session:
     """This class handles interaction with a single user, though it can send messages to other users as well, to inform them of the session's user actions.

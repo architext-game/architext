@@ -1,5 +1,5 @@
 from .verb import Verb
-import entities
+from .. import entities
 
 class AddVerb(Verb):
     """This verb allows users to create new custom verbs tied to items.

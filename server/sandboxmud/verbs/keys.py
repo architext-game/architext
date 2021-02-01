@@ -1,5 +1,5 @@
 from .verb import Verb
-import util
+from .. import util
 
 class MasterClose(Verb):
     command = "cierradirector "

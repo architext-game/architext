@@ -1,7 +1,7 @@
 from .verb import Verb
 from .look import Look 
-import util
-import entities
+from .. import util
+from .. import entities
 
 
 class TeleportClient(Verb):

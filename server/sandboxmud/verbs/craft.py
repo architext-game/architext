@@ -1,6 +1,6 @@
 from .verb import Verb
-import entities
-import util
+from .. import entities
+from .. import util
 
 class Craft(Verb):
     """This verb allows users to create items that are placed in their current room"""

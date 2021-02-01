@@ -1,5 +1,5 @@
 from .verb import Verb
-import entities
+from .. import entities
 
 class TextToOne(Verb):
     """Lets game masters send any message to a single user using:

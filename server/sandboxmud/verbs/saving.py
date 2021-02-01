@@ -1,5 +1,5 @@
 from .verb import Verb
-import entities
+from .. import entities
 import functools
 
 class PlaceItem(Verb):

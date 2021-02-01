@@ -1,5 +1,5 @@
 from .verb import Verb
-import util
+from .. import util
 
 class Build(Verb):
     """This verb allows the user to create a new room connected to his current location.

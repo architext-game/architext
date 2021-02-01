@@ -1,5 +1,5 @@
 from .verb import Verb
-import entities
+from .. import entities
 
 class DeleteRoom(Verb):
     """This verb allows users to delete their current room.

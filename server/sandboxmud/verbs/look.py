@@ -1,6 +1,6 @@
 from .verb import Verb
-from util import possible_meanings
-from entities import User
+from .. import util
+from .. import entities
 
 class Look(Verb):
     """Shows room and items info to players"""
@@ -18,11 +18,11 @@ class Look(Verb):
     def show_item_or_exit(self, partial_name):
         lookable_items = self.session.user.room.items + self.session.user.inventory
         names_of_lookable_items = [item.name for item in lookable_items]
-        items_he_may_be_referring_to = possible_meanings(partial_name, names_of_lookable_items)
+        items_he_may_be_referring_to = util.possible_meanings(partial_name, names_of_lookable_items)
 
         exits_in_room = self.session.user.room.exits
         names_of_exits_in_room = [exit.name for exit in exits_in_room]
-        exits_he_may_be_referring_to = possible_meanings(partial_name, names_of_exits_in_room)
+        exits_he_may_be_referring_to = util.possible_meanings(partial_name, names_of_exits_in_room)
         
 
         if len(items_he_may_be_referring_to) + len(exits_he_may_be_referring_to) == 1:
@@ -62,7 +62,7 @@ class Look(Verb):
         else:
             items = ''
 
-        players_here = '\n'.join(['{} está aquí.'.format(user.name) for user in User.objects(room=self.session.user.room, client_id__ne=None, master_mode=False) if user != self.session.user])
+        players_here = '\n'.join(['{} está aquí.'.format(user.name) for user in entities.User.objects(room=self.session.user.room, client_id__ne=None, master_mode=False) if user != self.session.user])
         players_here = players_here + '\n' if players_here != '' else ''
         message = ("""{title}{description}{items}{players_here}{exits}"""
                     ).format(title=title, description=description, exits=exits, players_here=players_here, items=items)

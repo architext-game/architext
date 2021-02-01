@@ -1,5 +1,5 @@
-import entities
-import util
+from .. import entities
+from .. import util
 from .verb import Verb
 
 class CustomVerb(Verb):
@@ -45,7 +45,7 @@ class CustomVerb(Verb):
         self.finish_interaction()
 
     def execute_custom_verb(self, custom_verb):
-        import session
+        from .. import session
         ghost = session.GhostSession(self.session.server, self.session.user.room)
         for message in custom_verb.commands:
             formatted_message = self.format_custom_verb_message(message)

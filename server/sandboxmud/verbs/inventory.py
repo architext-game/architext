@@ -1,5 +1,5 @@
 from .verb import Verb
-import util
+from .. import util
 import functools
 
 class Take(Verb):

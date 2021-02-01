@@ -1,6 +1,6 @@
 from .verb import Verb
-from util import possible_meanings
-from entities import User
+from ..util import possible_meanings
+from ..entities import User
 
 class Info(Verb):
     """Shows all info of a room or item. This command is designed for creators, since it shows
