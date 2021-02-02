@@ -1,4 +1,5 @@
 from .verb import Verb
+from .. import entities
 from .. import util
 
 class Build(Verb):
@@ -10,10 +11,9 @@ class Build(Verb):
 
     def __init__(self, session):
         super().__init__(session)
-        self.new_room_name = None
-        self.new_room_description = None
-        self.exit_from_here = None
-        self.exit_from_there = None
+        self.new_room = entities.Room(save_on_creation=False)
+        self.exit_from_here = entities.Exit(destination=self.new_room, room=self.session.user.room, save_on_creation=False)
+        self.exit_from_there = entities.Exit(destination=self.session.user.room, room=self.new_room, save_on_creation=False)
         self.current_process_function = self.process_first_message
 
     def process(self, message):
@@ -27,62 +27,62 @@ class Build(Verb):
         if not message:
             self.session.send_to_client("Tienes que poner un nombre a tu habitación. Prueba otra vez.")
         else:
-            self.new_room_name = message
+            self.new_room.name = message
             self.session.send_to_client("Ahora introduce una descripción para tu nueva sala, para que todo el mundo sepa cómo es.")
             self.current_process_function = self.process_room_description
 
     def process_room_description(self, message):
-        self.new_room_description = message
-        current_room = self.session.user.room.name
-        new_room = self.new_room_name
-        self.session.send_to_client("Cómo quieres llamar a la salida desde {} a {}? Si no se te ocurre nada, puedes dejarlo en blanco.".format(current_room, new_room))
+        self.new_room.description = message
+        self.session.send_to_client("Cómo quieres llamar a la salida desde {} a {}? Si no se te ocurre nada, puedes dejarlo en blanco.".format(self.session.user.room.name, self.new_room.name))
         self.current_process_function = self.process_here_exit_name
 
     def process_here_exit_name(self, message):
         if not message:
-            message = "a {}".format(self.new_room_name)
-            while(not util.valid_item_or_exit_name(self.session, message)):
-                message = 'directo ' + message
+            message = "a {}".format(self.new_room.name)
+            message = self.make_exit_name_valid(message, self.session.user.room)
 
-        if not util.valid_item_or_exit_name(self.session, message):
-            self.session.send_to_client('Introduce otro nombre.'.format(message))
+        self.exit_from_here.name = message
+        try:
+            self.exit_from_here.ensure_i_am_valid()
+        except entities.WrongNameFormat:
+            self.session.send_to_client("El nombre no puede acabar con # y un número. Prueba con otro.")
+        except entities.RoomNameClash:
+            self.session.send_to_client("Ya hay un objeto o salida con ese nombre en esta sala. Prueba con otro.")
+        except entities.TakableItemNameClash:
+            self.session.send_to_client("Hay en el mundo un objeto tomable con ese nombre. Los objetos tomables deben tener un nombre único en todo el mundo, así que prueba a poner otro.")
         else:
-            self.exit_from_here = message
-        
-            current_room = self.session.user.room.name
-            new_room = self.new_room_name
-            self.session.send_to_client("Cómo quieres llamar a la salida desde {} a {}? Si no se te ocurre nada, puedes dejarlo en blanco.".format(new_room, current_room))
+            self.session.send_to_client("Cómo quieres llamar a la salida desde {} a {}? Si no se te ocurre nada, puedes dejarlo en blanco.".format(self.new_room.name, self.session.user.room.name))
             self.current_process_function = self.process_there_exit_name
 
     def process_there_exit_name(self, message):
         if not message:
-            default_message = "a {}".format(self.session.user.room.name)
-            while(not util.name_globaly_free(self.session, default_message)):
-                default_message = 'directo ' + default_message
-            self.exit_from_there =  default_message
+            message = "a {}".format(self.session.user.room.name)
+            message = self.make_exit_name_valid(message, self.new_room)
+            
+        self.exit_from_there.name = message
+        
+        try:
+            self.exit_from_there.ensure_i_am_valid()
+        except entities.WrongNameFormat:
+            self.session.send_to_client("El nombre no puede acabar con # y un número. Prueba con otro.")
+        except entities.TakableItemNameClash:
+            self.session.send_to_client("Hay en el mundo un objeto tomable con ese nombre. Los objetos tomables deben tener un nombre único en todo el mundo, así que prueba a poner otro.")
         else:
-            if not util.name_globaly_free(self.session, message):
-                session.send_to_client("En este mundo hay un objeto cogible con ese nombre. Debes elegir otro.")
-                return
-            self.exit_from_there = message
+            self.new_room.save()
+            self.exit_from_here.save()
+            self.exit_from_there.save()
+            self.session.user.room.add_exit(self.exit_from_here)
+            self.new_room.add_exit(self.exit_from_there)
 
-        self.session.user.room.create_adjacent_room(
-            there_name = self.new_room_name,
-            there_description = self.new_room_description,
-            exit_from_here = self.exit_from_here,
-            exit_from_there = self.exit_from_there
-        )
-        self.session.send_to_client("¡Enhorabuena! Tu nueva habitación está lista.")
-        if not self.session.user.master_mode:
-            self.session.send_to_others_in_room("Los ojos de {} se ponen en blanco un momento. Una nueva salida aparece en la habitación.".format(self.session.user.name))
-        self.finish_interaction()
+            self.session.send_to_client("¡Enhorabuena! Tu nueva habitación está lista.")
+            if not self.session.user.master_mode:
+                self.session.send_to_others_in_room("Los ojos de {} se ponen en blanco un momento. Una nueva salida aparece en la habitación.".format(self.session.user.name))
+            self.finish_interaction()
 
-    def make_exit_name_valid(self, exit_name):
-        is_valid = False
-        while not is_valid:
-            try:
-                entities.Exit.check_exit_name(exit_name, self.session.user.room)
-                is_valid = True
-            except (ItemNameClash, ExitNameClash, TakableItemNameClash):
-                exit_name = 'directo ' + exit_name
+    def make_exit_name_valid(self, exit_name, room):
+        while not entities.Exit.name_is_valid(exit_name, room):
+            exit_name = 'directo ' + exit_name
         return exit_name
+
+    def cancel():
+        self.session.user.room.exits.remove(self.exit_from_here)

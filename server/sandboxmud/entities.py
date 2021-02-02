@@ -27,9 +27,10 @@ class CustomVerb(mongoengine.Document):
     names = mongoengine.ListField(mongoengine.StringField())
     commands = mongoengine.ListField(mongoengine.StringField())
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, save_on_creation=True, **kwargs):
         super().__init__(*args, **kwargs)
-        self.save()
+        if self.id is None and save_on_creation:
+            self.save()
 
     def is_name(self, verb_name):
         return verb_name in self.names
@@ -157,9 +158,10 @@ class World(mongoengine.Document):
     next_room_id = mongoengine.IntField(default=0)
     custom_verbs = mongoengine.ListField(mongoengine.ReferenceField('CustomVerb'))
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, save_on_creation=True, **kwargs):
         super().__init__(*args, **kwargs)
-        self.save()
+        if self.id is None and save_on_creation:
+            self.save()
 
     def get_unique_room_id(self):
         id_to_serve = str(self.next_room_id)
@@ -178,14 +180,30 @@ class Exit(mongoengine.Document):
     visible = mongoengine.StringField(choices=['listed', 'hidden', 'obvious'], default='listed')
     is_open = mongoengine.BooleanField(default=True)
     key_names = mongoengine.ListField(mongoengine.StringField())
+    room = mongoengine.ReferenceField('Room', default=None)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, save_on_creation=True, **kwargs):
         super().__init__(*args, **kwargs)
-        self.save()
+        if self.id is None and save_on_creation:
+            self.save()
+
+    def save(self):
+        self.ensure_i_am_valid()
+        super().save()
+
+    def ensure_i_am_valid(self):
+        name_conditions = self.get_name_validation_conditions(self.name,  self.room, self)
+        for condition in name_conditions.values():
+            if not condition['condition']:
+                raise condition['exception']
 
     @classmethod
-    def check_exit_name(cls, exit_name, local_room, ignore_item=None):
-        Item.check_item_name(cls, exit_name, local_room, ignore_item, takable=False)
+    def get_name_validation_conditions(cls, exit_name, local_room, ignore_item=None):
+        return Item.get_name_validation_conditions(exit_name, local_room, ignore_item)
+
+    @classmethod
+    def name_is_valid(cls, exit_name, local_room, ignore_item=None):
+        return Item.name_is_valid(exit_name, local_room, ignore_item)
 
     def is_obvious(self):
         return self.visible == 'obvious'
@@ -225,21 +243,20 @@ class Room(mongoengine.Document):
     items       = mongoengine.ListField(mongoengine.ReferenceField('Item'))
     custom_verbs = mongoengine.ListField(mongoengine.ReferenceField('CustomVerb'))
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, save_on_creation=True, **kwargs):
         if 'alias' in kwargs:
             super().__init__(*args, **kwargs)
         else:
             world = World.objects[0]
             default_alias = world.get_unique_room_id()
             super().__init__(alias=default_alias, *args, **kwargs)
-        self.save()
+        if self.id is None and save_on_creation:
+            self.save()
 
-    def add_exit(self, exit_name, destination):
-        if exit_name in [exit.name for exit in self.exits]:
-            raise Exception('Someone tried to create an exit with a duplicated name')
-        
-        new_exit = Exit(name=exit_name, destination=destination)
-        self.exits.append(new_exit)
+    def add_exit(self, exit):
+        exit.room = self
+        exit.save()
+        self.exits.append(exit)
         self.save()
 
     def delete_exit(self, exit_name):
@@ -249,12 +266,6 @@ class Room(mongoengine.Document):
 
     def get_exit(self, exit_name):
         return next(filter(lambda x: x.name==exit_name, self.exits))
-
-    def create_adjacent_room(self, there_name, exit_from_here, exit_from_there, there_description=""):
-        new_room = Room(name=there_name, description=there_description)
-        new_room.add_exit(exit_name=exit_from_there, destination=self)
-        self.add_exit(exit_from_here, new_room)
-        return new_room
 
     def add_item(self, item):
         item.room = self
@@ -286,9 +297,10 @@ class User(mongoengine.Document):
     master_mode = mongoengine.BooleanField(default=False)
     saved_items = mongoengine.ListField(mongoengine.ReferenceField('Item'))
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, save_on_creation=True,  **kwargs):
         super().__init__(*args, **kwargs)
-        self.save()
+        if self.id is None and save_on_creation:
+            self.save()
 
     def move(self, exit_name):
         if exit_name in [exit.name for exit in self.room.exits]:

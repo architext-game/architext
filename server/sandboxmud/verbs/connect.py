@@ -11,8 +11,8 @@ class Connect(Verb):
     def __init__(self, session):
         super().__init__(session)
         self.other_room = None
-        self.exit_from_here = None
-        self.exit_from_there = None
+        self.exit_from_here = entities.Exit(room=self.session.user.room, save_on_creation=False)
+        self.exit_from_there = entities.Exit(destination=self.session.user.room, save_on_creation=False)
         self.current_process_function = self.process_first_message
 
     def process(self, message):
@@ -27,6 +27,8 @@ class Connect(Verb):
             self.session.send_to_client("Prueba otra vez.")
         elif entities.Room.objects(alias=message):
                 self.other_room = entities.Room.objects(alias=message).first()
+                self.exit_from_here.destination = self.other_room
+                self.exit_from_there.room = self.other_room
                 self.session.send_to_client("¿Cómo quieres llamar a la salida desde aquí? Puedes dejarlo en blanco para un nombre autogenerado.")
                 self.current_process_function = self.process_here_exit_name
         else:
@@ -35,31 +37,46 @@ class Connect(Verb):
     def process_here_exit_name(self, message):
         if not message:
             message = "a {}".format(self.other_room.name)
-            while(not util.valid_item_or_exit_name(self.session, message)):
-                message = 'directo ' + message
+            message = self.make_exit_name_valid(message, self.session.user.room)
+
+        self.exit_from_here.name = message
         
-        if not util.valid_item_or_exit_name(self.session, message):
-            self.session.send_to_client('Introduce otro nombre.'.format(message))
+        try:
+            self.exit_from_here.ensure_i_am_valid()
+        except entities.WrongNameFormat:
+            self.session.send_to_client("El nombre no puede acabar con # y un número. Prueba con otro.")
+        except entities.RoomNameClash:
+            self.session.send_to_client("Ya hay un objeto o salida con ese nombre en esta sala. Prueba con otro.")
+        except entities.TakableItemNameClash:
+            self.session.send_to_client("Hay en el mundo un objeto tomable con ese nombre. Los objetos tomables deben tener un nombre único en todo el mundo, así que prueba a poner otro.")
         else:
-            self.exit_from_here = message
             self.session.send_to_client("¿Cómo quieres llamar a la salida desde la otra habitación? Puedes dejarlo en blanco para un nombre autogenerado.")
             self.current_process_function = self.process_there_exit_name
 
     def process_there_exit_name(self, message):
         if not message:
             message = "a {}".format(self.session.user.room.name)
-            while(not util.valid_item_or_exit_name(self.session, message, local_room=self.other_room)):
-                message = 'directo ' + message
-        
-        if not util.valid_item_or_exit_name(self.session, message, local_room=self.other_room):
-            self.session.send_to_client('Introduce otro nombre.'.format(message))
+            message = self.make_exit_name_valid(message, self.other_room)
+
+        self.exit_from_there.name = message
+
+        try:
+            self.exit_from_there.ensure_i_am_valid()
+        except entities.WrongNameFormat:
+            self.session.send_to_client("El nombre no puede acabar con # y un número. Prueba con otro.")
+        except entities.RoomNameClash:
+            self.session.send_to_client("Ya hay un objeto o salida con ese nombre en esta sala. Prueba con otro.")
+        except entities.TakableItemNameClash:
+            self.session.send_to_client("Hay en el mundo un objeto tomable con ese nombre. Los objetos tomables deben tener un nombre único en todo el mundo, así que prueba a poner otro.")
         else:
-            self.exit_from_there = message
-
-            self.session.user.room.add_exit(destination=self.other_room, exit_name=self.exit_from_here)
-            self.other_room.add_exit(destination=self.session.user.room, exit_name=self.exit_from_there)
-
+            self.session.user.room.add_exit(self.exit_from_here)
+            self.other_room.add_exit(self.exit_from_there)
             self.session.send_to_client("Salas conectadas")
             if not self.session.user.master_mode:
                 self.session.send_to_others_in_room("Los ojos de {} se ponen en blanco un momento. Una nueva salida aparece en la habitación.".format(self.session.user.name))
             self.finish_interaction()
+
+    def make_exit_name_valid(self, exit_name, room):
+        while not entities.Exit.name_is_valid(exit_name, room):
+            exit_name = 'directo ' + exit_name
+        return exit_name
