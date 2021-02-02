@@ -23,6 +23,7 @@ class CustomVerb(Verb):
                 if suitable_verb_found_in_item is not None:
                     return suitable_verb_found_in_item
         else:
+            target_verb_name = message
             suitable_verb_found_in_room = next(filter(lambda v: v.is_name(target_verb_name), session.user.room.custom_verbs), None)
             if suitable_verb_found_in_room is not None:
                 return suitable_verb_found_in_room
