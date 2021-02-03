@@ -1,6 +1,7 @@
 from .. import entities
 from .. import util
 from .verb import Verb
+from .. import session
 
 class CustomVerb(Verb):
     command = None
@@ -54,7 +55,8 @@ class CustomVerb(Verb):
             depth = 0
 
         try:
-            ghost = session.GhostSession(self.session.server, self.session.user.room, depth=depth)
+            creator_session = self.session if not isinstance(self.session, session.GhostSession) else self.session.creator_session
+            ghost = session.GhostSession(self.session.server, self.session.user.room, creator_session, depth=depth)
         except session.GhostSessionMaxDepthExceeded:
             self.session.send_to_all('En este mundo hay un travieso... menos mal que estoy yo aquí para poner orden :)')
         else:
@@ -64,5 +66,11 @@ class CustomVerb(Verb):
             ghost.disconnect()
 
     def format_custom_verb_message(self, message):
-        message = message.replace('.usuario', self.session.user.name)
+        if isinstance(self.session, session.GhostSession):
+            working_session = self.session.creator_session
+        else:
+            working_session = self.session
+  
+        message = message.replace('.usuario', working_session.user.name)
+  
         return message

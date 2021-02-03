@@ -104,12 +104,13 @@ class GhostSession(Session):
 
     MAX_DEPTH = 10  # max number of recursive GhostSessions
 
-    def __init__(self, server, start_room, depth=0):
+    def __init__(self, server, start_room, creator_session, depth=0):
         GHOST_USER_NAME = util.GHOST_USER_NAME  # name of the ghost user
         PLACEHOLDER_SESSION_ID = -1  # with this invalid id, the server won't send messages meant to the session's client 
         super().__init__(PLACEHOLDER_SESSION_ID, server)  # normal session __init__. Assigns session id and server.
         self.current_verb = None  # we want to not have an assigned verb at session creation.
         self.depth = depth
+        self.creator_session = creator_session
         if self.depth > self.MAX_DEPTH:
             raise GhostSessionMaxDepthExceeded()
 
