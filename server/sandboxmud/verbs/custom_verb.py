@@ -47,11 +47,21 @@ class CustomVerb(Verb):
 
     def execute_custom_verb(self, custom_verb):
         from .. import session
-        ghost = session.GhostSession(self.session.server, self.session.user.room)
-        for message in custom_verb.commands:
-            formatted_message = self.format_custom_verb_message(message)
-            ghost.process_message(formatted_message)
-        ghost.disconnect()
+
+        if isinstance(self.session, session.GhostSession):
+            depth = self.session.depth + 1
+        else:
+            depth = 0
+
+        try:
+            ghost = session.GhostSession(self.session.server, self.session.user.room, depth=depth)
+        except session.GhostSessionMaxDepthExceeded:
+            self.session.send_to_all('En este mundo hay un travieso... menos mal que estoy yo aquí para poner orden :)')
+        else:
+            for message in custom_verb.commands:
+                formatted_message = self.format_custom_verb_message(message)
+                ghost.process_message(formatted_message)
+            ghost.disconnect()
 
     def format_custom_verb_message(self, message):
         message = message.replace('.usuario', self.session.user.name)

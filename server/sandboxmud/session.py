@@ -83,7 +83,6 @@ class Session:
 
     def send_to_all(self, message):
         for user in entities.User.objects:
-            print(user.name)
             self.server.send_message(user.client_id, message)
 
     def set_logger(self, logger):
@@ -103,11 +102,16 @@ class GhostSession(Session):
      - A ghost session ends as soon as the automated task does.
     """
 
-    def __init__(self, server, start_room):
+    MAX_DEPTH = 10  # max number of recursive GhostSessions
+
+    def __init__(self, server, start_room, depth=0):
         GHOST_USER_NAME = util.GHOST_USER_NAME  # name of the ghost user
         PLACEHOLDER_SESSION_ID = -1  # with this invalid id, the server won't send messages meant to the session's client 
         super().__init__(PLACEHOLDER_SESSION_ID, server)  # normal session __init__. Assigns session id and server.
         self.current_verb = None  # we want to not have an assigned verb at session creation.
+        self.depth = depth
+        if self.depth > self.MAX_DEPTH:
+            raise GhostSessionMaxDepthExceeded()
 
         # retrieve or create ghost user and put in in the right room.
         if entities.User.objects(name=GHOST_USER_NAME):
@@ -121,3 +125,10 @@ class GhostSession(Session):
     def disconnect(self):
         if self.user is not None:
             self.user.disconnect()
+
+
+class GhostSessionMaxDepthExceeded(Exception):
+    """
+    Raised when there are too many nested custom verbs in execution.
+    i.e. when a custom verb is used that uses another custom verb, and so on.
+    """
