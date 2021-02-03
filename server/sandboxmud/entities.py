@@ -175,7 +175,7 @@ class World(mongoengine.Document):
 
 class Exit(mongoengine.Document):
     name = mongoengine.StringField(required=True)
-    destination = mongoengine.ReferenceField('Room', required=True)  # reverse delete rule specified later due to circular rule
+    destination = mongoengine.ReferenceField('Room', required=True)
     description = mongoengine.StringField(default='No tiene nada de especial.')
     visible = mongoengine.StringField(choices=['listed', 'hidden', 'obvious'], default='listed')
     is_open = mongoengine.BooleanField(default=True)
@@ -283,11 +283,6 @@ class Room(mongoengine.Document):
         self.custom_verbs.append(custom_verb)
         self.save()
 
-# make exits pointing to a deleted room to be deleted as well
-# can't specify it at class declaration because there is a circular delete rule:
-# deleted exits are removed from list of exits in a room
-Room.register_delete_rule(Exit, 'destination', mongoengine.CASCADE)
-
 
 class User(mongoengine.Document):
     name = mongoengine.StringField(required=True)
@@ -342,6 +337,27 @@ class User(mongoengine.Document):
         self.save()
 
 
+# delete rules
+# example:
+#   Entity1.register_delete_rule(Entity2, 'reference_field', delete_rule) 
+# means:
+#   when a document of type Entity1 is deleted, delete_rule happens to all Entity2 that referenced that Entity1 on its field 'referencefield'
+# Note: rules are only applied to database, not runtime instances. They must be reloaded.
+CustomVerb.register_delete_rule(Room, 'custom_verbs', mongoengine.PULL)
+CustomVerb.register_delete_rule(Item, 'custom_verbs', mongoengine.PULL)
+CustomVerb.register_delete_rule(World, 'custom_verbs', mongoengine.PULL)
+Item.register_delete_rule(Room, 'items', mongoengine.PULL)
+Item.register_delete_rule(User, 'inventory', mongoengine.PULL)
+Item.register_delete_rule(User, 'saved_items', mongoengine.DENY)
+Exit.register_delete_rule(Room, 'exits', mongoengine.PULL)
+Room.register_delete_rule(User, 'room', mongoengine.DENY)
+Room.register_delete_rule(Item, 'room', mongoengine.CASCADE)
+Room.register_delete_rule(Exit, 'room', mongoengine.CASCADE)
+Room.register_delete_rule(Exit, 'destination', mongoengine.CASCADE)  
+
+
+
+# Exceptions related to entities
 class BadItem(Exception):
     """Raised when saving an item that does not abide by the item prerequisites"""
 
