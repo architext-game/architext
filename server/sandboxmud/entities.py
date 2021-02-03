@@ -151,8 +151,11 @@ class Item(mongoengine.Document):
 
     @classmethod
     def get_items_in_world(cls):
-        return cls.objects(room__ne=None)
-
+        items_at_rooms = list(cls.objects(room__ne=None))
+        items_being_carried = []
+        for user in User.objects():
+            items_being_carried += user.inventory
+        return items_at_rooms + items_being_carried
 
 class World(mongoengine.Document):
     next_room_id = mongoengine.IntField(default=0)
