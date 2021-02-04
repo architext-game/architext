@@ -11,7 +11,7 @@ class Build(Verb):
 
     def __init__(self, session):
         super().__init__(session)
-        self.new_room = entities.Room(save_on_creation=False)
+        self.new_room = entities.Room(save_on_creation=False, world=self.session.user.room.world)
         self.exit_from_here = entities.Exit(destination=self.new_room, room=self.session.user.room, save_on_creation=False)
         self.exit_from_there = entities.Exit(destination=self.session.user.room, room=self.new_room, save_on_creation=False)
         self.current_process_function = self.process_first_message

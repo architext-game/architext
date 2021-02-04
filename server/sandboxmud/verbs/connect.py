@@ -25,8 +25,8 @@ class Connect(Verb):
     def process_room_alias(self, message):
         if not message:
             self.session.send_to_client("Prueba otra vez.")
-        elif entities.Room.objects(alias=message):
-                self.other_room = entities.Room.objects(alias=message).first()
+        elif entities.Room.objects(alias=message, world=self.session.user.room.world):
+                self.other_room = entities.Room.objects(alias=message, world=self.session.user.room.world).first()
                 self.exit_from_here.destination = self.other_room
                 self.exit_from_there.room = self.other_room
                 self.session.send_to_client("¿Cómo quieres llamar a la salida desde aquí? Puedes dejarlo en blanco para un nombre autogenerado.")

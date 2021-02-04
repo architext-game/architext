@@ -158,8 +158,10 @@ class Item(mongoengine.Document):
         return items_at_rooms + items_being_carried
 
 class World(mongoengine.Document):
-    next_room_id = mongoengine.IntField(default=0)
+    name = mongoengine.StringField(required=True)
+    next_room_id = mongoengine.IntField(default=1)
     custom_verbs = mongoengine.ListField(mongoengine.ReferenceField('CustomVerb'))
+    starting_room = mongoengine.ReferenceField('Room', required=True)
 
     def __init__(self, *args, save_on_creation=True, **kwargs):
         super().__init__(*args, **kwargs)
@@ -240,7 +242,8 @@ class Exit(mongoengine.Document):
 
 class Room(mongoengine.Document):
     name        = mongoengine.StringField(required=True)
-    alias       = mongoengine.StringField(required=True, unique=True)  # unique id of the room, not shown to users
+    world       = mongoengine.ReferenceField('World')
+    alias       = mongoengine.StringField(required=True)  # id of the room, unique in each world
     description = mongoengine.StringField(default='')
     exits       = mongoengine.ListField(mongoengine.ReferenceField('Exit', reverse_delete_rule=mongoengine.PULL))  # deleted exits are auto-removed from the list
     items       = mongoengine.ListField(mongoengine.ReferenceField('Item'))
@@ -250,8 +253,7 @@ class Room(mongoengine.Document):
         if 'alias' in kwargs:
             super().__init__(*args, **kwargs)
         else:
-            world = World.objects[0]
-            default_alias = world.get_unique_room_id()
+            default_alias = kwargs['world'].get_unique_room_id()
             super().__init__(alias=default_alias, *args, **kwargs)
         if self.id is None and save_on_creation:
             self.save()
@@ -289,7 +291,7 @@ class Room(mongoengine.Document):
 
 class User(mongoengine.Document):
     name = mongoengine.StringField(required=True)
-    room = mongoengine.ReferenceField('Room', required=True)
+    room = mongoengine.ReferenceField('Room')
     client_id = mongoengine.IntField(default=None)
     inventory = mongoengine.ListField(mongoengine.ReferenceField('Item'))
     master_mode = mongoengine.BooleanField(default=False)
@@ -356,7 +358,8 @@ Exit.register_delete_rule(Room, 'exits', mongoengine.PULL)
 Room.register_delete_rule(User, 'room', mongoengine.DENY)
 Room.register_delete_rule(Item, 'room', mongoengine.CASCADE)
 Room.register_delete_rule(Exit, 'room', mongoengine.CASCADE)
-Room.register_delete_rule(Exit, 'destination', mongoengine.CASCADE)  
+Room.register_delete_rule(Exit, 'destination', mongoengine.CASCADE)
+World.register_delete_rule(Room, 'world', mongoengine.CASCADE) 
 
 
 

@@ -14,7 +14,7 @@ class Session:
     """
 
     # List of all verbs supported by the session, ordered by priority: if two verbs can handle the same message, the first will have preference.
-    verbs = [v.CustomVerb, v.Build, v.Emote, v.Go, v.Help, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.TeleportClient, v.TeleportUser, v.TeleportAllInRoom, v.TeleportAllInWorld, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.Info, v.Items, v.Exits, v.AddVerb, v.MasterMode, v.TextToOne, v.TextToRoom, v.TextToRoomUnless, v.TextToWorld, v.Take, v.Drop, v.Inventory, v.MasterOpen, v.MasterClose, v.AssignKey, v.Open, v.SaveItem, v.PlaceItem]
+    verbs = [v.Lobby, v.GoToLobby, v.CustomVerb, v.Build, v.Emote, v.Go, v.Help, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.TeleportClient, v.TeleportUser, v.TeleportAllInRoom, v.TeleportAllInWorld, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.Info, v.Items, v.Exits, v.AddVerb, v.MasterMode, v.TextToOne, v.TextToRoom, v.TextToRoomUnless, v.TextToWorld, v.Take, v.Drop, v.Inventory, v.MasterOpen, v.MasterClose, v.AssignKey, v.Open, v.SaveItem, v.PlaceItem]
 
     def __init__(self, session_id, server):
         self.logger = None  # logger for recording user interaction

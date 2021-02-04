@@ -48,17 +48,16 @@ if __name__ == "__main__":
     # If not connected yet, try to connect to the default db specified in the docker-compose file
     if not connected_to_db:
         database_connect()
-
+        
     # World setup if there isn't one in the db
     if not sandboxmud.entities.World.objects:
         sandboxmud.entities.Item.drop_collection()
         sandboxmud.entities.User.drop_collection()
         sandboxmud.entities.Room.drop_collection()
-        new_world = sandboxmud.entities.World()
-
-    # First room setup, if there isn't one yet
-    if not sandboxmud.entities.Room.objects(alias='0'):
-        lobby = sandboxmud.entities.Room(name='El Inicio', description='Esta sala es donde nacen los novatos. A partir de aquí se abren las puertas a diferentes mundos. Si no sabes moverte, escribe "ayuda" y descubrirás todo lo que puedes hacer.')
+        lobby = sandboxmud.entities.Room(alias='0', name='El Inicio', description='Esta sala es donde nacen los novatos. A partir de aquí se abren las puertas a diferentes mundos. Si no sabes moverte, escribe "ayuda" y descubrirás todo lo que puedes hacer.')
+        new_world = sandboxmud.entities.World(starting_room=lobby, name='Mundo inicial')
+        lobby.world = new_world
+        lobby.save()
 
     # Server creation for telnet communication
     server = telnetserver.TelnetServer(error_policy='ignore')
