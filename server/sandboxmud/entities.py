@@ -98,7 +98,7 @@ class Item(mongoengine.Document):
                     'exception': RoomNameClash()
                 },
                 'there_is_no_takable_with_same_name': {
-                    'condition': item_name not in [takable_item.name for takable_item in Item.get_items_in_world() if takable_item != ignore_item and takable_item.visible=='takable'],
+                    'condition': item_name not in [takable_item.name for takable_item in Item.get_items_in_world(local_room.world) if takable_item != ignore_item and takable_item.visible=='takable'],
                     'exception': TakableItemNameClash()
                 }
             }
@@ -108,8 +108,8 @@ class Item(mongoengine.Document):
             takable_item_conditions = {
                 'name_is_globally_unique': {
                     'condition': (
-                            item_name not in [item.name for item in Item.get_items_in_world() if item != ignore_item]
-                            and item_name not in [item.name for item in Exit.get_exits_in_world() if item != ignore_item]
+                            item_name not in [item.name for item in Item.get_items_in_world(local_room.world) if item != ignore_item]
+                            and item_name not in [item.name for item in Exit.get_exits_in_world(local_room.world) if item != ignore_item]
                         ),
                     'exception': NameNotGloballyUnique()
                 }
@@ -150,11 +150,11 @@ class Item(mongoengine.Document):
         return new_item
 
     @classmethod
-    def get_items_in_world(cls):
+    def get_items_in_world(cls, world):
         items_at_rooms = list(cls.objects(room__ne=None))
         items_being_carried = []
         for user in User.objects():
-            items_being_carried += user.inventory
+            items_being_carried += user.get_inventory_from(world)
         return items_at_rooms + items_being_carried
 
 class World(mongoengine.Document):
@@ -236,8 +236,11 @@ class Exit(mongoengine.Document):
         return self.visible == 'hidden'
 
     @classmethod
-    def get_exits_in_world(cls):
-        return cls.objects()
+    def get_exits_in_world(cls, world):
+        exits_in_world = []
+        for room in Room.objects(world=world):
+            exits_in_world += room.exits
+        return exits_in_world
         
 
 class Room(mongoengine.Document):
@@ -293,7 +296,7 @@ class User(mongoengine.Document):
     name = mongoengine.StringField(required=True)
     room = mongoengine.ReferenceField('Room')
     client_id = mongoengine.IntField(default=None)
-    inventory = mongoengine.ListField(mongoengine.ReferenceField('Item'))
+    inventory = mongoengine.DictField()  #  One inventory for each world: keys are words, values are lists of items.
     master_mode = mongoengine.BooleanField(default=False)
     saved_items = mongoengine.ListField(mongoengine.ReferenceField('Item'))
 
@@ -311,12 +314,25 @@ class User(mongoengine.Document):
         self.room = room
         self.save()
 
+    def get_inventory_from(self, world):
+        return self.inventory.get(str(world.id), [])
+
+    def get_current_world_inventory(self):
+        if self.room is None:
+            raise Exception("Tried to get current world inventory of a user in lobby.")
+        return self.get_inventory_from(self.room.world)
+
     def add_item_to_inventory(self, item):
-        self.inventory.append(item)
+        if self.get_current_world_inventory() == []:
+            self.inventory[str(self.room.world.id)] = []
+        self.inventory[str(self.room.world.id)].append(item)
         self.save()
 
     def remove_item_from_inventory(self, item):
-        self.inventory.remove(item)
+        try:
+            self.inventory[str(self.room.world.id)].remove(item)
+        except KeyError:
+            raise KeyError('Tried to remove from inventory an item that was not there.')
         self.save()
 
     def save_item(self, item):
@@ -352,7 +368,7 @@ CustomVerb.register_delete_rule(Room, 'custom_verbs', mongoengine.PULL)
 CustomVerb.register_delete_rule(Item, 'custom_verbs', mongoengine.PULL)
 CustomVerb.register_delete_rule(World, 'custom_verbs', mongoengine.PULL)
 Item.register_delete_rule(Room, 'items', mongoengine.PULL)
-Item.register_delete_rule(User, 'inventory', mongoengine.PULL)
+# Item.register_delete_rule(User, 'inventory', mongoengine.PULL)  # Not working since inventory is a DictField
 Item.register_delete_rule(User, 'saved_items', mongoengine.DENY)
 Exit.register_delete_rule(Room, 'exits', mongoengine.PULL)
 Room.register_delete_rule(User, 'room', mongoengine.DENY)
