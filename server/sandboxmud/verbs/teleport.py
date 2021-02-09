@@ -14,7 +14,7 @@ class TeleportClient(Verb):
         command_length = len(self.command)
         room_alias = message[command_length:]
         
-        query = entities.Room.objects(alias=room_alias, world=self.session.user.room.world)
+        query = entities.Room.objects(alias=room_alias, world_state=self.session.user.room.world_state)
         if len(query) == 1:
             self.teleport_client(query.first())
         elif len(query) > 1:

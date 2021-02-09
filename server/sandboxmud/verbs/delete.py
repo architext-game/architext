@@ -67,18 +67,12 @@ class DeleteItem(Verb):
 
     def process(self, message):
         command_length = len(self.command)
-        message = message[command_length:]
-        selected_item = None
-        items = self.session.user.room.items
-        for item in items:
-            if item.name == message:
-                selected_item = item
-                break
+        item_name = message[command_length:]
+        selected_item = next(entities.Item.objects(room=self.session.user.room, name=item_name), None)
 
         if selected_item is None:
             self.session.send_to_client("No está ese objeto.")
         else:
-            self.session.user.room.remove_item(selected_item)
             selected_item.delete()
             self.session.send_to_client("Eliminado")
         self.finish_interaction()

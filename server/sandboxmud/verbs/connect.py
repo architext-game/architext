@@ -25,8 +25,8 @@ class Connect(Verb):
     def process_room_alias(self, message):
         if not message:
             self.session.send_to_client("Prueba otra vez.")
-        elif entities.Room.objects(alias=message, world=self.session.user.room.world):
-                self.other_room = entities.Room.objects(alias=message, world=self.session.user.room.world).first()
+        elif entities.Room.objects(alias=message, world_state=self.session.user.room.world_state):
+                self.other_room = entities.Room.objects(alias=message, world_state=self.session.user.room.world_state).first()
                 self.exit_from_here.destination = self.other_room
                 self.exit_from_there.room = self.other_room
                 self.session.send_to_client("¿Cómo quieres llamar a la salida desde aquí? Puedes dejarlo en blanco para un nombre autogenerado.")
@@ -69,8 +69,10 @@ class Connect(Verb):
         except entities.TakableItemNameClash:
             self.session.send_to_client("Hay en el mundo un objeto tomable con ese nombre. Los objetos tomables deben tener un nombre único en todo el mundo, así que prueba a poner otro.")
         else:
-            self.session.user.room.add_exit(self.exit_from_here)
-            self.other_room.add_exit(self.exit_from_there)
+            self.exit_from_here.destination = self.other_room
+            self.exit_from_there.room = self.other_room
+            self.exit_from_here.save()
+            self.exit_from_there.save()
             self.session.send_to_client("Salas conectadas")
             if not self.session.user.master_mode:
                 self.session.send_to_others_in_room("Los ojos de {} se ponen en blanco un momento. Una nueva salida aparece en la habitación.".format(self.session.user.name))

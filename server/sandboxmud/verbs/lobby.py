@@ -53,7 +53,7 @@ class Lobby(verb.Verb):
             self.session.send_to_client("Introduce el número correspondiente a uno de los mundos")
             return
 
-        self.session.user.room = chosen_world.starting_room
+        self.session.user.room = chosen_world.world_state.starting_room
         self.session.user.save()
         
         self.session.send_to_client("VIAJANDO A {}".format(chosen_world.name))
@@ -72,11 +72,7 @@ class Lobby(verb.Verb):
             return
 
         self.new_world.name = message
-        starting_room = entities.Room(alias='0', name='El Inicio', description='Esta sala es donde nacen los novatos. A partir de aquí se abren las puertas a diferentes mundos. Si no sabes moverte, escribe "ayuda" y descubrirás todo lo que puedes hacer.')
-        self.new_world.starting_room = starting_room
         self.new_world.save()
-        starting_room.world = self.new_world
-        starting_room.save()
         self.session.send_to_client('HECHO! Aquí lo ves:')
         self.show_world_list()
         self.finish_interaction()

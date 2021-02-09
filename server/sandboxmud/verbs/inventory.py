@@ -22,8 +22,8 @@ class Take(Verb):
         else:
             target_item_name = items_they_may_be_referring_to[0]
             target_item = next(filter(lambda i: i.name==target_item_name, self.session.user.room.items))
-            self.session.user.add_item_to_inventory(target_item)
-            self.session.user.room.remove_item(target_item)
+            self.session.user.get_current_world_inventory().add_item(target_item)
+            target_item.remove_from_room()
             self.session.send_to_client('Has cogido el objeto.')
         
         self.finish_interaction()
@@ -39,7 +39,7 @@ class Drop(Verb):
 
     def process(self, message):
         partial_name = message[len(self.command):]
-        names_of_dropable_items = [item.name for item in self.session.user.get_current_world_inventory()]
+        names_of_dropable_items = [item.name for item in self.session.user.get_current_world_inventory().items]
         items_they_may_be_referring_to = util.possible_meanings(partial_name, names_of_dropable_items)
 
         if len(items_they_may_be_referring_to) < 1:
@@ -48,9 +48,9 @@ class Drop(Verb):
             self.session.send_to_client('Hay más de un objeto con ese nombre en tu inventario. Sé más específico.')
         else:
             target_item_name = items_they_may_be_referring_to[0]
-            target_item = next(filter(lambda i: i.name==target_item_name, self.session.user.get_current_world_inventory()))
-            self.session.user.remove_item_from_inventory(target_item)
-            self.session.user.room.add_item(target_item)
+            target_item = next(filter(lambda i: i.name==target_item_name, self.session.user.get_current_world_inventory().items))
+            self.session.user.get_current_world_inventory().remove_item(target_item)
+            target_item.put_in_room(self.session.user.room)
             self.session.send_to_client('Has dejado el objeto.')
         
         self.finish_interaction()
@@ -62,10 +62,10 @@ class Inventory(Verb):
     command = 'inventario'
 
     def process(self, message):
-        if len(self.session.user.get_current_world_inventory()) < 1:
+        if len(self.session.user.get_current_world_inventory().items) < 1:
             self.session.send_to_client('No tienes ningún objeto en tu inventario.')
         else:
-            item_names = [item.name for item in self.session.user.get_current_world_inventory()]
+            item_names = [item.name for item in self.session.user.get_current_world_inventory().items]
             inventory_list = functools.reduce(lambda a, b: '{}\n{}'.format(a,b), item_names)
             self.session.send_to_client('Llevas contigo estos objetos:\n{}'.format(inventory_list))
 

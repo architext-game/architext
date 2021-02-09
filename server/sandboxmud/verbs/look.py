@@ -16,7 +16,7 @@ class Look(Verb):
         self.finish_interaction()
 
     def show_item_or_exit(self, partial_name):
-        lookable_items = self.session.user.room.items + self.session.user.get_current_world_inventory()
+        lookable_items = self.session.user.room.items + self.session.user.get_current_world_inventory().items
         names_of_lookable_items = [item.name for item in lookable_items]
         items_he_may_be_referring_to = util.possible_meanings(partial_name, names_of_lookable_items)
 

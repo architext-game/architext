@@ -81,7 +81,7 @@ class Open(Verb):
         self.finish_interaction()
 
     def open(self, exit_to_open):
-        for item in self.session.user.get_current_world_inventory():
+        for item in self.session.user.get_current_world_inventory().items:
             if item.name in exit_to_open.key_names:
                 exit_to_open.open()
                 self.session.send_to_client("Abres la salida con {}.".format(item.name))

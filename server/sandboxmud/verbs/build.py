@@ -11,7 +11,7 @@ class Build(Verb):
 
     def __init__(self, session):
         super().__init__(session)
-        self.new_room = entities.Room(save_on_creation=False, world=self.session.user.room.world)
+        self.new_room = entities.Room(save_on_creation=False, world_state=self.session.user.room.world_state)
         self.exit_from_here = entities.Exit(destination=self.new_room, room=self.session.user.room, save_on_creation=False)
         self.exit_from_there = entities.Exit(destination=self.session.user.room, room=self.new_room, save_on_creation=False)
         self.current_process_function = self.process_first_message
@@ -57,8 +57,8 @@ class Build(Verb):
     def process_there_exit_name(self, message):
         if not message:
             message = "a {}".format(self.session.user.room.name)
-            message = self.make_exit_name_valid(message, self.new_room)
-            
+            message = self.make_exit_name_valid(message, self.new_room)  
+
         self.exit_from_there.name = message
         
         try:
@@ -71,8 +71,6 @@ class Build(Verb):
             self.new_room.save()
             self.exit_from_here.save()
             self.exit_from_there.save()
-            self.session.user.room.add_exit(self.exit_from_here)
-            self.new_room.add_exit(self.exit_from_there)
 
             self.session.send_to_client("¡Enhorabuena! Tu nueva habitación está lista.")
             if not self.session.user.master_mode:
