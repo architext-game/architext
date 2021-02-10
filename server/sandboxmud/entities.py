@@ -21,6 +21,8 @@ The responsibilities of each entity are:
 
 import mongoengine
 import re
+import functools
+import operator
 
 
 class CustomVerb(mongoengine.Document):
@@ -142,8 +144,8 @@ class Item(mongoengine.Document):
         self.custom_verbs.append(custom_verb)
         self.save()
 
-    def clone(self):
-        new_item = Item(name=self.name, description=self.description, visible=self.visible)
+    def clone(self, new_room=None):
+        new_item = Item(name=self.name, description=self.description, visible=self.visible, room=new_room)
         for custom_verb in self.custom_verbs:
             new_item.add_custom_verb(custom_verb.clone())
         new_item.save()
@@ -182,22 +184,27 @@ class World(mongoengine.Document):
             if save_on_creation:
                 self.save()
 
+    def add_snapshot(self, snapshot):
+        self.snapshots.append(snapshot)
+        self.save()
+
 class WorldState(mongoengine.Document):
     starting_room = mongoengine.ReferenceField('Room', required=True)
     custom_verbs = mongoengine.ListField(mongoengine.ReferenceField('CustomVerb'))
     _next_room_id = mongoengine.IntField(default=1)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, save_on_creation=True, **kwargs):
         super().__init__(*args, **kwargs)
 
         if self.id is None:
-            if self.starting_room is None:
-                self.starting_room = Room(alias='0', name='El Inicio', description='Esta sala es donde nacen los novatos. A partir de aquí se abren las puertas a diferentes mundos. Si no sabes moverte, escribe "ayuda" y descubrirás todo lo que puedes hacer.')
-            if self.starting_room.alias != '0':
-                raise Exception('The alias of a starting room must be "0"')
-            self.starting_room.world_state = self
-            self.save()
-            self.starting_room.save()
+            if save_on_creation:
+                if self.starting_room is None:
+                    self.starting_room = Room(alias='0', name='El Inicio', description='Esta sala es donde nacen los novatos. A partir de aquí se abren las puertas a diferentes mundos. Si no sabes moverte, escribe "ayuda" y descubrirás todo lo que puedes hacer.')
+                if self.starting_room.alias != '0':
+                    raise Exception('The alias of a starting room must be "0"')
+                self.save()
+                self.starting_room.world_state = self
+                self.starting_room.save()
 
     def get_unique_room_id(self):
         id_to_serve = str(self._next_room_id)
@@ -205,18 +212,63 @@ class WorldState(mongoengine.Document):
         self.save()
         return id_to_serve
 
+    def get_world(self):
+        return next(World.objects(world_state=self))
+
     def add_custom_verb(self, custom_verb):
         self.custom_verbs.append(custom_verb)
         self.save()
 
+    def clone(self):
+        new_world_state = WorldState(_next_room_id=self._next_room_id, save_on_creation=False)
+
+        new_world_state.starting_room = self.starting_room.clone()
+        new_world_state.save()
+        new_world_state.starting_room.world_state = new_world_state
+        new_world_state.starting_room.save()
+
+        for custom_verb in self.custom_verbs:
+            new_world_state.custom_verbs.append(custom_verb.clone())
+
+        for room in Room.objects(world_state=self, alias__ne=self.starting_room.alias):
+            room.clone(new_world_state=new_world_state)
+
+        cloned_rooms = Room.objects(world_state=new_world_state)
+        exits_to_clone = [exit_to_clone for room in Room.objects(world_state=self) for exit_to_clone in room.exits]
+        for exit in exits_to_clone:
+            new_exit_location = next(filter(lambda r: r.alias==exit.room.alias, cloned_rooms))
+            new_exit_destination = next(filter(lambda r: r.alias==exit.destination.alias, cloned_rooms))
+            exit.clone(new_destination=new_exit_destination, new_room=new_exit_location)
+
+        for inventory in Inventory.objects(world_state=self):
+            inventory.clone(new_world_state=new_world_state)
+
+        new_world_state.save()
+        return new_world_state
+
+    def get_rooms(self):
+        return Room.objects(world_state=self)
+
 class WorldSnapshot(mongoengine.Document):
     name = mongoengine.StringField(required=True)
-    snapshoted_state = mongoengine.ReferenceField('WorldState')
+    snapshoted_state = mongoengine.ReferenceField('WorldState', required=True)
+
+    def __init__(self, *args, save_on_creation=True, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.id is None and save_on_creation:
+                self.save()
+
+
 
 class Inventory(mongoengine.Document):
     user  = mongoengine.ReferenceField('User', required=True)
     world_state = mongoengine.ReferenceField('WorldState', required=True)
     items = mongoengine.ListField(mongoengine.ReferenceField('Item'))
+
+    def __init__(self, *args, save_on_creation=True, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.id is None and save_on_creation:
+                self.save()
 
     def add_item(self, item):
         self.items.append(item)
@@ -225,6 +277,13 @@ class Inventory(mongoengine.Document):
     def remove_item(self, item):
         self.items.remove(item)
         self.save()
+
+    def clone(self, new_world_state):
+        new_inventory = Inventory(world_state=new_world_state, user=self.user)
+        for item in self.items:
+            new_inventory.items.append(item.clone())
+        new_inventory.save()
+        return new_inventory
 
 class Exit(mongoengine.Document):
     name = mongoengine.StringField(required=True)
@@ -283,6 +342,10 @@ class Exit(mongoengine.Document):
     def is_hidden(self):
         return self.visible == 'hidden'
 
+    def clone(self, new_destination, new_room=None):
+        new_exit = Exit(name=self.name, destination=new_destination, room=new_room, visible=self.visible, is_open=self.is_open, key_names=self.key_names.copy())
+        return new_exit
+
     @classmethod
     def get_exits_in_world_state(cls, world_state):
         exits_in_world_state = []
@@ -326,6 +389,22 @@ class Room(mongoengine.Document):
             return []
         return list(Exit.objects(room=self))
 
+    @property
+    def users(self):
+        if self.id is None:  # if the room is not yet saved into db it cannot have any items
+            return []
+        return list(User.objects(room=self))
+
+    def clone(self, new_world_state=None):
+        new_room = Room(name=self.name, alias=self.alias, description=self.description, world_state=new_world_state)
+        new_custom_verbs = []
+        for custom_verb in self.custom_verbs:
+            new_custom_verbs.append(custom_verb.clone())
+        new_room.custom_verbs = new_custom_verbs
+        for item in self.items:
+            item.clone(new_room=new_room)
+        new_room.save()
+        return new_room
 
 class User(mongoengine.Document):
     name = mongoengine.StringField(required=True)
@@ -395,10 +474,10 @@ Room.register_delete_rule(User, 'room', mongoengine.DENY)
 Room.register_delete_rule(Item, 'room', mongoengine.CASCADE)
 Room.register_delete_rule(Exit, 'room', mongoengine.CASCADE)
 Room.register_delete_rule(Exit, 'destination', mongoengine.CASCADE)
-Room.register_delete_rule(WorldState, 'starting_room', mongoengine.DENY)
+# Room.register_delete_rule(WorldState, 'starting_room', mongoengine.DENY)  # this rule is important, but won't let us delete any WorldState since it cascade-deletes its rooms.
 WorldState.register_delete_rule(Room, 'world_state', mongoengine.CASCADE) 
 WorldState.register_delete_rule(Inventory, 'world_state', mongoengine.CASCADE)
-WorldState.register_delete_rule(WorldSnapshot, 'snapshoted_state', mongoengine.CASCADE)
+WorldState.register_delete_rule(WorldSnapshot, 'snapshoted_state', mongoengine.DENY)
 WorldSnapshot.register_delete_rule(World, 'snapshots', mongoengine.PULL)
 
 
