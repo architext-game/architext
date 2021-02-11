@@ -27,7 +27,7 @@ class Login(Verb):
             self.session.user.connect(self.session.session_id)
             self.session.send_to_client("Bienvenido de nuevo {}.".format(name))
         else:
-            starting_room = entities.Room.objects(alias='0').first()
+            starting_room = None
             self.session.user = entities.User(name=name, room=starting_room)
             self.session.user.connect(self.session.session_id)
             self.session.send_to_client('Bienvenido {}. Si es tu primera vez, escribe "ayuda" para ver una pequeña guía.'.format(name))
