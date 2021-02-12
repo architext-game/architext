@@ -23,7 +23,7 @@ class PlaceItem(Verb):
             selected_item_snapshot = querry[0]
             item_to_place = selected_item_snapshot.clone()
             try:
-                self.session.user.room.add_item(item_to_place)
+                item_to_place.put_in_room(self.session.user.room)
             except entities.RoomNameClash:
                 self.session.send_to_client("En esta sala ya hay un objeto o salida con ese nombre.")
             except entities.TakableItemNameClash:

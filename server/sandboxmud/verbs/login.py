@@ -1,5 +1,6 @@
 from .verb import Verb
 from .look import Look
+from . import lobby
 from .. import entities
 from .. import util
 import logging
@@ -26,14 +27,18 @@ class Login(Verb):
             self.session.user.connect(self.session.session_id)
             self.session.send_to_client("Bienvenido de nuevo {}.".format(name))
         else:
-            lobby = entities.Room.objects(alias='0').first()
-            self.session.user = entities.User(name=name, room=lobby)
+            starting_room = None
+            self.session.user = entities.User(name=name, room=starting_room)
             self.session.user.connect(self.session.session_id)
             self.session.send_to_client('Bienvenido {}. Si es tu primera vez, escribe "ayuda" para ver una pequeña guía.'.format(name))
 
         self.session.user.leave_master_mode()
-        self.session.send_to_others_in_room("¡Puf! {} apareció.".format(name))
-        Look(self.session).show_current_room()
+
+        if self.session.user.room is not None:
+            self.session.send_to_others_in_room("¡Puf! {} apareció.".format(name))
+            Look(self.session).show_current_room()
+        else:
+            lobby.Lobby(self.session).show_world_list()
 
         server_logger = logging.getLogger('server_logger')
         user_logger = util.setup_logger('user_'+name, 'user_'+name+'.txt')
@@ -41,8 +46,6 @@ class Login(Verb):
         log_message = '{} has connected.'.format(name)
         user_logger.info(log_message)
         server_logger.info(log_message)
-        
-
 
     def is_a_valid_name(self, name):
         if not name == '' and not name == util.GHOST_USER_NAME:

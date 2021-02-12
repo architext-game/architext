@@ -22,6 +22,16 @@ def client_ids_cleanup():
     for user in sandboxmud.entities.User.objects(client_id__ne=None):
         user.disconnect()
 
+def clear_database():
+    sandboxmud.entities.User.drop_collection()
+    sandboxmud.entities.Item.drop_collection()
+    sandboxmud.entities.Room.drop_collection()
+    sandboxmud.entities.CustomVerb.drop_collection()
+    sandboxmud.entities.World.drop_collection()
+    sandboxmud.entities.WorldState.drop_collection()
+    sandboxmud.entities.WorldSnapshot.drop_collection()
+    sandboxmud.entities.Exit.drop_collection()
+
 if __name__ == "__main__":
     # Server setup starts here
     import sys, getopt, time
@@ -48,17 +58,11 @@ if __name__ == "__main__":
     # If not connected yet, try to connect to the default db specified in the docker-compose file
     if not connected_to_db:
         database_connect()
-
+        
     # World setup if there isn't one in the db
     if not sandboxmud.entities.World.objects:
-        sandboxmud.entities.Item.drop_collection()
-        sandboxmud.entities.User.drop_collection()
-        sandboxmud.entities.Room.drop_collection()
-        new_world = sandboxmud.entities.World()
-
-    # First room setup, if there isn't one yet
-    if not sandboxmud.entities.Room.objects(alias='0'):
-        lobby = sandboxmud.entities.Room(name='El Inicio', description='Esta sala es donde nacen los novatos. A partir de aquí se abren las puertas a diferentes mundos. Si no sabes moverte, escribe "ayuda" y descubrirás todo lo que puedes hacer.')
+        clear_database()
+        sandboxmud.entities.World(name='Mundo inicial')
 
     # Server creation for telnet communication
     server = telnetserver.TelnetServer(error_policy='ignore')

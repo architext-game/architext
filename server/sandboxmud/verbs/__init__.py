@@ -19,7 +19,10 @@ from .exits import Exits
 from .add_verb import AddVerb
 from .master_mode import MasterMode
 from .direct_text import TextToOne, TextToRoom, TextToRoomUnless, TextToWorld
-from .inventory import Take, Drop, Inventory
+from .inventory import Take, Drop, Inventory, Give, TakeFrom
 from .keys import MasterClose, MasterOpen, AssignKey, Open
 from .saving import SaveItem, PlaceItem
 from .custom_verb import CustomVerb
+from .lobby import GoToLobby, Lobby
+from .snapshots import CreateSnapshot, DeploySnapshot
+from .checks import CheckForItem

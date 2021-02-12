@@ -15,7 +15,7 @@ class CustomVerb(Verb):
     def search_for_custom_verb(cls, message, session):
         if len(message.split(" ", 1)) == 2:  # if the message has the form "verb item"
             target_verb_name, target_item_name = message.split(" ", 1)
-            candidate_items = session.user.room.items + session.user.inventory
+            candidate_items = session.user.room.items + session.user.get_current_world_inventory().items
             items_they_may_be_referring_to = util.possible_meanings(target_item_name, [i.name for i in candidate_items])
             if len(items_they_may_be_referring_to) == 1:
                 target_item_name = items_they_may_be_referring_to[0]
@@ -28,7 +28,7 @@ class CustomVerb(Verb):
             suitable_verb_found_in_room = next(filter(lambda v: v.is_name(target_verb_name), session.user.room.custom_verbs), None)
             if suitable_verb_found_in_room is not None:
                 return suitable_verb_found_in_room
-            world = entities.World.objects[0]
+            world = session.user.room.world_state
             suitable_verb_found_in_world = next(filter(lambda v: v.is_name(target_verb_name), world.custom_verbs), None)
             if suitable_verb_found_in_world is not None:
                 return suitable_verb_found_in_world

@@ -46,7 +46,7 @@ class Craft(Verb):
         elif message.lower() in ['listado', 'l', 'li']:
             self.new_item.visible = 'listed'
         elif message.lower() in ['oculto', 'o', 'oc']:
-            self.new.item_visible = 'hidden'
+            self.new_item.visible = 'hidden'
         elif message.lower() in ['cogible', 'c', 'co']:
             self.new_item.visible = 'takable'
         else:
@@ -58,7 +58,7 @@ class Craft(Verb):
         except entities.NameNotGloballyUnique:
             self.session.send_to_client("Ya hay en el mundo un objeto o una salida con este nombre. Los objetos cogibles deben tener un nombre totalmente único. Tendrás que empezar a crearlo de nuevo.")
         else:
-            self.session.user.room.add_item(self.new_item)
+            self.new_item.put_in_room(self.session.user.room)
             self.session.send_to_client("¡Objeto creado!")
             if not self.session.user.master_mode:
                 self.session.send_to_others_in_room("{} acaba de crear algo aquí.".format(self.session.user.name))

@@ -14,7 +14,7 @@ class TeleportClient(Verb):
         command_length = len(self.command)
         room_alias = message[command_length:]
         
-        query = entities.Room.objects(alias=room_alias)
+        query = entities.Room.objects(alias=room_alias, world_state=self.session.user.room.world_state)
         if len(query) == 1:
             self.teleport_client(query.first())
         elif len(query) > 1:
@@ -40,7 +40,7 @@ class TeleportUser(Verb):
         message = message[len(self.command):]
         target_user_name, room_alias = message.split("' ", 1)
         target_user = next(entities.User.objects(name=target_user_name, client_id__ne=None), None)
-        target_room = next(entities.Room.objects(alias=room_alias), None)
+        target_room = next(entities.Room.objects(alias=room_alias, world=self.session.user.room.world), None)
         if target_user is not None and target_room is not None:
             target_user.teleport(target_room)
             self.session.send_to_client("Hecho.")
@@ -59,7 +59,7 @@ class TeleportAllInRoom(Verb):
     def process(self, message):
         room_alias = message[len(self.command):]
         target_users = entities.User.objects(room=self.session.user.room, client_id__ne=None)
-        target_room = next(entities.Room.objects(alias=room_alias), None)
+        target_room = next(entities.Room.objects(alias=room_alias, world=self.session.user.room.world), None)
 
         if target_room is not None:
             for user in target_users:
@@ -81,7 +81,7 @@ class TeleportAllInWorld(Verb):
     def process(self, message):
         room_alias = message[len(self.command):]
         target_users = entities.User.objects(client_id__ne=None)
-        target_room = next(entities.Room.objects(alias=room_alias), None)
+        target_room = next(entities.Room.objects(alias=room_alias, world=self.session.user.room.world), None)
 
         if target_room is not None:
             for user in target_users:
