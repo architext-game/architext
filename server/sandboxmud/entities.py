@@ -271,6 +271,7 @@ class Inventory(mongoengine.Document):
                 self.save()
 
     def add_item(self, item):
+        item.remove_from_room()
         self.items.append(item)
         self.save()
 

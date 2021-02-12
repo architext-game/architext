@@ -1,6 +1,7 @@
 from .verb import Verb
 from .. import util
 import functools
+from .. import entities
 
 class Take(Verb):
     '''Takes a item to your inventory.
@@ -68,5 +69,46 @@ class Inventory(Verb):
             item_names = [item.name for item in self.session.user.get_current_world_inventory().items]
             inventory_list = functools.reduce(lambda a, b: '{}\n{}'.format(a,b), item_names)
             self.session.send_to_client('Llevas contigo estos objetos:\n{}'.format(inventory_list))
+
+        self.finish_interaction()
+
+
+class Give(Verb):
+    command = "give '"
+
+    def process(self, message):
+        message = message[len(self.command):]
+        target_user_name, target_item_name = message.split("' ", 1)
+
+        target_user = next(entities.User.objects(name=target_user_name, room=self.session.user.room, client_id__ne=None), None)
+        item = next(entities.Item.objects(name=target_item_name, room=self.session.user.room, visible='takable'), None)
+
+        if target_user is not None and item is not None:
+            target_user.get_current_world_inventory().add_item(item)
+            self.session.send_to_client('Hecho.')
+        else:
+            self.sssion.send_to_client("El usuario u objeto no está en esta sala.")
+
+        self.finish_interaction()
+
+class TakeFrom(Verb):
+    command = "take from '"
+
+    def process(self, message):
+        message = message[len(self.command):]
+        target_user_name, target_item_name = message.split("' ", 1)
+
+        target_user = next(entities.User.objects(name=target_user_name, room=self.session.user.room, client_id__ne=None), None)
+        
+        if target_user is not None:
+            target_item = next(filter(lambda i: i.name==target_item_name, target_user.get_current_world_inventory().items), None)
+            if target_item is not None:
+                target_user.get_current_world_inventory().remove_item(target_item)
+                target_item.put_in_room(target_user.room)
+                self.session.send_to_client('Hecho.')
+            else:
+                self.session.send_to_client('El objeto no está en el inventario de ese usuario.')
+        else:
+            self.session.send_to_client('Ese usuario no está aquí.')
 
         self.finish_interaction()
