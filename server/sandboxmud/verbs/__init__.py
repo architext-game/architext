@@ -25,3 +25,4 @@ from .saving import SaveItem, PlaceItem
 from .custom_verb import CustomVerb
 from .lobby import GoToLobby, Lobby
 from .snapshots import CreateSnapshot, DeploySnapshot
+from .checks import CheckForItem

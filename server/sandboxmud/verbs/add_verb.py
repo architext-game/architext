@@ -5,20 +5,6 @@ class AddVerb(Verb):
     """This verb allows users to create new custom verbs tied to items.
     """
 
-    """
-    >verbo
-    <sobre que objeto quieres crear el verbo?
-        1: todo el mundo
-        2: solo esta sala
-        3: objeto 1
-        4: objeto 2
-        ...
-        0: cancelar
-    >1
-    <nombre del verbo?
-    ...
-    """
-
     item_command = 'verboobjeto'  # command for adding verbs to items
     room_command = 'verbosala'    # command for adding verbs to rooms
     world_command = 'verbomundo'  # command for adding verbs to worlds
@@ -88,18 +74,17 @@ class AddVerb(Verb):
                 self.session.send_to_client("En tu lista hay un nombre de verbo inválido. Vuelve a probar.")
                 return
         self.verb_names = verb_names
-        self.session.send_to_client("Ahora introduce la primera acción que se realizará cuando se use el verbo. Puedes usar cualquier acción que puedas usar como jugador, será como si un jugador fantasma la realizase por ti. Escribe .usuario para referirte al jugador que usa el verbo")
+        self.session.send_to_client("Ahora introduce la primera acción que se realizará cuando se use el verbo. Puedes usar cualquier acción que puedas usar como jugador, será como si un jugador fantasma la realizase por ti. Escribe .usuario para referirte al jugador que usa el verbo. Cuando hayas acabado, introduce OK para terminar.")
         self.current_process_function = self.process_command
 
     def process_command(self, message):
-        if message == '' and len(self.command_list) > 0:
+        if message in ['OK', 'ok'] and len(self.command_list) > 0:
             self.build_verb()
             self.finish_interaction()
         elif self.is_valid_command(message):
             self.command_list.append(message)
-            self.session.send_to_client("OK. Ahora introduce la siguiente acción o una línea vacía para terminar.")
         else:
-            self.session.send_to_client("Ese comando no es válido. Prueba otra vez.")
+            self.session.send_to_client("Ese comando no es válido y ha sido ignorado.")
 
     def build_verb(self):
         new_verb = entities.CustomVerb(names=self.verb_names, commands=self.command_list)
@@ -120,5 +105,6 @@ class AddVerb(Verb):
         return True
 
     def is_valid_command(self, command):
-        # TODO checks if a command is a valid commnd
+        if not command:
+            return False
         return True
