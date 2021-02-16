@@ -59,11 +59,6 @@ if __name__ == "__main__":
     if not connected_to_db:
         database_connect()
         
-    # World setup if there isn't one in the db
-    if not sandboxmud.entities.World.objects:
-        clear_database()
-        sandboxmud.entities.World(name='Mundo inicial')
-
     # Server creation for telnet communication
     server = telnetserver.TelnetServer(error_policy='ignore')
 
@@ -90,7 +85,7 @@ if __name__ == "__main__":
             if disconnected_client in sessions:
                 ended_session = sessions.pop(disconnected_client)
                 ended_session.disconnect()
-                
+
         # Let each session handle messages sent by his client
         for sender_client, message in server.get_messages():
             if sender_client in sessions:

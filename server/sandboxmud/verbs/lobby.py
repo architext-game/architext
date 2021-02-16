@@ -25,11 +25,15 @@ class Lobby(verb.Verb):
             return False
 
     def show_world_list(self):
-        title = 'Introduce el número del mundo al que quieras ir.\n'
-        world_names_with_index = ['{}. {}'.format(index, world.name) for index, world in enumerate(entities.World.objects())]
-        world_list = functools.reduce(lambda a, b: '{}\n{}'.format(a, b), world_names_with_index)
-        new_world = '\n\n+ para crear un nuevo mundo.'
-        self.session.send_to_client(title+world_list+new_world)
+        message = ""
+        if entities.World.objects():
+            message += 'Introduce el número del mundo al que quieras ir.\n'
+            world_names_with_index = ['{}. {}'.format(index, world.name) for index, world in enumerate(entities.World.objects())]
+            message += functools.reduce(lambda a, b: '{}\n{}'.format(a, b), world_names_with_index)
+        else:
+            message += 'No hay ningún mundo en este servidor.'
+        message += '\n\n+ para crear un nuevo mundo.'
+        self.session.send_to_client(message)
 
     def process(self, message):
         self.current_process_function(message)
@@ -62,7 +66,7 @@ class Lobby(verb.Verb):
         self.finish_interaction()
 
     def create_world(self, message):
-        self.new_world = entities.World(save_on_creation=False)
+        self.new_world = entities.World(save_on_creation=False, creator=self.session.user)
         self.session.send_to_client('Escribe el nombre que quieres ponerle al mundo.')
         self.current_process_function = self.process_word_name
 
