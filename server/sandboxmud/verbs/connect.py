@@ -1,12 +1,13 @@
-from .verb import Verb
+from . import verb
 from .. import util
 from .. import entities
 
-class Connect(Verb):
+class Connect(verb.Verb):
     """This verb allow users to connect two existing rooms. One is the room where the user is located,
     The other room is specified through its alias"""
 
     command = 'conectar'
+    permissions = verb.PRIVILEGED
 
     def __init__(self, session):
         super().__init__(session)

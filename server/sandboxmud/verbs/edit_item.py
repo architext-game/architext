@@ -1,11 +1,12 @@
-from .verb import Verb
+from . import verb
 from .. import util
 from .. import entities
 
-class EditItem(Verb):
+class EditItem(verb.Verb):
     """This verb allows users to edit properties of an item or exit that is in their current room"""
 
     command = 'editar '
+    permissions = verb.PRIVILEGED
 
     def __init__(self, session):
         super().__init__(session)

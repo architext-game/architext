@@ -1,13 +1,14 @@
-from .verb import Verb
+from . import verb
 from .. import entities
 from .. import util
 
-class Build(Verb):
+class Build(verb.Verb):
     """This verb allows the user to create a new room connected to his current location.
     All the user need to know is the command he should write to start creation. That
     command will start a text wizard that drives him across the creation process.
     """
     command = 'construir'
+    permissions = verb.PRIVILEGED
 
     def __init__(self, session):
         super().__init__(session)

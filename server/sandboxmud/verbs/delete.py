@@ -1,13 +1,14 @@
-from .verb import Verb
+from . import verb
 from .. import entities
 
-class DeleteRoom(Verb):
+class DeleteRoom(verb.Verb):
     """This verb allows users to delete their current room.
     A room where there are other connected players cannot be deleted.
     Also, the initial room (with alias 0) cannot be deleted.
     Note that rooms may be left disconnected after the use of this command"""
 
     command = 'eliminarsala'
+    permissions = verb.PRIVILEGED
 
     def process(self, message):
         room_to_delete = self.session.user.room
@@ -35,11 +36,12 @@ class DeleteRoom(Verb):
             
         self.finish_interaction()
 
-class DeleteExit(Verb):
+class DeleteExit(verb.Verb):
     """With this verb users can delete an exit of their current room. Since (for now) exits are allways two-way, it also
     deletes the exit from the other room"""
 
     command = 'eliminarsalida '
+    permissions = verb.PRIVILEGED
 
     def process(self, message):
         command_length = len(self.command)
@@ -60,10 +62,11 @@ class DeleteExit(Verb):
         this_room.delete_exit(exit_here_name)
             
 
-class DeleteItem(Verb):
+class DeleteItem(verb.Verb):
     """By using this verb users can delete items that are in their current room"""
 
     command = 'eliminarobjeto '
+    permissions = verb.PRIVILEGED
 
     def process(self, message):
         command_length = len(self.command)

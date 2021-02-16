@@ -1,9 +1,10 @@
-from .verb import Verb
+from . import verb
 
-class MasterMode(Verb):
+class MasterMode(verb.Verb):
     """Lets players enter and leave master mode"""
 
     command = 'director'
+    permissions = verb.PRIVILEGED
 
     def process(self, message):
         if self.session.user.master_mode:

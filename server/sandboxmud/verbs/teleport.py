@@ -1,14 +1,15 @@
-from .verb import Verb
+from . import verb
 from .look import Look 
 from .. import util
 from .. import entities
 
 
-class TeleportClient(Verb):
+class TeleportClient(verb.Verb):
     """Allows a creator to travel between any two rooms, using the destination unique alias.
     this command is intended to ease the creation process"""
 
     command = 'tp '
+    permissions = verb.PRIVILEGED
 
     def process(self, message):
         command_length = len(self.command)
@@ -29,12 +30,13 @@ class TeleportClient(Verb):
         Look(self.session).show_current_room()
 
 
-class TeleportUser(Verb):
+class TeleportUser(verb.Verb):
     """Allows a creator to move one user to any room. Usage:
     command 'username' room_alias
     """
 
     command = "tpotro '"
+    permissions = verb.PRIVILEGED
 
     def process (self, message):
         message = message[len(self.command):]
@@ -49,12 +51,13 @@ class TeleportUser(Verb):
         self.finish_interaction()
 
 
-class TeleportAllInRoom(Verb):
+class TeleportAllInRoom(verb.Verb):
     """Allows a game master to move all users in his room to other room. Usage:
     command room_alias
     """
 
     command = "tpsala "
+    permissions = verb.PRIVILEGED
 
     def process(self, message):
         room_alias = message[len(self.command):]
@@ -71,12 +74,13 @@ class TeleportAllInRoom(Verb):
         self.finish_interaction()
 
 
-class TeleportAllInWorld(Verb):
+class TeleportAllInWorld(verb.Verb):
     """Allows a game master to move all connected users to the same room. Usage:
     command room_alias
     """
 
     command = "tptodos "
+    permissions = verb.PRIVILEGED
 
     def process(self, message):
         room_alias = message[len(self.command):]

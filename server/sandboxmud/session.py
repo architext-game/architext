@@ -14,7 +14,7 @@ class Session:
     """
 
     # List of all verbs supported by the session, ordered by priority: if two verbs can handle the same message, the first will have preference.
-    verbs = [v.Lobby, v.GoToLobby, v.CustomVerb, v.Build, v.Emote, v.Go, v.Help, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.TeleportClient, v.TeleportUser, v.TeleportAllInRoom, v.TeleportAllInWorld, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.Info, v.Items, v.Exits, v.AddVerb, v.MasterMode, v.TextToOne, v.TextToRoom, v.TextToRoomUnless, v.TextToWorld, v.Take, v.Drop, v.Inventory, v.MasterOpen, v.MasterClose, v.AssignKey, v.Open, v.SaveItem, v.PlaceItem, v.CreateSnapshot, v.DeploySnapshot, v.CheckForItem, v.Give, v.TakeFrom]
+    verbs = [v.Lobby, v.GoToLobby, v.CustomVerb, v.Build, v.Emote, v.Go, v.Help, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.TeleportClient, v.TeleportUser, v.TeleportAllInRoom, v.TeleportAllInWorld, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.Info, v.Items, v.Exits, v.AddVerb, v.MasterMode, v.TextToOne, v.TextToRoom, v.TextToRoomUnless, v.TextToWorld, v.Take, v.Drop, v.Inventory, v.MasterOpen, v.MasterClose, v.AssignKey, v.Open, v.SaveItem, v.PlaceItem, v.CreateSnapshot, v.DeploySnapshot, v.CheckForItem, v.Give, v.TakeFrom, v.WorldInfo, v.ChangeEditFreedom, v.MakeEditor, v.RemoveEditor]
 
     def __init__(self, client_id, server):
         self.logger = None  # logger for recording user interaction
@@ -47,7 +47,7 @@ class Session:
                     break
         
         if self.current_verb is not None:
-            self.current_verb.process(message)
+            self.current_verb.execute(message)
             if self.current_verb.command_finished():
                 self.current_verb = None
         else:
@@ -66,7 +66,8 @@ class Session:
             self.logger.info('server\n'+message)
 
     def send_to_user(self, user, message):
-        self.server.send_message(user.client_id, "\n\r"+message)
+        if user.client_id is not None:
+            self.server.send_message(user.client_id, "\n\r"+message)
 
     def send_to_room_except(self, exception_user, message):
         users_in_this_room = entities.User.objects(room=self.user.room)

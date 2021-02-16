@@ -1,12 +1,13 @@
-from .verb import Verb
+from . import verb
 from .. import entities
 
-class TextToOne(Verb):
+class TextToOne(verb.Verb):
     """Lets game masters send any message to a single user using:
     command 'username' text
     """
 
     command = "textoa '"
+    permissions = verb.PRIVILEGED
 
     def process(self, message):
         command_length = len(self.command)
@@ -20,12 +21,13 @@ class TextToOne(Verb):
         self.finish_interaction()
 
 
-class TextToRoom(Verb):
+class TextToRoom(verb.Verb):
     """Lets game masters send any message to all users in their same room using:
     command text
     """
 
     command = "textosala "
+    permissions = verb.PRIVILEGED
 
     def process(self, message):
         out_message = message[len(self.command):]
@@ -33,12 +35,13 @@ class TextToRoom(Verb):
         self.finish_interaction()
 
 
-class TextToWorld(Verb):
+class TextToWorld(verb.Verb):
     """Lets game masters send any message to all users in the world using:
     command text
     """
 
     command = "textomundo "
+    permissions = verb.PRIVILEGED
 
     def process(self, message):
         out_message = message[len(self.command):]
@@ -46,12 +49,13 @@ class TextToWorld(Verb):
         self.finish_interaction()
 
 
-class TextToRoomUnless(Verb):
+class TextToRoomUnless(verb.Verb):
     """Lets the game master send any message to all users in a room except one:
     command 'username' text
     """
 
     command = "textomenos '"
+    permissions = verb.PRIVILEGED
 
     def process(self, message):
         message = message[len(self.command):]

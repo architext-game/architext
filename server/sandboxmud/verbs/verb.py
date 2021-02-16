@@ -1,3 +1,9 @@
+from .. import session
+
+FREE = 'free'
+PRIVILEGED = 'privileged'
+CREATOR = 'creator'
+
 class Verb():
     """This is the template for creating new verbs. Every verb should have Verb as parent.
     This is an abstract class, with some methods not implemented.
@@ -12,7 +18,9 @@ class Verb():
     Then, the session creates a new instance of the verb and lets it process all user messages
     (via the process(message) method) until the verb instance returns True for its method command_finished.
     """
+
     command = 'verb '
+    permissions = FREE  # possible values: FREE, PRIVILEGED and CREATOR.
 
     @classmethod
     def can_process(cls, message, session):
@@ -24,6 +32,37 @@ class Verb():
     def __init__(self, session):
         self.session = session
         self.finished = False
+
+    def execute(self, message):
+        if self.user_has_enough_privileges():
+            self.process(message)
+        else:
+            self.session.send_to_client('No tienes permisos suficientes para hacer eso.')
+            self.finish_interaction()
+
+    def user_has_enough_privileges(self):
+        if self.session.user is None:
+            return True
+
+        if self.session.user.room is None:
+            return True
+
+        world = self.session.user.room.world_state.get_world()
+        
+        if self.permissions == 'free':
+            return True
+        
+        if self.permissions == 'privileged':
+            if world.all_can_edit or isinstance(self.session, session.GhostSession) or world.is_privileged(self.session.user):
+                return True
+            else:
+                return False
+        
+        if self.permissions == 'creator':
+            if world.is_creator(self.session.user):
+                return True
+            else:
+                return False
 
     def process(self, message):
         raise Exception('Abstract method of interface Verb not implemented')

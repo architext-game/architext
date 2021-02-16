@@ -175,6 +175,9 @@ class World(mongoengine.Document):
     name = mongoengine.StringField(required=True)
     world_state = mongoengine.ReferenceField('WorldState', required=True)
     snapshots = mongoengine.ListField(mongoengine.ReferenceField('WorldSnapshot'))
+    all_can_edit = mongoengine.BooleanField(default=False)
+    editors = mongoengine.ListField(mongoengine.ReferenceField('User'))
+    creator = mongoengine.ReferenceField('User', required=True)
 
     def __init__(self, *args, save_on_creation=True, **kwargs):
         super().__init__(*args, **kwargs)
@@ -187,6 +190,31 @@ class World(mongoengine.Document):
     def add_snapshot(self, snapshot):
         self.snapshots.append(snapshot)
         self.save()
+
+    def is_creator(self, user):
+        return user == self.creator
+
+    def is_privileged(self, user):
+        return self.is_creator(user) or user in self.editors
+
+    def set_to_free_edition(self):
+        self.all_can_edit = True
+        self.save()
+
+    def set_to_privileged_edition(self):
+        self.all_can_edit = False
+        self.save()
+
+    def add_editor(self, user):
+        if user not in self.editors:
+            self.editors.append(user)
+            self.save()
+
+    def remove_editor(self, user):
+        if user in self.editors:
+            self.editors.remove(user)
+            self.save()
+            
 
 class WorldState(mongoengine.Document):
     starting_room = mongoengine.ReferenceField('Room', required=True)

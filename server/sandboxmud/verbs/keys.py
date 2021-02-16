@@ -1,8 +1,9 @@
-from .verb import Verb
+from . import verb
 from .. import util
 
-class MasterClose(Verb):
+class MasterClose(verb.Verb):
     command = "cierradirector "
+    permissions = verb.PRIVILEGED
 
     def process(self, message):
         command_length = len(self.command)
@@ -17,8 +18,9 @@ class MasterClose(Verb):
         self.finish_interaction()
 
 
-class MasterOpen(Verb):
+class MasterOpen(verb.Verb):
     command = "abredirector "
+    permissions = verb.PRIVILEGED
 
     def process(self, message):
         command_length = len(self.command)
@@ -33,8 +35,9 @@ class MasterOpen(Verb):
         self.finish_interaction()
 
 
-class AssignKey(Verb):
+class AssignKey(verb.Verb):
     command = "asignarllave "
+    permissions = verb.PRIVILEGED
 
     def __init__(self, session):
         super().__init__(session)
@@ -61,7 +64,7 @@ class AssignKey(Verb):
         self.finish_interaction()
 
 
-class Open(Verb):
+class Open(verb.Verb):
     command = "abrir "
 
     def process(self, message):

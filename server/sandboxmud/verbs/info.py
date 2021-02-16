@@ -1,6 +1,35 @@
 from .verb import Verb
 from ..util import possible_meanings
 from ..entities import User
+import functools
+
+class WorldInfo(Verb):
+    command = 'worldinfo'
+
+    def process(self, message):
+        self.show_world_info()
+        self.finish_interaction()
+
+    def show_world_info(self):
+        world = self.session.user.room.world_state.get_world()
+        
+        if world.editors:
+            editor_names = functools.reduce(lambda a,b: '{}, {}'.format(a,b), [editor.name for editor in world.editors])
+        else:
+            editor_names = 'No tiene'
+        message = '''\
+Nombre del mundo: {world_name}
+Creador: {creator_name}
+Editores: {editor_names}
+Edición libre: {free_edition}
+'''.format(
+    world_name=world.name,
+    creator_name=world.creator.name,
+    editor_names=editor_names,
+    free_edition=world.all_can_edit
+)
+        self.session.send_to_client(message)
+
 
 class Info(Verb):
     """Shows all info of a room or item. This command is designed for creators, since it shows

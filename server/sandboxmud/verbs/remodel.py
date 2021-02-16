@@ -1,11 +1,12 @@
 # Issue: directly changes room values, and calls save() method.
 
-from .verb import Verb
+from . import verb
 
-class Remodel(Verb):
+class Remodel(verb.Verb):
     """Lets players edit every aspect of a room"""
 
     command = 'reformar'
+    permissions = verb.PRIVILEGED
 
     def __init__(self, session):
         super().__init__(session)

@@ -1,11 +1,12 @@
-from .verb import Verb
+from . import verb
 from .. import entities
 from .. import util
 
-class Craft(Verb):
+class Craft(verb.Verb):
     """This verb allows users to create items that are placed in their current room"""
 
     command = 'fabricar'
+    permissions = verb.PRIVILEGED
 
     def __init__(self, session):
         super().__init__(session)

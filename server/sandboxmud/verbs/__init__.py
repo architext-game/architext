@@ -13,7 +13,7 @@ from .edit_item import EditItem
 from .connect import Connect
 from .teleport import TeleportClient, TeleportUser, TeleportAllInRoom, TeleportAllInWorld
 from .delete import DeleteExit, DeleteItem, DeleteRoom
-from .info import Info
+from .info import Info, WorldInfo
 from .items import Items
 from .exits import Exits
 from .add_verb import AddVerb
@@ -26,3 +26,4 @@ from .custom_verb import CustomVerb
 from .lobby import GoToLobby, Lobby
 from .snapshots import CreateSnapshot, DeploySnapshot
 from .checks import CheckForItem
+from .privileges import ChangeEditFreedom, MakeEditor, RemoveEditor

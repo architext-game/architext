@@ -1,9 +1,10 @@
-from .verb import Verb
+from . import verb
 from .. import entities
 import functools
 
-class PlaceItem(Verb):
+class PlaceItem(verb.Verb):
     command = "colocar"
+    permissions = verb.PRIVILEGED
 
     def process(self, message):
         if message.startswith(self.command+' '):
@@ -44,7 +45,7 @@ class PlaceItem(Verb):
             self.session.send_to_client("No has guardado ningún objeto.")
 
 
-class SaveItem(Verb):
+class SaveItem(verb.Verb):
     command = 'guardar '
 
     def process(self, message):

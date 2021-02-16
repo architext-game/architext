@@ -6,6 +6,7 @@ _backup_snapshot_name = 'last_world_backup'
 
 class CreateSnapshot(verb.Verb):
     command = 'snapshot'
+    permissions = verb.PRIVILEGED
 
     def __init__(self, session):
         super().__init__(session)        
@@ -44,6 +45,7 @@ class CreateSnapshot(verb.Verb):
 
 class DeploySnapshot(verb.Verb):
     command = 'deploy'
+    permissions = verb.PRIVILEGED
 
     def __init__(self, session):
         super().__init__(session)
