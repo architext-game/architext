@@ -16,10 +16,10 @@ class Session:
     # List of all verbs supported by the session, ordered by priority: if two verbs can handle the same message, the first will have preference.
     verbs = [v.Lobby, v.GoToLobby, v.CustomVerb, v.Build, v.Emote, v.Go, v.Help, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.TeleportClient, v.TeleportUser, v.TeleportAllInRoom, v.TeleportAllInWorld, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.Info, v.Items, v.Exits, v.AddVerb, v.MasterMode, v.TextToOne, v.TextToRoom, v.TextToRoomUnless, v.TextToWorld, v.Take, v.Drop, v.Inventory, v.MasterOpen, v.MasterClose, v.AssignKey, v.Open, v.SaveItem, v.PlaceItem, v.CreateSnapshot, v.DeploySnapshot, v.CheckForItem, v.Give, v.TakeFrom]
 
-    def __init__(self, session_id, server):
+    def __init__(self, client_id, server):
         self.logger = None  # logger for recording user interaction
         self.server = server  # server used to send messages
-        self.session_id = session_id  # direction to send messages to our client
+        self.client_id = client_id  # direction to send messages to our client
         self.current_verb = v.Login(self)  # verb that is currently handling interaction. It starts with the log-in process.
         self.user = None  # here we'll have an User entity once the log-in is completed.
         
@@ -32,6 +32,10 @@ class Session:
         """
         if self.user is not None:
             self.user.reload()
+            if self.user.client_id != self.client_id:  # another session has been opened for the same user
+                self.send_to_client('Otra sesión ha sido abierta para el mismo usuario. Tu sesión ha sido cerrada.')
+                self.disconnect()
+                return
 
         if self.logger:
             self.logger.info('client\n'+message)
@@ -50,13 +54,14 @@ class Session:
             self.send_to_client("No te entiendo.")
 
     def disconnect(self):
-        if self.user is not None:
+        self.client_id = None
+        if self.user is not None and self.user.client_id == self.client_id:
             if not self.user.master_mode:
                 self.send_to_others_in_room("¡Whoop! {} se ha esfumado.".format(self.user.name))
             self.user.disconnect()
 
     def send_to_client(self, message):
-        self.server.send_message(self.session_id, "\n\r"+message)
+        self.server.send_message(self.client_id, "\n\r"+message)
         if self.logger:
             self.logger.info('server\n'+message)
 
@@ -117,11 +122,11 @@ class GhostSession(Session):
         # retrieve or create ghost user and put in in the right room.
         if entities.User.objects(name=GHOST_USER_NAME):
             self.user = entities.User.objects(name=GHOST_USER_NAME).first()
-            self.user.connect(self.session_id)
+            self.user.connect(self.client_id)
             self.user.teleport(start_room)
         else:
             self.user = entities.User(name=GHOST_USER_NAME, room=start_room, master_mode=True)
-            self.user.connect(self.session_id)
+            self.user.connect(self.client_id)
 
     def disconnect(self):
         if self.user is not None:

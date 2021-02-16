@@ -92,9 +92,13 @@ if __name__ == "__main__":
                 ended_session.disconnect()
                 
         # Let each session handle messages sent by his client
-        for sender_client, message in server.get_messages(): 
+        for sender_client, message in server.get_messages():
             if sender_client in sessions:
-                sessions[sender_client].process_message(message)
+                session = sessions[sender_client]
+                if session.client_id is None:  # the session has disconnected by itself
+                    sessions.pop(sender_client)
+                else:
+                    session.process_message(message)
 
         # Sleep a bit. We don't want to be using 100% CPU time.
         time.sleep(0.2)
