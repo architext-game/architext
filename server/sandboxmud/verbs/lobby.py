@@ -33,6 +33,7 @@ class Lobby(verb.Verb):
         else:
             message += 'No hay ningún mundo en este servidor.'
         message += '\n\n+ para crear un nuevo mundo.'
+        message += '\n* para crear tu propia instancia de un mundo público.'
         self.session.send_to_client(message)
 
     def process(self, message):
@@ -43,6 +44,62 @@ class Lobby(verb.Verb):
             self.travel_to_world(message)
         elif message == '+':
             self.create_world(message)
+        elif message == '*':
+            self.deploy_public_snapshot(message)
+
+    def deploy_public_snapshot(self, message):
+        self.public_snapshots = entities.WorldSnapshot.objects(public=True)
+
+        if not self.public_snapshots:
+            self.session.send_to_client('No hay mundos públicos para desplegar :(')
+            return
+
+        message = 'Qué mundo quieres desplegar?\n'
+        for index, snapshot in enumerate(self.public_snapshots):
+            message += '{}. {}\n'.format(index, snapshot.name)
+        message += '\n\nx para cancelar'
+        self.session.send_to_client(message)
+        self.current_process_function = self.process_snapshot_deploy_menu_option
+
+
+    def process_snapshot_deploy_menu_option(self, message):
+        if message == 'x':
+            self.session.send_to_client('Cancelado.')
+            self.show_world_list()
+            self.current_process_function = self.process_first_message
+            return
+            
+        try:
+            index = int(message)
+            if index < 0:
+                raise ValueError
+        except ValueError:
+            self.session.send_to_client("Introduce un número")
+            return
+
+        try:
+            self.chosen_snapshot = self.public_snapshots[index]
+        except IndexError:
+            self.session.send_to_client("Introduce el número correspondiente a uno de los snapshots")
+            return
+        
+        self.session.send_to_client('Cómo quieres llamar al nuevo mundo?')
+        self.current_process_function = self.process_name_of_world_created_from_public_snapshot
+
+    def process_name_of_world_created_from_public_snapshot(self, message):
+        if not message:
+            self.session.send_to_client('El nombre no puede estar vacío.')
+            return
+            
+        world_name = message
+        self.deploy_at_new_world(self.chosen_snapshot, world_name)
+        self.session.send_to_client('Hecho')
+        self.show_world_list()
+        self.current_process_function = self.process_first_message
+
+    def deploy_at_new_world(self, snapshot, world_name):
+        snapshot_instance = snapshot.snapshoted_state.clone()
+        new_world = entities.World(creator=self.session.user, world_state=snapshot_instance, name=world_name)
 
     def travel_to_world(self, message):
         try:

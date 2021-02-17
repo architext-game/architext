@@ -55,7 +55,7 @@ class DeploySnapshot(verb.Verb):
         self.current_process_function(message)
 
     def process_first_message(self, message):
-        self.show_snapshot_list()
+        self.show_world_snapshot_list()
         self.current_process_function = self.process_menu_option
 
     def process_menu_option(self, message):
@@ -63,31 +63,47 @@ class DeploySnapshot(verb.Verb):
             self.session.send_to_client('Cancelado.')
             self.finish_interaction()
             return
-        
+            
         try:
             index = int(message)
+            if index < 0:
+                raise ValueError
         except ValueError:
             self.session.send_to_client("Introduce un número")
             return
 
         world = self.session.user.room.world_state.get_world()
+
+        snapshots = world.snapshots
+
         try:
-            chosen_snapshot = world.snapshots[index]
+            chosen_snapshot = snapshots[index]
         except IndexError:
             self.session.send_to_client("Introduce el número correspondiente a uno de los snapshots")
             return
 
-        self.deploy_snapshot(chosen_snapshot, world)
-        self.session.send_to_client('Hecho! Puedes recuperar el mundo tal y como era antes del despliegue. Para hacerlo, despliega el snapshot "{}".'.format(_backup_snapshot_name))
-        self.finish_interaction()
+        if chosen_snapshot is not None:
+            world = self.session.user.room.world_state.get_world()
+            self.deploy_snapshot(chosen_snapshot, world)
+            self.session.send_to_client('{} desplegado! Puedes recuperar el mundo tal y como era antes del despliegue. Para hacerlo, despliega el snapshot "{}".'.format(chosen_snapshot.name, _backup_snapshot_name))
+            self.finish_interaction()
 
-    def show_snapshot_list(self):
+    def show_world_snapshot_list(self):
         world = self.session.user.room.world_state.get_world()
-        snapshots = world.snapshots
+        
+        if not world.snapshots:
+            self.session.send_to_client('Este mundo no tiene snapshots que desplegar.')
+            self.finish_interaction()
+            return
+
         message = '¿Qué snapshot quieres desplegar?\n'
+
+        snapshots = world.snapshots
+
         for i, snapshot in enumerate(snapshots):
             message += '{}. {}\n'.format(i, snapshot.name)
         message += '\n(x para cancelar)'
+
         self.session.send_to_client(message)
 
     def deploy_snapshot(self, chosen_snapshot, world):
@@ -118,3 +134,117 @@ class DeploySnapshot(verb.Verb):
             backup_snapshot.snapshoted_state = world_state
             backup_snapshot.save()
             old_backup.delete()
+
+
+class PubishSnapshot(verb.Verb):
+    command = 'publish'
+    permissions = verb.CREATOR
+
+    def process(self, message):
+        self.show_world_snapshot_list()
+        self.process = self.process_menu_option
+
+    def process_menu_option(self, message):
+        if message == 'x':
+            self.session.send_to_client('Cancelado.')
+            self.finish_interaction()
+            return
+            
+        try:
+            index = int(message)
+            if index < 0:
+                raise ValueError
+        except ValueError:
+            self.session.send_to_client("Introduce un número")
+            return
+
+        world = self.session.user.room.world_state.get_world()
+
+        publishable_snapshots = list(filter(lambda s: s.public==False and s.name!=_backup_snapshot_name, world.snapshots))
+
+        try:
+            chosen_snapshot = publishable_snapshots[index]
+        except IndexError:
+            self.session.send_to_client("Introduce el número correspondiente a uno de los snapshots")
+            return
+
+        if chosen_snapshot is not None:
+            chosen_snapshot.publish()
+            self.session.send_to_client('Hecho, el snapshot ha sido publicado!')
+            self.finish_interaction()
+
+    def show_world_snapshot_list(self):
+        world = self.session.user.room.world_state.get_world()
+        publishable_snapshots = list(filter(lambda s: s.public==False and s.name!=_backup_snapshot_name, world.snapshots))
+
+        if not publishable_snapshots:
+            self.session.send_to_client('Este mundo no tine snapshots que publicar.')
+            self.finish_interaction()
+            return
+        
+        message = '¿Qué snapshot quieres publicar?\n'
+
+        message = ''
+        
+        if len(publishable_snapshots) == 0:
+            message += 'No hay ningún snapshot sin publicar.\n'
+
+        for i, snapshot in enumerate(publishable_snapshots):
+            message += '{}. {}\n'.format(i, snapshot.name)
+        message += '\n(x para cancelar)'
+
+        self.session.send_to_client(message)
+
+
+class UnpubishSnapshot(verb.Verb):
+    command = 'unpublish'
+    permissions = verb.CREATOR
+
+    def process(self, message):
+        self.show_published_snapshot_list()
+        self.process = self.process_menu_option
+
+    def process_menu_option(self, message):
+        if message == 'x':
+            self.session.send_to_client('Cancelado.')
+            self.finish_interaction()
+            return
+            
+        try:
+            index = int(message)
+            if index < 0:
+                raise ValueError
+        except ValueError:
+            self.session.send_to_client("Introduce un número")
+            return
+
+        your_worlds = entities.World.objects(creator=self.session.user)
+        your_public_snapshots = [(snapshot, world) for world in your_worlds for snapshot in world.snapshots if snapshot.public]
+
+        try:
+            chosen_snapshot = your_public_snapshots[index][0]
+        except IndexError:
+            self.session.send_to_client("Introduce el número correspondiente a uno de los snapshots")
+            return
+        
+        if chosen_snapshot is not None:
+            chosen_snapshot.unpublish()
+            self.session.send_to_client('Hecho, el snapshot ha sido des-publicado!')
+            self.finish_interaction()
+
+    def show_published_snapshot_list(self):
+        your_worlds = entities.World.objects(creator=self.session.user)
+        your_public_snapshots = [(snapshot, world) for world in your_worlds for snapshot in world.snapshots if snapshot.public]
+
+        if len(your_public_snapshots) == 0:
+            self.session.send_to_client('No hay ningún snapshot publicado en tus mundos.')
+            self.finish_interaction()
+            return
+
+        message = 'Estas son las snapshots publicadas de tus mundos. ¿Cuál quieres despublicar?\n'
+
+        for i, (snapshot, world) in enumerate(your_public_snapshots):
+            message += '{}. {: <24} Mundo: {}\n'.format(i, snapshot.name, world.name)
+        message += '\n(x para cancelar)'
+
+        self.session.send_to_client(message)
