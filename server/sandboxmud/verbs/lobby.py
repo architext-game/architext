@@ -28,7 +28,7 @@ class Lobby(verb.Verb):
         message = ""
         if entities.World.objects():
             message += 'Introduce el número del mundo al que quieras ir.\n'
-            world_names_with_index = ['{}. {}  -{}'.format(index, world.name, world.creator.name) for index, world in enumerate(entities.World.objects())]
+            world_names_with_index = ['{}. {: <36}  ({}) by {}'.format(index, world.name, world.get_connected_users(), world.creator.name) for index, world in enumerate(entities.World.objects())]
             message += functools.reduce(lambda a, b: '{}\n{}'.format(a, b), world_names_with_index)
         else:
             message += 'No hay ningún mundo en este servidor.'

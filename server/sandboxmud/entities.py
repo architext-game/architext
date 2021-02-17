@@ -214,6 +214,10 @@ class World(mongoengine.Document):
         if user in self.editors:
             self.editors.remove(user)
             self.save()
+
+    def get_connected_users(self):
+        users = User.objects(client_id__ne=None, room__ne=None)
+        return len(list(filter(lambda u: u.room.world_state==self.world_state, users)))
             
 
 class WorldState(mongoengine.Document):
