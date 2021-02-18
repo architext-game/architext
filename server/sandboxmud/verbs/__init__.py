@@ -23,7 +23,7 @@ from .inventory import Take, Drop, Inventory, Give, TakeFrom
 from .keys import MasterClose, MasterOpen, AssignKey, Open
 from .saving import SaveItem, PlaceItem
 from .custom_verb import CustomVerb
-from .lobby import GoToLobby, Lobby
 from .snapshots import CreateSnapshot, DeploySnapshot, PubishSnapshot, UnpubishSnapshot
 from .checks import CheckForItem
 from .privileges import ChangeEditFreedom, MakeEditor, RemoveEditor
+from .lobby import EnterWorld, CreateWorld, DeployPublicSnapshot, GoToLobby

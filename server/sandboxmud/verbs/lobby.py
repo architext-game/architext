@@ -3,28 +3,9 @@ from .. import entities
 from . import look
 import functools
 
-class GoToLobby(verb.Verb):
-    command = 'salirmundo'
-
-    def process(self, message):
-        self.session.user.room = None
-        self.session.user.save()
-        Lobby(self.session).show_world_list()
-        self.finish_interaction()
-
-class Lobby(verb.Verb):
-    def __init__(self, session):
-        super().__init__(session)
-        self.current_process_function = self.process_first_message
-
-    @classmethod
-    def can_process(self, message, session):
-        if session.user.room is None:
-            return True
-        else:
-            return False
-
-    def show_world_list(self):
+class LobbyMenu():
+    '''Helper class that has the method that shows the lobby menu'''
+    def show_lobby_menu(self):
         message = ""
         if entities.World.objects():
             message += 'Introduce el número del mundo al que quieras ir.\n'
@@ -36,72 +17,24 @@ class Lobby(verb.Verb):
         message += '\n* para crear tu propia instancia de un mundo público.'
         self.session.send_to_client(message)
 
+class GoToLobby(verb.Verb, LobbyMenu):
+    command = 'salirmundo'
+
     def process(self, message):
-        self.current_process_function(message)
+        self.session.user.room = None
+        self.session.user.save()
+        self.show_lobby_menu()
+        self.finish_interaction()
 
-    def process_first_message(self, message):
-        if message.isnumeric():
-            self.travel_to_world(message)
-        elif message == '+':
-            self.create_world(message)
-        elif message == '*':
-            self.deploy_public_snapshot(message)
+class EnterWorld(verb.Verb, LobbyMenu):
+    @classmethod
+    def can_process(self, message, session):
+        if session.user.room is None and message.isnumeric():
+            return True
+        else:
+            return False
 
-    def deploy_public_snapshot(self, message):
-        self.public_snapshots = entities.WorldSnapshot.objects(public=True)
-
-        if not self.public_snapshots:
-            self.session.send_to_client('No hay mundos públicos para desplegar :(')
-            return
-
-        message = 'Qué mundo quieres desplegar?\n'
-        for index, snapshot in enumerate(self.public_snapshots):
-            message += '{}. {}\n'.format(index, snapshot.name)
-        message += '\n\nx para cancelar'
-        self.session.send_to_client(message)
-        self.current_process_function = self.process_snapshot_deploy_menu_option
-
-
-    def process_snapshot_deploy_menu_option(self, message):
-        if message == 'x':
-            self.session.send_to_client('Cancelado.')
-            self.show_world_list()
-            self.current_process_function = self.process_first_message
-            return
-            
-        try:
-            index = int(message)
-            if index < 0:
-                raise ValueError
-        except ValueError:
-            self.session.send_to_client("Introduce un número")
-            return
-
-        try:
-            self.chosen_snapshot = self.public_snapshots[index]
-        except IndexError:
-            self.session.send_to_client("Introduce el número correspondiente a uno de los snapshots")
-            return
-        
-        self.session.send_to_client('Cómo quieres llamar al nuevo mundo?')
-        self.current_process_function = self.process_name_of_world_created_from_public_snapshot
-
-    def process_name_of_world_created_from_public_snapshot(self, message):
-        if not message:
-            self.session.send_to_client('El nombre no puede estar vacío.')
-            return
-            
-        world_name = message
-        self.deploy_at_new_world(self.chosen_snapshot, world_name)
-        self.session.send_to_client('Hecho')
-        self.show_world_list()
-        self.current_process_function = self.process_first_message
-
-    def deploy_at_new_world(self, snapshot, world_name):
-        snapshot_instance = snapshot.snapshoted_state.clone()
-        new_world = entities.World(creator=self.session.user, world_state=snapshot_instance, name=world_name)
-
-    def travel_to_world(self, message):
+    def process(self, message):
         try:
             index = int(message)
         except ValueError:
@@ -122,10 +55,19 @@ class Lobby(verb.Verb):
         self.session.send_to_others_in_room("¡Puf! {} apareció.".format(self.session.user.name))
         self.finish_interaction()
 
-    def create_world(self, message):
+
+class CreateWorld(verb.Verb, LobbyMenu):
+    @classmethod
+    def can_process(self, message, session):
+        if session.user.room is None and message == '+':
+            return True
+        else:
+            return False
+
+    def process(self, message):
         self.new_world = entities.World(save_on_creation=False, creator=self.session.user)
         self.session.send_to_client('Escribe el nombre que quieres ponerle al mundo.')
-        self.current_process_function = self.process_word_name
+        self.process = self.process_word_name
 
     def process_word_name(self, message):
         if not message:
@@ -135,5 +77,70 @@ class Lobby(verb.Verb):
         self.new_world.name = message
         self.new_world.save()
         self.session.send_to_client('HECHO! Aquí lo ves:')
-        self.show_world_list()
+        self.show_lobby_menu()
         self.finish_interaction()
+
+
+class DeployPublicSnapshot(verb.Verb, LobbyMenu):
+    @classmethod
+    def can_process(self, message, session):
+        if session.user.room is None and message == '*':
+            return True
+        else:
+            return False
+
+    def process(self, message):
+        self.public_snapshots = entities.WorldSnapshot.objects(public=True)
+
+        if not self.public_snapshots:
+            self.session.send_to_client('No hay mundos públicos para desplegar :(')
+            return
+
+        message = 'Qué mundo quieres desplegar?\n'
+        for index, snapshot in enumerate(self.public_snapshots):
+            message += '{}. {}\n'.format(index, snapshot.name)
+        message += '\n\nx para cancelar'
+        self.session.send_to_client(message)
+        self.process = self.process_menu_option
+
+    def process_menu_option(self, message):
+        if message == 'x':
+            self.session.send_to_client('Cancelado.')
+            self.show_lobby_menu()
+            self.finish_interaction()
+            return
+            
+        try:
+            index = int(message)
+            if index < 0:
+                raise ValueError
+        except ValueError:
+            self.session.send_to_client("Introduce un número")
+            return
+
+        try:
+            self.chosen_snapshot = self.public_snapshots[index]
+        except IndexError:
+            self.session.send_to_client("Introduce el número correspondiente a uno de los snapshots")
+            return
+        
+        self.session.send_to_client('Cómo quieres llamar al nuevo mundo?')
+        self.process = self.process_new_world_name
+
+    def process_new_world_name(self, message):
+        if not message:
+            self.session.send_to_client('El nombre no puede estar vacío.')
+            return
+            
+        world_name = message
+        self.deploy_at_new_world(self.chosen_snapshot, world_name)
+        self.session.send_to_client('Hecho')
+        self.show_lobby_menu()
+        self.finish_interaction()
+
+    def deploy_at_new_world(self, snapshot, world_name):
+        snapshot_instance = snapshot.snapshoted_state.clone()
+        new_world = entities.World(creator=self.session.user, world_state=snapshot_instance, name=world_name)
+
+
+    
