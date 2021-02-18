@@ -171,6 +171,11 @@ class Item(mongoengine.Document):
         self.room = None
         self.save()
 
+    def delete(self):
+        for custom_verb in self.custom_verbs:
+            custom_verb.delete()
+        super().delete()
+
 class World(mongoengine.Document):
     name = mongoengine.StringField(required=True)
     world_state = mongoengine.ReferenceField('WorldState', required=True)
@@ -218,6 +223,15 @@ class World(mongoengine.Document):
     def get_connected_users(self):
         users = User.objects(client_id__ne=None, room__ne=None)
         return len(list(filter(lambda u: u.room.world_state==self.world_state, users)))
+
+    def delete(self):
+        for snapshot in self.snapshots:
+            if snapshot.public:
+                raise CantDelete("Can't delete a world that has one or more of its snapshots published.")
+        for snapshot in self.snapshots:
+            snapshot.delete()
+        self.world_state.delete()
+        super().delete()
             
 
 class WorldState(mongoengine.Document):
@@ -281,6 +295,11 @@ class WorldState(mongoengine.Document):
     def get_rooms(self):
         return Room.objects(world_state=self)
 
+    def delete(self):
+        for custom_verb in self.custom_verbs:
+            custom_verb.delete()
+        super().delete()
+
 class WorldSnapshot(mongoengine.Document):
     name = mongoengine.StringField(required=True)
     public = mongoengine.BooleanField(default=False)
@@ -298,6 +317,12 @@ class WorldSnapshot(mongoengine.Document):
     def unpublish(self):
         self.public = False
         self.save()
+
+    def delete(self):
+        if self.public:
+            raise CantDelete("Can't delete a public snapshot")
+        self.snapshoted_state.delete()
+        super().delete()
 
 class Inventory(mongoengine.Document):
     user  = mongoengine.ReferenceField('User', required=True)
@@ -446,6 +471,11 @@ class Room(mongoengine.Document):
         new_room.save()
         return new_room
 
+    def delete(self):
+        for custom_verb in self.custom_verbs:
+            custom_verb.delete()
+        super().delete()
+
 class User(mongoengine.Document):
     name = mongoengine.StringField(required=True)
     room = mongoengine.ReferenceField('Room')
@@ -509,15 +539,13 @@ CustomVerb.register_delete_rule(Room, 'custom_verbs', mongoengine.PULL)
 CustomVerb.register_delete_rule(Item, 'custom_verbs', mongoengine.PULL)
 CustomVerb.register_delete_rule(WorldState, 'custom_verbs', mongoengine.PULL)
 Item.register_delete_rule(Inventory, 'items', mongoengine.PULL)
-Item.register_delete_rule(User, 'saved_items', mongoengine.DENY)
-Room.register_delete_rule(User, 'room', mongoengine.DENY)
+Item.register_delete_rule(User, 'saved_items', mongoengine.PULL)
+Room.register_delete_rule(User, 'room', mongoengine.NULLIFY)
 Room.register_delete_rule(Item, 'room', mongoengine.CASCADE)
 Room.register_delete_rule(Exit, 'room', mongoengine.CASCADE)
 Room.register_delete_rule(Exit, 'destination', mongoengine.CASCADE)
-# Room.register_delete_rule(WorldState, 'starting_room', mongoengine.DENY)  # this rule is important, but won't let us delete any WorldState since it cascade-deletes its rooms.
 WorldState.register_delete_rule(Room, 'world_state', mongoengine.CASCADE) 
 WorldState.register_delete_rule(Inventory, 'world_state', mongoengine.CASCADE)
-WorldState.register_delete_rule(WorldSnapshot, 'snapshoted_state', mongoengine.DENY)
 WorldSnapshot.register_delete_rule(World, 'snapshots', mongoengine.PULL)
 
 
@@ -544,3 +572,6 @@ class TakableItemNameClash(BadItem):
 class NameNotGloballyUnique(BadItem):
     """Raised when creating a takable item whose name is already present
     it any item or exit of the world."""
+
+class CantDelete(Exception):
+    """Raised when trying to delete something that can't be deleted"""

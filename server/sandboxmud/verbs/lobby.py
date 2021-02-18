@@ -3,7 +3,7 @@ from .. import entities
 from . import look
 import functools
 
-class LobbyMenu():
+class LobbyMenu(verb.Verb):
     '''Helper class that has the method that shows the lobby menu'''
     def show_lobby_menu(self):
         message = ""
@@ -15,9 +15,10 @@ class LobbyMenu():
             message += 'No hay ningún mundo en este servidor.'
         message += '\n\n+ para crear un nuevo mundo.'
         message += '\n* para crear tu propia instancia de un mundo público.'
+        message += '\n- para borrar uno de tus mundos.'
         self.session.send_to_client(message)
 
-class GoToLobby(verb.Verb, LobbyMenu):
+class GoToLobby(LobbyMenu):
     command = 'salirmundo'
 
     def process(self, message):
@@ -26,7 +27,7 @@ class GoToLobby(verb.Verb, LobbyMenu):
         self.show_lobby_menu()
         self.finish_interaction()
 
-class EnterWorld(verb.Verb, LobbyMenu):
+class EnterWorld(LobbyMenu):
     @classmethod
     def can_process(self, message, session):
         if session.user.room is None and message.isnumeric():
@@ -56,7 +57,7 @@ class EnterWorld(verb.Verb, LobbyMenu):
         self.finish_interaction()
 
 
-class CreateWorld(verb.Verb, LobbyMenu):
+class CreateWorld(LobbyMenu):
     @classmethod
     def can_process(self, message, session):
         if session.user.room is None and message == '+':
@@ -81,7 +82,7 @@ class CreateWorld(verb.Verb, LobbyMenu):
         self.finish_interaction()
 
 
-class DeployPublicSnapshot(verb.Verb, LobbyMenu):
+class DeployPublicSnapshot(LobbyMenu):
     @classmethod
     def can_process(self, message, session):
         if session.user.room is None and message == '*':
@@ -143,4 +144,56 @@ class DeployPublicSnapshot(verb.Verb, LobbyMenu):
         new_world = entities.World(creator=self.session.user, world_state=snapshot_instance, name=world_name)
 
 
-    
+class DeleteWorld(LobbyMenu):
+    @classmethod
+    def can_process(self, message, session):
+        if session.user.room is None and message == '-':
+            return True
+        else:
+            return False
+
+    def process(self, message):
+        self.your_worlds = entities.World.objects(creator=self.session.user)
+
+        if not self.your_worlds:
+            self.session.send_to_client("No has creado ningún mundo.")
+            self.finish_interaction()
+            return
+
+        message = "Qué mundo quieres eliminar? ¡ES IRREVERSIBLE!\n"
+        for index, world in enumerate(self.your_worlds):
+            message += "{}. {}\n".format(index, world.name)
+        message += "\n\nx para cancelar."
+        self.session.send_to_client(message)
+        self.process = self.process_menu_option
+
+    def process_menu_option(self, message):
+        if message == 'x':
+            self.session.send_to_client("Cancelado.")
+            self.show_lobby_menu()
+            self.finish_interaction()
+            return
+
+        try:
+            index = int(message)
+            if index < 0:
+                raise ValueError
+        except ValueError:
+            self.session.send_to_client("Introduce un número")
+            return
+
+        try:
+            world_to_delete = self.your_worlds[index]
+        except IndexError:
+            self.session.send_to_client("Introduce el número correspondiente a uno de los mundos")
+            return
+
+        try:
+            world_to_delete.delete()
+        except entities.CantDelete as e:
+            self.session.send_to_client("No se pudo eliminar: {}".format(e))
+        else:
+            self.session.send_to_client("Hecho.")
+
+        self.show_lobby_menu()
+        self.finish_interaction()

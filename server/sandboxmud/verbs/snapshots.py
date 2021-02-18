@@ -248,3 +248,53 @@ class UnpubishSnapshot(verb.Verb):
         message += '\n(x para cancelar)'
 
         self.session.send_to_client(message)
+
+
+class DeleteSnapshot(verb.Verb):
+    command = 'delete snapshot'
+    permissions = verb.CREATOR
+
+    def process(self, message):
+        self.show_world_snapshot_list()
+        self.process = self.process_menu_option
+
+    def show_world_snapshot_list(self):
+        world = self.session.user.room.world_state.get_world()
+        self.deletable_snapshots = list(filter(lambda s: s.public==False, world.snapshots))
+
+        if not self.deletable_snapshots:
+            self.session.send_to_client('Este mundo no tine snapshots que eliminar. Si quieres eliminar un snapshot público, primero despubícalo.')
+            self.finish_interaction()
+            return
+        
+        message = '¿Qué snapshot quieres eliminar? (ES IRREVERSIBLE)\nSi quieres eliminar un snapshot público, primero despublícalo\n'
+
+        for i, snapshot in enumerate(self.deletable_snapshots):
+            message += '{}. {}\n'.format(i, snapshot.name)
+        message += '\n(x para cancelar)'
+
+        self.session.send_to_client(message)
+
+    def process_menu_option(self, message):
+        if message == 'x':
+            self.session.send_to_client('Cancelado.')
+            self.finish_interaction()
+            return
+
+        try:
+            index = int(message)
+            if index < 0:
+                raise ValueError
+        except ValueError:
+            self.session.send_to_client("Introduce un número")
+            return
+
+        try:
+            chosen_snapshot = self.deletable_snapshots[index]
+        except IndexError:
+            self.session.send_to_client("Introduce el número correspondiente a uno de los snapshots")
+            return
+
+        chosen_snapshot.delete()
+        self.session.send_to_client('Hecho, el snapshot ha sido borrado!')
+        self.finish_interaction()

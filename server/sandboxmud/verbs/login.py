@@ -38,7 +38,7 @@ class Login(Verb):
             self.session.send_to_others_in_room("¡Puf! {} apareció.".format(name))
             Look(self.session).show_current_room()
         else:
-            lobby.Lobby(self.session).show_world_list()
+            lobby.LobbyMenu(self.session).show_lobby_menu()
 
         server_logger = logging.getLogger('server_logger')
         user_logger = util.setup_logger('user_'+name, 'user_'+name+'.txt')
