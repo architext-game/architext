@@ -6,6 +6,7 @@ class AddVerb(verb.Verb):
     """This verb allows users to create new custom verbs tied to items.
     """
 
+    command = 'verbo'
     item_command = 'verboobjeto'  # command for adding verbs to items
     room_command = 'verbosala'    # command for adding verbs to rooms
     world_command = 'verbomundo'  # command for adding verbs to worlds
@@ -13,7 +14,7 @@ class AddVerb(verb.Verb):
 
     @classmethod
     def can_process(cls, message, session):
-        if message.startswith(cls.item_command) or message.startswith(cls.room_command) or message.startswith(cls.world_command):
+        if message.startswith(cls.item_command) or message.startswith(cls.room_command) or message.startswith(cls.world_command) and super().can_process(message, session):
             return True
         else:
             return False

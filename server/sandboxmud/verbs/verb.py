@@ -4,6 +4,9 @@ FREE = 'free'
 PRIVILEGED = 'privileged'
 CREATOR = 'creator'
 
+LOBBYVERB = 'lobbyverb'
+WORLDVERB = 'worldverb'
+
 class Verb():
     """This is the template for creating new verbs. Every verb should have Verb as parent.
     This is an abstract class, with some methods not implemented.
@@ -21,13 +24,20 @@ class Verb():
 
     command = 'verb '
     permissions = FREE  # possible values: FREE, PRIVILEGED and CREATOR.
+    verbtype = WORLDVERB
 
     @classmethod
     def can_process(cls, message, session):
+        if cls.verbtype == WORLDVERB and session.user.room is None:
+            return False
+
+        if cls.verbtype == LOBBYVERB and session.user.room is not None:
+            return False
+
         if message.startswith(cls.command):
             return True
-        else:
-            return False
+        
+        return False
 
     def __init__(self, session):
         self.session = session

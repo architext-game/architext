@@ -28,9 +28,12 @@ class GoToLobby(LobbyMenu):
         self.finish_interaction()
 
 class EnterWorld(LobbyMenu):
+    command = ''
+    verbtype = verb.LOBBYVERB
+
     @classmethod
     def can_process(self, message, session):
-        if session.user.room is None and message.isnumeric():
+        if super().can_process(message, session) and message.isnumeric():
             return True
         else:
             return False
@@ -58,12 +61,8 @@ class EnterWorld(LobbyMenu):
 
 
 class CreateWorld(LobbyMenu):
-    @classmethod
-    def can_process(self, message, session):
-        if session.user.room is None and message == '+':
-            return True
-        else:
-            return False
+    verbtype = verb.LOBBYVERB
+    command = '+'
 
     def process(self, message):
         self.new_world = entities.World(save_on_creation=False, creator=self.session.user)
@@ -83,12 +82,8 @@ class CreateWorld(LobbyMenu):
 
 
 class DeployPublicSnapshot(LobbyMenu):
-    @classmethod
-    def can_process(self, message, session):
-        if session.user.room is None and message == '*':
-            return True
-        else:
-            return False
+    verbtype = verb.LOBBYVERB
+    command = '*'
 
     def process(self, message):
         self.public_snapshots = entities.WorldSnapshot.objects(public=True)
@@ -145,12 +140,8 @@ class DeployPublicSnapshot(LobbyMenu):
 
 
 class DeleteWorld(LobbyMenu):
-    @classmethod
-    def can_process(self, message, session):
-        if session.user.room is None and message == '-':
-            return True
-        else:
-            return False
+    verbtype = verb.LOBBYVERB
+    command = '-'
 
     def process(self, message):
         self.your_worlds = entities.World.objects(creator=self.session.user)

@@ -4,12 +4,12 @@ from .verb import Verb
 from .. import session
 
 class CustomVerb(Verb):
-    command = None
+    command = ''
 
     @classmethod
     def can_process(cls, message, session):
         '''true if any custom verb corresponds to the message'''
-        return cls.search_for_custom_verb(message, session) is not None
+        return super().can_process(message, session) and cls.search_for_custom_verb(message, session) is not None
 
     @classmethod
     def search_for_custom_verb(cls, message, session):
