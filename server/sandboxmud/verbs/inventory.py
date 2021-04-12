@@ -25,7 +25,7 @@ class Take(Verb):
             target_item = next(filter(lambda i: i.name==target_item_name, self.session.user.room.items))
             self.session.user.get_current_world_inventory().add_item(target_item)
             target_item.remove_from_room()
-            self.session.send_to_client('Has cogido el objeto.')
+            self.session.send_to_client(f'Has cogido {target_item_name}.')
         
         self.finish_interaction()
 
@@ -52,7 +52,7 @@ class Drop(Verb):
             target_item = next(filter(lambda i: i.name==target_item_name, self.session.user.get_current_world_inventory().items))
             self.session.user.get_current_world_inventory().remove_item(target_item)
             target_item.put_in_room(self.session.user.room)
-            self.session.send_to_client('Has dejado el objeto.')
+            self.session.send_to_client(f'Has dejado {target_item_name}.')
         
         self.finish_interaction()
 
@@ -67,14 +67,15 @@ class Inventory(Verb):
             self.session.send_to_client('No tienes ningún objeto en tu inventario.')
         else:
             item_names = [item.name for item in self.session.user.get_current_world_inventory().items]
-            inventory_list = functools.reduce(lambda a, b: '{}\n{}'.format(a,b), item_names)
-            self.session.send_to_client('Llevas contigo estos objetos:\n{}'.format(inventory_list))
+            item_list_items = [f'{chr(9679)} {name}' for name in item_names]
+            inventory_list = '\n'.join(item_list_items)
+            self.session.send_to_client(f'Llevas contigo estos objetos:\n{inventory_list}')
 
         self.finish_interaction()
 
 
 class Give(Verb):
-    command = "give '"
+    command = "dar '"
 
     def process(self, message):
         message = message[len(self.command):]
@@ -87,12 +88,12 @@ class Give(Verb):
             target_user.get_current_world_inventory().add_item(item)
             self.session.send_to_client('Hecho.')
         else:
-            self.sssion.send_to_client("El usuario u objeto no está en esta sala.")
+            self.session.send_to_client("El usuario u objeto no está en esta sala.")
 
         self.finish_interaction()
 
 class TakeFrom(Verb):
-    command = "take from '"
+    command = "quitar '"
 
     def process(self, message):
         message = message[len(self.command):]

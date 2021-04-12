@@ -48,10 +48,16 @@ class DeleteExit(verb.Verb):
         exit_name = message[command_length:]
 
         if exit_name in [exit.name for exit in self.session.user.room.exits]:
-            self.delete_exit(exit_name)
-            self.session.send_to_client("Borrada la salida desde aquí hasta allí. Ojo, no he intentado borrar la salida desde allí hasta aquí. Si quieres hacerlo, vas para allá y lo haces desde allí.")
+            exit = self.session.user.room.get_exit(exit_name=exit_name)
+            destination = exit.destination
+            exit_from_there = destination.get_exit(destination=self.session.user.room)
+            warning = ''
+            if exit_from_there is not None:
+                warning = f'\n {chr(10060)} La salida "{exit_from_there.name}" en "{destination.name}" que lleva hasta aquí no ha sido borrada (y puede que haya más).'
+            self.session.send_to_client(f'Salida borrada: "{exit_name}"\n{chr(9472)*(17+len(exit_name))}\nEl destino era "{destination.name}" (alias: {destination.alias}){warning}')
+            exit.delete()
         else:
-            self.session.send_to_client("No existe esa salida.")
+            self.session.send_to_client(f'En esta sala no hay ninguna salida llamada "{exit_name}".\nRecuerda que para eliminar una salida debes escribir su nombre completo.')
 
         self.finish_interaction()
 
@@ -59,7 +65,8 @@ class DeleteExit(verb.Verb):
         this_room = self.session.user.room
         other_room = self.session.user.room.get_exit(exit_here_name).destination
         
-        this_room.delete_exit(exit_here_name)
+        exit = self.session.user.room.get_exit(exit_here_name).delete()
+        # this_room.delete_exit(exit_here_name)
             
 
 class DeleteItem(verb.Verb):
@@ -74,9 +81,9 @@ class DeleteItem(verb.Verb):
         selected_item = next(entities.Item.objects(room=self.session.user.room, name=item_name), None)
 
         if selected_item is None:
-            self.session.send_to_client("No está ese objeto.")
+            self.session.send_to_client(f"No hay un objeto llamado {item_name} en esta sala.\nRecuerda que para eliminarlo, debes escribir su nombre completo.")
         else:
             selected_item.delete()
-            self.session.send_to_client("Eliminado")
+            self.session.send_to_client(f'Objeto "{item_name}" eliminado')
         self.finish_interaction()
 

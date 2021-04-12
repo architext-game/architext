@@ -18,10 +18,14 @@ class Build(verb.Verb):
         self.current_process_function = self.process_first_message
 
     def process(self, message):
-        self.current_process_function(message)
+        if message == '/':
+            self.session.send_to_client("Construcción cancelada.")
+            self.finish_interaction()
+        else:
+            self.current_process_function(message)
 
     def process_first_message(self, message):
-        self.session.send_to_client("Comienzas a construir una habitación. ¿Cómo quieres llamarla?")
+        self.session.send_to_client(f"Comienzas a construir una habitación.\n{chr(9472)*37}\n{chr(10060)} Para cancelar, introduce '/' en cualquier momento.\n\nEscribe los siguientes datos:\n {chr(9873)} Nombre de la habitación")
         self.current_process_function = self.process_room_name
 
     def process_room_name(self, message):
@@ -29,12 +33,14 @@ class Build(verb.Verb):
             self.session.send_to_client("Tienes que poner un nombre a tu habitación. Prueba otra vez.")
         else:
             self.new_room.name = message
-            self.session.send_to_client("Ahora introduce una descripción para tu nueva sala, para que todo el mundo sepa cómo es.")
+            self.session.send_to_client(f" {chr(128065)} Descripción")
             self.current_process_function = self.process_room_description
 
     def process_room_description(self, message):
+        this_room = self.session.user.room.name
+        new_room = self.new_room.name
         self.new_room.description = message
-        self.session.send_to_client("Cómo quieres llamar a la salida desde {} a {}? Si no se te ocurre nada, puedes dejarlo en blanco.".format(self.session.user.room.name, self.new_room.name))
+        self.session.send_to_client(f' \u2B95 Nombre de la salida en "{this_room}" hacia "{new_room}"\n   [Por defecto: "a {new_room}"]')
         self.current_process_function = self.process_here_exit_name
 
     def process_here_exit_name(self, message):
@@ -52,7 +58,7 @@ class Build(verb.Verb):
         except entities.TakableItemNameClash:
             self.session.send_to_client("Hay en el mundo un objeto tomable con ese nombre. Los objetos tomables deben tener un nombre único en todo el mundo, así que prueba a poner otro.")
         else:
-            self.session.send_to_client("Cómo quieres llamar a la salida desde {} a {}? Si no se te ocurre nada, puedes dejarlo en blanco.".format(self.new_room.name, self.session.user.room.name))
+            self.session.send_to_client(f' \u2B95 Nombre de la salida en "{self.new_room.name}" hacia "{self.session.user.room.name}"\n   [Por defecto: "a {self.new_room.name}"]')
             self.current_process_function = self.process_there_exit_name
 
     def process_there_exit_name(self, message):

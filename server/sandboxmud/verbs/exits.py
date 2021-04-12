@@ -8,7 +8,7 @@ class Exits(Verb):
         exits_names = [exit.name for exit in self.session.user.room.exits if not exit.is_hidden()]
 
         if exits_names:
-            out_message = 'Fácilmente distingues las siguientes salidas:\n  ' + '\n  '.join(exits_names)
+            out_message = 'Fácilmente distingues las siguientes salidas:\n\u2B95 ' + '\n\u2B95 '.join(exits_names)
         else:
             out_message = 'No hay ninguna manera obvia de salir de esta habitación.'
 

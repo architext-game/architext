@@ -14,10 +14,14 @@ class CreateSnapshot(verb.Verb):
         self.snapshot = entities.WorldSnapshot(save_on_creation=False)
 
     def process(self, message):
-        self.current_process_function(message)
+        if message == '/':
+            self.session.send_to_client("Creación de snapshot cancelada.")
+            self.finish_interaction()
+        else:
+            self.current_process_function(message)
 
     def process_first_message(self, message):
-        self.session.send_to_client("¿Qué nombre quieres ponerle al snapshot?")
+        self.session.send_to_client("¿Qué nombre quieres ponerle al snapshot? ('/' para cancelar)")
         self.current_process_function = self.process_snapshot_name
 
     def process_snapshot_name(self, message):
@@ -35,7 +39,7 @@ class CreateSnapshot(verb.Verb):
         self.snapshot.snapshoted_state = self.snapshot_world_state()
         self.snapshot.save()
         world.add_snapshot(self.snapshot)
-        self.session.send_to_client('Hecho!')
+        self.session.send_to_client('Snapshot creado.')
         self.finish_interaction()
     
     def snapshot_world_state(self):
@@ -44,7 +48,7 @@ class CreateSnapshot(verb.Verb):
 
 
 class DeploySnapshot(verb.Verb):
-    command = 'deploy'
+    command = 'desplegar'
     permissions = verb.PRIVILEGED
 
     def __init__(self, session):
@@ -52,7 +56,11 @@ class DeploySnapshot(verb.Verb):
         self.current_process_function = self.process_first_message
 
     def process(self, message):
-        self.current_process_function(message)
+        if message == '/':
+            self.session.send_to_client("Despliegue de snapshot cancelado.")
+            self.finish_interaction()
+        else:
+            self.current_process_function(message)
 
     def process_first_message(self, message):
         self.show_world_snapshot_list()
@@ -85,7 +93,7 @@ class DeploySnapshot(verb.Verb):
         if chosen_snapshot is not None:
             world = self.session.user.room.world_state.get_world()
             self.deploy_snapshot(chosen_snapshot, world)
-            self.session.send_to_client('{} desplegado! Puedes recuperar el mundo tal y como era antes del despliegue. Para hacerlo, despliega el snapshot "{}".'.format(chosen_snapshot.name, _backup_snapshot_name))
+            self.session.send_to_client('{} desplegado. Puedes recuperar el mundo tal y como era antes del despliegue. Para hacerlo, despliega el snapshot "{}".'.format(chosen_snapshot.name, _backup_snapshot_name))
             self.finish_interaction()
 
     def show_world_snapshot_list(self):
@@ -96,13 +104,12 @@ class DeploySnapshot(verb.Verb):
             self.finish_interaction()
             return
 
-        message = '¿Qué snapshot quieres desplegar?\n'
+        message = '¿Qué snapshot quieres desplegar? ("/" para cancelar)\n'
 
         snapshots = world.snapshots
 
         for i, snapshot in enumerate(snapshots):
-            message += '{}. {}\n'.format(i, snapshot.name)
-        message += '\n(x para cancelar)'
+            message += ' {} - {}\n'.format(i, snapshot.name)
 
         self.session.send_to_client(message)
 
@@ -137,7 +144,7 @@ class DeploySnapshot(verb.Verb):
 
 
 class PubishSnapshot(verb.Verb):
-    command = 'publish'
+    command = 'publicar'
     permissions = verb.CREATOR
 
     def process(self, message):
@@ -145,8 +152,8 @@ class PubishSnapshot(verb.Verb):
         self.process = self.process_menu_option
 
     def process_menu_option(self, message):
-        if message == 'x':
-            self.session.send_to_client('Cancelado.')
+        if message == '/':
+            self.session.send_to_client('Publicación de snapshot cancelada.')
             self.finish_interaction()
             return
             
@@ -178,26 +185,23 @@ class PubishSnapshot(verb.Verb):
         publishable_snapshots = list(filter(lambda s: s.public==False and s.name!=_backup_snapshot_name, world.snapshots))
 
         if not publishable_snapshots:
-            self.session.send_to_client('Este mundo no tine snapshots que publicar.')
+            self.session.send_to_client('Este mundo no tiene snapshots que publicar.')
             self.finish_interaction()
             return
         
-        message = '¿Qué snapshot quieres publicar?\n'
-
-        message = ''
+        message = '¿Qué snapshot quieres publicar? ("/" para cancelar)\n'
         
         if len(publishable_snapshots) == 0:
             message += 'No hay ningún snapshot sin publicar.\n'
 
         for i, snapshot in enumerate(publishable_snapshots):
-            message += '{}. {}\n'.format(i, snapshot.name)
-        message += '\n(x para cancelar)'
+            message += ' {} - {}\n'.format(i, snapshot.name)
 
         self.session.send_to_client(message)
 
 
 class UnpubishSnapshot(verb.Verb):
-    command = 'unpublish'
+    command = 'despublicar'
     permissions = verb.CREATOR
 
     def process(self, message):
@@ -205,7 +209,7 @@ class UnpubishSnapshot(verb.Verb):
         self.process = self.process_menu_option
 
     def process_menu_option(self, message):
-        if message == 'x':
+        if message == '/':
             self.session.send_to_client('Cancelado.')
             self.finish_interaction()
             return
@@ -241,17 +245,16 @@ class UnpubishSnapshot(verb.Verb):
             self.finish_interaction()
             return
 
-        message = 'Estas son las snapshots publicadas de tus mundos. ¿Cuál quieres despublicar?\n'
+        message = 'Estas son las snapshots publicadas de tus mundos.\n¿Cuál quieres despublicar? ("/" para cancelar)\n'
 
         for i, (snapshot, world) in enumerate(your_public_snapshots):
-            message += '{}. {: <24} Mundo: {}\n'.format(i, snapshot.name, world.name)
-        message += '\n(x para cancelar)'
+            message += ' {} - {: <24} Mundo: {}\n'.format(i, snapshot.name, world.name)
 
         self.session.send_to_client(message)
 
 
 class DeleteSnapshot(verb.Verb):
-    command = 'delete snapshot'
+    command = 'borrarsnapshot'
     permissions = verb.CREATOR
 
     def process(self, message):
@@ -263,20 +266,20 @@ class DeleteSnapshot(verb.Verb):
         self.deletable_snapshots = list(filter(lambda s: s.public==False, world.snapshots))
 
         if not self.deletable_snapshots:
-            self.session.send_to_client('Este mundo no tine snapshots que eliminar. Si quieres eliminar un snapshot público, primero despubícalo.')
+            self.session.send_to_client('Este mundo no tiene snapshots que eliminar. Si quieres eliminar un snapshot público, primero despubícalo.')
             self.finish_interaction()
             return
         
         message = '¿Qué snapshot quieres eliminar? (ES IRREVERSIBLE)\nSi quieres eliminar un snapshot público, primero despublícalo\n'
 
         for i, snapshot in enumerate(self.deletable_snapshots):
-            message += '{}. {}\n'.format(i, snapshot.name)
-        message += '\n(x para cancelar)'
+            message += ' {} - {}\n'.format(i, snapshot.name)
+        message += '\n("/" para cancelar)'
 
         self.session.send_to_client(message)
 
     def process_menu_option(self, message):
-        if message == 'x':
+        if message == '/':
             self.session.send_to_client('Cancelado.')
             self.finish_interaction()
             return

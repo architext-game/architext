@@ -14,10 +14,14 @@ class Craft(verb.Verb):
         self.current_process_function = self.process_first_message
 
     def process(self, message):
-        self.current_process_function(message)
+        if message == '/':
+            self.session.send_to_client("Fabricación cancelada.")
+            self.finish_interaction()
+        else:
+            self.current_process_function(message)
 
     def process_first_message(self, message):
-        self.session.send_to_client("Comienzas a fabricar un objeto. ¿Cómo quieres llamarlo?")
+        self.session.send_to_client(f"Comienzas a fabricar un objeto.\n{chr(9472)*34}\n{chr(10060)} Para cancelar, introduce '/' en cualquier momento.\n\nEscribe los siguientes datos:\n {chr(9873)} Nombre del objeto")
         self.current_process_function = self.process_item_name
 
     def process_item_name(self, message):
@@ -27,18 +31,18 @@ class Craft(verb.Verb):
         except entities.EmptyName:
             self.session.send_to_client("El nombre no puede estar vacío. Prueba con otro.")
         except entities.WrongNameFormat:
-            self.session.send_to_client("El nombre no puede acabar con # y un número. Prueba con otro.")
+            self.session.send_to_client("El nombre no puede acabar con # seguido de un número. Prueba con otro.")
         except entities.RoomNameClash:
             self.session.send_to_client("Ya hay un objeto o salida con ese nombre en esta sala. Prueba con otro.")
         except entities.TakableItemNameClash:
             self.session.send_to_client("Hay en el mundo un objeto tomable con ese nombre. Los objetos tomables deben tener un nombre único en todo el mundo, así que prueba a poner otro.")
         else:
-            self.session.send_to_client("Ahora introduce una descripción para tu nuevo objeto, para que todo el mundo sepa cómo es.")
+            self.session.send_to_client(f" {chr(128065)} Descripción")
             self.current_process_function = self.process_item_description
  
     def process_item_description(self, message):
         self.new_item.description = message
-        self.session.send_to_client('¿Cuál es la visibilidad del objeto? Escribe:\n  "visible" si nombraste el objeto en la descripción de la sala.\n  "listado" para que se nombre automáticamente al mirar la sala.\n  "oculto" para que los jugadores tengan que encontrarlo por otros medios.\n  "cogible" para que los jugadores puedan coger el objeto y llevarlo consigo. Será listado igual que un verbo listado, y no deberías nombrarlo en la descripción de la sala.')
+        self.session.send_to_client(f' {chr(128269)} Visibilidad\n Escribe:\n  (l) "listado" {chr(9472)} para que el objeto se nombre automáticamente al mirar la sala.\n  (v) "visible" {chr(9472)} si ya nombraste el objeto en la descripción de la sala.\n  (o) "oculto"  {chr(9472)} para que no aparezca ni en el comando "objetos".\n  (c) "cogible" {chr(9472)} para que los jugadores puedan coger el objeto y llevarlo consigo. Aparecerá automáticamente en la descripción de la sala. Su nombre deberá ser único en este mundo.')
         self.process = self.process_visibility
 
     def process_visibility(self, message):

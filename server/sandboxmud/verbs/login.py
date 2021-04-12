@@ -19,7 +19,7 @@ class Login(Verb):
             self.process_user_name(message)
             self.finish_interaction()
         else:
-            self.session.send_to_client('Enter a valid name.')
+            self.session.send_to_client('Introduce un nombre válido.')
 
     def process_user_name(self, name):
         if entities.User.objects(name=name):
@@ -30,7 +30,7 @@ class Login(Verb):
             starting_room = None
             self.session.user = entities.User(name=name, room=starting_room)
             self.session.user.connect(self.session.client_id)
-            self.session.send_to_client('Bienvenido {}. Si es tu primera vez, escribe "ayuda" para ver una pequeña guía.'.format(name))
+            self.session.send_to_client('Bienvenido {}.'.format(name))
 
         self.session.user.leave_master_mode()
 

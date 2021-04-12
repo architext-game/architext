@@ -7,6 +7,6 @@ class Shout(Verb):
 
     def process(self, message):
         command_length = len(self.command)
-        out_message = '{} grita "{}"'.format(self.session.user.name, message[command_length:])
+        out_message = f'{self.session.user.name} grita "¡¡{message[command_length:].upper()}!!"'
         self.session.send_to_all(out_message)
         self.finish_interaction()

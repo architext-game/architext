@@ -23,8 +23,14 @@ class Room(mongoengine.Document):
         self.custom_verbs.append(custom_verb)
         self.save()
 
-    def get_exit(self, exit_name):
-        return next(exit_module.Exit.objects(room=self, name=exit_name), None)
+    def get_exit(self, exit_name=None, destination=None):
+        if exit_name is not None and destination is not None:
+            return next(exit_module.Exit.objects(room=self, name=exit_name, destination=destination), None)
+        if exit_name is not None:
+            return next(exit_module.Exit.objects(room=self, name=exit_name), None)
+        if destination is not None:
+            return next(exit_module.Exit.objects(room=self, destination=destination), None)
+        return None
 
     @property
     def items(self):

@@ -1,6 +1,7 @@
 from . import verb
 from .. import entities
 import functools
+import textwrap
 
 class AddVerb(verb.Verb):
     """This verb allows users to create new custom verbs tied to items.
@@ -29,7 +30,11 @@ class AddVerb(verb.Verb):
         self.current_process_function = self.process_first_message
 
     def process(self, message):
-        self.current_process_function(message)
+        if message == '/':
+            self.session.send_to_client("Creación de verbo cancelada.")
+            self.finish_interaction()
+        else:
+            self.current_process_function(message)
 
     def process_first_message(self, message):
         # figure out wether it is a world, room or item verb
@@ -51,7 +56,11 @@ class AddVerb(verb.Verb):
         suitable_item_found = suitable_live_item_found if suitable_live_item_found is not None else suitable_saved_item_found
         if suitable_item_found is not None:
             self.item = suitable_item_found
-            self.session.send_to_client("Introduce el nombre del verbo a añadir al objeto (Ejemplos: usar, tocar, abrir, comer...) Puedes introducir varios separados por espacios.")
+            out_message  = f'Añadiendo un verbo a "{self.item.name}"\n{chr(9472)*(22+len(self.item.name))}\n'
+            out_message += f'{chr(10060)} Para cancelar, introduce "/" en cualquier momento.\n\n'
+            out_message += f'Vas a añadir un verbo que todos los jugadores podrán usar sobre este objeto. Primero introduce el nombre del verbo.\nPor ejemplo, si escribes "usar", tu verbo se ejecutará cuando un jugador escriba "usar {self.item.name}". Puedes introducir varios nombres separados por un espacio, y todos tendrán el mismo efecto.\n\n'
+            out_message += 'Nombre(s) del verbo:'
+            self.session.send_to_client(out_message)
             self.current_process_function = self.process_verb_names
         else:
             self.session.send_to_client("No encuentras ningún objeto con ese nombre.")
@@ -59,12 +68,20 @@ class AddVerb(verb.Verb):
 
     def process_room_verb_creation(self, message):
         self.room = self.session.user.room
-        self.session.send_to_client("Introduce el nombre del verbo a añadir a la sala (Ejemplos: usar, tocar, abrir, comer...) Puedes introducir varios separados por espacios.")
+        out_message  = f'Añadiendo un verbo a la sala\n{chr(9472)*29}\n'
+        out_message += f'{chr(10060)} Para cancelar, introduce "/" en cualquier momento.\n\n'
+        out_message += f'Vas a añadir un verbo que todos los jugadores podrán usar solo en esta sala. Primero introduce el nombre del verbo.\nPor ejemplo, si escribes "cantar", tu verbo se ejecutará cuando un jugador en esta sala escriba "cantar". Puedes introducir varios nombres separados por un espacio, y todos tendrán el mismo efecto.\n\n'
+        out_message += 'Nombre(s) del verbo:'
+        self.session.send_to_client(out_message)
         self.current_process_function = self.process_verb_names
 
     def process_world_verb_creation(self, message):
         self.world_state = self.session.user.room.world_state
-        self.session.send_to_client("Introduce el nombre del verbo a añadir al mundo (Ejemplos: usar, tocar, abrir, comer...) Puedes introducir varios separados por espacios.")
+        out_message  = f'Añadiendo un verbo al mundo\n{chr(9472)*29}\n'
+        out_message += f'{chr(10060)} Para cancelar, introduce "/" en cualquier momento.\n\n'
+        out_message += f'Vas a añadir un verbo que los jugadores podrán usar en cualquier momento. Primero introduce el nombre del verbo.\nPor ejemplo, si escribes "cantar", tu verbo se ejecutará cuando cualquier jugador escriba "cantar". Puedes introducir varios nombres separados por un espacio, y todos tendrán el mismo efecto.\n\n'
+        out_message += 'Nombre(s) del verbo:'
+        self.session.send_to_client(out_message)
         self.current_process_function = self.process_verb_names
 
     def process_verb_names(self, message):
@@ -77,7 +94,8 @@ class AddVerb(verb.Verb):
                 self.session.send_to_client("En tu lista hay un nombre de verbo inválido. Vuelve a probar.")
                 return
         self.verb_names = verb_names
-        self.session.send_to_client("Ahora introduce la primera acción que se realizará cuando se use el verbo. Puedes usar cualquier acción que puedas usar como jugador, será como si un jugador fantasma la realizase por ti. Escribe .usuario para referirte al jugador que usa el verbo. Cuando hayas acabado, introduce OK para terminar.")
+        out_message  = f'Ahora escribe la primera acción a realizar cuando un jugador use el verbo\n{chr(9472)*74}\n  {chr(9679)} Puedes usar cualquier acción que puedas hacer como jugador y editor.\n  {chr(9679)} Cuando se use, será como si un jugador fantasma apareciese en la habitación donde se usa el verbo e hiciese las acciones por ti.\n  {chr(9679)} Puedes escribir ".usuario" para referirte al jugador que usa el verbo.\n\nPuedes seguir escribiendo acciones después de la primera, uno por línea, como harías mientras juegas (aunque no verás ninguna respuesta). Cuando hayas acabado, introduce "OK".\n\nAcciones del verbo:'
+        self.session.send_to_client(out_message)
         self.current_process_function = self.process_command
 
     def process_command(self, message):
@@ -113,7 +131,7 @@ class AddVerb(verb.Verb):
         return True
 
 class InspectCustomVerb(verb.Verb):
-    command = 'inspect customverb from '
+    command = 'ver verbo de '
 
     def process(self, message):
         if message == 'inspect customverb from world':
@@ -173,43 +191,50 @@ class InspectCustomVerb(verb.Verb):
         self.finish_interaction()
 
 class DeleteCustomVerb(verb.Verb):
-    command = 'delete customverb from '
+    command = 'eliminarverbo '
     permissions = verb.PRIVILEGED
 
     def process(self, message):
-        if message == 'delete customverb from world':
+        if message == 'eliminarverbo mundo':
             self.deletable_custom_verbs = self.session.user.room.world_state.custom_verbs
-        elif message == 'delete customverb from room':
+            target_name = 'este mundo'
+        elif message == 'eliminarverbo sala':
             self.deletable_custom_verbs = self.session.user.room.custom_verbs
+            target_name = f'"{self.session.user.room.name}" (sala)'
         else:
             item_name = message[len(self.command):]
             selected_item = next(entities.Item.objects(room=self.session.user.room, name=item_name), None)
             if selected_item is None:
-                self.session.send_to_client("No sé de dónde quieres eliminar verbos.")
+                self.session.send_to_client('No sé de dónde quieres eliminar verbos. Escribe el nombre de un objeto, "mundo" o "sala".')
                 self.finish_interaction()
                 return
+            target_name = f'"{selected_item.name}" (objeto)'
             self.deletable_custom_verbs = selected_item.custom_verbs
 
         if not self.deletable_custom_verbs:
-            self.session.send_to_client("No tiene verbos para eliminar!")
+            self.session.send_to_client(f"En {target_name} no hay verbos para eliminar.")
             self.finish_interaction()
             return
 
-        message = 'Qué verbo custom quieres eliminar?\n'
-        message += self.get_custom_verb_list()
-        self.session.send_to_client(message)
+        out_message = f"""\
+        Eliminando verbo de {target_name}
+        {chr(9472)*(21+len(target_name))}
+        {chr(10060)} Para cancelar, introduce '/' en cualquier momento.
+
+        ¿Qué verbo quieres eliminar? (introduce el número correspondiente)
+        {self.get_custom_verb_list()}""".replace('    ', '')
+        self.session.send_to_client(out_message)
         self.process = self.process_menu_option
 
     def get_custom_verb_list(self):
         list = ''
         for index, custom_verb in enumerate(self.deletable_custom_verbs):
-            list += '{}. {}\n'.format(index, custom_verb.names)
-        list += '\n\nx para cancelar'
+            list += f' {index} - {custom_verb.names}\n'
         return list
 
     def process_menu_option(self, message):
-        if message == 'x':
-            self.session.send_to_client('Cancelado.')
+        if message == '/':
+            self.session.send_to_client('Borrado de verbo cancelado.')
             self.finish_interaction()
             return
 
@@ -228,7 +253,7 @@ class DeleteCustomVerb(verb.Verb):
             return
 
         chosen_custom_verb.delete()
-        self.session.send_to_client('Hecho, el verbo ha sido borrado!')
+        self.session.send_to_client('Verbo borrado.')
         self.finish_interaction()
         
 

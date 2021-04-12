@@ -15,12 +15,17 @@ class Connect(verb.Verb):
         self.exit_from_here = entities.Exit(room=self.session.user.room, save_on_creation=False)
         self.exit_from_there = entities.Exit(destination=self.session.user.room, save_on_creation=False)
         self.current_process_function = self.process_first_message
-
+    
     def process(self, message):
-        self.current_process_function(message)
+        if message == '/':
+            self.session.send_to_client("Conexión cancelada.")
+            self.finish_interaction()
+        else:
+            self.current_process_function(message)
 
     def process_first_message(self, message):
-        self.session.send_to_client("Vas a crear una nueva conexion desde esta habitación. Introduce el alias de la habitación con la que quieres conectarla.")
+        out_message = f'Conectando desde "{self.session.user.room.name}" (alias: {self.session.user.room.alias})\n{chr(9472)*(19+len(self.session.user.room.name))}\n{chr(10060)} Para cancelar, introduce "/" en cualquier momento.\n\nVas a crear una nueva salida desde esta habitación.\nDebes introducir el alias de la habitación con la que quieres conectarla.\n(Si no sabes cuál es, ve a la sala de destino y usa el comando "info" allí)\n\nAlias de destino:'
+        self.session.send_to_client(out_message)
         self.current_process_function = self.process_room_alias
 
     def process_room_alias(self, message):
@@ -30,7 +35,9 @@ class Connect(verb.Verb):
                 self.other_room = entities.Room.objects(alias=message, world_state=self.session.user.room.world_state).first()
                 self.exit_from_here.destination = self.other_room
                 self.exit_from_there.room = self.other_room
-                self.session.send_to_client("¿Cómo quieres llamar a la salida desde aquí? Puedes dejarlo en blanco para un nombre autogenerado.")
+                out_message =  f'Conectando con "{self.other_room.name}" (alias: {self.other_room.alias})\n'
+                out_message += f' \u2B95 Introduce nombre de la salida en "{self.session.user.room.name}" hacia "{self.other_room.name}"\n[Por defecto: "a {self.other_room.name}"]'
+                self.session.send_to_client(out_message)
                 self.current_process_function = self.process_here_exit_name
         else:
             self.session.send_to_client("No hay ninguna sala con ese alias. Prueba otra vez.")
@@ -51,7 +58,9 @@ class Connect(verb.Verb):
         except entities.TakableItemNameClash:
             self.session.send_to_client("Hay en el mundo un objeto tomable con ese nombre. Los objetos tomables deben tener un nombre único en todo el mundo, así que prueba a poner otro.")
         else:
-            self.session.send_to_client("¿Cómo quieres llamar a la salida desde la otra habitación? Puedes dejarlo en blanco para un nombre autogenerado.")
+            out_message = f' \u2B95 Introduce nombre de la salida en "{self.other_room.name}" hacia "{self.session.user.room.name}"\n[Por defecto: "a {self.session.user.room.name}"]'
+
+            self.session.send_to_client(out_message)
             self.current_process_function = self.process_there_exit_name
 
     def process_there_exit_name(self, message):
@@ -74,7 +83,7 @@ class Connect(verb.Verb):
             self.exit_from_there.room = self.other_room
             self.exit_from_here.save()
             self.exit_from_there.save()
-            self.session.send_to_client("Salas conectadas")
+            self.session.send_to_client("Conexión completada")
             if not self.session.user.master_mode:
                 self.session.send_to_others_in_room("Los ojos de {} se ponen en blanco un momento. Una nueva salida aparece en la habitación.".format(self.session.user.name))
             self.finish_interaction()

@@ -32,7 +32,7 @@ class PlaceItem(verb.Verb):
             except entities.NameNotGloballyUnique:
                 self.session.send_to_client("El objeto no se puede colocar, porque es cogible y ya hay un objeto con ese nombre en este mundo.")   
             else:
-                self.session.send_to_client("Hecho!")
+                self.session.send_to_client(f'Has colocado "{item_to_place.name}" en esta sala.')
         else:
             raise Exception("There was more than one item with the same id!")
 

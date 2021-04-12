@@ -64,5 +64,5 @@ class TextToRoomUnless(verb.Verb):
         if exception_user is not None:
             self.session.send_to_room_except(exception_user, out_message)
         else:
-            self.sssion.send_to_client("El usuario al que no quieres enviar el mensaje no está en esta sala. No se ha enviado mensaje a ningún jugador.")
+            self.session.send_to_client("El usuario al que no quieres enviar el mensaje no está en esta sala. No se ha enviado mensaje a ningún jugador.")
         self.finish_interaction()

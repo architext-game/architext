@@ -45,7 +45,11 @@ class AssignKey(verb.Verb):
         self.current_process_function = self.process_exit_name
 
     def process(self, message):
-        self.current_process_function(message)
+        if message == '/':
+            self.session.send_to_client("Asignación de llave cancelada.")
+            self.finish_interaction()
+        else:
+            self.current_process_function(message)
 
     def process_exit_name(self, message):
         command_length = len(self.command)
@@ -53,7 +57,7 @@ class AssignKey(verb.Verb):
         self.exit_to_assign = next(filter(lambda e: e.name==exit_name, self.session.user.room.exits), None)
         if self.exit_to_assign is not None:
             self.current_process_function = self.process_item_name
-            self.session.send_to_client("¿Cómo se llama el objeto que debe abrir esta salida?")
+            self.session.send_to_client("¿Cómo se llama el objeto que debe abrir esta salida? ('/' para cancelar)")
         else:
             self.session.send_to_client("No encuentras esa salida.")
             self.finish_interaction()
@@ -84,6 +88,10 @@ class Open(verb.Verb):
         self.finish_interaction()
 
     def open(self, exit_to_open):
+        if(exit_to_open.is_open):
+            self.session.send_to_client("Esa salida ya está abierta.")
+            return
+
         for item in self.session.user.get_current_world_inventory().items:
             if item.name in exit_to_open.key_names:
                 exit_to_open.open()

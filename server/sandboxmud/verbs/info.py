@@ -1,10 +1,11 @@
-from .verb import Verb
+from . import verb
 from ..util import possible_meanings
 from ..entities import User
 import functools
+import textwrap
 
-class WorldInfo(Verb):
-    command = 'worldinfo'
+class WorldInfo(verb.Verb):
+    command = 'info mundo'
 
     def process(self, message):
         self.show_world_info()
@@ -31,11 +32,12 @@ Edición libre: {free_edition}
         self.session.send_to_client(message)
 
 
-class Info(Verb):
+class Info(verb.Verb):
     """Shows all info of a room or item. This command is designed for creators, since it shows
     info that should be secret."""
 
     command = 'info'
+    permissions = verb.PRIVILEGED
 
     def process(self, message):
         command_length = len(self.command) + 1
@@ -79,45 +81,37 @@ class Info(Verb):
         description = self.session.user.room.description
         alias = self.session.user.room.alias
 
-        listed_exits = [exit for exit in self.session.user.room.exits if exit.is_listed()]
-        if len(listed_exits) > 0:
-            listed_exits = '  '+('\n\r  '.join(['"{}" lleva a "{}"'.format(exit.name, exit.destination.name) for exit in listed_exits]))
-            listed_exits = "Salidas listadas:\n\r{}".format(listed_exits)
-        else:
-            listed_exits = "Salidas listadas: NINGUNA"
+        exit_list = []
+        for exit in self.session.user.room.exits:
+            exit_list.append(f'   {exit.name} lleva a {exit.destination.name} ({self.visible_output(exit)})')
+        exit_string = '\n'.join(exit_list)
 
-        obvious_exits = [exit for exit in self.session.user.room.exits if exit.is_obvious()]
-        if len(obvious_exits) > 0:
-            obvious_exits = '  '+('\n\r  '.join(['"{}" lleva a "{}"'.format(exit.name, exit.destination.name) for exit in obvious_exits]))
-            obvious_exits = "Salidas visibles:\n\r{}".format(obvious_exits)
-        else:
-            obvious_exits = "Salidas visibles: NINGUNA"
-
-        hidden_exits = [exit for exit in self.session.user.room.exits if exit.is_hidden()]
-        if len(hidden_exits) > 0:
-            hidden_exits = '  '+('\n\r  '.join(['"{}" lleva a "{}"'.format(exit.name, exit.destination.name) for exit in hidden_exits]))
-            hidden_exits = "Salidas ocultas:\n\r{}".format(hidden_exits)
-        else:
-            hidden_exits = "Salidas ocultas: NINGUNA"
-
-        if [item for item in self.session.user.room.items if item.is_listed()]:
-            listed_items = 'Objetos listados: '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if item.is_listed()]))
-        else:
-            listed_items = 'Objetos listados: NINGUNO'
-
-        if [item for item in self.session.user.room.items if item.is_obvious()]:
-            obvious_items = 'Objetos visibles: '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if item.is_obvious()]))
-        else:
-            obvious_items = 'Objetos visibles: NINGUNO'
-
-        if [item for item in self.session.user.room.items if item.is_hidden()]:
-            hidden_items = 'Objetos ocultos: '+(', '.join(["{}".format(item.name) for item in self.session.user.room.items if item.is_hidden()]))
-        else:
-            hidden_items = 'Objetos ocultos: NINGUNO'
+        item_list = []
+        for item in self.session.user.room.items:
+            item_list.append(f'   {item.name} ({self.visible_output(item)})')
+        item_string = '\n'.join(item_list)
         
-        players_online = ', '.join(['"{}"'.format(user.name) for user in User.objects(room=self.session.user.room, client_id__ne=None)])
-        players_offline = ', '.join(['"{}"'.format(user.name) for user in User.objects(room=self.session.user.room, client_id=None)])
-        message = 'Nombre de la sala: "{name}"\nAlias: "{alias}"\nDescripción: "{description}"\n{listed_exits}\n{obvious_exits}\n{hidden_exits}\n{listed_items}\n{obvious_items}\n{hidden_items}\nJugadores online aquí: {online}\nJugadores offline aquí: {offline}'.format(
-            name=room_name, alias=alias, description=description, listed_exits=listed_exits, obvious_exits=obvious_exits, hidden_exits=hidden_exits, listed_items=listed_items, obvious_items=obvious_items, hidden_items=hidden_items, online=players_online, offline=players_offline
-        )
+        players_online = ', '.join(['{}'.format(user.name) for user in User.objects(room=self.session.user.room, client_id__ne=None)])
+        players_offline = ', '.join(['{}'.format(user.name) for user in User.objects(room=self.session.user.room, client_id=None)])
+        message = (f"""
+Sala: "{room_name}"
+{chr(9472)*(8+len(room_name))}
+ Alias: {alias}
+ Descripción: {description}
+ Salidas:
+{exit_string}
+ Objetos:
+{item_string}
+ Jugadores online aquí: {players_online}
+ Jugadores offline aquí: {players_offline}""")
         self.session.send_to_client(message)
+
+    def visible_output(self, item):
+        if item.visible == 'takable':
+            return 'cogible'
+        if item.visible=='obvious':
+            return 'visible'
+        if item.visible=='listed':
+            return 'listado'
+        if item.visible=='hidden':
+            return 'oculto'

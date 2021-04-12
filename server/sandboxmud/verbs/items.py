@@ -8,7 +8,7 @@ class Items(Verb):
         items_names = [item.name for item in self.session.user.room.items if not item.is_hidden()]
 
         if items_names:
-            out_message = 'Distingues fácilmente los siguientes objetos:\n  ' + '\n  '.join(items_names)
+            out_message = f'Distingues fácilmente los siguientes objetos:\n {chr(9679)} ' + f'\n {chr(9679)} '.join(items_names)
         else:
             out_message = 'A primera vista parece que no hay ningún objeto interesante en esta sala.'
 

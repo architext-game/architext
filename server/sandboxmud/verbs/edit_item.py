@@ -28,11 +28,15 @@ class EditItem(verb.Verb):
 
         if suitable_item_found is not None:
             self.item_to_edit = suitable_item_found
-            self.session.send_to_client("Introduce el número correspondiente al atributo a eidtar.\n  [0] Nombre\n  [1] Descripción\n  [2] Visibilidad")
+            out_message = f"Editando {self.item_to_edit.name} (objeto)\n{chr(9472)*(10+len(self.item_to_edit.name))}\n{chr(10060)} Para cancelar, introduce '/' en cualquier momento.\n\n¿Qué quieres cambiar? (introduce el número correspondiente)\n 0 - Nombre\n 1 - Descripción\n 2 - Visibilidad"
+            self.session.send_to_client(out_message)
+            # self.session.send_to_client("Introduce el número correspondiente al atributo a eidtar.\n  [0] Nombre\n  [1] Descripción\n  [2] Visibilidad")
             self.current_process_function = self.process_item_edit_option_number
         elif message in [exit.name for exit in current_room.exits]:
             self.exit_to_edit = next(filter(lambda e: e.name == message, current_room.exits))
-            self.session.send_to_client("Introduce el número correspondiente al atributo a eidtar.\n  [0] Nombre\n  [1] Descripción\n  [2] Visibilidad\n  [3] Destino")
+            out_message = f"Editando {self.exit_to_edit.name} (salida)\n{chr(9472)*(10+len(self.exit_to_edit.name))}\n{chr(10060)} Para cancelar, introduce '/' en cualquier momento.\n\n¿Qué quieres cambiar? (introduce el número correspondiente)\n 0 - Nombre\n 1 - Descripción\n 2 - Visibilidad\n 3 - Destino"
+            self.session.send_to_client(out_message)
+            #self.session.send_to_client("Introduce el número correspondiente al atributo a editar.\n  [0] Nombre\n  [1] Descripción\n  [2] Visibilidad\n  [3] Destino")
             self.current_process_function = self.process_exit_edit_option_number
         else:
             self.session.send_to_client("No encuentras ningún objeto ni salida con ese nombre.")
@@ -48,7 +52,7 @@ class EditItem(verb.Verb):
         # max_number = 2
         if 0 <= message <= 1:
             self.option_number = message
-            self.session.send_to_client('Ahora introduce el nuevo valor para esa propiedad.')
+            self.session.send_to_client('Introduce el nuevo valor')
             self.current_process_function = self.process_reform_value
         elif message == 2:
             self.option_number = message
@@ -126,7 +130,7 @@ class EditItem(verb.Verb):
                     self.finish_interaction()
                     return
             object_to_edit.save()
-            self.session.send_to_client('Hecho.')
+            self.session.send_to_client('Edición completada.')
             self.finish_interaction()
         else:
             self.session.send_to_client('Debes introducir el nuevo valor')

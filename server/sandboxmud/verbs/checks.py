@@ -2,10 +2,10 @@ from . import verb
 from .. import  session
 
 class CheckForItem(verb.Verb):
-    command = 'check '
-    check_room_command = 'check room for '
-    check_inv_command =  'check inv for '
-    check_room_and_inv_command = 'check room and inv for '
+    command = 'si hay en '
+    check_room_command = 'si hay en sala '
+    check_inv_command =  'si hay en inventario '
+    check_room_and_inv_command = 'si hay en sala o inventario '
 
     def __init__(self, session):
         super().__init__(session)        
@@ -57,18 +57,18 @@ class CheckForItem(verb.Verb):
 
         if message in ['OK', 'ok']:
             self.session.send_to_client('Vale, VAMOS A HACERLO!')
-            self.check_and_execute()
+            self.check_and_run()
             self.finish_interaction()
         elif message:
             self.false_case_actions.append(message)
         else:
             pass
 
-    def check_and_execute(self):
+    def check_and_run(self):
         if self.condition_to_check():
-            self.execute(self.true_case_actions, self.session)
+            self.run(self.true_case_actions, self.session)
         else:
-            self.execute(self.false_case_actions, self.session)
+            self.run(self.false_case_actions, self.session)
 
     def item_name_is_at_room(self):
         item_names = [item.name for item in self.session.user.room.items]
@@ -87,7 +87,7 @@ class CheckForItem(verb.Verb):
         return self.item_name_is_at_room() or self.item_name_is_at_inv()
 
     @classmethod
-    def execute(cls, actions, session):
+    def run(cls, actions, session):
         previous_session_verb = session.current_verb
         session.current_verb = None
         for action in actions:
