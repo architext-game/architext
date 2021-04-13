@@ -50,9 +50,10 @@ class AddVerb(verb.Verb):
     def process_item_name(self, message):
         current_room = self.session.user.room
         target_item_name = message[len(self.item_command)+1:]
+        saved_items = entities.Item.objects(saved_in=self.session.user.room.world_state)
 
         suitable_live_item_found = next(filter(lambda i: i.name==target_item_name, current_room.items), None)
-        suitable_saved_item_found = next(filter(lambda i: i.item_id==target_item_name, self.session.user.saved_items), None)
+        suitable_saved_item_found = next(filter(lambda i: i.item_id==target_item_name, saved_items), None)
         suitable_item_found = suitable_live_item_found if suitable_live_item_found is not None else suitable_saved_item_found
         if suitable_item_found is not None:
             self.item = suitable_item_found

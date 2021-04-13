@@ -15,10 +15,10 @@ class PlaceItem(verb.Verb):
         self.finish_interaction()
 
     def place(self, provided_item_id):
-        querry = entities.Item.objects(item_id=provided_item_id, room=None)
+        querry = entities.Item.objects(item_id=provided_item_id, room=None, saved_in=self.session.user.room.world_state)
 
         if len(querry) == 0:
-            self.session.send_to_client("No hay ningún objeto guardado con el identificador '{}'.".format(provided_item_id))
+            self.session.send_to_client("No hay ningún objeto guardado con el identificador '{}' en este mundo.".format(provided_item_id))
             self.list_your_saved_messages()
         elif len(querry) == 1:
             selected_item_snapshot = querry[0]
@@ -37,16 +37,18 @@ class PlaceItem(verb.Verb):
             raise Exception("There was more than one item with the same id!")
 
     def list_your_saved_messages(self):
-        if self.session.user.saved_items != []:
-            saved_item_ids = ["'{}'".format(item.item_id) for item in self.session.user.saved_items]
+        saved_items = entities.Item.objects(saved_in=self.session.user.room.world_state)
+        if len(saved_items) > 0:
+            saved_item_ids = ["'{}'".format(item.item_id) for item in saved_items]
             saved_item_list = functools.reduce(lambda a, b: '{}\n{}'.format(a,b), saved_item_ids)
-            self.session.send_to_client('Estos son los objetos que has guardado:\n{}'.format(saved_item_list))
+            self.session.send_to_client('Objetos guardados en este mundo:\n{}'.format(saved_item_list))
         else:
-            self.session.send_to_client("No has guardado ningún objeto.")
+            self.session.send_to_client("No has guardado ningún objeto en este mundo.")
 
 
 class SaveItem(verb.Verb):
     command = 'guardar '
+    permissions = verb.PRIVILEGED
 
     def process(self, message):
         message = message[len(self.command):]

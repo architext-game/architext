@@ -21,9 +21,10 @@ class EditItem(verb.Verb):
     def start_editing(self, message):
         current_room = self.session.user.room
         message = message[len(self.command):]
+        saved_items = entities.Item.objects(saved_in=self.session.user.room.world_state)
 
         suitable_live_item_found = next(filter(lambda i: i.name==message, current_room.items), None)
-        suitable_saved_item_found = next(filter(lambda i: i.item_id==message, self.session.user.saved_items), None)
+        suitable_saved_item_found = next(filter(lambda i: i.item_id==message, saved_items), None)
         suitable_item_found = suitable_live_item_found if suitable_live_item_found is not None else suitable_saved_item_found
 
         if suitable_item_found is not None:

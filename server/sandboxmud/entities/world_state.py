@@ -1,5 +1,6 @@
 import mongoengine
 from . import inventory as inventory_module
+from . import item as item_module
 from . import room as room_module
 from . import world as world_module
 
@@ -57,6 +58,10 @@ class WorldState(mongoengine.Document):
 
         for inventory in inventory_module.Inventory.objects(world_state=self):
             inventory.clone(new_world_state=new_world_state)
+
+        saved_items = item_module.Item.objects(saved_in=self)
+        for saved_item in saved_items:
+            cloned_item = saved_item.clone(new_item_id=saved_item.item_id, new_saved_in=new_world_state)
 
         new_world_state.save()
         return new_world_state

@@ -6,7 +6,6 @@ class User(mongoengine.Document):
     room = mongoengine.ReferenceField('Room')
     client_id = mongoengine.IntField(default=None)
     master_mode = mongoengine.BooleanField(default=False)
-    saved_items = mongoengine.ListField(mongoengine.ReferenceField('Item'))
 
     def __init__(self, *args, save_on_creation=True,  **kwargs):
         super().__init__(*args, **kwargs)
@@ -24,7 +23,9 @@ class User(mongoengine.Document):
 
     def save_item(self, item):
         item_snapshot = item.clone()
-        self.saved_items.append(item_snapshot)
+        item_snapshot.saved_in = self.room.world_state
+        item_snapshot.item_id = item_snapshot._generate_item_id()
+        item_snapshot.save()
         self.save()
         return item_snapshot
 

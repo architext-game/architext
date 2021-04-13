@@ -6,17 +6,19 @@ from . import room as room_module
 import re
 
 class Item(mongoengine.Document):
-    item_id      = mongoengine.StringField(unique=True, required=True)
+    item_id      = mongoengine.StringField(default=None)
     name         = mongoengine.StringField(required=True)
     description  = mongoengine.StringField(default='No tiene nada de especial.')
     visible      = mongoengine.StringField(choices=['listed', 'hidden', 'obvious', 'takable'], default='listed')
     custom_verbs = mongoengine.ListField(mongoengine.ReferenceField('CustomVerb'))
     room         = mongoengine.ReferenceField('Room', default=None)
+    saved_in     = mongoengine.ReferenceField('WorldState', default=None)
 
     def __init__(self, *args, save_on_creation=True, **kwargs):
         super().__init__(*args, **kwargs)
         if self.id is None:  # if this is a newly created Item, instead of a pre-existing document being instantiated by mongoengine.
-            self.item_id = self._generate_item_id()
+            if self.saved_in is not None and self.item_id is None:
+                self.item_id = self._generate_item_id()
             if save_on_creation:
                 self.save()
 
@@ -26,10 +28,10 @@ class Item(mongoengine.Document):
 
     def _generate_item_id(self):
         id_number = 1
-        item_id = "{}#{}".format(self.name, id_number)
-        while len(Item.objects(item_id=item_id)) > 0:
+        item_id = f"{self.name}#{id_number}"
+        while len(Item.objects(item_id=item_id, saved_in=self.saved_in)) > 0:
             id_number = id_number + 1
-            item_id = "{}#{}".format(self.name, id_number)
+            item_id = f"{self.name}#{id_number}"
         return item_id
 
     def ensure_i_am_valid(self):
@@ -106,8 +108,8 @@ class Item(mongoengine.Document):
         self.custom_verbs.append(custom_verb)
         self.save()
 
-    def clone(self, new_room=None):
-        new_item = Item(name=self.name, description=self.description, visible=self.visible, room=new_room)
+    def clone(self, new_room=None, new_saved_in=None, new_item_id=None):
+        new_item = Item(name=self.name, description=self.description, visible=self.visible, room=new_room, saved_in=new_saved_in, item_id=new_item_id)
         for custom_verb in self.custom_verbs:
             new_item.add_custom_verb(custom_verb.clone())
         new_item.save()
