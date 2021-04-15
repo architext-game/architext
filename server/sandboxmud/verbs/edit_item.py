@@ -16,7 +16,11 @@ class EditItem(verb.Verb):
         self.current_process_function = self.start_editing
 
     def process(self, message):
-        self.current_process_function(message)
+        if message == '/':
+            self.session.send_to_client("Edición cancelada.")
+            self.finish_interaction()
+        else:
+            self.current_process_function(message)
 
     def start_editing(self, message):
         current_room = self.session.user.room

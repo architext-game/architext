@@ -95,7 +95,7 @@ class AddVerb(verb.Verb):
                 self.session.send_to_client("En tu lista hay un nombre de verbo inválido. Vuelve a probar.")
                 return
         self.verb_names = verb_names
-        out_message  = f'Ahora escribe la primera acción a realizar cuando un jugador use el verbo\n{chr(9472)*74}\n  {chr(9679)} Puedes usar cualquier acción que puedas hacer como jugador y editor.\n  {chr(9679)} Cuando se use, será como si un jugador fantasma apareciese en la habitación donde se usa el verbo e hiciese las acciones por ti.\n  {chr(9679)} Puedes escribir ".usuario" para referirte al jugador que usa el verbo.\n\nPuedes seguir escribiendo acciones después de la primera, uno por línea, como harías mientras juegas (aunque no verás ninguna respuesta). Cuando hayas acabado, introduce "OK".\n\nAcciones del verbo:'
+        out_message  = f'Ahora escribe la primera acción a realizar cuando un jugador use el verbo\n{chr(9472)*74}\n  {chr(9679)} Puedes usar cualquier acción que puedas hacer como jugador y editor.\n  {chr(9679)} Cuando se use, será como si un jugador fantasma apareciese en la habitación donde se usa el verbo e hiciese las acciones por ti.\n  {chr(9679)} Puedes escribir ".usuario" para referirte al jugador que usa el verbo.\n\nPuedes seguir escribiendo acciones después de la primera, uno por línea, como harías mientras juegas (aunque no verás ninguna respuesta). Cuando hayas acabado, introduce "OK".\n\nAcciones del verbo: ("OK" para terminar)'
         self.session.send_to_client(out_message)
         self.current_process_function = self.process_command
 

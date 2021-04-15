@@ -83,7 +83,7 @@ class Info(verb.Verb):
 
         exit_list = []
         for exit in self.session.user.room.exits:
-            exit_list.append(f'   {exit.name} lleva a {exit.destination.name} ({self.visible_output(exit)})')
+            exit_list.append(f'   "{exit.name}" lleva a "{exit.destination.name}" ({self.visible_output(exit)})')
         exit_string = '\n'.join(exit_list)
 
         item_list = []
