@@ -162,11 +162,11 @@ class InspectCustomVerb(verb.Verb):
         list = ''
         for index, custom_verb in enumerate(self.inspectable_custom_verbs):
             list += '{}. {}\n'.format(index, custom_verb.names)
-        list += '\n\nx para cancelar'
+        list += '\n\n"/" para cancelar'
         return list
 
     def process_menu_option(self, message):
-        if message == 'x':
+        if message == '/':
             self.session.send_to_client('Cancelado.')
             self.finish_interaction()
             return

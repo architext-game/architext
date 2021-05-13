@@ -67,7 +67,7 @@ class DeploySnapshot(verb.Verb):
         self.current_process_function = self.process_menu_option
 
     def process_menu_option(self, message):
-        if message == 'x':
+        if message == '/':
             self.session.send_to_client('Cancelado.')
             self.finish_interaction()
             return
