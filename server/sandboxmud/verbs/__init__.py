@@ -20,7 +20,7 @@ from .add_verb import AddVerb, InspectCustomVerb, DeleteCustomVerb
 from .master_mode import MasterMode
 from .direct_text import TextToOne, TextToRoom, TextToRoomUnless, TextToWorld
 from .inventory import Take, Drop, Inventory, Give, TakeFrom
-from .keys import MasterClose, MasterOpen, AssignKey, Open
+from .keys import MasterClose, MasterOpen, AssignKey, Open, DeleteKey
 from .saving import SaveItem, PlaceItem
 from .custom_verb import CustomVerb
 from .snapshots import CreateSnapshot, DeploySnapshot, PubishSnapshot, UnpubishSnapshot, DeleteSnapshot
