@@ -43,7 +43,7 @@ class Craft(verb.Verb):
     def process_item_description(self, message):
         self.new_item.description = message
         self.session.send_to_client(f' {chr(128269)} Visibilidad\n Escribe:\n  (l) "listado" {chr(9472)} para que el objeto se nombre automáticamente al mirar la sala.\n  (v) "visible" {chr(9472)} si ya nombraste el objeto en la descripción de la sala.\n  (o) "oculto"  {chr(9472)} para que no aparezca ni en el comando "objetos".\n  (c) "cogible" {chr(9472)} para que los jugadores puedan coger el objeto y llevarlo consigo. Aparecerá automáticamente en la descripción de la sala. Su nombre deberá ser único en este mundo.')
-        self.process = self.process_visibility
+        self.current_process_function = self.process_visibility
 
     def process_visibility(self, message):
         if message.lower() in ['visible', 'v', 'vi']:
