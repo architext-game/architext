@@ -1,8 +1,21 @@
 import mongoengine
 from . import inventory as inventory_module
+from . import exceptions
+from .. import util
+from .. import entities
+
+def validate_user_name(name):
+    if '\n' in name:
+        raise exceptions.ValueWithLineBreaks()
+    elif len(name) > entities.User.NAME_MAX_LENGTH:
+        raise exceptions.ValueTooLong()
+    elif name == "":
+        raise exceptions.EmptyName()
 
 class User(mongoengine.Document):
-    name = mongoengine.StringField(required=True)
+    NAME_MAX_LENGTH = 26
+
+    name = mongoengine.StringField(required=True, validation=validate_user_name)
     room = mongoengine.ReferenceField('Room')
     client_id = mongoengine.IntField(default=None)
     master_mode = mongoengine.BooleanField(default=False)

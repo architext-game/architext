@@ -2,8 +2,11 @@ import mongoengine
 from .exceptions import *
 from . import user as user_module
 from . import world_state as world_state_module
+from .. import util
 
 class World(mongoengine.Document):
+    NAME_MAX_LENGTH = 36
+
     name = mongoengine.StringField(required=True)
     world_state = mongoengine.ReferenceField('WorldState', required=True)
     snapshots = mongoengine.ListField(mongoengine.ReferenceField('WorldSnapshot'))
@@ -19,6 +22,11 @@ class World(mongoengine.Document):
                 self.world_state = world_state_module.WorldState()
             if save_on_creation:
                 self.save()
+
+    # called by mongoengine just before saving the document
+    def clean(self):
+        self.name = util.fix_string(self.name, max_length=self.NAME_MAX_LENGTH, remove_breaks=True)
+
 
     def add_snapshot(self, snapshot):
         self.snapshots.append(snapshot)

@@ -15,11 +15,20 @@ class Login(Verb):
         self.session.send_to_client("Estás conectado. ¿Cómo te llamas?\n\r")
 
     def process(self, message):
-        if self.is_a_valid_name(message):
+        if message == util.GHOST_USER_NAME:
+            self.session.send_to_client("Ese nombre está reservado. Prueba con otro.")
+            return
+
+        try:
             self.process_user_name(message)
             self.finish_interaction()
-        else:
-            self.session.send_to_client('Introduce un nombre válido.')
+        except entities.EmptyName:
+            self.session.send_to_client("El nombre no puede estar vacío.")
+        except entities.ValueWithLineBreaks:
+            self.session.send_to_client("El nombre no puede contener saltos de línea.")
+        except entities.ValueTooLong:
+            self.session.send_to_client(f"El nombre no puede contener más de {entities.User.NAME_MAX_LENGTH} caracteres.")
+
 
     def process_user_name(self, name):
         if entities.User.objects(name=name):
@@ -46,9 +55,3 @@ class Login(Verb):
         log_message = '{} has connected.'.format(name)
         user_logger.info(log_message)
         server_logger.info(log_message)
-
-    def is_a_valid_name(self, name):
-        if not name == '' and not name == util.GHOST_USER_NAME:
-            return True
-        else:
-            return False

@@ -23,3 +23,9 @@ class NameNotGloballyUnique(BadItem):
 
 class CantDelete(Exception):
     """Raised when trying to delete something that can't be deleted"""
+
+class ValueWithLineBreaks(Exception):
+    """Raised when a value that should not have line breaks has line breaks"""
+
+class ValueTooLong(Exception):
+    """Raised when a value exceeds its max length"""

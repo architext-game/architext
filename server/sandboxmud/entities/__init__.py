@@ -10,7 +10,7 @@ from .exit import Exit
 from .room import Room
 from .user import User
 
-from .exceptions import BadItem, EmptyName, WrongNameFormat, RoomNameClash, TakableItemNameClash, NameNotGloballyUnique, CantDelete
+from .exceptions import BadItem, EmptyName, WrongNameFormat, RoomNameClash, TakableItemNameClash, NameNotGloballyUnique, CantDelete, ValueWithLineBreaks, ValueTooLong
 
 # delete rules
 # example:

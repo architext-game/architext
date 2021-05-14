@@ -40,4 +40,10 @@ def setup_logger(logger_name, log_file, console=False, level=logging.INFO):
 
     return logger
 
+def fix_string(string, remove_breaks=False, max_length=None):
+    if remove_breaks:
+        string = string.replace('\n', '')
+    if max_length is not None:
+        string = string[:max_length]
+    return string
 
