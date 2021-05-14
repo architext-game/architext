@@ -6,6 +6,7 @@ class User(mongoengine.Document):
     room = mongoengine.ReferenceField('Room')
     client_id = mongoengine.IntField(default=None)
     master_mode = mongoengine.BooleanField(default=False)
+    joined_worlds = mongoengine.ListField(mongoengine.ReferenceField('World'))
 
     def __init__(self, *args, save_on_creation=True,  **kwargs):
         super().__init__(*args, **kwargs)
@@ -19,6 +20,12 @@ class User(mongoengine.Document):
 
     def teleport(self, room):
         self.room = room
+        self.save()
+
+    def enter_world(self, world):
+        self.room = world.world_state.starting_room
+        if world not in self.joined_worlds:
+            self.joined_worlds.append(world)
         self.save()
 
     def save_item(self, item):

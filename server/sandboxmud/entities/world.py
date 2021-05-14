@@ -10,6 +10,7 @@ class World(mongoengine.Document):
     all_can_edit = mongoengine.BooleanField(default=False)
     editors = mongoengine.ListField(mongoengine.ReferenceField('User'))
     creator = mongoengine.ReferenceField('User', required=True)
+    public = mongoengine.BooleanField(default=False)
 
     def __init__(self, *args, save_on_creation=True, **kwargs):
         super().__init__(*args, **kwargs)
@@ -46,6 +47,10 @@ class World(mongoengine.Document):
         if user in self.editors:
             self.editors.remove(user)
             self.save()
+
+    def toggle_public(self):
+        self.public = not self.public
+        self.save()
 
     def get_connected_users(self):
         users = user_module.User.objects(client_id__ne=None, room__ne=None)

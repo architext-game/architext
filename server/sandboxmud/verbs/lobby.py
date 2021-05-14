@@ -8,18 +8,38 @@ import textwrap
 class LobbyMenu(verb.Verb):
     '''Helper class that has the method that shows the lobby menu'''
     def show_lobby_menu(self):
-        message = ""
-        if entities.World.objects():
-            message += f'Introduce el número del mundo al que quieras ir\n'
-            world_names_with_index = ['{}. {: <36}  ({}) by {}'.format(index, world.name, world.get_connected_users(), world.creator.name) for index, world in enumerate(entities.World.objects())]
-            message += functools.reduce(lambda a, b: '{}\n{}'.format(a, b), world_names_with_index)
+        out_message = ""
+
+        world_list = self.get_worlds_list()
+        if world_list:
+            out_message += f'Introduce el número del mundo al que quieras ir\n'
+            world_names_with_index = [f' {index}. {world.name: <36}  {world.get_connected_users()}{chr(128100)} by {world.creator.name} {"" if world.public else chr(128274)}' for index, world in enumerate(world_list)]
+            out_message += functools.reduce(lambda a, b: '{}\n{}'.format(a, b), world_names_with_index)
         else:
-            message += 'No hay ningún mundo en este servidor.'
-        message += '\n\n + para crear un nuevo mundo.'
-        message += '\n * para crear tu propia instancia de un mundo público.'
-        message += '\n - para borrar uno de tus mundos.'
-        message += '\n > para importar un mundo.'
-        self.session.send_to_client(message)
+            out_message += 'No hay ningún mundo público (o privado conocido) en este servidor.'
+        out_message += textwrap.dedent('''
+            
+             + para crear un nuevo mundo.
+             * para crear tu propia instancia de un mundo público.
+             - para borrar uno de tus mundos.
+             > para importar un mundo.
+            Puedes introducir el código de invitación de un mundo privado para entrar en él.'''
+        )
+        self.session.send_to_client(out_message)
+
+    def get_worlds_list(self):
+        return list(filter(self.has_to_be_listed, entities.World.objects()))
+
+    def has_to_be_listed(self, world):
+        if world.public:
+            return True
+        elif world.creator == self.session.user:
+            return True
+        elif world in self.session.user.joined_worlds:
+            return True
+        else:
+            return False
+
 
 class GoToLobby(LobbyMenu):
     command = 'salirmundo'
@@ -28,6 +48,36 @@ class GoToLobby(LobbyMenu):
         self.session.user.room = None
         self.session.user.save()
         self.show_lobby_menu()
+        self.finish_interaction()
+
+class JoinByInviteCode(LobbyMenu):
+    command = ''
+    verbtype = verb.LOBBYVERB
+
+    @classmethod
+    def has_world_id_format(cls, string):
+        return len(string.strip()) == 24
+
+    @classmethod
+    def can_process(cls, message, session):
+        if super().can_process(message, session) and cls.has_world_id_format(message):
+            return True
+        else:
+            return False
+
+    def process(self, message):
+        try:
+            chosen_world = entities.World.objects.get(id=message)
+        except entities.World.DoesNotExist:
+            self.session.send_to_client("No te entiendo.")
+            self.finish_interaction()
+            return
+
+        self.session.user.enter_world(chosen_world)
+        
+        self.session.send_to_client("VIAJANDO A {}".format(chosen_world.name))
+        look.Look(self.session).show_current_room()
+        self.session.send_to_others_in_room("¡Puf! {} apareció.".format(self.session.user.name))
         self.finish_interaction()
 
 class EnterWorld(LobbyMenu):
@@ -49,13 +99,12 @@ class EnterWorld(LobbyMenu):
             return
         
         try:
-            chosen_world = entities.World.objects[index]
+            chosen_world = self.get_worlds_list()[index]
         except IndexError:
             self.session.send_to_client("Introduce el número correspondiente a uno de los mundos")
             return
 
-        self.session.user.room = chosen_world.world_state.starting_room
-        self.session.user.save()
+        self.session.user.enter_world(chosen_world)
         
         self.session.send_to_client("VIAJANDO A {}".format(chosen_world.name))
         look.Look(self.session).show_current_room()
@@ -83,7 +132,12 @@ class CreateWorld(LobbyMenu):
 
         self.new_world.name = message
         self.new_world.save()
-        self.session.send_to_client('Tu nuevo mundo está listo.')
+        self.session.send_to_client(textwrap.dedent(f'''
+            Tu nuevo mundo está listo.
+            Es un mundo privado{chr(128274)}. Puedes invitar a tus amigos compartiendo su código de invitación: 
+            {self.new_world.id}
+            Si quieres y cuando esté listo, puedes entrar en él y usar el verbo "editarmundo" para hacerlo público.'''
+        ))
         self.show_lobby_menu()
         self.finish_interaction()
 

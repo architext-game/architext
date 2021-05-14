@@ -18,17 +18,14 @@ class WorldInfo(verb.Verb):
             editor_names = functools.reduce(lambda a,b: '{}, {}'.format(a,b), [editor.name for editor in world.editors])
         else:
             editor_names = 'No tiene'
-        message = '''\
-Nombre del mundo: {world_name}
-Creador: {creator_name}
-Editores: {editor_names}
-Edición libre: {free_edition}
-'''.format(
-    world_name=world.name,
-    creator_name=world.creator.name,
-    editor_names=editor_names,
-    free_edition=world.all_can_edit
-)
+        message = textwrap.dedent(f'''
+            Nombre del mundo: {world.name}
+            Creador: {world.creator.name}
+            Editores: {editor_names}
+            Edición libre: {world.all_can_edit}
+            El mundo es {"público" if world.public else "privado"}
+            Código de invitación: {world.id}
+        ''')
         self.session.send_to_client(message)
 
 
