@@ -1,5 +1,6 @@
 from . import verb
 from .. import entities
+from .. import util
 
 class TextToOne(verb.Verb):
     """Lets game masters send any message to a single user using:
@@ -13,11 +14,16 @@ class TextToOne(verb.Verb):
         command_length = len(self.command)
         message = message[command_length:]
         target_user_name, out_message = message.split("' ", 1)
-        target_user = next(entities.User.objects(name=target_user_name, client_id__ne=None), None)
-        if target_user is not None:
-            self.session.send_to_user(target_user, out_message)
-        else:
+        target_user = util.name_to_entity(self.session, target_user_name, loose_match=['connected_users'])
+
+        if target_user == "many":
+            self.session.send_to_client("Hay varios usuarios con un nombre parecido a ese. Intenta poner mayúsculas y acentos.")
+        elif target_user is None:
             self.session.send_to_client("Ese usuario no existe o no está conectado.")
+        else:
+            self.session.send_to_user(target_user, out_message)
+            self.session.send_to_client(f"Texto enviado a {target_user.name}.")
+
         self.finish_interaction()
 
 
@@ -60,9 +66,13 @@ class TextToRoomUnless(verb.Verb):
     def process(self, message):
         message = message[len(self.command):]
         exception_user_name, out_message = message.split("' ", 1)
-        exception_user = next(entities.User.objects(name=exception_user_name, room=self.session.user.room, client_id__ne=None), None)
-        if exception_user is not None:
-            self.session.send_to_room_except(exception_user, out_message)
+        exception_user = util.name_to_entity(self.session, exception_user_name, loose_match=['room_users'])
+
+        if exception_user == "many":
+            self.session.send_to_client("Hay varios usuarios con un nombre parecido a ese. Intenta poner mayúsculas y acentos.")
+        elif exception_user is None:
+            self.session.send_to_client("Ese usuario no existe o no está conectado en esta sala.")
         else:
-            self.session.send_to_client("El usuario al que no quieres enviar el mensaje no está en esta sala. No se ha enviado mensaje a ningún jugador.")
+            self.session.send_to_client(f"Texto enviado a todos menos a {exception_user.name}.")
+            self.session.send_to_room_except(exception_user, out_message)
         self.finish_interaction()

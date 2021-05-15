@@ -1,14 +1,16 @@
 from . import verb
 from .. import entities
+from .. import util
 import functools
 import textwrap
+
 
 class AddVerb(verb.Verb):
     """This verb allows users to create new custom verbs tied to items.
     """
 
     command = 'verbo'
-    item_command = 'verboobjeto'  # command for adding verbs to items
+    item_command = 'verboobjeto '  # command for adding verbs to items
     room_command = 'verbosala'    # command for adding verbs to rooms
     world_command = 'verbomundo'  # command for adding verbs to worlds
     permissions = verb.PRIVILEGED
@@ -48,24 +50,40 @@ class AddVerb(verb.Verb):
             raise ValueError('invalid message "{}"'.format(message))
 
     def process_item_name(self, message):
-        current_room = self.session.user.room
-        target_item_name = message[len(self.item_command)+1:]
-        saved_items = entities.Item.objects(saved_in=self.session.user.room.world_state)
+        name = message[len(self.item_command):]
+        target_item = util.name_to_entity(self.session, name, loose_match=["saved_items"], substr_match=["room_items", "inventory"])
 
-        suitable_live_item_found = next(filter(lambda i: i.name==target_item_name, current_room.items), None)
-        suitable_saved_item_found = next(filter(lambda i: i.item_id==target_item_name, saved_items), None)
-        suitable_item_found = suitable_live_item_found if suitable_live_item_found is not None else suitable_saved_item_found
-        if suitable_item_found is not None:
-            self.item = suitable_item_found
-            out_message  = f'Añadiendo un verbo a "{self.item.name}"\n{chr(9472)*(22+len(self.item.name))}\n'
-            out_message += f'{chr(10060)} Para cancelar, introduce "/" en cualquier momento.\n\n'
-            out_message += f'Vas a añadir un verbo que todos los jugadores podrán usar sobre este objeto. Primero introduce el nombre del verbo.\nPor ejemplo, si escribes "usar", tu verbo se ejecutará cuando un jugador escriba "usar {self.item.name}". Puedes introducir varios nombres separados por un espacio, y todos tendrán el mismo efecto.\n\n'
-            out_message += 'Nombre(s) del verbo:'
-            self.session.send_to_client(out_message)
-            self.current_process_function = self.process_verb_names
-        else:
+        if target_item == "many":
+            self.session.send_to_client("Hay más de un objeto con un nombre similar a ese. Sé más específico.")
+            self.finish_interaction()
+        elif target_item is None:
             self.session.send_to_client("No encuentras ningún objeto con ese nombre.")
             self.finish_interaction()
+        else:
+            self.item = target_item
+            self.current_process_function = self.process_verb_names
+
+            if target_item.is_saved():
+                self.session.send_to_client(textwrap.dedent(f"""
+                    Añadiendo un verbo a "{self.item.item_id}" (objeto guardado)
+                    {chr(9472)*(22+len(self.item.item_id))}
+                    {chr(10060)} Para cancelar, introduce "/" en cualquier momento.
+                    Vas a añadir un verbo que todos los jugadores podrán usar sobre este objeto. Primero introduce el nombre del verbo.
+                    Por ejemplo, si escribes "usar", tu verbo se ejecutará cuando un jugador escriba "usar {self.item.name}". Puedes introducir varios nombres separados por un espacio, y todos tendrán el mismo efecto.
+                    
+                    Nombre(s) del verbo:"""
+                ))
+            else:
+                self.session.send_to_client(textwrap.dedent(f"""
+                    Añadiendo un verbo a "{self.item.name}"
+                    {chr(9472)*(22+len(self.item.name))}
+                    {chr(10060)} Para cancelar, introduce "/" en cualquier momento.
+                    Vas a añadir un verbo que todos los jugadores podrán usar sobre este objeto. Primero introduce el nombre del verbo.
+                    Por ejemplo, si escribes "usar", tu verbo se ejecutará cuando un jugador escriba "usar {self.item.name}". Puedes introducir varios nombres separados por un espacio, y todos tendrán el mismo efecto.
+                    
+                    Nombre(s) del verbo:"""
+                ))
+
 
     def process_room_verb_creation(self, message):
         self.room = self.session.user.room
@@ -133,30 +151,47 @@ class AddVerb(verb.Verb):
 
 class InspectCustomVerb(verb.Verb):
     command = 'ver verbo de '
+    world_command = 'ver verbo de mundo'
+    room_command = 'ver verbo de sala'
 
     def process(self, message):
-        if message == 'inspect customverb from world':
+        out_message = ""
+        
+        if message == self.world_command:
             self.inspectable_custom_verbs = self.session.user.room.world_state.custom_verbs
-        elif message == 'inspect customverb from room':
+        elif message == self.room_command:
             self.inspectable_custom_verbs = self.session.user.room.custom_verbs
         else:
             item_name = message[len(self.command):]
-            selected_item = next(entities.Item.objects(room=self.session.user.room, name=item_name), None)
-            if selected_item is None:
-                self.session.send_to_client("No sé de dónde quieres inspeccionar verbos.")
+            selected_item = util.name_to_entity(self.session, item_name, loose_match=["saved_items"], substr_match=["room_items", "inventory"])
+
+            if selected_item == "many":
+                self.session.send_to_client("Hay más de un objeto con un nombre similar a ese. Sé más específico.")
                 self.finish_interaction()
                 return
-            self.inspectable_custom_verbs = selected_item.custom_verbs
-
+            elif selected_item is None:
+                self.session.send_to_client("No encuentras ningún objeto con ese nombre.")
+                self.finish_interaction()
+                return
+            else:
+                self.inspectable_custom_verbs = selected_item.custom_verbs
+                if selected_item.is_saved():
+                    out_message += f"Objeto guardado: {selected_item.item_id}\n"
+                else:
+                    out_message += f"Objeto: {selected_item.name}\n"
+                    
+        
         if not self.inspectable_custom_verbs:
-            self.session.send_to_client("No tiene verbos para inspeccionar!")
+            out_message += "No tiene verbos para inspeccionar."
+            self.session.send_to_client(out_message)
             self.finish_interaction()
             return
 
-        message = 'Qué verbo custom quieres inspeccionar?\n'
-        message += self.get_custom_verb_list()
-        self.session.send_to_client(message)
+        out_message += 'Qué verbo custom quieres inspeccionar?\n'
+        out_message += self.get_custom_verb_list()
+        self.session.send_to_client(out_message)
         self.process = self.process_menu_option
+
 
     def get_custom_verb_list(self):
         list = ''
@@ -204,12 +239,22 @@ class DeleteCustomVerb(verb.Verb):
             target_name = f'"{self.session.user.room.name}" (sala)'
         else:
             item_name = message[len(self.command):]
-            selected_item = next(entities.Item.objects(room=self.session.user.room, name=item_name), None)
-            if selected_item is None:
+
+            selected_item = util.name_to_entity(self.session, item_name, loose_match=["saved_items"], substr_match=["room_items", "inventory"])
+
+            if selected_item == "many":
+                self.session.send_to_client('Hay varios objetos con un nombre similar a ese. Sé más específico.')
+                self.finish_interaction()
+                return
+            elif selected_item is None:
                 self.session.send_to_client('No sé de dónde quieres eliminar verbos. Escribe el nombre de un objeto, "mundo" o "sala".')
                 self.finish_interaction()
                 return
-            target_name = f'"{selected_item.name}" (objeto)'
+            target_name = (
+                f'"{selected_item.item_id}" (objeto guardado)'
+                if selected_item.is_saved()
+                else f'"{selected_item.name}" (objeto)'
+            )
             self.deletable_custom_verbs = selected_item.custom_verbs
 
         if not self.deletable_custom_verbs:

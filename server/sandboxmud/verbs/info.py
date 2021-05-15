@@ -1,8 +1,8 @@
-from . import verb
-from ..util import possible_meanings
-from ..entities import User
 import functools
 import textwrap
+from . import verb
+from .. import util
+from .. import entities
 
 class WorldInfo(verb.Verb):
     command = 'info mundo'
@@ -45,32 +45,30 @@ class Info(verb.Verb):
         self.finish_interaction()
 
     def show_item_info(self, partial_item_name):
-        items_in_room = self.session.user.room.items
-        names_of_items_in_room = [item.name for item in items_in_room]
-        items_he_may_be_reffering_to = possible_meanings(partial_item_name, names_of_items_in_room)
+        selected_entity = util.name_to_entity(self.session, partial_item_name, loose_match=['saved_items'], substr_match=['room_items', 'inventory', 'room_exits'])
 
-        exits_in_room = self.session.user.room.exits
-        names_of_exits_in_room = [exit.name for exit in exits_in_room]
-        exits_he_may_be_reffering_to = possible_meanings(partial_item_name, names_of_exits_in_room)
-
-        if len(items_he_may_be_reffering_to) + len(exits_he_may_be_reffering_to) == 1:
-            if len(items_he_may_be_reffering_to) == 1:
-                item_name = items_he_may_be_reffering_to[0]
-                for item in items_in_room:
-                    if item.name == item_name:
-                        self.session.send_to_client('Nombre del objeto: "{}"\nDescripción: "{}"\nVisible: {}'.format(item.name, item.description, item.visible))
-                        break
+        if selected_entity == "many":
+            self.session.send_to_client("Hay varios objetos o salidas con un nombre similar a ese. Intenta ser más específico.")
+            self.finish_interaction()
+        elif selected_entity is None:
+            self.session.send_to_client("No hay ningún objeto ni salida con ese nombre en la sala.")
+            self.finish_interaction()
+        else:
+            if isinstance(selected_entity, entities.Item):
+                self.session.send_to_client(textwrap.dedent(f"""
+                    Nombre del objeto: "{selected_entity.name}"
+                    Descripción: "{selected_entity.description}"
+                    Visible: {selected_entity.visible}"""
+                ))
+            elif isinstance(selected_entity, entities.Exit):
+                self.session.send_to_client(textwrap.dedent(f"""
+                    Nombre de la salida: "{selected_entity.name}"
+                    Descripción "{selected_entity.description}"
+                    Visible: {selected_entity.visible}
+                    Destino: {selected_entity.destination.name} (Alias {selected_entity.destination.name})"""
+                ))
             else:
-                exit_name = exits_he_may_be_reffering_to[0]
-                for exit in exits_in_room:
-                    if exit.name == exit_name:
-                        self.session.send_to_client('Nombre de la salida: "{}"\nDescripción "{}"\nVisible: {}\nDestino: {} (Alias {})'.format(exit.name, exit.description, exit.visible, exit.destination.name, exit.destination.alias))
-                        break
-
-        elif len(items_he_may_be_reffering_to) + len(exits_he_may_be_reffering_to) == 0:
-            self.session.send_to_client("No ves eso por aquí.".format(partial_item_name))
-        elif len(items_he_may_be_reffering_to) + len(exits_he_may_be_reffering_to) > 1:
-            self.session.send_to_client("¿A cuál te refieres? Sé más específico.")
+                raise ValueError(f"Item or Exit expected. {type(selected_entity)} found.")
 
     
     def show_current_room_info(self):
@@ -88,8 +86,8 @@ class Info(verb.Verb):
             item_list.append(f'   {item.name} ({self.visible_output(item)})')
         item_string = '\n'.join(item_list)
         
-        players_online = ', '.join(['{}'.format(user.name) for user in User.objects(room=self.session.user.room, client_id__ne=None)])
-        players_offline = ', '.join(['{}'.format(user.name) for user in User.objects(room=self.session.user.room, client_id=None)])
+        players_online = ', '.join(['{}'.format(user.name) for user in entities.User.objects(room=self.session.user.room, client_id__ne=None)])
+        players_offline = ', '.join(['{}'.format(user.name) for user in entities.User.objects(room=self.session.user.room, client_id=None)])
         message = (f"""
 Sala: "{room_name}"
 {chr(9472)*(8+len(room_name))}

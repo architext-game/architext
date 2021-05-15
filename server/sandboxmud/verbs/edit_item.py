@@ -1,6 +1,7 @@
 from . import verb
 from .. import util
 from .. import entities
+import textwrap
 
 class EditItem(verb.Verb):
     """This verb allows users to edit properties of an item or exit that is in their current room"""
@@ -27,25 +28,65 @@ class EditItem(verb.Verb):
         message = message[len(self.command):]
         saved_items = entities.Item.objects(saved_in=self.session.user.room.world_state)
 
-        suitable_live_item_found = next(filter(lambda i: i.name==message, current_room.items), None)
-        suitable_saved_item_found = next(filter(lambda i: i.item_id==message, saved_items), None)
-        suitable_item_found = suitable_live_item_found if suitable_live_item_found is not None else suitable_saved_item_found
+        selected_entity = util.name_to_entity(self.session, message, loose_match=["saved_items"], substr_match=["room_items", "inventory", "room_exits"])
 
-        if suitable_item_found is not None:
-            self.item_to_edit = suitable_item_found
-            out_message = f"Editando {self.item_to_edit.name} (objeto)\n{chr(9472)*(10+len(self.item_to_edit.name))}\n{chr(10060)} Para cancelar, introduce '/' en cualquier momento.\n\n¿Qué quieres cambiar? (introduce el número correspondiente)\n 0 - Nombre\n 1 - Descripción\n 2 - Visibilidad"
-            self.session.send_to_client(out_message)
-            # self.session.send_to_client("Introduce el número correspondiente al atributo a eidtar.\n  [0] Nombre\n  [1] Descripción\n  [2] Visibilidad")
-            self.current_process_function = self.process_item_edit_option_number
-        elif message in [exit.name for exit in current_room.exits]:
-            self.exit_to_edit = next(filter(lambda e: e.name == message, current_room.exits))
-            out_message = f"Editando {self.exit_to_edit.name} (salida)\n{chr(9472)*(10+len(self.exit_to_edit.name))}\n{chr(10060)} Para cancelar, introduce '/' en cualquier momento.\n\n¿Qué quieres cambiar? (introduce el número correspondiente)\n 0 - Nombre\n 1 - Descripción\n 2 - Visibilidad\n 3 - Destino"
-            self.session.send_to_client(out_message)
-            #self.session.send_to_client("Introduce el número correspondiente al atributo a editar.\n  [0] Nombre\n  [1] Descripción\n  [2] Visibilidad\n  [3] Destino")
-            self.current_process_function = self.process_exit_edit_option_number
-        else:
-            self.session.send_to_client("No encuentras ningún objeto ni salida con ese nombre.")
+        if selected_entity == "many":
+            self.session.send_to_client('Hay más de un objeto o salida con un nombre similar a ese. Se más específico.')
             self.finish_interaction()
+            return
+        elif selected_entity is None:
+            self.session.send_to_client('No hay ningún objeto o salida con ese nombre en esta sala, ni objeto guardado con ese identificador.')
+            self.finish_interaction()
+            return
+
+        if isinstance(selected_entity, entities.Item):
+            self.item_to_edit = selected_entity
+
+            if self.item_to_edit.is_saved():
+                header = textwrap.dedent(f"""
+                    Editando {self.item_to_edit.item_id} (objeto guardado)
+                    {chr(9472)*(10+len(self.item_to_edit.item_id))}"""
+                )
+            else:
+                header = textwrap.dedent(f"""
+                    Editando {self.item_to_edit.name} (objeto en la sala)
+                    {chr(9472)*(10+len(self.item_to_edit.name))}"""
+                )
+
+            out_message = textwrap.dedent(f"""
+                {header}
+                
+                {chr(10060)} Para cancelar, introduce '/' en cualquier momento.
+                
+                ¿Qué quieres cambiar? (introduce el número correspondiente)
+                    1 - Descripción
+                    0 - Nombre
+                    2 - Visibilidad"""
+            )
+            self.session.send_to_client(out_message)
+            self.next_process_function = self.process_item_edit_option_number
+
+        elif isinstance(selected_entity, entities.Exit):
+            self.exit_to_edit = selected_entity
+
+            out_message = textwrap.dedent(f"""
+                Editando {self.exit_to_edit.name} (salida)
+                {chr(9472)*(10+len(self.exit_to_edit.name))}
+                {chr(10060)} Para cancelar, introduce '/' en cualquier momento.
+                
+                ¿Qué quieres cambiar? (introduce el número correspondiente)
+                    0 - Nombre
+                    1 - Descripción 
+                    2 - Visibilidad
+                    3 - Destino"""
+            )
+
+            self.session.send_to_client(out_message)
+            self.current_process_function = self.process_exit_edit_option_number
+
+        else:
+            raise ValueError(f"Expected Room or Exit, {type(selected_entity)} found")
+
 
     def process_item_edit_option_number(self, message):
         try:

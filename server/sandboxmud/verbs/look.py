@@ -16,33 +16,14 @@ class Look(Verb):
         self.finish_interaction()
 
     def show_item_or_exit(self, partial_name):
-        lookable_items = self.session.user.room.items + self.session.user.get_current_world_inventory().items
-        names_of_lookable_items = [item.name for item in lookable_items]
-        items_he_may_be_referring_to = util.possible_meanings(partial_name, names_of_lookable_items)
+        selected_entity = util.name_to_entity(self.session, partial_name, substr_match=['room_items', 'room_exits', 'inventory'])
 
-        exits_in_room = self.session.user.room.exits
-        names_of_exits_in_room = [exit.name for exit in exits_in_room]
-        exits_he_may_be_referring_to = util.possible_meanings(partial_name, names_of_exits_in_room)
-        
-
-        if len(items_he_may_be_referring_to) + len(exits_he_may_be_referring_to) == 1:
-            if len(items_he_may_be_referring_to) == 1:
-                item_name = items_he_may_be_referring_to[0]
-                for item in lookable_items:
-                    if item.name == item_name:
-                        description = item.description if item.description else "No tiene nada de especial"
-                        self.session.send_to_client(f"{chr(128065)} {item.name}\n {description}")
-                        break
-            else:
-                exit_name = exits_he_may_be_referring_to[0]
-                for exit in exits_in_room:
-                    if exit.name == exit_name:
-                        self.session.send_to_client(f"{chr(128065)} {exit_name}\n {exit.description}")
-                        break
-        elif len(items_he_may_be_referring_to) + len(exits_he_may_be_referring_to) == 0:
+        if selected_entity == 'many':
+            self.session.send_to_client("¿A cuál te refieres? Sé más específico (prueba a introducir el nombre más completo o a incluir mayúsuclas y acentos).")
+        elif selected_entity is None:
             self.session.send_to_client("No ves eso por aquí.")
-        else:  # it is unclear what the user is referring to
-            self.session.send_to_client("¿A cuál te refieres? Sé más específico.")
+        else:
+            self.session.send_to_client(f"{chr(128065)} {selected_entity.name}\n {selected_entity.description}")
     
     def show_current_room(self):
         title = self.session.user.room.name + "\n"

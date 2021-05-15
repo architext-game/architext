@@ -57,7 +57,7 @@ class DeleteExit(verb.Verb):
             self.session.send_to_client(f'Salida borrada: "{exit_name}"\n{chr(9472)*(17+len(exit_name))}\nEl destino era "{destination.name}" (alias: {destination.alias}){warning}')
             exit.delete()
         else:
-            self.session.send_to_client(f'En esta sala no hay ninguna salida llamada "{exit_name}".\nRecuerda que para eliminar una salida debes escribir su nombre completo.')
+            self.session.send_to_client(f'En esta sala no hay ninguna salida llamada "{exit_name}".\nRecuerda que para eliminar una salida debes escribir su nombre exacto.')
 
         self.finish_interaction()
 
@@ -81,7 +81,7 @@ class DeleteItem(verb.Verb):
         selected_item = next(entities.Item.objects(room=self.session.user.room, name=item_name), None)
 
         if selected_item is None:
-            self.session.send_to_client(f"No hay un objeto llamado {item_name} en esta sala.\nRecuerda que para eliminarlo, debes escribir su nombre completo.")
+            self.session.send_to_client(f"No hay un objeto llamado {item_name} en esta sala.\nRecuerda que para eliminarlo, debes escribir su nombre exacto.")
         else:
             selected_item.delete()
             self.session.send_to_client(f'Objeto "{item_name}" eliminado')

@@ -108,6 +108,9 @@ class Item(mongoengine.Document):
     def is_takable(self):
         return self.visible == 'takable'
 
+    def is_saved(self):
+        return self.saved_in is not None
+
     def add_custom_verb(self, custom_verb):
         self.custom_verbs.append(custom_verb)
         self.save()
