@@ -2,6 +2,8 @@ import logging
 from . import entities
 import os
 import re
+import io
+import yaml
 
 # username to be used by the ghost session (see ghost_session.py)
 GHOST_USER_NAME = "-nadie-"
@@ -234,3 +236,7 @@ def remove_accents(text):
 
     return text 
 
+def get_config():
+    with io.open('config.yml') as file:
+        config = yaml.load(file, Loader=yaml.FullLoader)
+    return config

@@ -1,5 +1,6 @@
 from . import verb
 import textwrap
+from .. import entities
 
 class EditWorld(verb.Verb):
     command = 'editarmundo'
@@ -80,7 +81,12 @@ class EditWorld(verb.Verb):
         no  = ['no', 'No', 'n', 'N']
 
         if message in yes:
-            self.world.toggle_public()
+            try:
+                self.world.toggle_public()
+            except entities.PublicWorldLimitReached:
+                self.session.send_to_client('Ya has llegado al límite de mundos públicos en este servidor. Haz privado otro mundo o pide al administrador que incremente tu límite.')
+                self.finish_interaction()
+                return
             self.session.send_to_client(f'Ahora el mundo es {"público" if self.world.public else "privado"}.')
             self.finish_interaction()
         elif message in no:

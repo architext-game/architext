@@ -29,3 +29,6 @@ class ValueWithLineBreaks(Exception):
 
 class ValueTooLong(Exception):
     """Raised when a value exceeds its max length"""
+
+class PublicWorldLimitReached(Exception):
+    """Raised when trying to publish a world avobe the limit"""

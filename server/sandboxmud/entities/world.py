@@ -57,6 +57,12 @@ class World(mongoengine.Document):
             self.save()
 
     def toggle_public(self):
+        # check for public world limit
+        if not self.public:
+            number_of_public_worlds = len(World.objects(creator=self.creator, public=True))
+            if number_of_public_worlds >= util.get_config()['public_worlds_limit']:
+                raise PublicWorldLimitReached()
+
         self.public = not self.public
         self.save()
 
