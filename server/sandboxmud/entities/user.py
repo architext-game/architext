@@ -1,5 +1,6 @@
 import mongoengine
 from . import inventory as inventory_module
+from . import location_save as location_save_module
 from . import exceptions
 from .. import util
 from .. import entities
@@ -35,10 +36,28 @@ class User(mongoengine.Document):
         self.room = room
         self.save()
 
+    def get_location_save(self, world):
+        return next(location_save_module.LocationSave.objects(user=self, world=world), None)
+
     def enter_world(self, world):
-        self.room = world.world_state.starting_room
+        location_save = self.get_location_save(world)
+        if location_save is not None and location_save.room.world_state == world.world_state:
+            self.room = location_save.room
+        else:
+            self.room = world.world_state.starting_room
         if world not in self.joined_worlds:
             self.joined_worlds.append(world)
+        self.save()
+
+    def leave_world(self):
+        if self.room is not None:
+            current_world = self.room.world_state.get_world()
+            location_save = self.get_location_save(current_world)
+            if location_save is not None:
+                location_save.change_room(self.room)
+            else:
+                location_save_module.LocationSave(user=self, world=self.room.world_state.get_world(), room=self.room)
+        self.room = None
         self.save()
 
     def save_item(self, item):

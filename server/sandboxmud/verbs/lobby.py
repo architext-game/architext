@@ -50,8 +50,7 @@ class GoToLobby(LobbyMenu):
     command = 'salirmundo'
 
     def process(self, message):
-        self.session.user.room = None
-        self.session.user.save()
+        self.session.user.leave_world()
         self.show_lobby_menu()
         self.finish_interaction()
 
@@ -96,7 +95,14 @@ class EnterWorld(LobbyMenu):
         else:
             return False
 
+    def __init__(self, session):
+        super().__init__(session)
+        self.current_process_function = self.process_world_number
+
     def process(self, message):
+        self.current_process_function(message)
+
+    def process_world_number(self, message):
         try:
             index = int(message)
         except ValueError:
@@ -112,13 +118,22 @@ class EnterWorld(LobbyMenu):
             return
 
         try:
+            location_save = self.session.user.get_location_save(chosen_world)
             self.session.user.enter_world(chosen_world)
         except mongoengine.errors.DoesNotExist:
             self.session.send_to_client("Ese mundo ya no existe. Refresca el lobby escribiendo 'r'.")
             self.finish_interaction()
             return
         
-        self.session.send_to_client("VIAJANDO A {}".format(chosen_world.name))
+        if location_save is not None:
+            self.session.send_to_client("Volviendo a tu última localización en {}".format(chosen_world.name))
+        else:
+            self.session.send_to_client("Viajando por primera vez a {}".format(chosen_world.name))
+        
+        self.session.send_to_client("Pulsa enter para entrar...")
+        self.current_process_function = self.enter_to_continue
+        
+    def enter_to_continue(self, message):
         look.Look(self.session).show_current_room()
         self.session.send_to_others_in_room("¡Puf! {} apareció.".format(self.session.user.name))
         self.finish_interaction()

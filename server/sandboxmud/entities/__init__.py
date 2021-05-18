@@ -9,6 +9,7 @@ from .inventory import Inventory
 from .exit import Exit
 from .room import Room
 from .user import User
+from .location_save import LocationSave
 
 from .exceptions import BadItem, EmptyName, WrongNameFormat, RoomNameClash, TakableItemNameClash, NameNotGloballyUnique, CantDelete, ValueWithLineBreaks, ValueTooLong, PublicWorldLimitReached
 
@@ -26,6 +27,7 @@ Room.register_delete_rule(User, 'room', mongoengine.NULLIFY)
 Room.register_delete_rule(Item, 'room', mongoengine.CASCADE)
 Room.register_delete_rule(Exit, 'room', mongoengine.CASCADE)
 Room.register_delete_rule(Exit, 'destination', mongoengine.CASCADE)
+Room.register_delete_rule(LocationSave, 'room', mongoengine.CASCADE)
 WorldState.register_delete_rule(Room, 'world_state', mongoengine.CASCADE) 
 WorldState.register_delete_rule(Inventory, 'world_state', mongoengine.CASCADE)
 WorldSnapshot.register_delete_rule(World, 'snapshots', mongoengine.PULL)
