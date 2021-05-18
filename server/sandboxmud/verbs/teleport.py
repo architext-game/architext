@@ -3,6 +3,16 @@ from .look import Look
 from .. import util
 from .. import entities
 
+class Recall(verb.Verb):
+    """Puts the player in the starting room of current world"""
+
+    command = "recall"
+
+    def process(self, message):
+        starting_room = self.session.user.room.world_state.starting_room
+        self.session.user.teleport(starting_room)
+        Look(self.session).show_current_room()
+        self.finish_interaction()
 
 class TeleportClient(verb.Verb):
     """Allows a creator to travel between any two rooms, using the destination unique alias.
