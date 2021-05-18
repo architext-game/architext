@@ -5,7 +5,7 @@ from .. import util
 from .. import entities
 
 class WorldInfo(verb.Verb):
-    command = 'info mundo'
+    command = 'infomundo'
 
     def process(self, message):
         self.show_world_info()

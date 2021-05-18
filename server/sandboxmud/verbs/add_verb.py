@@ -150,9 +150,9 @@ class AddVerb(verb.Verb):
         return True
 
 class InspectCustomVerb(verb.Verb):
-    command = 'ver verbo de '
-    world_command = 'ver verbo de mundo'
-    room_command = 'ver verbo de sala'
+    command = 'verbos'
+    world_command = 'verbosmundo'
+    room_command = 'verbossala'
 
     def process(self, message):
         out_message = ""
@@ -162,7 +162,7 @@ class InspectCustomVerb(verb.Verb):
         elif message == self.room_command:
             self.inspectable_custom_verbs = self.session.user.room.custom_verbs
         else:
-            item_name = message[len(self.command):]
+            item_name = message[len(self.command)+1:]
             selected_item = util.name_to_entity(self.session, item_name, loose_match=["saved_items"], substr_match=["room_items", "inventory"])
 
             if selected_item == "many":
@@ -170,7 +170,7 @@ class InspectCustomVerb(verb.Verb):
                 self.finish_interaction()
                 return
             elif selected_item is None:
-                self.session.send_to_client("No encuentras ningún objeto con ese nombre.")
+                self.session.send_to_client("No encuentras ningún objeto con ese nombre." + item_name)
                 self.finish_interaction()
                 return
             else:
