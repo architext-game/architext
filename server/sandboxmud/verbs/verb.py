@@ -6,6 +6,7 @@ CREATOR = 'creator'
 
 LOBBYVERB = 'lobbyverb'
 WORLDVERB = 'worldverb'
+VERSATILE = 'versatile' 
 
 class Verb():
     """This is the template for creating new verbs. Every verb should have Verb as parent.

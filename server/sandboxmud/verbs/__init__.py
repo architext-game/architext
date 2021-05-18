@@ -29,3 +29,4 @@ from .privileges import ChangeEditFreedom, MakeEditor, RemoveEditor
 from .lobby import EnterWorld, CreateWorld, DeployPublicSnapshot, GoToLobby, DeleteWorld, ImportWorld, JoinByInviteCode
 from .edit_world import EditWorld
 from .export import ExportWorld
+from .who import Who
