@@ -1,1 +1,7 @@
 public_worlds_limit: 99
+new_user_welcome_message: |-
+  ¡Bienvenido a sandbox_mud!
+  Pide a tu administrador que edite este mensaje de bienvenida, que no sea un super vago.
+old_user_welcome_message: |-
+  ¡Bienvenido de vuelta!
+  Pide a tu administrador que edite este mensaje de bienvenida, que no sea un super vago.
