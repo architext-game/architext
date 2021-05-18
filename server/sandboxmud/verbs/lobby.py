@@ -4,13 +4,17 @@ from . import look
 import functools
 import json
 import textwrap
+import mongoengine
 
 class LobbyMenu(verb.Verb):
     '''Helper class that has the method that shows the lobby menu'''
     def show_lobby_menu(self):
         out_message = ""
 
-        world_list = self.get_worlds_list()
+        self.session.world_list_cache = self.get_worlds_list()
+
+        world_list = self.session.world_list_cache
+        
         if world_list:
             out_message += f'Introduce el número del mundo al que quieras ir\n'
             world_names_with_index = [f' {index}. {world.name: <36}  {world.get_connected_users()}{chr(128100)} by {world.creator.name} {"" if world.public else chr(128274)}' for index, world in enumerate(world_list)]
@@ -20,6 +24,7 @@ class LobbyMenu(verb.Verb):
         out_message += textwrap.dedent('''
             
              + para crear un nuevo mundo.
+             r para refrescar la lista de mundos.
              * para crear tu propia instancia de un mundo público.
              - para borrar uno de tus mundos.
              > para importar un mundo.
@@ -96,21 +101,36 @@ class EnterWorld(LobbyMenu):
             index = int(message)
         except ValueError:
             self.session.send_to_client("Introduce un número")
+            self.finish_interaction()
             return
         
         try:
-            chosen_world = self.get_worlds_list()[index]
+            chosen_world = self.session.world_list_cache[index]
         except IndexError:
             self.session.send_to_client("Introduce el número correspondiente a uno de los mundos")
+            self.finish_interaction()
             return
 
-        self.session.user.enter_world(chosen_world)
+        try:
+            self.session.user.enter_world(chosen_world)
+        except mongoengine.errors.DoesNotExist:
+            self.session.send_to_client("Ese mundo ya no existe. Refresca el lobby escribiendo 'r'.")
+            self.finish_interaction()
+            return
         
         self.session.send_to_client("VIAJANDO A {}".format(chosen_world.name))
         look.Look(self.session).show_current_room()
         self.session.send_to_others_in_room("¡Puf! {} apareció.".format(self.session.user.name))
         self.finish_interaction()
 
+
+class RefreshLobby(LobbyMenu):
+    verbtype = verb.LOBBYVERB
+    command = 'r'
+
+    def process(self, message):
+        self.show_lobby_menu()
+        self.finish_interaction()
 
 class CreateWorld(LobbyMenu):
     verbtype = verb.LOBBYVERB

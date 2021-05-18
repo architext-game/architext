@@ -26,7 +26,7 @@ from .custom_verb import CustomVerb
 from .snapshots import CreateSnapshot, DeploySnapshot, PubishSnapshot, UnpubishSnapshot, DeleteSnapshot
 from .checks import CheckForItem
 from .privileges import ChangeEditFreedom, MakeEditor, RemoveEditor
-from .lobby import EnterWorld, CreateWorld, DeployPublicSnapshot, GoToLobby, DeleteWorld, ImportWorld, JoinByInviteCode
+from .lobby import EnterWorld, CreateWorld, DeployPublicSnapshot, GoToLobby, DeleteWorld, ImportWorld, JoinByInviteCode, RefreshLobby
 from .edit_world import EditWorld
 from .export import ExportWorld
 from .who import Who

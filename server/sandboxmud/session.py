@@ -14,7 +14,7 @@ class Session:
     """
 
     # List of all verbs supported by the session, ordered by priority: if two verbs can handle the same message, the first will have preference.
-    verbs = [v.ExportWorld, v.ImportWorld, v.DeleteWorld, v.JoinByInviteCode, v.EnterWorld, v.CreateWorld, v.DeployPublicSnapshot, v.GoToLobby, v.CustomVerb, v.Build, v.Emote, v.Go, v.Help, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.TeleportClient, v.TeleportUser, v.TeleportAllInRoom, v.TeleportAllInWorld, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.WorldInfo, v.Info, v.Items, v.Exits, v.AddVerb, v.MasterMode, v.TextToOne, v.TextToRoom, v.TextToRoomUnless, v.TextToWorld, v.Take, v.Drop, v.Inventory, v.MasterOpen, v.MasterClose, v.AssignKey, v.Open, v.SaveItem, v.PlaceItem, v.CreateSnapshot, v.DeploySnapshot, v.CheckForItem, v.Give, v.TakeFrom, v.ChangeEditFreedom, v.MakeEditor, v.RemoveEditor, v.PubishSnapshot, v.UnpubishSnapshot, v.DeleteSnapshot, v.InspectCustomVerb, v.DeleteCustomVerb, v.EditWorld, v.DeleteKey, v.Who]
+    verbs = [v.ExportWorld, v.ImportWorld, v.DeleteWorld, v.JoinByInviteCode, v.EnterWorld, v.CreateWorld, v.DeployPublicSnapshot, v.GoToLobby, v.CustomVerb, v.Build, v.Emote, v.Go, v.Help, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.TeleportClient, v.TeleportUser, v.TeleportAllInRoom, v.TeleportAllInWorld, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.WorldInfo, v.Info, v.Items, v.Exits, v.AddVerb, v.MasterMode, v.TextToOne, v.TextToRoom, v.TextToRoomUnless, v.TextToWorld, v.Take, v.Drop, v.Inventory, v.MasterOpen, v.MasterClose, v.AssignKey, v.Open, v.SaveItem, v.PlaceItem, v.CreateSnapshot, v.DeploySnapshot, v.CheckForItem, v.Give, v.TakeFrom, v.ChangeEditFreedom, v.MakeEditor, v.RemoveEditor, v.PubishSnapshot, v.UnpubishSnapshot, v.DeleteSnapshot, v.InspectCustomVerb, v.DeleteCustomVerb, v.EditWorld, v.DeleteKey, v.Who, v.RefreshLobby]
 
     def __init__(self, client_id, server):
         self.logger = None  # logger for recording user interaction
@@ -22,8 +22,8 @@ class Session:
         self.client_id = client_id  # direction to send messages to our client
         self.current_verb = v.Login(self)  # verb that is currently handling interaction. It starts with the log-in process.
         self.user = None  # here we'll have an User entity once the log-in is completed.
-        
-
+        self.world_list_cache = None  # when the lobby is shown its values are cached here (see #122).
+    
 
     def process_message(self, message):
         """This method processes a message sent by the client.
