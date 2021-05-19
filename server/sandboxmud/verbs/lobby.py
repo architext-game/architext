@@ -5,6 +5,10 @@ import functools
 import json
 import textwrap
 import mongoengine
+import unicodedata
+
+def remove_control_characters(s):
+    return "".join(ch for ch in s if unicodedata.category(ch)[0]!="C")
 
 class LobbyMenu(verb.Verb):
     '''Helper class that has the method that shows the lobby menu'''
@@ -326,7 +330,8 @@ class ImportWorld(LobbyMenu):
             return
         self.session.send_to_client(f"recibido un mensaje de {len(message)} caracteres")
         message_valid = False
-        self.json_message += message
+        message_without_control_characters = remove_control_characters(message)
+        self.json_message += message_without_control_characters
         try:
             world_dict = json.loads(self.json_message)
             self.session.send_to_client('Representación válida, generando mundo.')
