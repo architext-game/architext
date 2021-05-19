@@ -21,18 +21,14 @@ class LobbyMenu(verb.Verb):
         
         if world_list:
             out_message += f'Introduce el número del mundo al que quieras ir\n'
-            world_names_with_index = [f' {index}. {world.name: <36}  {world.get_connected_users()}{chr(128100)} by {world.creator.name} {"" if world.public else chr(128274)}' for index, world in enumerate(world_list)]
+            world_names_with_index = [f' {index: < 4} {world.name: <36}  {world.get_connected_users()}{chr(128100)} by {world.creator.name} {"" if world.public else chr(128274)}' for index, world in enumerate(world_list)]
             out_message += functools.reduce(lambda a, b: '{}\n{}'.format(a, b), world_names_with_index)
         else:
             out_message += 'No hay ningún mundo público (o privado conocido) en este servidor.'
-        out_message += textwrap.dedent('''
-            
-             + para crear un nuevo mundo.
-             r para refrescar la lista de mundos.
-             * para crear tu propia instancia de un mundo público.
-             - para borrar uno de tus mundos.
-             > para importar un mundo.
-            Puedes introducir el código de invitación de un mundo privado para entrar en él.'''
+        out_message += '\n' + textwrap.dedent('''
+            Opciones:
+              +  para crear un nuevo mundo.
+              ?  para ver más acciones disponibles.'''
         )
         self.session.send_to_client(out_message)
 
@@ -49,6 +45,29 @@ class LobbyMenu(verb.Verb):
         else:
             return False
 
+
+class LobbyHelp(LobbyMenu):
+    command = '?'
+    verbtype = verb.LOBBYVERB
+
+    def process(self, message):
+        out_message = textwrap.dedent(f"""
+            Desde el lobby puedes introducir los siguientes comandos:
+              +      para crear un nuevo mundo.
+              -      para borrar uno de tus mundos.
+              r      para refrescar y mostrar la lista de mundos.
+              *      para crear tu propia instancia de un mundo público.
+              >      para importar un mundo.
+              quien  para ver la lista de jugadores conectados.
+            
+            O introduce el número de un mundo de la lista de mundos para entrar en él.
+            También puedes introducir el código de invitación de un mundo privado para entrar en él.
+            """
+        )
+        self.session.send_to_client(out_message)
+        self.finish_interaction()
+
+    
 
 class GoToLobby(LobbyMenu):
     command = 'salirmundo'
