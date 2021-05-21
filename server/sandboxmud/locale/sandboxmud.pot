@@ -1,0 +1,47 @@
+# Translations template for PROJECT.
+# Copyright (C) 2021 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2021-05-21 13:14+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: server/sandboxmud/util.py:245
+msgid "There is more than one thing with a similar name. Be more specific."
+msgstr ""
+
+#: server/sandboxmud/util.py:246
+msgid "You can't find that here."
+msgstr ""
+
+#: server/sandboxmud/verbs/look.py:8
+msgid "look"
+msgstr ""
+
+#: server/sandboxmud/verbs/look.py:35
+msgid "⮕ Exits: {exits}.\n"
+msgstr ""
+
+#: server/sandboxmud/verbs/look.py:41
+msgid "👁 You see "
+msgstr ""
+
+#: server/sandboxmud/verbs/look.py:51
+msgid "{player_name} is here"
+msgstr ""
+
+#: server/sandboxmud/verbs/look.py:54
+msgid "Players here: {players_list}"
+msgstr ""
+
