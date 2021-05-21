@@ -35,8 +35,13 @@ class Verb():
         if cls.verbtype == LOBBYVERB and session.user.room is not None:
             return False
 
-        if message.startswith(cls.command):
-            return True
+        if type(cls.command) == str:
+            if message.startswith(cls.command):
+                return True
+        elif type(cls.command) == list:
+            for command in cls.command:
+                if message.startswith(command):
+                    return True 
         
         return False
 
