@@ -66,7 +66,7 @@ class Build(verb.Verb):
             self.session.send_to_client(strings.takable_name_clash)
         else:
             self.session.send_to_client(
-                _(' ⮕ Name of the exit in "{new_room}" towards "{this_room}"\n   [Default: "to {new_room}"]')
+                _(' ⮕ Name of the exit in "{new_room}" towards "{this_room}"\n   [Default: "to {this_room}"]')
                     .format(new_room = self.new_room.name, this_room = self.session.user.room.name)
             )
             self.current_process_function = self.process_there_exit_name
