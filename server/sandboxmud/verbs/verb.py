@@ -28,13 +28,17 @@ class Verb():
     verbtype = WORLDVERB
 
     @classmethod
-    def can_process(cls, message, session):
+    def in_the_right_context(cls, session):
         if cls.verbtype == WORLDVERB and session.user.room is None:
             return False
 
         if cls.verbtype == LOBBYVERB and session.user.room is not None:
             return False
+        
+        return True
 
+    @classmethod
+    def message_matches_command(cls, message):
         if type(cls.command) == str:
             if message.startswith(cls.command):
                 return True
@@ -44,6 +48,10 @@ class Verb():
                     return True 
         
         return False
+
+    @classmethod
+    def can_process(cls, message, session):
+        return cls.in_the_right_context(session) and cls.message_matches_command(message)
 
     def __init__(self, session):
         self.session = session

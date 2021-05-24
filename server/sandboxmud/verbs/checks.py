@@ -1,11 +1,23 @@
 from . import verb
 from .. import  session
+import sandboxmud.util as util
+import regex
 
 class CheckForItem(verb.Verb):
-    command = 'si hay en '
-    check_room_command = 'si hay en sala '
-    check_inv_command =  'si hay en inventario '
-    check_room_and_inv_command = 'si hay en sala o inventario '
+    check_room_command         = 'if (?P<item_name>.+) in room'
+    check_inv_command          = 'if (?P<item_name>.+) in inventory'
+    check_room_and_inv_command = 'if (?P<item_name>.+) in room or inventory'
+    command = [check_room_command, check_inv_command, check_room_and_inv_command]
+
+    @classmethod
+    def can_process(cls, message, session):
+        if not cls.in_the_right_context(session):
+            return False
+
+        if util.match(cls.command, message) is not None:
+            return True
+        
+        return False
 
     def __init__(self, session):
         super().__init__(session)        
@@ -19,32 +31,37 @@ class CheckForItem(verb.Verb):
         self.current_process_function(message)
 
     def process_first_message(self, message):
-        if message.startswith(self.check_room_command):
-            self.item_name = message[len(self.check_room_command):]
-            condition = 'un objeto llamado "{}" está en la sala'.format(self.item_name)
-            self.condition_to_check = self.item_name_is_at_room
-        elif message.startswith(self.check_inv_command):
-            self.item_name = message[len(self.check_inv_command):]
-            condition = 'un objeto llamado "{}" está en tu inventario'.format(self.item_name)
-            self.condition_to_check = self.item_name_is_at_inv
-        elif message.startswith(self.check_room_and_inv_command):
-            self.item_name = message[len(self.check_room_and_inv_command):]
-            condition = 'un objeto llamado "{}" está en la sala o en tu inventario.'.format(self.item_name)
-            self.condition_to_check = self.item_name_is_at_room_or_inv
-        else:
-            self.session.send_to_client('No te entiendo')
-            self.finish_interaction()
-            return
+        match = util.match(self.command, message)
 
-        self.session.send_to_client('Introduce la secuencia de acciones que quieres realizar si {}\nCada acción debe estar precedida por un guión ("-").\nPara terminar, introduce OK, también precedido por un guión.'.format(condition))
+        self.item_name = match['item_name']
+        
+        if match['pattern'] == self.check_room_command:
+            condition = _('there is an item called {item_name} in this room').format(item_name=self.item_name)
+            self.condition_to_check = self.item_name_is_at_room
+        elif match['pattern'] == self.check_inv_command:
+            condition = _('there is an item called {item_name} in your inventory').format(item_name=self.item_name)
+            self.condition_to_check = self.item_name_is_at_inv
+        elif match['pattern'] == self.check_room_and_inv_command:
+            condition = _('there is an item called {item_name} in this room or your inventory').format(item_name=self.item_name)
+            self.condition_to_check = self.item_name_is_at_room_or_inv
+
+        self.session.send_to_client(_(
+            'Write the actions to perform if {condition}.\n'
+            'Each action should be preceded by an hyphen, as in:\n'
+            '-go door\n\n'
+            'Enter "-OK" to end.'
+        ).format(condition=condition))
         self.current_process_function = self.process_true_case_action
 
     def process_true_case_action(self, message):
-        if message.startswith('-'):
-                message = message[1:]
+        if not message.startswith('-'):
+            self.session.send_to_client(_('Action ignored. It should be preceded by "-".'))
+            return
+        
+        message = message[1:]    
 
-        if message in ['OK', 'ok']:
-            self.session.send_to_client('OK, ahora haz lo mismo con las acciones a realizar si no se cumple la condición')
+        if message in ['OK', 'ok', 'Ok', 'oK']:
+            self.session.send_to_client(_('Received. Now do the same with the actions you want to perform if the condition is not met.'))
             self.current_process_function = self.process_false_case_action 
         elif message:
             self.true_case_actions.append(message)
@@ -52,11 +69,14 @@ class CheckForItem(verb.Verb):
             pass       
             
     def process_false_case_action(self, message):
-        if message.startswith('-'):
-                message = message[1:]
+        if not message.startswith('-'):
+            self.session.send_to_client(_('Action ignored. It should be preceded by "-".'))
+            return
+        
+        message = message[1:]
 
-        if message in ['OK', 'ok']:
-            self.session.send_to_client('Vale, VAMOS A HACERLO!')
+        if message in ['OK', 'ok', 'Ok', 'oK']:
+            self.session.send_to_client(_('OK, lets run it!'))
             self.check_and_run()
             self.finish_interaction()
         elif message:
