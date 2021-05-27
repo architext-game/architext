@@ -29,7 +29,7 @@ class ExportWorld(verb.Verb):
             'You have exported your actual world. Copy the text between the horizontal lines and save it anywhere.\n'
             'You can import this and any exported world at the lobby.'
         )
-        self.session.send_to_client(header + json_out + footer)
+        self.session.send_to_client(header + json_out + '\n' + footer)
         self.finish_interaction()
 
     def dump_item(self, item):
