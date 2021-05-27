@@ -52,7 +52,7 @@ class Build(verb.Verb):
 
     def process_here_exit_name(self, message):
         if not message:
-            message = "a {}".format(self.new_room.name)
+            message = _("to {room_name}").format(room_name=self.new_room.name)
             message = self.make_exit_name_valid(message, self.session.user.room)
 
         self.exit_from_here.name = message
