@@ -178,7 +178,15 @@ class CreateWorld(LobbyMenu):
     command = '+'
 
     def process(self, message):
-        self.new_world = entities.World(save_on_creation=False, creator=self.session.user)
+        starting_room = entities.Room(
+            name=_('First room'),
+            alias='0',
+            description=_(
+                'This is the first room of your world.\n'
+                'Now you can create whatever you want!'
+            )
+        )
+        self.new_world = entities.World(save_on_creation=False, creator=self.session.user, starting_room=starting_room)
         self.session.send_to_client(_('Enter the name for your new world. ("/" to cancel)'))
         self.process = self.process_word_name
 
@@ -190,6 +198,7 @@ class CreateWorld(LobbyMenu):
         if not message:
             self.session.send_to_client(strings.is_empty)
             return
+
 
         self.new_world.name = message
         self.new_world.save()
