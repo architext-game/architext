@@ -73,7 +73,7 @@ class Info(verb.Verb):
                     'Exit name: "{exit_name}"\n'
                     'Description "{description}"\n'
                     'Visibility: {visible}\n'
-                    'Destination: {destination_name} (id {destination_alias})'
+                    'Destination: {destination_name} (number {destination_alias})'
                 ).format(
                     exit_name=selected_entity.name, 
                     description=selected_entity.description, 
@@ -93,7 +93,7 @@ class Info(verb.Verb):
         exit_list = []
         for exit in self.session.user.room.exits:
             exit_list.append(
-                _('   "{exit_name}" lleva a "{destination_name}" id {destination_alias} ({exit_visibility})')
+                _('   "{exit_name}" lleva a "{destination_name}" number {destination_alias} ({exit_visibility})')
                     .format(
                         exit_name=exit.name, 
                         destination_name=exit.destination.name, 
@@ -112,7 +112,7 @@ class Info(verb.Verb):
         players_offline = ', '.join(['{}'.format(user.name) for user in entities.User.objects(room=self.session.user.room, client_id=None)])
         title = _('Room "{room_name}"').format(room_name=room_name)
         body = _(
-            'id: {alias}\n'
+            'Room number: {alias}\n'
             'Description: {description}\n'
             'Exits:\n'
             '{exit_string}\n'

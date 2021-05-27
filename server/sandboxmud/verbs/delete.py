@@ -58,7 +58,7 @@ class DeleteExit(verb.Verb):
                 ).format(exit_name=exit_from_there.name, destination_name=destination.name)
             self.session.send_to_client(_(
                 'Exit "{exit_name}" has been deleted.\n'
-                'It\'s destination was "{destination_name}" (id: {destination_alias})\n'
+                'It\'s destination was "{destination_name}" (number {destination_alias})\n'
                 '{warning}'
             ).format(exit_name=exit_name, destination_name=destination.name, destination_alias=destination.alias, warning=warning))
             exit.delete()

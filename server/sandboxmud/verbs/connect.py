@@ -25,14 +25,14 @@ class Connect(verb.Verb):
             self.current_process_function(message)
 
     def process_first_message(self, message):
-        title = _('Linking from {user_room_name} (id {user_room_alias}).').format(
+        title = _('Linking from {user_room_name} (number {user_room_alias}).').format(
             user_room_name=self.session.user.room.name, 
             user_room_alias=self.session.user.room.alias
         )
         body = _(
             'You are about to create an exit in your current room.\n'
-            'Enter the id of the room you want to connect it to (you can check it using the "info" verb).\n\n'
-            'Destination room id:'
+            'Enter the number of the room you want to connect it to (you can check it using the "info" verb).\n\n'
+            'Destination room number:'
         )
         out_message = strings.format(title, body, cancel=True)
         self.session.send_to_client(out_message)
@@ -46,8 +46,8 @@ class Connect(verb.Verb):
             self.exit_from_here.destination = self.other_room
             self.exit_from_there.room = self.other_room
             out_message = _(
-                'Linking with "{destination_name}" (id {destination_alias}).\n'
-                '  ⮕ Enter the name of the exit in {this_room_name} (id {this_room_alias}) towards {destination_name} (id {destination_alias})\n'
+                'Linking with "{destination_name}" (number {destination_alias}).\n'
+                '  ⮕ Enter the name of the exit in {this_room_name} (number {this_room_alias}) towards {destination_name} (number {destination_alias})\n'
                 '[Default: to {destination_name}]'
             ).format(destination_name=self.other_room.name, destination_alias=self.other_room.alias, this_room_name=self.session.user.room.name, this_room_alias=self.session.user.room.alias)
             self.session.send_to_client(out_message)
@@ -72,7 +72,7 @@ class Connect(verb.Verb):
             self.session.send_to_client(strings.takable_name_clash)
         else:
             out_message = _(
-                '  ⮕ Enter the name of the exit in {destination_name} (id {destination_alias}) towards {this_room_name} (id {this_room_alias})\n'
+                '  ⮕ Enter the name of the exit in {destination_name} (number {destination_alias}) towards {this_room_name} (number {this_room_alias})\n'
                 '[Default: to {this_room_name}]'
             ).format(destination_name=self.other_room.name, destination_alias=self.other_room.alias, this_room_name=self.session.user.room.name, this_room_alias=self.session.user.room.alias)
             

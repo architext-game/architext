@@ -58,7 +58,7 @@ class TeleportUser(verb.Verb):
             target_user.teleport(target_room)
             self.session.send_to_client(_("Done. Note that this verb moves players but doesn't tell them that they have been moved. You can tell them using text verbs if you want to."))
         else:
-            self.session.send_to_client(_("The user does not exist, it is not connected, or there is not a room with that id."))
+            self.session.send_to_client(_("The user does not exist, it is not connected, or there is not a room with that room number."))
         self.finish_interaction()
 
 

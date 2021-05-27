@@ -109,7 +109,7 @@ class EditItem(verb.Verb):
 
         if message == 3:
             self.option_number = message
-            self.session.send_to_client(_('Enter the id of the new destination. You can find it using the "info" command.'))
+            self.session.send_to_client(_('Enter the room number of the new destination. You can find it using the "info" command.'))
             self.current_process_function = self.process_reform_value
         else:
             self.process_item_edit_option_number(message)
