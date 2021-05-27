@@ -2,7 +2,7 @@ from .. import entities
 from .. import util
 from .verb import Verb
 from .. import session
-import sandboxmud.strings as strings
+import architext.strings as strings
 
 class CustomVerb(Verb):
     command = ''

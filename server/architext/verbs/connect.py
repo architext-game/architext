@@ -1,7 +1,7 @@
 from . import verb
 from .. import util
 from .. import entities
-import sandboxmud.strings as strings
+import architext.strings as strings
 
 class Connect(verb.Verb):
     """This verb allow users to connect two existing rooms. One is the room where the user is located,

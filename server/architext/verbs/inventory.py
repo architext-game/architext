@@ -2,7 +2,7 @@ from .verb import Verb
 from .. import util
 import functools
 from .. import entities
-import sandboxmud.strings as strings
+import architext.strings as strings
 
 class Take(Verb):
     '''Takes a item to your inventory.

@@ -1,7 +1,7 @@
 from . import verb
 import textwrap
 from .. import entities
-import sandboxmud.strings as strings
+import architext.strings as strings
 
 class EditWorld(verb.Verb):
     command = _('editworld')

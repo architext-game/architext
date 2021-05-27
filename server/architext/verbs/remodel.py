@@ -1,7 +1,7 @@
 # Issue: directly changes room values, and calls save() method.
 
 from . import verb
-import sandboxmud.strings as strings
+import architext.strings as strings
 class Remodel(verb.Verb):
     """Lets players edit every aspect of a room"""
 

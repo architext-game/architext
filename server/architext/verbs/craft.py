@@ -1,7 +1,7 @@
 from . import verb
 from .. import entities
 from .. import util
-import sandboxmud.strings as strings
+import architext.strings as strings
 
 class Craft(verb.Verb):
     """This verb allows users to create items that are placed in their current room"""

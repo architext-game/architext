@@ -1,7 +1,7 @@
 from . import verb
 from .. import entities
 from .. import util
-import sandboxmud.strings as strings
+import architext.strings as strings
 
 class Build(verb.Verb):
     """This verb allows the user to create a new room connected to his current location.

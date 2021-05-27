@@ -8,7 +8,7 @@ import mongoengine
 from .. import entities
 from . import look, verb
 
-import sandboxmud.strings as strings
+import architext.strings as strings
 
 
 def remove_control_characters(s):
@@ -546,7 +546,7 @@ hasta que salga un mensaje no cortado
     Como saber si un mensaje esta cortado?
         Si el numero de caracteres es igual al limite
             No es suficiente, porque puede tener justo ese numero de caracteres
-            ¿Y cómo sabemos el limite de caracteres desde sandboxmud? No podemos hardcodearlo, hay que obtenerlo.
+            ¿Y cómo sabemos el limite de caracteres desde architext? No podemos hardcodearlo, hay que obtenerlo.
         + si el mensaje no está terminado (ej el json está incompleto)
             no es suficiente, porque el mensaje puede estar mal formateado desde el principio
         ¿Hay algun flag o algo que podamos obtener que nos diga que el mensaje está cortado?

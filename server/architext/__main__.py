@@ -1,7 +1,7 @@
 """
 Run this file to start your server. It does all initial setup and contains the game loop.
 """
-import sandboxmud
+import architext
 import mongoengine
 import telnetserver
 import atexit
@@ -14,23 +14,23 @@ def database_connect(uri=None):
     if uri:
         mongoengine.connect(host=uri)
     else:
-        mongoengine.connect('sandboxmud', host='mud-db')
+        mongoengine.connect('architext', host='mud-db')
 
 def client_ids_cleanup():
     """Cleans client connection id in the database, disconnecting everyone.
     """
-    for user in sandboxmud.entities.User.objects(client_id__ne=None):
+    for user in architext.entities.User.objects(client_id__ne=None):
         user.disconnect()
 
 def clear_database():
-    sandboxmud.entities.User.drop_collection()
-    sandboxmud.entities.Item.drop_collection()
-    sandboxmud.entities.Room.drop_collection()
-    sandboxmud.entities.CustomVerb.drop_collection()
-    sandboxmud.entities.World.drop_collection()
-    sandboxmud.entities.WorldState.drop_collection()
-    sandboxmud.entities.WorldSnapshot.drop_collection()
-    sandboxmud.entities.Exit.drop_collection()
+    architext.entities.User.drop_collection()
+    architext.entities.Item.drop_collection()
+    architext.entities.Room.drop_collection()
+    architext.entities.CustomVerb.drop_collection()
+    architext.entities.World.drop_collection()
+    architext.entities.WorldState.drop_collection()
+    architext.entities.WorldSnapshot.drop_collection()
+    architext.entities.Exit.drop_collection()
 
 if __name__ == "__main__":
     # Server setup starts here
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     connected_to_db = False
     
     # Sets up logger for main server logs
-    logger = sandboxmud.util.setup_logger('server_logger', 'server.txt', console=True)
+    logger = architext.util.setup_logger('server_logger', 'server.txt', console=True)
 
     # Process commmand line args
     command_line_args = sys.argv[1:]
@@ -78,7 +78,7 @@ if __name__ == "__main__":
 
         # Handle new connections
         for new_client in server.get_new_clients():
-            sessions[new_client] = sandboxmud.session.Session(new_client, server)
+            sessions[new_client] = architext.session.Session(new_client, server)
 
         # Handle disconnects
         for disconnected_client in server.get_disconnected_clients():

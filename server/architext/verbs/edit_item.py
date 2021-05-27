@@ -2,7 +2,7 @@ from . import verb
 from .. import util
 from .. import entities
 import textwrap
-import sandboxmud.strings as strings
+import architext.strings as strings
 
 class EditItem(verb.Verb):
     """This verb allows users to edit properties of an item or exit that is in their current room"""

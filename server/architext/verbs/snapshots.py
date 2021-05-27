@@ -1,7 +1,7 @@
 from . import verb
 from .. import entities
 import functools
-import sandboxmud.strings as strings
+import architext.strings as strings
 
 _backup_snapshot_name = 'last_world_backup'
 

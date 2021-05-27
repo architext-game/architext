@@ -3,7 +3,7 @@ from .. import entities
 from .. import util
 import functools
 import textwrap
-import sandboxmud.strings as strings
+import architext.strings as strings
 
 class AddVerb(verb.Verb):
     """This verb allows users to create new custom verbs tied to items.

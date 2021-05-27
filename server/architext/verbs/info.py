@@ -3,7 +3,7 @@ import textwrap
 from . import verb
 from .. import util
 from .. import entities
-import sandboxmud.strings as strings
+import architext.strings as strings
 
 class WorldInfo(verb.Verb):
     command = _('worldinfo')

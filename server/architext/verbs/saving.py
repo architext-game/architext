@@ -2,7 +2,7 @@ from . import verb
 from .. import entities
 from .. import util
 import functools
-import sandboxmud.strings as strings
+import architext.strings as strings
 
 class PlaceItem(verb.Verb):
     command = _("spawn")

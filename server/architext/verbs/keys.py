@@ -1,6 +1,6 @@
 from . import verb
 from .. import util
-import sandboxmud.strings as strings
+import architext.strings as strings
 
 class MasterClose(verb.Verb):
     command = _("masterclose ")

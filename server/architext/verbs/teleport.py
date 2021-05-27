@@ -2,7 +2,7 @@ from . import verb
 from .look import Look 
 from .. import util
 from .. import entities
-import sandboxmud.strings as strings
+import architext.strings as strings
 
 class Recall(verb.Verb):
     """Puts the player in the starting room of current world"""

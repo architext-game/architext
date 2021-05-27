@@ -1,6 +1,6 @@
 from . import verb
 from .. import  session
-import sandboxmud.util as util
+import architext.util as util
 import regex
 
 class CheckForItem(verb.Verb):

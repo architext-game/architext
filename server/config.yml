@@ -1,10 +1,10 @@
 public_worlds_limit: 99
 locale: en_US
 cover: |-
-  WELCOME TO SANDBOXMUD!
+  WELCOME TO ARCHITEXT!
   
 new_user_welcome_message: |-
-  ¡Bienvenido a sandbox_mud!
+  ¡Bienvenido a Architext!
   Pide a tu administrador que edite este mensaje de bienvenida, que no sea un super vago.
 old_user_welcome_message: |-
   ¡Bienvenido de vuelta!
