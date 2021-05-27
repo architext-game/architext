@@ -4,22 +4,23 @@ import textwrap
 class MasterMode(verb.Verb):
     """Lets players enter and leave master mode"""
 
-    command = 'director'
+    command = _('mastermode')
     permissions = verb.PRIVILEGED
 
     def process(self, message):
         if self.session.user.master_mode:
             self.session.user.leave_master_mode()
-            self.session.send_to_client("Has salido del modo director.")
+            self.session.send_to_client(_("You left master mode"))
         else:
             self.session.user.enter_master_mode()
-            self.session.send_to_client(textwrap.dedent(f"""
-                Modo director
-                {chr(9472)*13}
-                En este modo:
-                 {chr(9679)} Eres invisible para el resto de jugadores.
-                 {chr(9679)} Puedes usar salidas cerradas.
-                 
-                Has entrado en el modo director."""))
+            self.session.send_to_client(_(
+                'Master mode\n'
+                '───────────\n'
+                'While in master mode:\n'
+                ' ● You are invisible to the rest of players.\n'
+                ' ● You can go through closed exits.\n'
+                '\n'
+                'You are now in master mode. Enter "mastermode" again to go back to normal mode.'
+            ))
 
         self.finish_interaction()

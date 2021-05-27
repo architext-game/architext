@@ -61,7 +61,7 @@ class Verb():
         if self.user_has_enough_privileges():
             self.process(message)
         else:
-            self.session.send_to_client('No tienes permisos suficientes para hacer eso.')
+            self.session.send_to_client(_('You don\'t have enough privileges to do that here.'))
             self.finish_interaction()
 
     def user_has_enough_privileges(self):

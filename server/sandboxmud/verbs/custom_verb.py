@@ -2,6 +2,7 @@ from .. import entities
 from .. import util
 from .verb import Verb
 from .. import session
+import sandboxmud.strings as strings
 
 class CustomVerb(Verb):
     command = ''
@@ -58,7 +59,8 @@ class CustomVerb(Verb):
             creator_session = self.session if not isinstance(self.session, session.GhostSession) else self.session.creator_session
             ghost = session.GhostSession(self.session.server, self.session.user.room, creator_session, depth=depth)
         except session.GhostSessionMaxDepthExceeded:
-            self.session.send_to_all('En este mundo hay un travieso... menos mal que estoy yo aquí para poner orden :)')
+            #TODO log max recursion depth exceeded (this self.session has no logger)
+            pass
         else:
             for message in custom_verb.commands:
                 formatted_message = self.format_custom_verb_message(message)
@@ -71,6 +73,6 @@ class CustomVerb(Verb):
         else:
             working_session = self.session
   
-        message = message.replace('.usuario', working_session.user.name)
+        message = message.replace(strings.user_name_placeholder, working_session.user.name)
   
         return message

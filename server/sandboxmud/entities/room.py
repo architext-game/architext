@@ -7,7 +7,7 @@ class Room(mongoengine.Document):
     name        = mongoengine.StringField(required=True)
     world_state = mongoengine.ReferenceField('WorldState')
     alias       = mongoengine.StringField(required=True)  # id of the room, unique in each world state
-    description = mongoengine.StringField(default='')
+    description = mongoengine.StringField()
     custom_verbs = mongoengine.ListField(mongoengine.ReferenceField('CustomVerb'))
 
     def __init__(self, *args, save_on_creation=True, **kwargs):

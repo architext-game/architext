@@ -125,11 +125,11 @@ class AddVerb(verb.Verb):
             Now write the actions to perform when the verb is executed.
               ● You can use any action that you would normally do as a player or editor.
               ● When the verb is used, an invisible ghost player will perform the actions you provided.
-              ● If you write ".usuario" in any action, it will be substituted by the name of the player that used the verb.
+              ● If you write "{user_name_placeholder}" in any action, it will be substituted by the name of the player that used the verb.
               
             You can write as many actions as you like, one per line, as you would do while playing. You won't see any answer to your commands. When you are finished, write "OK".
               
-            Verb actions: ("OK" to finish)'''))
+            Verb actions: ("OK" to finish)''').format(user_name_placeholder=strings.user_name_placeholder))
         self.session.send_to_client(out_message)
         self.current_process_function = self.process_command
 

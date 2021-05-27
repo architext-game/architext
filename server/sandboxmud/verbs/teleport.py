@@ -6,7 +6,7 @@ from .. import entities
 class Recall(verb.Verb):
     """Puts the player in the starting room of current world"""
 
-    command = "recall"
+    command = _("recall")
 
     def process(self, message):
         starting_room = self.session.user.room.world_state.starting_room
@@ -18,7 +18,7 @@ class TeleportClient(verb.Verb):
     """Allows a creator to travel between any two rooms, using the destination unique alias.
     this command is intended to ease the creation process"""
 
-    command = 'tp '
+    command = _('tp ')
     permissions = verb.PRIVILEGED
 
     def process(self, message):
@@ -29,9 +29,9 @@ class TeleportClient(verb.Verb):
         if len(query) == 1:
             self.teleport_client(query.first())
         elif len(query) > 1:
-            self.session.send_to_client('Hay más de una sala con ese alias. Esto no debería pasar.')
+            raise Exception('There is more than one room with the same alias.')
         elif len(query) == 0:
-            self.session.send_to_client("NO hay ninguna sala con ese alias.")
+            self.session.send_to_client(strings.room_not_found)
 
         self.finish_interaction()
 
@@ -45,19 +45,19 @@ class TeleportUser(verb.Verb):
     command 'username' room_alias
     """
 
-    command = "tpotro '"
+    command = _("tpuser '")
     permissions = verb.PRIVILEGED
 
     def process (self, message):
         message = message[len(self.command):]
         target_user_name, room_alias = message.split("' ", 1)
         target_user = next(entities.User.objects(name=target_user_name, client_id__ne=None), None)
-        target_room = next(entities.Room.objects(alias=room_alias, world=self.session.user.room.world), None)
+        target_room = next(entities.Room.objects(alias=room_alias, world_state=self.session.user.room.world_state), None)
         if target_user is not None and target_room is not None:
             target_user.teleport(target_room)
-            self.session.send_to_client("Hecho.")
+            self.session.send_to_client(_("Done. Note that this verb moves players but doesn't tell them that they have been moved. You can tell them using text verbs if you want to."))
         else:
-            self.session.send_to_client("El usuario no existe o no está conectado, o no hay ninguna sala con ese alias.")
+            self.session.send_to_client(_("The user does not exist, it is not connected, or there is not a room with that id."))
         self.finish_interaction()
 
 
@@ -66,20 +66,20 @@ class TeleportAllInRoom(verb.Verb):
     command room_alias
     """
 
-    command = "tpsala "
+    command = _("tproom ")
     permissions = verb.PRIVILEGED
 
     def process(self, message):
         room_alias = message[len(self.command):]
         target_users = entities.User.objects(room=self.session.user.room, client_id__ne=None)
-        target_room = next(entities.Room.objects(alias=room_alias, world=self.session.user.room.world), None)
+        target_room = next(entities.Room.objects(alias=room_alias, world_state=self.session.user.room.world_state), None)
 
         if target_room is not None:
             for user in target_users:
                 user.teleport(target_room)
-            self.session.send_to_client("Hecho")
+            self.session.send_to_client(_("Done. Note that this verb  moves players but doesn't tell them that they have been moved. You can tell them using text verbs if you want to."))
         else:
-            self.session.send_to_client("No existe una sala con ese alias.")
+            self.session.send_to_client(strings.room_not_found)
         
         self.finish_interaction()
 
@@ -89,20 +89,20 @@ class TeleportAllInWorld(verb.Verb):
     command room_alias
     """
 
-    command = "tptodos "
+    command = _("tpall ")
     permissions = verb.PRIVILEGED
 
     def process(self, message):
         room_alias = message[len(self.command):]
         target_users = entities.User.objects(client_id__ne=None)
-        target_room = next(entities.Room.objects(alias=room_alias, world=self.session.user.room.world), None)
+        target_room = next(entities.Room.objects(alias=room_alias, world_state=self.session.user.room.world_state), None)
 
         if target_room is not None:
             for user in target_users:
                 user.teleport(target_room)
-            self.session.send_to_client("Hecho")
+            self.session.send_to_client(_("Done. Note that this verb only  players but doesn't tell them that they have been moved. You can tell them using text verbs if you want to."))
         else:
-            self.session.send_to_client("No existe una sala con ese alias.")
+            self.session.send_to_client(strings.room_not_found)
         
         self.finish_interaction()
 

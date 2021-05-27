@@ -24,11 +24,11 @@ class Look(Verb):
         elif selected_entity is None:
             self.session.send_to_client(strings.not_found)
         else:
-            self.session.send_to_client(f"👁 {selected_entity.name}\n{selected_entity.description}")
+            self.session.send_to_client(f"👁 {selected_entity.name}\n{selected_entity.description if selected_entity.description else strings.default_description}")
     
     def show_current_room(self):
         title = self.session.user.room.name + "\n"
-        description = self.session.user.room.description + "\n"
+        description = (self.session.user.room.description if self.session.user.room.description else strings.default_description) + "\n"
 
         listed_exits = [exit.name for exit in self.session.user.room.exits if exit.is_listed()]
         if len(listed_exits) > 0:
@@ -55,5 +55,6 @@ class Look(Verb):
             players_here = _("Players here: {players_list}").format(players_list=players_list)
         players_here = f'👤 {players_here}.' + '\n' if players_here != '' else ''
         underline = '─'*len(title)
-        message = (f"""{title}{underline}\n{description}{items}{players_here}{exits}""")
+        line_break = '\n' if (items or players_here or exits) else ''
+        message = (f"""{title}{underline}\n{description}{line_break}{items}{players_here}{exits}""")
         self.session.send_to_client(message)

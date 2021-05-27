@@ -1,11 +1,15 @@
-from . import verb
-from .. import entities
-from . import look
 import functools
 import json
 import textwrap
-import mongoengine
 import unicodedata
+
+import mongoengine
+
+from .. import entities
+from . import look, verb
+
+import sandboxmud.strings as strings
+
 
 def remove_control_characters(s):
     return "".join(ch for ch in s if unicodedata.category(ch)[0]!="C")
@@ -20,15 +24,15 @@ class LobbyMenu(verb.Verb):
         world_list = self.session.world_list_cache
         
         if world_list:
-            out_message += f'Introduce el número del mundo al que quieras ir\n'
+            out_message += _('Enter the number of the world you want to enter\n')
             world_names_with_index = [f' {index: < 4} {world.name: <36}  {world.get_connected_users()}{chr(128100)} by {world.creator.name} {"" if world.public else chr(128274)}' for index, world in enumerate(world_list)]
             out_message += functools.reduce(lambda a, b: '{}\n{}'.format(a, b), world_names_with_index)
         else:
-            out_message += 'No hay ningún mundo público (o privado conocido) en este servidor.'
-        out_message += '\n' + textwrap.dedent('''
-            Opciones:
-              +  para crear un nuevo mundo.
-              ?  para ver más acciones disponibles.'''
+            out_message += _('There are not public or known private worlds in this server.')
+        out_message += '\n\n' + _(
+            'Options:\n'
+            '  +  to create a new world.\n'
+            '  ?  to see all available actions.'
         )
         self.session.send_to_client(out_message)
 
@@ -51,18 +55,17 @@ class LobbyHelp(LobbyMenu):
     verbtype = verb.LOBBYVERB
 
     def process(self, message):
-        out_message = textwrap.dedent(f"""
-            Desde el lobby puedes introducir los siguientes comandos:
-              +      para crear un nuevo mundo.
-              -      para borrar uno de tus mundos.
-              r      para refrescar y mostrar la lista de mundos.
-              *      para crear tu propia instancia de un mundo público.
-              >      para importar un mundo.
-              quien  para ver la lista de jugadores conectados.
-            
-            O introduce el número de un mundo de la lista de mundos para entrar en él.
-            También puedes introducir el código de invitación de un mundo privado para entrar en él.
-            """
+        out_message = _(
+            'You can use these commands from the lobby:\n'
+            '  +      to create a new world.\n'
+            '  -      to delete one of your worlds.\n'
+            '  r      to reload and show the list of worlds.\n'
+            '  *      to deploy a public world snapshot.\n'
+            '  >      to import a world from text.\n'
+            '  who    to see who is connected right now.\n'
+            '\n'
+            'Enter the number of a world in the world list to go there.\n'
+            'Enter the invite code of a world to go there.'
         )
         self.session.send_to_client(out_message)
         self.finish_interaction()
@@ -70,7 +73,7 @@ class LobbyHelp(LobbyMenu):
     
 
 class GoToLobby(LobbyMenu):
-    command = 'salirmundo'
+    command = _('exitworld')
 
     def process(self, message):
         self.session.user.leave_world()
@@ -96,15 +99,15 @@ class JoinByInviteCode(LobbyMenu):
         try:
             chosen_world = entities.World.objects.get(id=message)
         except entities.World.DoesNotExist:
-            self.session.send_to_client("No te entiendo.")
+            self.session.send_to_client(_("I don't understand that"))
             self.finish_interaction()
             return
 
         self.session.user.enter_world(chosen_world)
         
-        self.session.send_to_client("VIAJANDO A {}".format(chosen_world.name))
+        self.session.send_to_client(_("Traveling to {world_name}.").format(world_name=chosen_world.name))
         look.Look(self.session).show_current_room()
-        self.session.send_to_others_in_room("¡Puf! {} apareció.".format(self.session.user.name))
+        self.session.send_to_others_in_room(_("Pof! {player_name} appears here.").format(player_name=self.session.user.name))
         self.finish_interaction()
 
 class EnterWorld(LobbyMenu):
@@ -129,14 +132,14 @@ class EnterWorld(LobbyMenu):
         try:
             index = int(message)
         except ValueError:
-            self.session.send_to_client("Introduce un número")
+            self.session.send_to_client(strings.not_a_number)
             self.finish_interaction()
             return
         
         try:
             chosen_world = self.session.world_list_cache[index]
         except IndexError:
-            self.session.send_to_client("Introduce el número correspondiente a uno de los mundos")
+            self.session.send_to_client(strings.wrong_value)
             self.finish_interaction()
             return
 
@@ -144,21 +147,21 @@ class EnterWorld(LobbyMenu):
             location_save = self.session.user.get_location_save(chosen_world)
             self.session.user.enter_world(chosen_world)
         except mongoengine.errors.DoesNotExist:
-            self.session.send_to_client("Ese mundo ya no existe. Refresca el lobby escribiendo 'r'.")
+            self.session.send_to_client(_("This world no longer exists. Enter 'r' to reload the lobby."))
             self.finish_interaction()
             return
         
         if location_save is not None:
-            self.session.send_to_client("Volviendo a tu última localización en {}".format(chosen_world.name))
+            self.session.send_to_client(_("Returning to your last location in {world_name}").format(world_name=chosen_world.name))
         else:
-            self.session.send_to_client("Viajando por primera vez a {}".format(chosen_world.name))
+            self.session.send_to_client(_("Traveling to {world_name} for the first time.").format(world_name=chosen_world.name))
         
-        self.session.send_to_client("Pulsa enter para entrar...")
+        self.session.send_to_client(_("Press enter to continue..."))
         self.current_process_function = self.enter_to_continue
         
     def enter_to_continue(self, message):
         look.Look(self.session).show_current_room()
-        self.session.send_to_others_in_room("¡Puf! {} apareció.".format(self.session.user.name))
+        self.session.send_to_others_in_room(_("Puufh! {player_name} appears here.").format(player_name=self.session.user.name))
         self.finish_interaction()
 
 
@@ -176,26 +179,31 @@ class CreateWorld(LobbyMenu):
 
     def process(self, message):
         self.new_world = entities.World(save_on_creation=False, creator=self.session.user)
-        self.session.send_to_client('Escribe el nombre que quieres ponerle al mundo. ("/" para cancelar)')
+        self.session.send_to_client(_('Enter the name for your new world. ("/" to cancel)'))
         self.process = self.process_word_name
 
     def process_word_name(self, message):
         if message == "/":
-            self.session.send_to_client("Creación de mundo cancelada.")
+            self.session.send_to_client(strings.cancelled)
             self.finish_interaction()
             return
         if not message:
-            self.session.send_to_client('No puede estar vacío')
+            self.session.send_to_client(strings.is_empty)
             return
 
         self.new_world.name = message
         self.new_world.save()
-        self.session.send_to_client(textwrap.dedent(f'''
-            Tu nuevo mundo está listo.
-            Es un mundo privado{chr(128274)}. Puedes invitar a tus amigos compartiendo su código de invitación: 
-            {self.new_world.id}
-            Si quieres y cuando esté listo, puedes entrar en él y usar el verbo "editarmundo" para hacerlo público.'''
-        ))
+        self.session.send_to_client(_(
+            'You new world is ready.\n'
+            'It is a private world 🔒. You can invite your friends sharing this invite code:\n'
+            '{invite_code}\n'
+            'When it is ready, you can make the world public using the editworld command.\n'
+            '\n'
+            'Press enter to continue...'
+        ).format(invite_code=self.new_world.id))
+        self.process = self.enter_to_continue
+
+    def enter_to_continue(self, message):
         self.show_lobby_menu()
         self.finish_interaction()
 
@@ -208,11 +216,11 @@ class DeployPublicSnapshot(LobbyMenu):
         self.public_snapshots = entities.WorldSnapshot.objects(public=True)
 
         if not self.public_snapshots:
-            self.session.send_to_client('No hay mundos públicos para desplegar :(')
+            self.session.send_to_client(_('There are no public worlds to deploy.'))
             self.finish_interaction()
             return
 
-        message = '¿Qué mundo quieres desplegar? ("/" para cancelar)\n'
+        message = _('Which world do you want to deploy? ("/" to cancel)\n')
         for index, snapshot in enumerate(self.public_snapshots):
             message += '{}. {}\n'.format(index, snapshot.name)
         self.session.send_to_client(message)
@@ -220,7 +228,7 @@ class DeployPublicSnapshot(LobbyMenu):
 
     def process_menu_option(self, message):
         if message == '/':
-            self.session.send_to_client('Cancelado.')
+            self.session.send_to_client(strings.cancelled)
             self.show_lobby_menu()
             self.finish_interaction()
             return
@@ -230,30 +238,30 @@ class DeployPublicSnapshot(LobbyMenu):
             if index < 0:
                 raise ValueError
         except ValueError:
-            self.session.send_to_client("Introduce un número")
+            self.session.send_to_client(strings.not_a_number)
             return
 
         try:
             self.chosen_snapshot = self.public_snapshots[index]
         except IndexError:
-            self.session.send_to_client("Introduce el número correspondiente a uno de los snapshots")
+            self.session.send_to_client(strings.wrong_value)
             return
         
-        self.session.send_to_client('¿Cómo quieres llamar al nuevo mundo? ("/" para cancelar)')
+        self.session.send_to_client(_('How do you want to name the new world? ("/" to cancel)'))
         self.process = self.process_new_world_name
 
     def process_new_world_name(self, message):
         if message == "/":
-            self.session.send_to_client("Cancelado")
+            self.session.send_to_client(strings.cancelled)
             self.finish_interaction()
             return
         if not message:
-            self.session.send_to_client('El nombre no puede estar vacío.')
+            self.session.send_to_client(strings.is_empty)
             return
             
         world_name = message
         self.deploy_at_new_world(self.chosen_snapshot, world_name)
-        self.session.send_to_client('Hecho.')
+        self.session.send_to_client(_('Done.'))
         self.show_lobby_menu()
         self.finish_interaction()
 
@@ -270,11 +278,11 @@ class DeleteWorld(LobbyMenu):
         self.your_worlds = entities.World.objects(creator=self.session.user)
 
         if not self.your_worlds:
-            self.session.send_to_client("No has creado ningún mundo.")
+            self.session.send_to_client(_("You have not created any world."))
             self.finish_interaction()
             return
 
-        message = '¿Qué mundo quieres eliminar? ¡ES IRREVERSIBLE! ("/" para cancelar)\n'
+        message = _('Choose the world to delete. YOU WON\'T BE ABLE TO GET IT BACK. Consider making a backup first. ("/" to cancel)\n')
         for index, world in enumerate(self.your_worlds):
             message += "{}. {}\n".format(index, world.name)
         self.session.send_to_client(message)
@@ -282,7 +290,7 @@ class DeleteWorld(LobbyMenu):
 
     def process_menu_option(self, message):
         if message == '/':
-            self.session.send_to_client("Cancelado.")
+            self.session.send_to_client(strings.cancelled)
             self.show_lobby_menu()
             self.finish_interaction()
             return
@@ -292,21 +300,21 @@ class DeleteWorld(LobbyMenu):
             if index < 0:
                 raise ValueError
         except ValueError:
-            self.session.send_to_client("Introduce un número")
+            self.session.send_to_client(strings.not_a_number)
             return
 
         try:
             world_to_delete = self.your_worlds[index]
         except IndexError:
-            self.session.send_to_client("Introduce el número correspondiente a uno de los mundos")
+            self.session.send_to_client(strings.wrong_value)
             return
 
         try:
             world_to_delete.delete()
         except entities.CantDelete as e:
-            self.session.send_to_client("No se pudo eliminar: {}".format(e))
+            self.session.send_to_client(_("It can not be deleted: {error}".format(error=e)))
         else:
-            self.session.send_to_client("Hecho.")
+            self.session.send_to_client(_("Done."))
 
         self.show_lobby_menu()
         self.finish_interaction()
@@ -320,46 +328,47 @@ class ImportWorld(LobbyMenu):
         self.json_message = ''
         self.new_world_state = entities.WorldState(save_on_creation=False)
         self.new_world = entities.World(save_on_creation=False, creator=self.session.user, world_state=self.new_world_state)
-        self.session.send_to_client('Escribe el nombre que quieres ponerle al mundo importado. ("/" para cancelar)')
+        self.session.send_to_client(_('Enter a name for your new world. ("/" to cancel)'))
         self.process = self.process_word_name
 
     def process_word_name(self, message):
         if message == "/":
-            self.session.send_to_client("Creación de mundo cancelada.")
+            self.session.send_to_client(strings.cancelled)
             self.finish_interaction()
             return
         if not message:
-            self.session.send_to_client('No puede estar vacío')
+            self.session.send_to_client(strings.is_empty)
             return
 
         self.new_world.name = message
-        self.session.send_to_client(textwrap.dedent(f'''
-            Ahora pega la representación textual del mundo en un solo mensaje (obtenida mediante el comando exportar).
-            Si la representación tiene muchos caracteres será dividida en vaios mensajes automáticamente. El
-            servidor no considerará completada la entrada hasta que sea válida.
-            Si te has equivocado al introducir la representación y quieres cancelar la importacion, envía "/".'''))
+        self.session.send_to_client(_(
+            'Now paste the text export of the world.\n'
+            'It will be automatically divided into multiple messages if it is too long.'
+            'The server won\'t consider the text as received until it is valid.\n'
+            'If you entered the wrong text, send "/" to cancel.'
+        ))
         self.process = self.process_world_json
 
     def process_world_json(self, message):
         # todo: check for possible risks and outcomes of bad input.
         if message == '/':
-            self.session.send_to_client('Importación cancelada')
+            self.session.send_to_client(strings.cancelled)
             self.show_lobby_menu()
             self.finish_interaction()
             return
-        self.session.send_to_client(f"recibido un mensaje de {len(message)} caracteres")
+        self.session.send_to_client(_("{char_number} chars received").format(char_number=len(message)))
         message_valid = False
         message_without_control_characters = remove_control_characters(message)
         self.json_message += message_without_control_characters
         try:
             world_dict = json.loads(self.json_message)
-            self.session.send_to_client('Representación válida, generando mundo.')
+            self.session.send_to_client(_('All text received, generating world.'))
             self.populate_world_from_dict(world_dict)
-            self.session.send_to_client('Tu nuevo mundo está listo. Si en el mundo exportado había algún objeto en los inventarios de otros jugadores, estos han sido transferidos a tu inventario.')
+            self.session.send_to_client(_('Your new world is ready. The items in all player inventories from the original world has been moved to your inventory.'))
             self.show_lobby_menu()
             self.finish_interaction()
         except json.decoder.JSONDecodeError:
-            self.session.send_to_client('Mensaje procesado, representación inválida. Esperando el resto de la representación ("/" para cancelar)')
+            self.session.send_to_client(_('The text is still invalid. Waiting for more characters. ("/" to cancel)'))
         
 
     def populate_world_from_dict(self, world_dict):

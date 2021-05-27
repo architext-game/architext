@@ -7,7 +7,7 @@ class TextToOne(verb.Verb):
     command 'username' text
     """
 
-    command = "textoa '"
+    command = _("textto '")
     permissions = verb.PRIVILEGED
 
     def process(self, message):
@@ -17,12 +17,12 @@ class TextToOne(verb.Verb):
         target_user = util.name_to_entity(self.session, target_user_name, loose_match=['connected_users'])
 
         if target_user == "many":
-            self.session.send_to_client("Hay varios usuarios con un nombre parecido a ese. Intenta poner mayúsculas y acentos.")
+            self.session.send_to_client(_("There are more than one user with a similiar name. Try to match case and accents."))
         elif target_user is None:
-            self.session.send_to_client("Ese usuario no existe o no está conectado.")
+            self.session.send_to_client(_("That user is not connected or does not exist"))
         else:
             self.session.send_to_user(target_user, out_message)
-            self.session.send_to_client(f"Texto enviado a {target_user.name}.")
+            self.session.send_to_client(_("Text sent to {user_name}.").format(user_name=target_user.name))
 
         self.finish_interaction()
 
@@ -32,7 +32,7 @@ class TextToRoom(verb.Verb):
     command text
     """
 
-    command = "textosala "
+    command = _("textroom ")
     permissions = verb.PRIVILEGED
 
     def process(self, message):
@@ -46,7 +46,7 @@ class TextToWorld(verb.Verb):
     command text
     """
 
-    command = "textomundo "
+    command = _("textworld ")
     permissions = verb.PRIVILEGED
 
     def process(self, message):
@@ -60,7 +60,7 @@ class TextToRoomUnless(verb.Verb):
     command 'username' text
     """
 
-    command = "textomenos '"
+    command = _("textroombut '")
     permissions = verb.PRIVILEGED
 
     def process(self, message):
@@ -69,10 +69,10 @@ class TextToRoomUnless(verb.Verb):
         exception_user = util.name_to_entity(self.session, exception_user_name, loose_match=['room_users'])
 
         if exception_user == "many":
-            self.session.send_to_client("Hay varios usuarios con un nombre parecido a ese. Intenta poner mayúsculas y acentos.")
+            self.session.send_to_client(_("There are more than one user with a similiar name. Try to match case and accents."))
         elif exception_user is None:
-            self.session.send_to_client("Ese usuario no existe o no está conectado en esta sala.")
+            self.session.send_to_client(_("That user is not connected or does not exist"))
         else:
-            self.session.send_to_client(f"Texto enviado a todos menos a {exception_user.name}.")
+            self.session.send_to_client(_("Text send to all users in this room except {user_name}.").format(user_name=exception_user.name))
             self.session.send_to_room_except(exception_user, out_message)
         self.finish_interaction()

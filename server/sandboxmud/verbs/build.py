@@ -27,7 +27,7 @@ class Build(verb.Verb):
 
     def process_first_message(self, message):
         title = _('You start building a new room.')
-        body = _('Enter the following fields\n⚑ Room\'s name:')
+        body = _('Enter the following fields\n ⚑ Room\'s name')
         out_message = strings.format(title, body, cancel=True)
         self.session.send_to_client(out_message)
         self.current_process_function = self.process_room_name
@@ -37,7 +37,7 @@ class Build(verb.Verb):
             self.session.send_to_client(strings.is_empty)
         else:
             self.new_room.name = message
-            self.session.send_to_client(_(" 👁 Description:"))
+            self.session.send_to_client(_(' 👁 Description  [default "{default_description}"]').format(default_description=strings.default_description))
             self.current_process_function = self.process_room_description
 
     def process_room_description(self, message):

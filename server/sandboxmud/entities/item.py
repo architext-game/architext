@@ -8,7 +8,7 @@ import re
 class Item(mongoengine.Document):
     item_id      = mongoengine.StringField(default=None)
     name         = mongoengine.StringField(required=True)
-    description  = mongoengine.StringField(required=True)
+    description  = mongoengine.StringField()
     visible      = mongoengine.StringField(choices=['listed', 'hidden', 'obvious', 'takable'], default='listed')
     custom_verbs = mongoengine.ListField(mongoengine.ReferenceField('CustomVerb'))
     room         = mongoengine.ReferenceField('Room', default=None)
@@ -21,10 +21,6 @@ class Item(mongoengine.Document):
                 self.item_id = self._generate_item_id()
             if save_on_creation:
                 self.save()
-
-    def clean(self):
-        if self.description.strip() == "" or self.description is None:
-            self.description = "No tiene nada de especial"
 
     def save(self):
         self.ensure_i_am_valid()

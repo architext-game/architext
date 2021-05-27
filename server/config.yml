@@ -1,5 +1,8 @@
 public_worlds_limit: 99
 locale: en_US
+cover: |-
+  WELCOME TO SANDBOXMUD!
+  
 new_user_welcome_message: |-
   ¡Bienvenido a sandbox_mud!
   Pide a tu administrador que edite este mensaje de bienvenida, que no sea un super vago.
