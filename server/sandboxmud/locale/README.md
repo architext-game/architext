@@ -26,7 +26,8 @@ PO files contain the translations for a given language. To merge the POT changes
 pybabel update \
     --domain=sandboxmud \
     --input-file ./server/sandboxmud/locale/sandboxmud.pot \
-    --output-dir ./server/sandboxmud/locale/
+    --output-dir ./server/sandboxmud/locale/ \
+    --no-wrap
 ```
 This will merge the changes with all the existing PO files. Then you'll have to modify each PO file individually to add the new translations.
 
@@ -48,7 +49,8 @@ pybabel init \
     -D sandboxmud \
     -i ./server/sandboxmud/locale/sandboxmud.pot \
     -d ./server/sandboxmud/locale/ \
-    -l es_ES
+    -l es_ES \
+    --no-wrap
 ```
 Replace es_ES with whichever name you want to give to the locale. We prefer names like \<lowercase language code>_\<UPPERCASE COUNTRY CODE>.
 
