@@ -2,11 +2,12 @@ from . import verb
 from .. import util
 from .. import entities
 import textwrap
+import sandboxmud.strings as strings
 
 class EditItem(verb.Verb):
     """This verb allows users to edit properties of an item or exit that is in their current room"""
 
-    command = 'editar '
+    command = _('edit ')
     permissions = verb.PRIVILEGED
 
     def __init__(self, session):
@@ -18,7 +19,7 @@ class EditItem(verb.Verb):
 
     def process(self, message):
         if message == '/':
-            self.session.send_to_client("Edición cancelada.")
+            self.session.send_to_client(strings.cancelled)
             self.finish_interaction()
         else:
             self.current_process_function(message)
@@ -31,11 +32,11 @@ class EditItem(verb.Verb):
         selected_entity = util.name_to_entity(self.session, message, loose_match=["saved_items"], substr_match=["room_items", "inventory", "room_exits"])
 
         if selected_entity == "many":
-            self.session.send_to_client('Hay más de un objeto o salida con un nombre similar a ese. Se más específico.')
+            self.session.send_to_client(strings.many_found)
             self.finish_interaction()
             return
         elif selected_entity is None:
-            self.session.send_to_client('No hay ningún objeto o salida con ese nombre en esta sala, ni objeto guardado con ese identificador.')
+            self.session.send_to_client(strings.not_found)
             self.finish_interaction()
             return
 
@@ -43,43 +44,32 @@ class EditItem(verb.Verb):
             self.item_to_edit = selected_entity
 
             if self.item_to_edit.is_saved():
-                header = textwrap.dedent(f"""
-                    Editando {self.item_to_edit.item_id} (objeto guardado)
-                    {chr(9472)*(10+len(self.item_to_edit.item_id))}"""
-                )
+                title = _('Editing saved item {item_id}').format(item_id=self.item_to_edit.item_id)
             else:
-                header = textwrap.dedent(f"""
-                    Editando {self.item_to_edit.name} (objeto en la sala)
-                    {chr(9472)*(10+len(self.item_to_edit.name))}"""
-                )
+                title = _('Editing item {item_name}').format(item_name=self.item_to_edit.name)
 
-            out_message = textwrap.dedent(f"""
-                {header}
-                
-                {chr(10060)} Para cancelar, introduce '/' en cualquier momento.
-                
-                ¿Qué quieres cambiar? (introduce el número correspondiente)
-                    1 - Descripción
-                    0 - Nombre
-                    2 - Visibilidad"""
+            body = _(
+                'Enter the number of the value to edit.\n'
+                '    0 - Name\n'
+                '    1 - Description\n'
+                '    2 - Visibility'
             )
+            out_message = strings.format(title, body, cancel=True)
             self.session.send_to_client(out_message)
-            self.next_process_function = self.process_item_edit_option_number
+            self.current_process_function = self.process_item_edit_option_number
 
         elif isinstance(selected_entity, entities.Exit):
             self.exit_to_edit = selected_entity
 
-            out_message = textwrap.dedent(f"""
-                Editando {self.exit_to_edit.name} (salida)
-                {chr(9472)*(10+len(self.exit_to_edit.name))}
-                {chr(10060)} Para cancelar, introduce '/' en cualquier momento.
-                
-                ¿Qué quieres cambiar? (introduce el número correspondiente)
-                    0 - Nombre
-                    1 - Descripción 
-                    2 - Visibilidad
-                    3 - Destino"""
+            title = _('Editing exit {exit_name}').format(exit_name=self.exit_to_edit.name)
+            body = _(
+                'Enter the number of the value to edit.\n'
+                '    0 - Name\n'
+                '    1 - Description\n'
+                '    2 - Visibility\n'
+                '    3 - Destination'
             )
+            out_message = strings.format(title, body, cancel=True)
 
             self.session.send_to_client(out_message)
             self.current_process_function = self.process_exit_edit_option_number
@@ -92,31 +82,34 @@ class EditItem(verb.Verb):
         try:
             message = int(message)
         except ValueError:
-            self.session.send_to_client('Debes introducir un número.')
+            self.session.send_to_client(strings.not_a_number)
             return
 
         # max_number = 2
         if 0 <= message <= 1:
             self.option_number = message
-            self.session.send_to_client('Introduce el nuevo valor')
+            self.session.send_to_client(_('Enter the new value:'))
             self.current_process_function = self.process_reform_value
         elif message == 2:
             self.option_number = message
-            self.session.send_to_client('¿Qué visibilidad prefieres? Escribe:\n  "visible" si nombraste el objeto en la descripción de la sala.\n  "listado" para que se nombre automáticamente al mirar la sala.\n  "oculto" para que los jugadores tengan que encontrarlo por otros medios.\n  "cogible" para que los jugadores puedan coger el objeto y llevarlo consigo. Será listado igual que un verbo listado, y no deberías nombrarlo en la descripción de la sala.')
+            self.session.send_to_client(
+                _('Choose the new visibility:\n') +
+                strings.visibility_list
+            )
             self.current_process_function = self.process_reform_value
         else:
-            self.session.send_to_client("Introduce el número correspondiente a una de las opciones.")
+            self.session.send_to_client(_('Please enter the value of one of the options.'))
 
     def process_exit_edit_option_number(self, message):
         try:
             message = int(message)
         except ValueError:
-            self.session.send_to_client('Debes introducir un número.')
+            self.session.send_to_client(strings.not_a_number)
             return
 
         if message == 3:
             self.option_number = message
-            self.session.send_to_client('Introduce el alias de la sala a la que quieres que lleve esta salida. (Puedes encontrarlo escribiendo "info" allí).')
+            self.session.send_to_client(_('Enter the id of the new destination. You can find it using the "info" command.'))
             self.current_process_function = self.process_reform_value
         else:
             self.process_item_edit_option_number(message)
@@ -130,56 +123,51 @@ class EditItem(verb.Verb):
                 try:
                     object_to_edit.ensure_i_am_valid()
                 except entities.NameNotGloballyUnique:
-                    self.session.send_to_client('Ya hay un objeto con ese nombre en este mundo. El objeto que tratas de editar es cogible, y por eso no puede compartir nombre con ningún otro objeto. Se cancela la edición.')
-                    self.finish_interaction()
+                    self.session.send_to_client(_('There is another entity with that name in this world. Since the item you are editing is takable, it needs an unique name. Enter another name.'))
                     return
                 except entities.EmptyName:
-                    self.session.send_to_client('No puedes poner un nombre vacío. Se cancela la edición.')
-                    self.finish_interaction()
+                    self.session.send_to_client(strings.is_empty)
                     return
                 except entities.WrongNameFormat:
-                    self.session.send_to_client('El nombre no puede terminar con # y un número. Se cancela la edición.')
-                    self.finish_interaction()
+                    self.session.send_to_client(strings.wrong_format)
                     return
                 except entities.RoomNameClash:
-                    self.session.send_to_client('Ya hay un objeto o salida con ese nombre en esta sala. Se cancela la edición.')
-                    self.finish_interaction()
+                    self.session.send_to_client(strings.room_name_clash)
                     return
                 except entities.TakableItemNameClash:
-                    self.session.send_to_client('Hay un objeto cogible con ese nombre en este mundo. Se cancela la edición.')
-                    self.finish_interaction()
+                    self.session.send_to_client(strings.takable_name_clash)
                     return
             elif self.option_number == 1:  # edit description
                 object_to_edit.description = message
             elif self.option_number == 2:  # edit visibility
-                if message.lower() in ['visible', 'v', 'vi']:
+                if message.lower() in strings.visible_input_options:
                     object_to_edit.visible = 'obvious'
-                elif message.lower() in ['listado', 'l', 'li']:
+                elif message.lower() in strings.listed_input_options:
                     object_to_edit.visible = 'listed'
-                elif message.lower() in ['oculto', 'o', 'oc']:
+                elif message.lower() in strings.hidden_input_options:
                     object_to_edit.visible = 'hidden'
-                elif message.lower() in ['cogible', 'c', 'co']:
+                elif message.lower() in strings.takable_input_options:
                     if self.can_change_to_takable(self.item_to_edit):
                         object_to_edit.visible = 'takable'
                     else:
-                        self.session.send_to_client("Por lo tanto, no se puede asignar esa visibilidad a tu objeto. Prueba a cambiarle el nombre primero.")
+                        self.session.send_to_client(_('There is another entity with that name in this world. Since you are trying to make this item takable, it needs an unique name.\nEdition cancelled.'))
                         self.finish_interaction()
                         return
                 else:
-                    self.session.send_to_client('No te entiendo. Responde "visible", "listado", "oculto" o "cogible".')
+                    self.session.send_to_client(strings.wrong_value)
                     return
             elif self.option_number == 3:  # edit exit's destination
                 if entities.Room.objects(alias=message):
                     object_to_edit.destination = entities.Room.objects(alias=message).first()
                 else:
-                    self.session.send_to_client('No existe una sala con ese alias. Terminando edición.')
+                    self.session.send_to_client(strings.room_not_found)
                     self.finish_interaction()
                     return
             object_to_edit.save()
-            self.session.send_to_client('Edición completada.')
+            self.session.send_to_client(_('Edition completed.'))
             self.finish_interaction()
         else:
-            self.session.send_to_client('Debes introducir el nuevo valor')
+            self.session.send_to_client(strings.is_empty)
 
 
     def can_change_to_takable(self, item_to_change):

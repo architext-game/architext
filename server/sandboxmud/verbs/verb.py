@@ -28,17 +28,30 @@ class Verb():
     verbtype = WORLDVERB
 
     @classmethod
-    def can_process(cls, message, session):
+    def in_the_right_context(cls, session):
         if cls.verbtype == WORLDVERB and session.user.room is None:
             return False
 
         if cls.verbtype == LOBBYVERB and session.user.room is not None:
             return False
+        
+        return True
 
-        if message.startswith(cls.command):
-            return True
+    @classmethod
+    def message_matches_command(cls, message):
+        if type(cls.command) == str:
+            if message.startswith(cls.command):
+                return True
+        elif type(cls.command) == list:
+            for command in cls.command:
+                if message.startswith(command):
+                    return True 
         
         return False
+
+    @classmethod
+    def can_process(cls, message, session):
+        return cls.in_the_right_context(session) and cls.message_matches_command(message)
 
     def __init__(self, session):
         self.session = session
@@ -48,7 +61,7 @@ class Verb():
         if self.user_has_enough_privileges():
             self.process(message)
         else:
-            self.session.send_to_client('No tienes permisos suficientes para hacer eso.')
+            self.session.send_to_client(_('You don\'t have enough privileges to do that here.'))
             self.finish_interaction()
 
     def user_has_enough_privileges(self):

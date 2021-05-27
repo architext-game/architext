@@ -1,11 +1,12 @@
 from . import verb
 from .. import entities
 from .. import util
+import sandboxmud.strings as strings
 
 class Craft(verb.Verb):
     """This verb allows users to create items that are placed in their current room"""
 
-    command = 'fabricar'
+    command = _('craft')
     permissions = verb.PRIVILEGED
 
     def __init__(self, session):
@@ -15,13 +16,16 @@ class Craft(verb.Verb):
 
     def process(self, message):
         if message == '/':
-            self.session.send_to_client("Fabricación cancelada.")
+            self.session.send_to_client(strings.cancelled)
             self.finish_interaction()
         else:
             self.current_process_function(message)
 
     def process_first_message(self, message):
-        self.session.send_to_client(f"Comienzas a fabricar un objeto.\n{chr(9472)*34}\n{chr(10060)} Para cancelar, introduce '/' en cualquier momento.\n\nEscribe los siguientes datos:\n {chr(9873)} Nombre del objeto")
+        title = _("You start crafting an item")
+        body = _("Enter the following fields\n ⚑ Item's name")
+        out_message = strings.format(title, body, cancel=True)
+        self.session.send_to_client(out_message)
         self.current_process_function = self.process_item_name
 
     def process_item_name(self, message):
@@ -29,42 +33,47 @@ class Craft(verb.Verb):
         try:
             self.new_item.ensure_i_am_valid()
         except entities.EmptyName:
-            self.session.send_to_client("El nombre no puede estar vacío. Prueba con otro.")
+            self.session.send_to_client(strings.is_empty)
         except entities.WrongNameFormat:
-            self.session.send_to_client("El nombre no puede acabar con # seguido de un número. Prueba con otro.")
+            self.session.send_to_client(strings.wrong_format)
         except entities.RoomNameClash:
-            self.session.send_to_client("Ya hay un objeto o salida con ese nombre en esta sala. Prueba con otro.")
+            self.session.send_to_client(strings.room_name_clash)
         except entities.TakableItemNameClash:
-            self.session.send_to_client("Hay en el mundo un objeto tomable con ese nombre. Los objetos tomables deben tener un nombre único en todo el mundo, así que prueba a poner otro.")
+            self.session.send_to_client(strings.takable_name_clash)
         else:
-            self.session.send_to_client(f" {chr(128065)} Descripción")
+            self.session.send_to_client(_(' 👁 Description  [default "{default_description}"]').format(default_description=strings.default_description))
             self.current_process_function = self.process_item_description
  
     def process_item_description(self, message):
         self.new_item.description = message
-        self.session.send_to_client(f' {chr(128269)} Visibilidad\n Escribe:\n  (l) "listado" {chr(9472)} para que el objeto se nombre automáticamente al mirar la sala.\n  (v) "visible" {chr(9472)} si ya nombraste el objeto en la descripción de la sala.\n  (o) "oculto"  {chr(9472)} para que no aparezca ni en el comando "objetos".\n  (c) "cogible" {chr(9472)} para que los jugadores puedan coger el objeto y llevarlo consigo. Aparecerá automáticamente en la descripción de la sala. Su nombre deberá ser único en este mundo.')
+        self.session.send_to_client(_(
+            ' 🔍 Visibility\n'
+            ' Write:\n'
+            ) +
+            strings.visibility_list
+            )
         self.current_process_function = self.process_visibility
 
     def process_visibility(self, message):
-        if message.lower() in ['visible', 'v', 'vi']:
+        if message.lower() in strings.visible_input_options:
             self.new_item.visible = 'obvious'
-        elif message.lower() in ['listado', 'l', 'li']:
+        elif message.lower() in strings.listed_input_options:
             self.new_item.visible = 'listed'
-        elif message.lower() in ['oculto', 'o', 'oc']:
+        elif message.lower() in strings.hidden_input_options:
             self.new_item.visible = 'hidden'
-        elif message.lower() in ['cogible', 'c', 'co']:
+        elif message.lower() in strings.takable_input_options:
             self.new_item.visible = 'takable'
         else:
-            self.session.send_to_client('No te entiendo. Responde "visible", "listado", "oculto" o "cogible.')
+            self.session.send_to_client(_('Answer "listed", "visible", "hidden" or "takable.'))
             return
 
         try:
             self.new_item.save()
         except entities.NameNotGloballyUnique:
-            self.session.send_to_client("Ya hay en el mundo un objeto o una salida con este nombre. Los objetos cogibles deben tener un nombre totalmente único. Tendrás que empezar a crearlo de nuevo.")
+            self.session.send_to_client(_("There is an item or exit with that name in this world. Takable items need an unique name. Choose another visibility or start over to choose another name."))
         else:
             self.new_item.put_in_room(self.session.user.room)
-            self.session.send_to_client("¡Objeto creado!")
+            self.session.send_to_client(_("Item crafted!"))
             if not self.session.user.master_mode:
-                self.session.send_to_others_in_room("{} acaba de crear algo aquí.".format(self.session.user.name))
-        self.finish_interaction()
+                self.session.send_to_others_in_room(_("{user_name} has crafted something here.").format(user_name=self.session.user.name))
+            self.finish_interaction()

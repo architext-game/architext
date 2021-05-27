@@ -14,8 +14,6 @@ class WorldState(mongoengine.Document):
 
         if self.id is None:
             if save_on_creation:
-                if self.starting_room is None:
-                    self.starting_room = room_module.Room(alias='0', name='El Inicio', description='Esta sala es donde nacen los novatos. A partir de aquí se abren las puertas a diferentes mundos. Si no sabes moverte, escribe "ayuda" y descubrirás todo lo que puedes hacer.')
                 if self.starting_room.alias != '0':
                     raise Exception('The alias of a starting room must be "0"')
                 self.save()

@@ -5,7 +5,7 @@ from . import room as room_module
 class Exit(mongoengine.Document):
     name = mongoengine.StringField(required=True)
     destination = mongoengine.ReferenceField('Room', required=True)
-    description = mongoengine.StringField(default='No tiene nada de especial.')
+    description = mongoengine.StringField()
     visible = mongoengine.StringField(choices=['listed', 'hidden', 'obvious'], default='listed')
     is_open = mongoengine.BooleanField(default=True)
     key_names = mongoengine.ListField(mongoengine.StringField())

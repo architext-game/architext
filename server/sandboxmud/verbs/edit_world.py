@@ -1,10 +1,11 @@
 from . import verb
 import textwrap
 from .. import entities
+import sandboxmud.strings as strings
 
 class EditWorld(verb.Verb):
-    command = 'editarmundo'
-    permissions = verb.PRIVILEGED
+    command = _('editworld')
+    permissions = verb.CREATOR
 
     def __init__(self, session):
         super().__init__(session)
@@ -15,22 +16,20 @@ class EditWorld(verb.Verb):
 
     def process(self, message):
         if message == '/':
-            self.session.send_to_client("Edición cancelada.")
+            self.session.send_to_client(strings.cancelled)
             self.finish_interaction()
         else:
             self.current_process_function(message)
 
     def process_first_message(self, message):
-        # self.session.send_to_client(f'Editando el nombre del mundo\n{chr(9472)*29}\n{chr(10060)} Para cancelar, introduce "/".\n\nNuevo nombre:')
-        out_message = textwrap.dedent(f"""
-            Editando el mundo "{self.world.name}"
-            {chr(9472)*(20+len(self.world.name))}
-            {chr(10060)} Para cancelar, introduce '/' en cualquier momento.
-            
-            ¿Qué quieres cambiar? (introduce el número correspondiente)
-             0 - Nombre
-             1 - Cambiar público/privado"""
+        title = _('Editing this world: "{world_name}"').format(world_name=self.world.name)
+        body = _(
+            'Enter the number of the value you want to edit.\n'
+            '    0 - Name\n'
+            '    1 - Make public/private'
+            '    2 - Edit freedom'
         )
+        out_message = strings.format(title, body, cancel=True)
         self.session.send_to_client(out_message)
         self.current_process_function = self.process_option_number
 
@@ -38,27 +37,38 @@ class EditWorld(verb.Verb):
         try:
             message = int(message)
         except ValueError:
-            self.session.send_to_client('Debes introducir un número.')
+            self.session.send_to_client(strings.not_a_number)
             return
         
         options = {
             0: {
-                "out_message": 'Introduce el nuevo valor para el nombre del mundo.',
+                "out_message": _('Enter the new name:'),
                 "next_process_function": self.process_new_world_name,
             },
             1: {
-                "out_message": textwrap.dedent(f"""
-                    Actualmente el mundo es {'público' if self.world.public else 'privado'}'
-                    ¿Quieres cambiarlo a {'público' if not self.world.public else 'privado'}? [sí/no]"""
+                "out_message": _(
+                    'This world is {actual_value}.\n'
+                    'Do you want to change it to {new_value}? [yes/no]'
+                ).format(
+                    actual_value=(strings.public if self.world.public else strings.private), 
+                    new_value=(strings.public if not self.world.public else strings.private)
                 ), 
                 "next_process_function": self.process_public_choice,
             },
+            2: {
+                "out_message": _(
+                    'Who should be able to edit the world?\n'
+                    '    0 - All users.\n'
+                    '    1 - Only you and your designated editors.'
+                ),
+                "next_process_function": self.process_edit_freedom_option,
+            }
         }
 
         try:
             chosen_option = options[message]
         except KeyError:
-            self.session.send_to_client('Introduce el número correspondiente a una de las opciones')
+            self.session.send_to_client(strings.wrong_value)
             return
 
         self.session.send_to_client(chosen_option["out_message"])
@@ -66,31 +76,40 @@ class EditWorld(verb.Verb):
 
     def process_new_world_name(self, message):
         if not message:
-            self.session.send_to_client("El nombre no puede estar vacío")
+            self.session.send_to_client(strings.is_empty)
             return
 
         world = self.session.user.room.world_state.get_world()
         world.name = message
         world.save()
         self.finish_interaction()
-        self.session.send_to_client("Nombre cambiado.")
+        self.session.send_to_client(_("The name has been successfully changed."))
         return
 
     def process_public_choice(self, message):
-        yes = ['si', 'sí', 'Si', 'Sí', 's', 'S']
-        no  = ['no', 'No', 'n', 'N']
-
-        if message in yes:
+        if message.lower() in strings.yes_input_options:
             try:
                 self.world.toggle_public()
             except entities.PublicWorldLimitReached:
-                self.session.send_to_client('Ya has llegado al límite de mundos públicos en este servidor. Haz privado otro mundo o pide al administrador que incremente tu límite.')
+                self.session.send_to_client(_('You have reached the limit of public worlds in this server. Try to make another world private or ask the admin to increase your limit.'))
                 self.finish_interaction()
                 return
-            self.session.send_to_client(f'Ahora el mundo es {"público" if self.world.public else "privado"}.')
+            self.session.send_to_client(_('This world is now {public_or_private}.').format(public_or_private=(strings.public if self.world.public else strings.private)))
             self.finish_interaction()
-        elif message in no:
-            self.session.send_to_client(f'OK. El mundo sigue siendo {"público" if self.world.public else "privado"}.')
+        elif message.lower() in strings.no_input_options:
+            self.session.send_to_client(_('OK. The world remains {public_or_private}').format(public_or_private=(strings.public if self.world.public else strings.private)))
             self.finish_interaction()
         else:
-            self.session.send_to_client('Introduce "si" o "no".')
+            self.session.send_to_client(_('Please enter "yes" or "no".'))
+
+    def process_edit_freedom_option(self, message):
+        if message == '0':
+            self.session.user.room.world_state.get_world().set_to_free_edition()
+            self.session.send_to_client(_("Everybody can edit this world now."))
+            self.finish_interaction()
+        elif message == '1':
+            self.session.user.room.world_state.get_world().set_to_privileged_edition()
+            self.session.send_to_client(_("Only your designated editors and you can edit this world now."))
+            self.finish_interaction()
+        else:
+            self.session.send_to_client(strings.wrong_value)

@@ -13,7 +13,9 @@ class Login(Verb):
 
     def __init__(self, session):
         super().__init__(session)
-        self.session.send_to_client("Estás conectado. ¿Cómo te llamas?\n\r")
+        cover = util.get_config()['cover']
+        self.session.send_to_client(str(cover))
+        self.session.send_to_client(_("What is your character name? (or the name for your new character)\n\r"))
         self.current_process_function = self.start_login
 
     def process(self, message):
@@ -21,17 +23,17 @@ class Login(Verb):
 
     def start_login(self, message):
         if message == util.GHOST_USER_NAME:
-            self.session.send_to_client("Ese nombre está reservado. Prueba con otro.")
+            self.session.send_to_client(_("That name is reserved. Try with another one."))
             return
 
         try:
             self.process_user_name(message)
         except entities.EmptyName:
-            self.session.send_to_client("El nombre no puede estar vacío.")
+            self.session.send_to_client(strings.is_empty)
         except entities.ValueWithLineBreaks:
-            self.session.send_to_client("El nombre no puede contener saltos de línea.")
+            self.session.send_to_client(strings.has_line_breaks)
         except entities.ValueTooLong:
-            self.session.send_to_client(f"El nombre no puede contener más de {entities.User.NAME_MAX_LENGTH} caracteres.")
+            self.session.send_to_client(_("The name can\'t exceed {character_limit} characters.").format(character_limit=entities.User.NAME_MAX_LENGTH))
 
 
     def process_user_name(self, name):
@@ -54,10 +56,10 @@ class Login(Verb):
         out_message += '\n' + self.get_status_message()
 
         if self.session.user.room is not None:
-            self.session.send_to_others_in_room("¡Puf! {} apareció.".format(name))
+            self.session.send_to_others_in_room(_("Poohf! {user_name} appears.").format(user_name=name))
             world = self.session.user.room.world_state.get_world()
 
-        out_message += "\nPulsa enter para continuar..."        
+        out_message += _("\nPress enter to continue...")        
         self.session.send_to_client(out_message)
 
         self.current_process_function = self.process_enter_to_continue
@@ -79,16 +81,15 @@ class Login(Verb):
         self.finish_interaction()
 
     def get_status_message(self):
-        return textwrap.dedent(f"""
-            Estás conectado como {self.session.user.name}.
-            Estás en {self.get_location()}.
-            """
-        )
+        return _(
+            'You are logged in as {user_name}.\n'
+            'You are in {location}.'
+        ).format(user_name=self.session.user.name, location=self.get_location())
 
     def get_location(self):
         user = self.session.user
         if user.room is None:
-            return 'el lobby'
+            return _('the lobby')
         else:
             world = user.room.world_state.get_world()
-            return f'el mundo {world.name}, de {world.creator.name}'
+            return _('the world {world_name}, by {creator_name}').format(world_name=world.name, creator_name=world.creator.name)

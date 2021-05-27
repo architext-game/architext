@@ -4,8 +4,8 @@ import json
 import textwrap
 
 class ExportWorld(verb.Verb):
-    command = "exportar"
-    pretty_command = "exportar bonito"
+    command = _("export")
+    pretty_command = _("export pretty")
     permissions = verb.PRIVILEGED
 
     def process(self, message):
@@ -19,18 +19,17 @@ class ExportWorld(verb.Verb):
             )
         else:
             json_out = json.dumps(world_state_dict_representation)
-        header = textwrap.dedent(f"""
-        Tu mundo:
-        {chr(9472)*60}
-        """)
-        footer = textwrap.dedent(f"""
-        {chr(9472)*60}
-        
-        Has exportado el mundo actual. Puedes copiar el texto entre las líneas, y guardarlo donde quieras.
-        Para importarlo, sal de este mundo y usa la opción "importar" del menú inicial.
-        """)
-        self.session.send_to_client(header + json_out + footer)
-        # json.loads(json_out)
+        header = _(
+            'Your world:\n'
+            '────────────────────────────────────────────────────────────\n'
+        )
+        footer = _(
+            '────────────────────────────────────────────────────────────\n'
+            '\n'
+            'You have exported your actual world. Copy the text between the horizontal lines and save it anywhere.\n'
+            'You can import this and any exported world at the lobby.'
+        )
+        self.session.send_to_client(header + json_out + '\n' + footer)
         self.finish_interaction()
 
     def dump_item(self, item):

@@ -1,0 +1,1454 @@
+# Spanish (Spain) translations for PROJECT.
+# Copyright (C) 2021 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2021-05-27 13:44+0200\n"
+"PO-Revision-Date: 2021-05-27 13:48+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: es_ES\n"
+"Language-Team: es_ES <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: server/sandboxmud/session.py:54
+msgid "I don't understand that."
+msgstr ""
+
+#: server/sandboxmud/session.py:60
+msgid "Whoop! {player_name} has gone."
+msgstr ""
+
+#: server/sandboxmud/strings.py:1
+msgid "There is more than one thing with a similar name. Be more specific."
+msgstr ""
+
+#: server/sandboxmud/strings.py:2
+msgid "You can't find that here."
+msgstr ""
+
+#: server/sandboxmud/strings.py:3
+msgid "Action cancelled"
+msgstr ""
+
+#: server/sandboxmud/strings.py:4
+msgid "❌ You can send \"/\" anytime to cancel."
+msgstr ""
+
+#: server/sandboxmud/strings.py:5
+msgid "It can't be empty."
+msgstr ""
+
+#: server/sandboxmud/strings.py:6
+msgid "The name cannot end with # followed by a number. Try another one."
+msgstr ""
+
+#: server/sandboxmud/strings.py:7
+msgid "There is already an item or exit with that name in this room. Try another one."
+msgstr ""
+
+#: server/sandboxmud/strings.py:8
+msgid "There is a takable item with that name in this world. Takable items need a unique name, so try with another one."
+msgstr ""
+
+#: server/sandboxmud/strings.py:9
+msgid "There is not a room with that alias. Try another one."
+msgstr ""
+
+#: server/sandboxmud/strings.py:10 server/sandboxmud/verbs/add_verb.py:231
+msgid "Please enter a number."
+msgstr ""
+
+#: server/sandboxmud/strings.py:11 server/sandboxmud/verbs/edit_item.py:101
+msgid "Please enter the value of one of the options."
+msgstr ""
+
+#: server/sandboxmud/strings.py:12
+msgid "It can't contain line breaks."
+msgstr ""
+
+#: server/sandboxmud/strings.py:14
+msgid "It's nothing special."
+msgstr ""
+
+#: server/sandboxmud/strings.py:17
+msgid ""
+"  (l) \"listed\"  ─ the item will be automatically listed in the room description.\n"
+"  (v) \"visible\" ─ it won't be listed in room description.\n"
+"  (h) \"hidden\"  ─ it won't even be listed by the \"items\" verb.\n"
+"  (t) \"takable\" ─ players will be able to take the item into their inventory. It will be a listed item. Its name will need to be unique in the world."
+msgstr ""
+
+#: server/sandboxmud/strings.py:23 server/sandboxmud/verbs/info.py:138
+msgid "visible"
+msgstr ""
+
+#: server/sandboxmud/strings.py:23
+msgid "v"
+msgstr ""
+
+#: server/sandboxmud/strings.py:23
+msgid "vi"
+msgstr ""
+
+#: server/sandboxmud/strings.py:24 server/sandboxmud/verbs/info.py:140
+msgid "listed"
+msgstr ""
+
+#: server/sandboxmud/strings.py:24
+msgid "l"
+msgstr ""
+
+#: server/sandboxmud/strings.py:24
+msgid "li"
+msgstr ""
+
+#: server/sandboxmud/strings.py:25 server/sandboxmud/verbs/info.py:142
+msgid "hidden"
+msgstr ""
+
+#: server/sandboxmud/strings.py:25
+msgid "h"
+msgstr ""
+
+#: server/sandboxmud/strings.py:25
+msgid "hi"
+msgstr ""
+
+#: server/sandboxmud/strings.py:26 server/sandboxmud/verbs/info.py:136
+msgid "takable"
+msgstr ""
+
+#: server/sandboxmud/strings.py:26
+msgid "t"
+msgstr ""
+
+#: server/sandboxmud/strings.py:26
+msgid "ta"
+msgstr ""
+
+#: server/sandboxmud/strings.py:27
+msgid "yes"
+msgstr ""
+
+#: server/sandboxmud/strings.py:27
+msgid "y"
+msgstr ""
+
+#: server/sandboxmud/strings.py:28
+msgid "no"
+msgstr ""
+
+#: server/sandboxmud/strings.py:28
+msgid "n"
+msgstr ""
+
+#: server/sandboxmud/strings.py:31
+msgid "public"
+msgstr ""
+
+#: server/sandboxmud/strings.py:32
+msgid "private"
+msgstr ""
+
+#: server/sandboxmud/strings.py:34
+msgid ".user"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:12
+msgid "itemverb "
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:13
+msgid "roomverb"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:14
+msgid "worldverb"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:66
+msgid ""
+"                You are creating a verb that any player will be able to use over this item.\n"
+"\n"
+"                Now enter the verb's name. If you write \"use\" the verb will be executed by \"use {item_name}\".\n"
+"                You can give the verb multiple names. Just enter all of them separated by a whitespace.\n"
+"\n"
+"                Verb name/s:"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:76
+msgid "Adding verb to saved item \"{item_id}\""
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:80
+msgid "Adding verb to item \"{item_id}\""
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:86
+msgid "Adding verb to this room"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:87
+msgid ""
+"            You are creating a verb that any player in this room will be able to use.\n"
+"\n"
+"            Now enter the verb's name. If you write \"sing\" the verb will be executed simply by \"sing\".\n"
+"            You can give the verb multiple names. Just enter all of them separated by a whitespace.\n"
+"\n"
+"            Verb name/s:"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:100
+msgid "Adding verb to this world"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:101
+msgid ""
+"            You are creating a verb that any player in this world will be able to use.\n"
+"\n"
+"            Now enter the verb's name. If you write \"sing\" the verb will be executed simply by \"sing\".\n"
+"            You can give the verb multiple names. Just enter all of them separated by a whitespace.\n"
+"\n"
+"            Verb name/s:"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:119
+msgid "One of your verb names is invalid. Try again."
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:122
+msgid ""
+"            Verb actions\n"
+"            ────────────\n"
+"            Now write the actions to perform when the verb is executed.\n"
+"              ● You can use any action that you would normally do as a player or editor.\n"
+"              ● When the verb is used, an invisible ghost player will perform the actions you provided.\n"
+"              ● If you write \"{user_name_placeholder}\" in any action, it will be substituted by the name of the player that used the verb.\n"
+"              \n"
+"            You can write as many actions as you like, one per line, as you would do while playing. You won't see any answer to your commands. When you are finished, write \"OK\".\n"
+"              \n"
+"            Verb actions: (\"OK\" to finish)"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:143
+msgid "That last command is invalid. It has been ignored."
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:149
+msgid "Verb created. Write \"{verb_name} {item_name}\" to unleash its power!"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:152
+msgid "Room verb created. Write \"{verb_name}\" to unleash its power!"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:155
+msgid "World verb created. Write \"{verb_name}\" to unleash its power!"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:169
+msgid "seeitemverb "
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:170
+msgid "seeworldverb"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:171
+msgid "seeroomverb"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:196
+msgid "Saved item: {item_id}\n"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:198
+msgid "Item: {item_name}\n"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:202
+msgid "There are no verbs to show."
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:207
+msgid "Which verb do you want to see?\n"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:217
+msgid ""
+"\n"
+"\n"
+"\"/\" to cancel"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:237
+#: server/sandboxmud/verbs/add_verb.py:314
+msgid "Please introduce the number of one of the listed verbs."
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:247
+msgid "deleteitemverb "
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:248
+msgid "deleteroomverb"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:249
+msgid "deleteworldverb"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:256
+msgid "this world"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:259
+msgid "\"{room_name}\" (room)"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:274
+msgid "\"{item_id}\" (saved item)"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:276
+msgid "\"{item_name}\" (item)"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:281
+msgid "{target_name} has no verbs to delete."
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:285
+msgid "Deleting verb of {target_name}"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:286
+msgid ""
+"Enter the number of the verb to delete.\n"
+"{verb_list}"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:308
+msgid "Please enter a number"
+msgstr ""
+
+#: server/sandboxmud/verbs/add_verb.py:318
+msgid "The verb has been deleted."
+msgstr ""
+
+#: server/sandboxmud/verbs/build.py:11
+msgid "build"
+msgstr ""
+
+#: server/sandboxmud/verbs/build.py:29
+msgid "You start building a new room."
+msgstr ""
+
+#: server/sandboxmud/verbs/build.py:30
+msgid ""
+"Enter the following fields\n"
+" ⚑ Room's name"
+msgstr ""
+
+#: server/sandboxmud/verbs/build.py:40 server/sandboxmud/verbs/craft.py:44
+msgid " 👁 Description  [default \"{default_description}\"]"
+msgstr ""
+
+#: server/sandboxmud/verbs/build.py:48
+msgid ""
+" ⮕ Name of the exit in \"{this_room}\" towards \"{new_room}\"\n"
+"   [Default: \"to {new_room}\"]"
+msgstr ""
+
+#: server/sandboxmud/verbs/build.py:69
+msgid ""
+" ⮕ Name of the exit in \"{new_room}\" towards \"{this_room}\"\n"
+"   [Default: \"to {this_room}\"]"
+msgstr ""
+
+#: server/sandboxmud/verbs/build.py:76
+msgid "to {room_name}"
+msgstr ""
+
+#: server/sandboxmud/verbs/build.py:92
+msgid "Your new room is ready. Good work!"
+msgstr ""
+
+#: server/sandboxmud/verbs/build.py:95 server/sandboxmud/verbs/connect.py:105
+msgid "{user_name}'s eyes turn blank for a moment. A new exit appears in this room."
+msgstr ""
+
+#: server/sandboxmud/verbs/build.py:102 server/sandboxmud/verbs/connect.py:112
+msgid "straight {exit_name}"
+msgstr ""
+
+#: server/sandboxmud/verbs/checks.py:39
+msgid "there is an item called {item_name} in this room"
+msgstr ""
+
+#: server/sandboxmud/verbs/checks.py:42
+msgid "there is an item called {item_name} in your inventory"
+msgstr ""
+
+#: server/sandboxmud/verbs/checks.py:45
+msgid "there is an item called {item_name} in this room or your inventory"
+msgstr ""
+
+#: server/sandboxmud/verbs/checks.py:48
+msgid ""
+"Write the actions to perform if {condition}.\n"
+"Each action should be preceded by an hyphen, as in:\n"
+"-go door\n"
+"\n"
+"Enter \"-OK\" to end."
+msgstr ""
+
+#: server/sandboxmud/verbs/checks.py:58 server/sandboxmud/verbs/checks.py:73
+msgid "Action ignored. It should be preceded by \"-\"."
+msgstr ""
+
+#: server/sandboxmud/verbs/checks.py:64
+msgid "Received. Now do the same with the actions you want to perform if the condition is not met."
+msgstr ""
+
+#: server/sandboxmud/verbs/checks.py:79
+msgid "OK, lets run it!"
+msgstr ""
+
+#: server/sandboxmud/verbs/connect.py:10
+msgid "link"
+msgstr ""
+
+#: server/sandboxmud/verbs/connect.py:28
+msgid "Linking from {user_room_name} (id {user_room_alias})."
+msgstr ""
+
+#: server/sandboxmud/verbs/connect.py:32
+msgid ""
+"You are about to create an exit in your current room.\n"
+"Enter the id of the room you want to connect it to (you can check it using the \"info\" verb).\n"
+"\n"
+"Destination room id:"
+msgstr ""
+
+#: server/sandboxmud/verbs/connect.py:48
+msgid ""
+"Linking with \"{destination_name}\" (id {destination_alias}).\n"
+"  ⮕ Enter the name of the exit in {this_room_name} (id {this_room_alias}) towards {destination_name} (id {destination_alias})\n"
+"[Default: to {destination_name}]"
+msgstr ""
+
+#: server/sandboxmud/verbs/connect.py:60 server/sandboxmud/verbs/connect.py:84
+msgid "to {destination_name}"
+msgstr ""
+
+#: server/sandboxmud/verbs/connect.py:74
+msgid ""
+"  ⮕ Enter the name of the exit in {destination_name} (id {destination_alias}) towards {this_room_name} (id {this_room_alias})\n"
+"[Default: to {this_room_name}]"
+msgstr ""
+
+#: server/sandboxmud/verbs/connect.py:102
+msgid "Your new exits are ready!"
+msgstr ""
+
+#: server/sandboxmud/verbs/craft.py:9
+msgid "craft"
+msgstr ""
+
+#: server/sandboxmud/verbs/craft.py:25
+msgid "You start crafting an item"
+msgstr ""
+
+#: server/sandboxmud/verbs/craft.py:26
+msgid ""
+"Enter the following fields\n"
+" ⚑ Item's name"
+msgstr ""
+
+#: server/sandboxmud/verbs/craft.py:49
+msgid ""
+" 🔍 Visibility\n"
+" Write:\n"
+msgstr ""
+
+#: server/sandboxmud/verbs/craft.py:67
+msgid "Answer \"listed\", \"visible\", \"hidden\" or \"takable."
+msgstr ""
+
+#: server/sandboxmud/verbs/craft.py:73
+msgid "There is an item or exit with that name in this world. Takable items need an unique name. Choose another visibility or start over to choose another name."
+msgstr ""
+
+#: server/sandboxmud/verbs/craft.py:76
+msgid "Item crafted!"
+msgstr ""
+
+#: server/sandboxmud/verbs/craft.py:78
+msgid "{user_name} has crafted something here."
+msgstr ""
+
+#: server/sandboxmud/verbs/delete.py:10
+msgid "deleteroom"
+msgstr ""
+
+#: server/sandboxmud/verbs/delete.py:17
+msgid "You can't delete the room if there are other players here."
+msgstr ""
+
+#: server/sandboxmud/verbs/delete.py:19
+msgid "You can't delete the starting room. But you can edit it if you don't like it :-)"
+msgstr ""
+
+#: server/sandboxmud/verbs/delete.py:35
+msgid "The room and the exits leading to it have been deleted."
+msgstr ""
+
+#: server/sandboxmud/verbs/delete.py:43
+msgid "deleteexit "
+msgstr ""
+
+#: server/sandboxmud/verbs/delete.py:56
+msgid " 🚧 Keep in mind that the exit \"{exit_name}\" in \"{destination_name}\" that leads here has not been deleted."
+msgstr ""
+
+#: server/sandboxmud/verbs/delete.py:59
+msgid ""
+"Exit \"{exit_name}\" has been deleted.\n"
+"It's destination was \"{destination_name}\" (id: {destination_alias})\n"
+"{warning}"
+msgstr ""
+
+#: server/sandboxmud/verbs/delete.py:66
+msgid ""
+"There is no room called \"{exit_name}\".\n"
+"To delete anything you have to enter its exact name."
+msgstr ""
+
+#: server/sandboxmud/verbs/delete.py:83
+msgid "deleteitem "
+msgstr ""
+
+#: server/sandboxmud/verbs/delete.py:92
+msgid ""
+"There is not any item called {item_name}.\n"
+"To delete anything you have to enter its exact name."
+msgstr ""
+
+#: server/sandboxmud/verbs/direct_text.py:10
+msgid "textto '"
+msgstr ""
+
+#: server/sandboxmud/verbs/direct_text.py:20
+#: server/sandboxmud/verbs/direct_text.py:72
+msgid "There are more than one user with a similiar name. Try to match case and accents."
+msgstr ""
+
+#: server/sandboxmud/verbs/direct_text.py:22
+#: server/sandboxmud/verbs/direct_text.py:74
+msgid "That user is not connected or does not exist"
+msgstr ""
+
+#: server/sandboxmud/verbs/direct_text.py:25
+msgid "Text sent to {user_name}."
+msgstr ""
+
+#: server/sandboxmud/verbs/direct_text.py:35
+msgid "textroom "
+msgstr ""
+
+#: server/sandboxmud/verbs/direct_text.py:49
+msgid "textworld "
+msgstr ""
+
+#: server/sandboxmud/verbs/direct_text.py:63
+msgid "textroombut '"
+msgstr ""
+
+#: server/sandboxmud/verbs/direct_text.py:76
+msgid "Text send to all users in this room except {user_name}."
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_item.py:10
+msgid "edit "
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_item.py:47
+msgid "Editing saved item {item_id}"
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_item.py:49
+msgid "Editing item {item_name}"
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_item.py:51
+msgid ""
+"Enter the number of the value to edit.\n"
+"    0 - Name\n"
+"    1 - Description\n"
+"    2 - Visibility"
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_item.py:64
+msgid "Editing exit {exit_name}"
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_item.py:65
+msgid ""
+"Enter the number of the value to edit.\n"
+"    0 - Name\n"
+"    1 - Description\n"
+"    2 - Visibility\n"
+"    3 - Destination"
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_item.py:91
+msgid "Enter the new value:"
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_item.py:96
+msgid "Choose the new visibility:\n"
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_item.py:112
+msgid "Enter the id of the new destination. You can find it using the \"info\" command."
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_item.py:126
+msgid "There is another entity with that name in this world. Since the item you are editing is takable, it needs an unique name. Enter another name."
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_item.py:153
+msgid ""
+"There is another entity with that name in this world. Since you are trying to make this item takable, it needs an unique name.\n"
+"Edition cancelled."
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_item.py:167
+msgid "Edition completed."
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_world.py:7
+msgid "editworld"
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_world.py:25
+msgid "Editing this world: \"{world_name}\""
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_world.py:26
+msgid ""
+"Enter the number of the value you want to edit.\n"
+"    0 - Name\n"
+"    1 - Make public/private    2 - Edit freedom"
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_world.py:45
+msgid "Enter the new name:"
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_world.py:49
+msgid ""
+"This world is {actual_value}.\n"
+"Do you want to change it to {new_value}? [yes/no]"
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_world.py:59
+msgid ""
+"Who should be able to edit the world?\n"
+"    0 - All users.\n"
+"    1 - Only you and your designated editors."
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_world.py:86
+msgid "The name has been successfully changed."
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_world.py:94
+msgid "You have reached the limit of public worlds in this server. Try to make another world private or ask the admin to increase your limit."
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_world.py:97
+msgid "This world is now {public_or_private}."
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_world.py:100
+msgid "OK. The world remains {public_or_private}"
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_world.py:103
+msgid "Please enter \"yes\" or \"no\"."
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_world.py:108
+msgid "Everybody can edit this world now."
+msgstr ""
+
+#: server/sandboxmud/verbs/edit_world.py:112
+msgid "Only your designated editors and you can edit this world now."
+msgstr ""
+
+#: server/sandboxmud/verbs/exits.py:5
+msgid "exits"
+msgstr ""
+
+#: server/sandboxmud/verbs/exits.py:11
+msgid "Obvious exits:"
+msgstr ""
+
+#: server/sandboxmud/verbs/exits.py:13
+msgid "There is not an obvious way to exit this room."
+msgstr ""
+
+#: server/sandboxmud/verbs/export.py:7
+msgid "export"
+msgstr ""
+
+#: server/sandboxmud/verbs/export.py:8
+msgid "export pretty"
+msgstr ""
+
+#: server/sandboxmud/verbs/export.py:22
+msgid ""
+"Your world:\n"
+"────────────────────────────────────────────────────────────\n"
+msgstr ""
+
+#: server/sandboxmud/verbs/export.py:26
+msgid ""
+"────────────────────────────────────────────────────────────\n"
+"\n"
+"You have exported your actual world. Copy the text between the horizontal lines and save it anywhere.\n"
+"You can import this and any exported world at the lobby."
+msgstr ""
+
+#: server/sandboxmud/verbs/go.py:8
+msgid "go "
+msgstr ""
+
+#: server/sandboxmud/verbs/go.py:20
+msgid "There is more than one exit with a similar name. Please be more specific."
+msgstr ""
+
+#: server/sandboxmud/verbs/go.py:29
+msgid "You try to go that way, but the exit is closed."
+msgstr ""
+
+#: server/sandboxmud/verbs/go.py:38
+msgid "{user_name} leaves through {exit_name}."
+msgstr ""
+
+#: server/sandboxmud/verbs/go.py:40
+msgid "{user_name} goes to somewhere."
+msgstr ""
+
+#: server/sandboxmud/verbs/go.py:42
+msgid "{user_name} arrives through {exit_name}."
+msgstr ""
+
+#: server/sandboxmud/verbs/go.py:44
+msgid "{user_name} arrives from somewhere."
+msgstr ""
+
+#: server/sandboxmud/verbs/info.py:9
+msgid "worldinfo"
+msgstr ""
+
+#: server/sandboxmud/verbs/info.py:21
+msgid "No one."
+msgstr ""
+
+#: server/sandboxmud/verbs/info.py:22
+msgid ""
+"Name: {world_name}\n"
+"Creator: {creator_name}\n"
+"Editors: {editor_names}\n"
+"Free edition: {all_can_edit}\n"
+"This world is {public_or_private}\n"
+"Invitation code: {world_id}"
+msgstr ""
+
+#: server/sandboxmud/verbs/info.py:44
+msgid "info"
+msgstr ""
+
+#: server/sandboxmud/verbs/info.py:66
+msgid ""
+"Item name \"{item_name}\"\n"
+"Description: \"{description}\"\n"
+"Visibility: {visible}"
+msgstr ""
+
+#: server/sandboxmud/verbs/info.py:72
+msgid ""
+"Exit name: \"{exit_name}\"\n"
+"Description \"{description}\"\n"
+"Visibility: {visible}\n"
+"Destination: {destination_name} (id {destination_alias})"
+msgstr ""
+
+#: server/sandboxmud/verbs/info.py:96
+msgid "   \"{exit_name}\" lleva a \"{destination_name}\" id {destination_alias} ({exit_visibility})"
+msgstr ""
+
+#: server/sandboxmud/verbs/info.py:113
+msgid "Room \"{room_name}\""
+msgstr ""
+
+#: server/sandboxmud/verbs/info.py:114
+msgid ""
+"id: {alias}\n"
+"Description: {description}\n"
+"Exits:\n"
+"{exit_string}\n"
+"Items:\n"
+"{item_string}\n"
+"Online players here: {players_online}\n"
+"Offline players here: {players_offline}"
+msgstr ""
+
+#: server/sandboxmud/verbs/inventory.py:13
+msgid "take "
+msgstr ""
+
+#: server/sandboxmud/verbs/inventory.py:25
+msgid "{item_name}: You can't take that item."
+msgstr ""
+
+#: server/sandboxmud/verbs/inventory.py:29
+msgid "You took {item_name}."
+msgstr ""
+
+#: server/sandboxmud/verbs/inventory.py:40
+msgid "drop "
+msgstr ""
+
+#: server/sandboxmud/verbs/inventory.py:48
+msgid "You don't have that item."
+msgstr ""
+
+#: server/sandboxmud/verbs/inventory.py:50
+msgid "There are more than one item with a similar name in your inventory. Be more specific."
+msgstr ""
+
+#: server/sandboxmud/verbs/inventory.py:54
+msgid "You dropped {item_name}."
+msgstr ""
+
+#: server/sandboxmud/verbs/inventory.py:62
+msgid "inventory"
+msgstr ""
+
+#: server/sandboxmud/verbs/inventory.py:66
+msgid "Your inventory is empty"
+msgstr ""
+
+#: server/sandboxmud/verbs/inventory.py:71
+msgid ""
+"You carry:\n"
+"{inventory_list}"
+msgstr ""
+
+#: server/sandboxmud/verbs/inventory.py:77
+msgid "give '"
+msgstr ""
+
+#: server/sandboxmud/verbs/inventory.py:88
+#: server/sandboxmud/verbs/inventory.py:108
+#: server/sandboxmud/verbs/lobby.py:273 server/sandboxmud/verbs/lobby.py:326
+msgid "Done."
+msgstr ""
+
+#: server/sandboxmud/verbs/inventory.py:90
+msgid "The item/user is not in this room."
+msgstr ""
+
+#: server/sandboxmud/verbs/inventory.py:95
+msgid "remove '"
+msgstr ""
+
+#: server/sandboxmud/verbs/inventory.py:110
+msgid "The item is not in that user's inventory."
+msgstr ""
+
+#: server/sandboxmud/verbs/inventory.py:112
+msgid "That user is not here."
+msgstr ""
+
+#: server/sandboxmud/verbs/items.py:5
+msgid "items"
+msgstr ""
+
+#: server/sandboxmud/verbs/items.py:11
+msgid ""
+"Obvious items:\n"
+" ● "
+msgstr ""
+
+#: server/sandboxmud/verbs/items.py:13
+msgid "At first glance, it seems there is nothing here."
+msgstr ""
+
+#: server/sandboxmud/verbs/keys.py:6
+msgid "masterclose "
+msgstr ""
+
+#: server/sandboxmud/verbs/keys.py:20
+msgid "The exit \"{exit_name}\" has been closed."
+msgstr ""
+
+#: server/sandboxmud/verbs/keys.py:26
+msgid "masteropen "
+msgstr ""
+
+#: server/sandboxmud/verbs/keys.py:40
+msgid "The exit \"{exit_name}\" is now open."
+msgstr ""
+
+#: server/sandboxmud/verbs/keys.py:46
+msgid "assignkey "
+msgstr ""
+
+#: server/sandboxmud/verbs/keys.py:75
+msgid "What is the name of the item that will open \"{exit_name}\"? (\"/\" to cancel)"
+msgstr ""
+
+#: server/sandboxmud/verbs/keys.py:81
+msgid "Key added."
+msgstr ""
+
+#: server/sandboxmud/verbs/keys.py:86
+msgid "open "
+msgstr ""
+
+#: server/sandboxmud/verbs/keys.py:104
+msgid "The exit \"{exit_name}\" is already open."
+msgstr ""
+
+#: server/sandboxmud/verbs/keys.py:110
+msgid "You open {exit_name} using {key_name}."
+msgstr ""
+
+#: server/sandboxmud/verbs/keys.py:113
+msgid "{exit_name}: You try to open it, but fail."
+msgstr ""
+
+#: server/sandboxmud/verbs/keys.py:117
+msgid "deletekey "
+msgstr ""
+
+#: server/sandboxmud/verbs/keys.py:145
+msgid "{exit_name}: Which key do you want to remove?"
+msgstr ""
+
+#: server/sandboxmud/verbs/keys.py:148
+msgid ""
+"\n"
+"\n"
+"* To remove all assigned keys."
+msgstr ""
+
+#: server/sandboxmud/verbs/keys.py:149
+msgid ""
+"\n"
+"/ to cancel."
+msgstr ""
+
+#: server/sandboxmud/verbs/keys.py:153
+msgid "The exit \"{exit_name}\" has no assigned keys."
+msgstr ""
+
+#: server/sandboxmud/verbs/keys.py:176
+msgid "Key/s deleted."
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:27
+msgid "Enter the number of the world you want to enter\n"
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:31
+msgid "There are not public or known private worlds in this server."
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:32
+msgid ""
+"Options:\n"
+"  +  to create a new world.\n"
+"  ?  to see all available actions."
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:58
+msgid ""
+"You can use these commands from the lobby:\n"
+"  +      to create a new world.\n"
+"  -      to delete one of your worlds.\n"
+"  r      to reload and show the list of worlds.\n"
+"  *      to deploy a public world snapshot.\n"
+"  >      to import a world from text.\n"
+"  who    to see who is connected right now.\n"
+"\n"
+"Enter the number of a world in the world list to go there.\n"
+"Enter the invite code of a world to go there."
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:76
+msgid "exitworld"
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:102
+msgid "I don't understand that"
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:108
+msgid "Traveling to {world_name}."
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:110
+msgid "Pof! {player_name} appears here."
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:150
+msgid "This world no longer exists. Enter 'r' to reload the lobby."
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:155
+msgid "Returning to your last location in {world_name}"
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:157
+msgid "Traveling to {world_name} for the first time."
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:159
+msgid "Press enter to continue..."
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:164
+msgid "Puufh! {player_name} appears here."
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:182
+msgid "First room"
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:184
+msgid ""
+"This is the first room of your world.\n"
+"Now you can create whatever you want!"
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:190
+msgid "Enter the name for your new world. (\"/\" to cancel)"
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:205
+msgid ""
+"You new world is ready.\n"
+"It is a private world 🔒. You can invite your friends sharing this invite code:\n"
+"{invite_code}\n"
+"When it is ready, you can make the world public using the editworld command.\n"
+"\n"
+"Press enter to continue..."
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:228
+msgid "There are no public worlds to deploy."
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:232
+msgid "Which world do you want to deploy? (\"/\" to cancel)\n"
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:259
+msgid "How do you want to name the new world? (\"/\" to cancel)"
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:290
+msgid "You have not created any world."
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:294
+msgid "Choose the world to delete. YOU WON'T BE ABLE TO GET IT BACK. Consider making a backup first. (\"/\" to cancel)\n"
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:324
+msgid "It can not be deleted: {error}"
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:340
+msgid "Enter a name for your new world. (\"/\" to cancel)"
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:353
+msgid ""
+"Now paste the text export of the world.\n"
+"It will be automatically divided into multiple messages if it is too long.The server won't consider the text as received until it is valid.\n"
+"If you entered the wrong text, send \"/\" to cancel."
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:368
+msgid "{char_number} chars received"
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:374
+msgid "All text received, generating world."
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:376
+msgid "Your new world is ready. The items in all player inventories from the original world has been moved to your inventory."
+msgstr ""
+
+#: server/sandboxmud/verbs/lobby.py:380
+msgid "The text is still invalid. Waiting for more characters. (\"/\" to cancel)"
+msgstr ""
+
+#: server/sandboxmud/verbs/login.py:18
+msgid ""
+"What is your character name? (or the name for your new character)\n"
+"\r"
+msgstr ""
+
+#: server/sandboxmud/verbs/login.py:26
+msgid "That name is reserved. Try with another one."
+msgstr ""
+
+#: server/sandboxmud/verbs/login.py:36
+msgid "The name can't exceed {character_limit} characters."
+msgstr ""
+
+#: server/sandboxmud/verbs/login.py:59
+msgid "Poohf! {user_name} appears."
+msgstr ""
+
+#: server/sandboxmud/verbs/login.py:62
+msgid ""
+"\n"
+"Press enter to continue..."
+msgstr ""
+
+#: server/sandboxmud/verbs/login.py:84
+msgid ""
+"You are logged in as {user_name}.\n"
+"You are in {location}."
+msgstr ""
+
+#: server/sandboxmud/verbs/login.py:92 server/sandboxmud/verbs/who.py:25
+msgid "the lobby"
+msgstr ""
+
+#: server/sandboxmud/verbs/login.py:95
+msgid "the world {world_name}, by {creator_name}"
+msgstr ""
+
+#: server/sandboxmud/verbs/look.py:9
+msgid "look"
+msgstr ""
+
+#: server/sandboxmud/verbs/look.py:36
+msgid "⮕ Exits: {exits}.\n"
+msgstr ""
+
+#: server/sandboxmud/verbs/look.py:42
+msgid "👁 You see "
+msgstr ""
+
+#: server/sandboxmud/verbs/look.py:52
+msgid "{player_name} is here"
+msgstr ""
+
+#: server/sandboxmud/verbs/look.py:55
+msgid "Players here: {players_list}"
+msgstr ""
+
+#: server/sandboxmud/verbs/master_mode.py:7
+msgid "mastermode"
+msgstr ""
+
+#: server/sandboxmud/verbs/master_mode.py:13
+msgid "You left master mode"
+msgstr ""
+
+#: server/sandboxmud/verbs/master_mode.py:16
+msgid ""
+"Master mode\n"
+"───────────\n"
+"While in master mode:\n"
+" ● You are invisible to the rest of players.\n"
+" ● You can go through closed exits.\n"
+"\n"
+"You are now in master mode. Enter \"mastermode\" again to go back to normal mode."
+msgstr ""
+
+#: server/sandboxmud/verbs/privileges.py:6
+msgid "makeeditor "
+msgstr ""
+
+#: server/sandboxmud/verbs/privileges.py:16
+msgid "{user_name} is now an editor in {world_name}."
+msgstr ""
+
+#: server/sandboxmud/verbs/privileges.py:17
+msgid "You just become an editor in {world_name}!"
+msgstr ""
+
+#: server/sandboxmud/verbs/privileges.py:19
+msgid "That user does not exist"
+msgstr ""
+
+#: server/sandboxmud/verbs/privileges.py:25
+msgid "removeeditor "
+msgstr ""
+
+#: server/sandboxmud/verbs/privileges.py:36
+msgid "{user_name} is no longer an editor in {world_name}."
+msgstr ""
+
+#: server/sandboxmud/verbs/privileges.py:37
+msgid "You are no longer an editor in {world_name}"
+msgstr ""
+
+#: server/sandboxmud/verbs/privileges.py:39
+msgid "That user is not an editor in this world."
+msgstr ""
+
+#: server/sandboxmud/verbs/privileges.py:41
+msgid "That user does not exist."
+msgstr ""
+
+#: server/sandboxmud/verbs/remodel.py:8
+msgid "reform"
+msgstr ""
+
+#: server/sandboxmud/verbs/remodel.py:24
+msgid "Reforming room \"{room_name}\""
+msgstr ""
+
+#: server/sandboxmud/verbs/remodel.py:25
+msgid ""
+"Enter the number of the field to modify\n"
+"    0 - Name\n"
+"    1 - Description"
+msgstr ""
+
+#: server/sandboxmud/verbs/remodel.py:44
+msgid "Enter the new value"
+msgstr ""
+
+#: server/sandboxmud/verbs/remodel.py:57
+msgid "Reform completed."
+msgstr ""
+
+#: server/sandboxmud/verbs/saving.py:8
+msgid "spawn"
+msgstr ""
+
+#: server/sandboxmud/verbs/saving.py:23
+msgid "There is no item with the id {item_id} in this world."
+msgstr ""
+
+#: server/sandboxmud/verbs/saving.py:32
+msgid "The item could not be spawned: there is already an item or exit with that name in this room."
+msgstr ""
+
+#: server/sandboxmud/verbs/saving.py:34
+msgid "The item could not be spawned: there is a takable item with that name in this world (takable items need an unique name)."
+msgstr ""
+
+#: server/sandboxmud/verbs/saving.py:36
+msgid "The item could not be spawned: it is a takable item, and there is already an item with that name in this world."
+msgstr ""
+
+#: server/sandboxmud/verbs/saving.py:38
+msgid "You spawned \"{item_name}\" in this world."
+msgstr ""
+
+#: server/sandboxmud/verbs/saving.py:45
+msgid ""
+"Saved items in this world:\n"
+"{saved_item_list}"
+msgstr ""
+
+#: server/sandboxmud/verbs/saving.py:47
+msgid "There are no saved items in this world."
+msgstr ""
+
+#: server/sandboxmud/verbs/saving.py:51
+msgid "save "
+msgstr ""
+
+#: server/sandboxmud/verbs/saving.py:64
+msgid "{item_name} has been saved as {item_id}. To spawn it, use \"spawn {item_id}"
+msgstr ""
+
+#: server/sandboxmud/verbs/say.py:6
+msgid "say "
+msgstr ""
+
+#: server/sandboxmud/verbs/shout.py:6
+msgid "shout "
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:9
+msgid "snapshot"
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:25
+msgid "You are creating a snapshot"
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:26
+msgid ""
+"The snapshot will save this world as it is now, and you would be able to return to this state anytime you want.\n"
+"\n"
+"Enter a name for your snapshot:"
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:41
+msgid "That name is reserved. Try anothe one."
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:50
+msgid "Snapshot created. You can use \"deploy\" to see and restore your snapshots."
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:59
+msgid "deploy"
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:104
+msgid "\"{snapshot_name}\" has been deployed. The state before the deploy has been snapshoted as {world_backup_name}. Please note that if you deploy a new snapshot, the backup will be overwritten."
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:111
+msgid "This world has no snaphots to deploy."
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:131
+msgid "A snapshot has been deployed on this world."
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:156
+msgid "publish"
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:189
+msgid "The snapshot has been published!"
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:197
+msgid "This world has no snapshots to publish"
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:201
+msgid "You are publishing a snapshot"
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:202
+msgid ""
+"After it is published, any player will be able to create a new world based on the snapshost.\n"
+"Publishing snapshots is useful for worlds containing puzzles that can only be solved once.\n"
+"\n"
+"Enter the number of the snapshot to publish\n"
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:217
+msgid "unpublish"
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:249
+msgid "The snapshot has been unpublished"
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:257
+msgid "There are not published snapshots in this world."
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:261
+msgid "Enter the number of the snapshot to unpublish (\"/\" to cancel)\n"
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:264
+msgid " {index} - {snapshot_name: <24} World: {world_name}\n"
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:270
+msgid "deletesnapshot"
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:282
+msgid "This world has no snapshots to delete. If you want to delete a public one, first unpublish it."
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:286
+msgid ""
+"If you want to delete a public snapshot, you need to unpublish it first\n"
+"\n"
+"Enter the number of the snapshots to delete (\"/\" to cancel)\n"
+msgstr ""
+
+#: server/sandboxmud/verbs/snapshots.py:318
+msgid "Snapshot deleted"
+msgstr ""
+
+#: server/sandboxmud/verbs/teleport.py:9
+msgid "recall"
+msgstr ""
+
+#: server/sandboxmud/verbs/teleport.py:21
+msgid "tp "
+msgstr ""
+
+#: server/sandboxmud/verbs/teleport.py:48
+msgid "tpuser '"
+msgstr ""
+
+#: server/sandboxmud/verbs/teleport.py:58
+msgid "Done. Note that this verb moves players but doesn't tell them that they have been moved. You can tell them using text verbs if you want to."
+msgstr ""
+
+#: server/sandboxmud/verbs/teleport.py:60
+msgid "The user does not exist, it is not connected, or there is not a room with that id."
+msgstr ""
+
+#: server/sandboxmud/verbs/teleport.py:69
+msgid "tproom "
+msgstr ""
+
+#: server/sandboxmud/verbs/teleport.py:80
+msgid "Done. Note that this verb  moves players but doesn't tell them that they have been moved. You can tell them using text verbs if you want to."
+msgstr ""
+
+#: server/sandboxmud/verbs/teleport.py:92
+msgid "tpall "
+msgstr ""
+
+#: server/sandboxmud/verbs/teleport.py:103
+msgid "Done. Note that this verb only  players but doesn't tell them that they have been moved. You can tell them using text verbs if you want to."
+msgstr ""
+
+#: server/sandboxmud/verbs/verb.py:64
+msgid "You don't have enough privileges to do that here."
+msgstr ""
+
+#: server/sandboxmud/verbs/who.py:8
+msgid "who"
+msgstr ""
+
+#: server/sandboxmud/verbs/who.py:20
+msgid ""
+"Online players:\n"
+"{users_list}"
+msgstr ""
+
+#: server/sandboxmud/verbs/who.py:28
+msgid "a private world"
+msgstr ""
+

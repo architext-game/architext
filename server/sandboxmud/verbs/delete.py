@@ -7,16 +7,16 @@ class DeleteRoom(verb.Verb):
     Also, the initial room (with alias 0) cannot be deleted.
     Note that rooms may be left disconnected after the use of this command"""
 
-    command = 'eliminarsala'
+    command = _('deleteroom')
     permissions = verb.PRIVILEGED
 
     def process(self, message):
         room_to_delete = self.session.user.room
 
         if len([user for user in entities.User.objects(room=room_to_delete) if user.client_id != None]) > 1:
-            self.session.send_to_client("No puedes borrar la sala si hay mas gente conectada aquí.")
+            self.session.send_to_client(_("You can't delete the room if there are other players here."))
         if room_to_delete.alias == "0":
-            self.session.send_to_client('No puedes eliminar la sala inicial. Prueba a editarla si no te gusta :-)')
+            self.session.send_to_client(_('You can\'t delete the starting room. But you can edit it if you don\'t like it :-)'))
         else:
             # exits connecting to this room are implicitly removed from db and from exit lists in all rooms, due to its definition in entities.py
 
@@ -32,7 +32,7 @@ class DeleteRoom(verb.Verb):
                 user.teleport(room_to_escape_from_oblivion)
 
             room_to_delete.delete()
-            self.session.send_to_client("Sala eliminada. Espero que no hayas dejado muchas salas desconectadas.")
+            self.session.send_to_client(_("The room and the exits leading to it have been deleted."))
             
         self.finish_interaction()
 
@@ -40,7 +40,7 @@ class DeleteExit(verb.Verb):
     """With this verb users can delete an exit of their current room. Since (for now) exits are allways two-way, it also
     deletes the exit from the other room"""
 
-    command = 'eliminarsalida '
+    command = _('deleteexit ')
     permissions = verb.PRIVILEGED
 
     def process(self, message):
@@ -53,11 +53,19 @@ class DeleteExit(verb.Verb):
             exit_from_there = destination.get_exit(destination=self.session.user.room)
             warning = ''
             if exit_from_there is not None:
-                warning = f'\n {chr(10060)} La salida "{exit_from_there.name}" en "{destination.name}" que lleva hasta aquí no ha sido borrada (y puede que haya más).'
-            self.session.send_to_client(f'Salida borrada: "{exit_name}"\n{chr(9472)*(17+len(exit_name))}\nEl destino era "{destination.name}" (alias: {destination.alias}){warning}')
+                warning = _(
+                    ' 🚧 Keep in mind that the exit "{exit_name}" in "{destination_name}" that leads here has not been deleted.'
+                ).format(exit_name=exit_from_there.name, destination_name=destination.name)
+            self.session.send_to_client(_(
+                'Exit "{exit_name}" has been deleted.\n'
+                'It\'s destination was "{destination_name}" (id: {destination_alias})\n'
+                '{warning}'
+            ).format(exit_name=exit_name, destination_name=destination.name, destination_alias=destination.alias, warning=warning))
             exit.delete()
         else:
-            self.session.send_to_client(f'En esta sala no hay ninguna salida llamada "{exit_name}".\nRecuerda que para eliminar una salida debes escribir su nombre exacto.')
+            self.session.send_to_client(_(
+                'There is no room called "{exit_name}".\nTo delete anything you have to enter its exact name.'
+            ).format(exit_name=exit_name))
 
         self.finish_interaction()
 
@@ -72,7 +80,7 @@ class DeleteExit(verb.Verb):
 class DeleteItem(verb.Verb):
     """By using this verb users can delete items that are in their current room"""
 
-    command = 'eliminarobjeto '
+    command = _('deleteitem ')
     permissions = verb.PRIVILEGED
 
     def process(self, message):
@@ -81,9 +89,12 @@ class DeleteItem(verb.Verb):
         selected_item = next(entities.Item.objects(room=self.session.user.room, name=item_name), None)
 
         if selected_item is None:
-            self.session.send_to_client(f"No hay un objeto llamado {item_name} en esta sala.\nRecuerda que para eliminarlo, debes escribir su nombre exacto.")
+            self.session.send_to_client(_(
+                "There is not any item called {item_name}.\n"
+                "To delete anything you have to enter its exact name."
+            ).format(item_name=item_name))
         else:
             selected_item.delete()
-            self.session.send_to_client(f'Objeto "{item_name}" eliminado')
+            self.session.send_to_client(f'Item "{item_name}" has been deleted.')
         self.finish_interaction()
 

@@ -4,6 +4,7 @@ import os
 import re
 import io
 import yaml
+import regex
 
 # username to be used by the ghost session (see ghost_session.py)
 GHOST_USER_NAME = "-nadie-"
@@ -240,3 +241,52 @@ def get_config():
     with io.open('config.yml') as file:
         config = yaml.load(file, Loader=yaml.FullLoader)
     return config
+
+def match(pattern, string):
+    """
+    Checkes one or more regex patterns against a given string.
+    For a match to ocurr, the string must fully match the pattern (see Python's
+    re.Pattern.fullmatch function docs for more info.)
+
+    Parameters
+    ----------
+    patterns : str or [str]
+        A single regex pattern or a list of patterns to check.
+    string : str
+        The string to be checked.
+    
+    Returns
+    -------
+    A dict that contains the result of the re.Match.groupdict function
+    for the first matching pattern in the list, containing the name and
+    values of named subgroups. Also contains a 'pattern' key containing the 
+    matched regular expression. If the expression contained a 'pattern' named 
+    subgroup, it value in the dict will be overwritten.
+    If there is no match, returns None.
+
+    If the regex contained a repeating named pattern and there is more than
+    one match for that group, its key will contain a list with all the 
+    matches.
+    """
+    if type(pattern) != list:
+        pattern = [pattern]
+    
+    for p in pattern:
+        compiled_pattern = regex.compile(p)
+        the_match = compiled_pattern.fullmatch(string)
+        
+        if the_match is not None:
+            capturesdict = the_match.capturesdict()
+
+            for group in capturesdict:
+                if len(capturesdict[group]) == 1:
+                    capturesdict[group] = capturesdict[group][0]
+                elif len(capturesdict[group]) == 0:
+                    capturesdict[group] = None
+
+            capturesdict['pattern'] = p
+
+            return capturesdict
+
+    return None
+ 

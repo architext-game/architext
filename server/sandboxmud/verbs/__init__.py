@@ -25,7 +25,7 @@ from .saving import SaveItem, PlaceItem
 from .custom_verb import CustomVerb
 from .snapshots import CreateSnapshot, DeploySnapshot, PubishSnapshot, UnpubishSnapshot, DeleteSnapshot
 from .checks import CheckForItem
-from .privileges import ChangeEditFreedom, MakeEditor, RemoveEditor
+from .privileges import MakeEditor, RemoveEditor
 from .lobby import EnterWorld, CreateWorld, DeployPublicSnapshot, GoToLobby, DeleteWorld, ImportWorld, JoinByInviteCode, RefreshLobby, LobbyHelp
 from .edit_world import EditWorld
 from .export import ExportWorld
