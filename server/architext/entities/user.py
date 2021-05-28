@@ -4,6 +4,7 @@ from . import location_save as location_save_module
 from . import exceptions
 from .. import util
 from .. import entities
+import hashlib
 
 def validate_user_name(name):
     if '\n' in name:
@@ -21,11 +22,20 @@ class User(mongoengine.Document):
     client_id = mongoengine.IntField(default=None)
     master_mode = mongoengine.BooleanField(default=False)
     joined_worlds = mongoengine.ListField(mongoengine.ReferenceField('World'))
+    _password_hash = mongoengine.BinaryField(required=True)
 
-    def __init__(self, *args, save_on_creation=True,  **kwargs):
+    def __init__(self, *args, password=None, save_on_creation=True,  **kwargs):
         super().__init__(*args, **kwargs)
         if self.id is None and save_on_creation:
+            self._password_hash = self.hash_password(password)
             self.save()
+
+    def match_password(self, password):
+        hash = self.hash_password(password)
+        return self._password_hash == hash
+
+    def hash_password(self, password):
+        return hashlib.sha256(bytes(password, 'utf-8')).digest()
 
     def move(self, exit_name):
         if exit_name in [exit.name for exit in self.room.exits]:

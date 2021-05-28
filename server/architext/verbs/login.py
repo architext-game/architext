@@ -77,7 +77,7 @@ class Login(Verb):
             self.current_process_function = self.process_user_name
             return
 
-        if True:  # correct password case
+        if self.selected_user.match_password(message):
             self.session.user = self.selected_user
             self.session.send_to_client(util.get_config()['log_in_welcome'])
             self.connect()
@@ -103,9 +103,9 @@ class Login(Verb):
             return
         self.password = message
         self.session.send_to_client(_('Enter your password again to confirm.'))
-        self.current_process_function = self.process_repeat_log_in_password
+        self.current_process_function = self.process_repeat_password
 
-    def process_repeat_log_in_password(self, message):
+    def process_repeat_password(self, message):
         if message != self.password:
             self.session.send_to_client(_(
                 'The two passwords don\'t match.\n'
@@ -114,7 +114,7 @@ class Login(Verb):
             self.current_process_function = self.process_user_name
             return
 
-        self.session.user = entities.User(name=self.new_name, room=None)
+        self.session.user = entities.User(name=self.new_name, room=None, password=self.password)
         self.session.send_to_client(util.get_config()['sign_in_welcome'])
         self.connect()
         self.finish_interaction()
