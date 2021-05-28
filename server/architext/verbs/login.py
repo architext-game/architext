@@ -5,6 +5,7 @@ from .. import entities
 from .. import util
 import logging
 import textwrap
+from .. import strings
 
 class Login(Verb):
     """This is the first verb that a session starts with, and handles user log-in.
@@ -13,58 +14,117 @@ class Login(Verb):
 
     def __init__(self, session):
         super().__init__(session)
-        cover = util.get_config()['cover']
-        self.session.send_to_client(str(cover))
-        self.session.send_to_client(_("What is your character name? (or the name for your new character)\n\r"))
-        self.current_process_function = self.start_login
+        out_message  = _("""
+                ___       __   __         ___    ___  __  
+          |  | |__  |    /  ` /  \  |\/| |__      |  /  \ 
+          |/\| |___ |___ \__, \__/  |  | |___     |  \__/ 
+     
+   █████  ██████   ██████ ██   ██ ██ ████████ ███████ ██   ██ ████████  
+  ██   ██ ██   ██ ██      ██   ██ ██    ██    ██       ██ ██     ██     
+  ███████ ██████  ██      ███████ ██    ██    █████     ███      ██     
+  ██   ██ ██   ██ ██      ██   ██ ██    ██    ██       ██ ██     ██     
+  ██   ██ ██   ██  ██████ ██   ██ ██    ██    ███████ ██   ██    ██ 
+  ────────────────────────────────────────────────────────────────────
+                 ╔╦╗╦ ╦╔═╗  ╔═╗╔═╗╔╗╔╔╦╗╔╗ ╔═╗═╗ ╦
+                  ║ ╠═╣║╣   ╚═╗╠═╣║║║ ║║╠╩╗║ ║╔╩╦╝
+                  ╩ ╩ ╩╚═╝  ╚═╝╩ ╩╝╚╝═╩╝╚═╝╚═╝╩ ╚═
+
+""")
+        out_message += util.get_config()['cover']
+        out_message += _("\n\n\n ᐅ What is your nickname?")
+        self.session.send_to_client(out_message)
+
+        self.current_process_function = self.process_user_name
 
     def process(self, message):
         self.current_process_function(message)
 
-    def start_login(self, message):
-        if message == util.GHOST_USER_NAME:
+    def process_user_name(self, message):
+        if not message:
+            self.session.send_to_client(strings.is_empty)
+        elif message == util.GHOST_USER_NAME:
             self.session.send_to_client(_("That name is reserved. Try with another one."))
+        elif '\n' in message:
+            self.session.send_to_client(strings.has_line_breaks)
+        elif len(message) > entities.User.NAME_MAX_LENGTH:
+            self.session.send_to_client(_("The name can\'t exceed {character_limit} characters.").format(character_limit=entities.User.NAME_MAX_LENGTH))
+        else:
+            self.selected_user = next(entities.User.objects(name=message), None)
+
+            # returning user or new user entering a name in use
+            if self.selected_user:
+                self.session.send_to_client(_(
+                    'An avatar with that name already exists.\n'
+                    ' ᐅ Enter {user_name}\'s password or "/" to go back.'
+                ).format(user_name=message))
+                self.current_process_function = self.process_login_password
+
+            # new user or returning user mispelling its name
+            else:
+                self.new_name = message
+                self.session.send_to_client(_(
+                    'That name is not in use.\n'
+                    ' ᐅ To create a new account with this name, enter a password.\n'
+                    ' ᐅ To go back, enter "/"'
+                ))
+                self.current_process_function = self.process_sign_in_password        
+
+    def process_login_password(self, message):
+        if message == '/':
+            self.session.send_to_client(_(
+                ' ᐅ What is your nickname?'
+            ))
+            self.current_process_function = self.process_user_name
             return
 
-        try:
-            self.process_user_name(message)
-        except entities.EmptyName:
-            self.session.send_to_client(strings.is_empty)
-        except entities.ValueWithLineBreaks:
-            self.session.send_to_client(strings.has_line_breaks)
-        except entities.ValueTooLong:
-            self.session.send_to_client(_("The name can\'t exceed {character_limit} characters.").format(character_limit=entities.User.NAME_MAX_LENGTH))
-
-
-    def process_user_name(self, name):
-        out_message = ''
-
-        # returning user
-        if entities.User.objects(name=name):
-            self.session.user = entities.User.objects(name=name).first()
-            self.session.user.connect(self.session.client_id)
-            out_message += util.get_config()["old_user_welcome_message"]
-        # new user
+        if True:  # correct password case
+            self.session.user = self.selected_user
+            self.session.send_to_client(util.get_config()['log_in_welcome'])
+            self.connect()
+            self.finish_interaction()
         else:
-            starting_room = None
-            self.session.user = entities.User(name=name, room=starting_room)
-            self.session.user.connect(self.session.client_id)
-            out_message += util.get_config()["new_user_welcome_message"]
+            self.session.send_to_client(_(
+                'That password is not correct.\n'
+                ' ᐅ What is your nickname?'
+            ))
+            self.current_process_function = self.process_user_name
 
+    def process_sign_in_password(self, message):
+        if message == '/':
+            self.session.send_to_client(_(
+                ' ᐅ What is your nickname?'
+            ))
+            self.current_process_function = self.process_user_name
+            return
+        if len(message) < 6:
+            self.session.send_to_client(_(
+                'The password needs to have six or more characters. Try with another one.'
+            ))
+            return
+        self.password = message
+        self.session.send_to_client(_('Enter your password again to confirm.'))
+        self.current_process_function = self.process_repeat_log_in_password
+
+    def process_repeat_log_in_password(self, message):
+        if message != self.password:
+            self.session.send_to_client(_(
+                'The two passwords don\'t match.\n'
+                ' ᐅ What is your nickname?'
+            ))
+            self.current_process_function = self.process_user_name
+            return
+
+        self.session.user = entities.User(name=self.new_name, room=None)
+        self.session.send_to_client(util.get_config()['sign_in_welcome'])
+        self.connect()
+        self.finish_interaction()
+        
+
+    def connect(self):
+        self.session.user.connect(self.session.client_id)
         self.session.user.leave_master_mode()
-
-        out_message += '\n' + self.get_status_message()
-
-        if self.session.user.room is not None:
-            self.session.send_to_others_in_room(_("Poohf! {user_name} appears.").format(user_name=name))
-            world = self.session.user.room.world_state.get_world()
-
-        out_message += _("\nPress enter to continue...")        
-        self.session.send_to_client(out_message)
-
-        self.current_process_function = self.process_enter_to_continue
-
         # logger setup
+        name = self.session.user.name
         server_logger = logging.getLogger('server_logger')
         user_logger = util.setup_logger('user_'+name, 'user_'+name+'.txt')
         self.session.set_logger(user_logger)
@@ -73,23 +133,21 @@ class Login(Verb):
         user_logger.info(log_message)
         server_logger.info(log_message)
 
-    def process_enter_to_continue(self, message):
+        self.session.send_to_client(_(
+            'LOGGED IN AS:     {user_name}\n'
+            'YOU ARE IN:       {location}\n'
+            'ONLINE USERS:     {user_count}'
+        ).format(
+            user_name=self.session.user.name,
+            location=(
+                _('the lobby')
+                if self.session.user.room is None else
+                _('{room_name} ─ {world_name}').format(room_name=self.session.user.room.name, world_name=self.session.user.room.world_state.get_world().name)
+            ),
+            user_count=len(entities.User.objects(client_id__ne=None))
+        ))
         if self.session.user.room is not None:
+            self.session.send_to_others_in_room(_("Poohf! {user_name} appears.").format(user_name=name))
             Look(self.session).show_current_room()
         else:
             lobby.LobbyMenu(self.session).show_lobby_menu()
-        self.finish_interaction()
-
-    def get_status_message(self):
-        return _(
-            'You are logged in as {user_name}.\n'
-            'You are in {location}.'
-        ).format(user_name=self.session.user.name, location=self.get_location())
-
-    def get_location(self):
-        user = self.session.user
-        if user.room is None:
-            return _('the lobby')
-        else:
-            world = user.room.world_state.get_world()
-            return _('the world {world_name}, by {creator_name}').format(world_name=world.name, creator_name=world.creator.name)

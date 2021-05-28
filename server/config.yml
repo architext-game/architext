@@ -1,11 +1,14 @@
 public_worlds_limit: 99
 locale: en_US
+
 cover: |-
-  WELCOME TO ARCHITEXT!
-  
-new_user_welcome_message: |-
-  ¡Bienvenido a Architext!
-  Pide a tu administrador que edite este mensaje de bienvenida, que no sea un super vago.
-old_user_welcome_message: |-
-  ¡Bienvenido de vuelta!
-  Pide a tu administrador que edite este mensaje de bienvenida, que no sea un super vago.
+  This is a text game where you can create and share any world you can imagine.
+  If you are new, bear with me and discover the game in just 5 minutes :-)
+
+sign_in_welcome: |-
+  Welcome to Architext!
+
+log_in_welcome: |-
+  NEWS:
+    We are still in development, you can check the source code at
+    https://github.com/OliverLSanz/architext
