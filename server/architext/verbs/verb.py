@@ -1,4 +1,5 @@
 from .. import session
+from .. import util
 
 FREE = 'free'
 PRIVILEGED = 'privileged'
@@ -26,6 +27,7 @@ class Verb():
     command = 'verb '
     permissions = FREE  # possible values: FREE, PRIVILEGED and CREATOR.
     verbtype = WORLDVERB
+    regex_command = False  # False: can process if message starts with command. True: command is a regex and can process if message matches the regex.
 
     @classmethod
     def in_the_right_context(cls, session):
@@ -39,15 +41,18 @@ class Verb():
 
     @classmethod
     def message_matches_command(cls, message):
-        if type(cls.command) == str:
-            if message.startswith(cls.command):
-                return True
-        elif type(cls.command) == list:
-            for command in cls.command:
-                if message.startswith(command):
-                    return True 
-        
-        return False
+        if cls.regex_command:
+            return util.match(cls.command, message) is not None
+        else:
+            if type(cls.command) == str:
+                if message.startswith(cls.command):
+                    return True
+            elif type(cls.command) == list:
+                for command in cls.command:
+                    if message.startswith(command):
+                        return True 
+            
+            return False
 
     @classmethod
     def can_process(cls, message, session):

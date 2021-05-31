@@ -4,20 +4,12 @@ import architext.util as util
 import regex
 
 class CheckForItem(verb.Verb):
-    check_room_command         = 'if (?P<item_name>.+) in room'
-    check_inv_command          = 'if (?P<item_name>.+) in inventory'
-    check_room_and_inv_command = 'if (?P<item_name>.+) in room or inventory'
+    regex_command = True
+
+    check_room_command         = _('if (?P<item_name>.+) in room')
+    check_inv_command          = _('if (?P<item_name>.+) in inventory')
+    check_room_and_inv_command = _('if (?P<item_name>.+) in room or inventory')
     command = [check_room_command, check_inv_command, check_room_and_inv_command]
-
-    @classmethod
-    def can_process(cls, message, session):
-        if not cls.in_the_right_context(session):
-            return False
-
-        if util.match(cls.command, message) is not None:
-            return True
-        
-        return False
 
     def __init__(self, session):
         super().__init__(session)        
