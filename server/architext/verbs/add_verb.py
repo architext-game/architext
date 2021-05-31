@@ -4,6 +4,7 @@ from .. import util
 import functools
 import textwrap
 import architext.strings as strings
+import re
 
 class AddVerb(verb.Verb):
     """This verb allows users to create new custom verbs tied to items.
@@ -134,13 +135,23 @@ class AddVerb(verb.Verb):
         self.current_process_function = self.process_command
 
     def process_command(self, message):
-        if message in ['OK', 'ok'] and len(self.command_list) > 0:
-            self.build_verb()
-            self.finish_interaction()
-        elif self.is_valid_command(message):
-            self.command_list.append(message)
-        else:
-            self.session.send_to_client(_("That last command is invalid. It has been ignored."))
+        commands = re.split(r';\r\n|;\n', message)
+
+        if '\n' in message and len(commands)==1:
+            self.session.send_to_client(_('Note: your multiline message will be treated as one single command. If you want to send multiple commands in one message, write ";" at the end of each of them.'))
+        
+        # remove trailing ";"
+        if len(commands) > 0 and len(commands[-1]) > 0 and commands[-1][-1] == ';':
+            commands[-1] = commands[-1][0:-1]
+
+        for command in commands:
+            if command.lower() == 'ok' and len(self.command_list) > 0:
+                self.build_verb()
+                self.finish_interaction()
+            elif self.is_valid_command(command):
+                self.command_list.append(command)
+            else:
+                self.session.send_to_client(_("That last command is invalid. It has been ignored."))
 
     def build_verb(self):
         new_verb = entities.CustomVerb(names=self.verb_names, commands=self.command_list)
