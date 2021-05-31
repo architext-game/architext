@@ -10,18 +10,12 @@ class AddVerb(verb.Verb):
     """This verb allows users to create new custom verbs tied to items.
     """
 
-    item_command  = _('itemverb ')  # command for adding verbs to items
-    room_command  = _('roomverb')   # command for adding verbs to rooms
-    world_command = _('worldverb')  # command for adding verbs to worlds
-    command = [item_command, room_command, world_command]
+    command  = _('verb ')
+    room_special_name  = _('room')   # special_name for adding verbs to rooms
+    room_alt_name  = _('*room*')
+    world_special_name = _('world')  # special_name for adding verbs to worlds
+    world_alt_name  = _('*world*')
     permissions = verb.PRIVILEGED
-
-    @classmethod
-    def can_process(cls, message, session):
-        if message.startswith(cls.item_command) or message.startswith(cls.room_command) or message.startswith(cls.world_command) and super().can_process(message, session):
-            return True
-        else:
-            return False
 
     def __init__(self, session):
         super().__init__(session)
@@ -40,49 +34,46 @@ class AddVerb(verb.Verb):
             self.current_process_function(message)
 
     def process_first_message(self, message):
-        # figure out wether it is a world, room or item verb
-        if message.startswith(self.item_command):
-            self.process_item_name(message)
-        elif message.startswith(self.room_command):
-            self.process_room_verb_creation(message)
-        elif message.startswith(self.world_command):
-            self.process_world_verb_creation(message)
-        else:
-            raise ValueError('invalid message "{}"'.format(message))
-
-    def process_item_name(self, message):
-        name = message[len(self.item_command):]
+        name = message[len(self.command):]
         target_item = util.name_to_entity(self.session, name, loose_match=["saved_items"], substr_match=["room_items", "inventory"])
+
+        if target_item is not None and name in [self.room_special_name, self.world_special_name]:
+            if name == self.room_special_name:
+                self.session.send_to_client(_('🚧 🚧 🚧 🚧 🚧 🚧\nNote: An item with that name was found. If you want to add the verb to the room instead, you can use "addverb *room*"'))
+            if name == self.world_special_name:
+                self.session.send_to_client(_('🚧 🚧 🚧 🚧 🚧 🚧\nNote: An item with that name was found. If you want to add the verb to the world instead, you can use "addverb *world*"'))
 
         if target_item == "many":
             self.session.send_to_client(strings.many_found)
             self.finish_interaction()
-        elif target_item is None:
-            self.session.send_to_client(strings.not_found)
-            self.finish_interaction()
+        elif target_item is not None:
+            self.process_item_verb_creation(target_item)
+        elif name == self.room_special_name or name == self.room_alt_name:
+            self.process_room_verb_creation()
+        elif name == self.world_special_name or name == self.world_alt_name:
+            self.process_world_verb_creation()
+
+    def process_item_verb_creation(self, target_item):
+        self.item = target_item
+
+        body = textwrap.dedent(_("""\
+            You are creating a verb that any player will be able to use over this item.
+
+            Now enter the verb's name. If you write "use" the verb will be executed by "use {item_name}".
+            You can give the verb multiple names. Just enter all of them separated by a whitespace.
+
+            Verb name/s:"""
+        ).format(item_name=self.item.name))
+        
+        if target_item.is_saved():
+            title = _('Adding verb to saved item "{item_id}"').format(item_id=self.item.item_id)
         else:
-            self.item = target_item
-            self.current_process_function = self.process_verb_names
+            title = _('Adding verb to item "{item_id}"').format(item_id=self.item.name)
 
-            body = textwrap.dedent(_("""\
-                You are creating a verb that any player will be able to use over this item.
+        self.session.send_to_client(strings.format(title, body, cancel=True))
+        self.current_process_function = self.process_verb_names
 
-                Now enter the verb's name. If you write "use" the verb will be executed by "use {item_name}".
-                You can give the verb multiple names. Just enter all of them separated by a whitespace.
-
-                Verb name/s:"""
-            ).format(item_name=self.item.name))
-            
-            if target_item.is_saved():
-                title = _('Adding verb to saved item "{item_id}"').format(item_id=self.item.item_id)
-                self.session.send_to_client(strings.format(title, body, cancel=True))
-
-            else:
-                title = _('Adding verb to item "{item_id}"').format(item_id=self.item.name)
-                self.session.send_to_client(strings.format(title, body, cancel=True))
-
-
-    def process_room_verb_creation(self, message):
+    def process_room_verb_creation(self):
         self.room = self.session.user.room
         title = _('Adding verb to this room')
         body = textwrap.dedent(_("""\
@@ -96,7 +87,7 @@ class AddVerb(verb.Verb):
         self.session.send_to_client(strings.format(title, body, cancel=True))
         self.current_process_function = self.process_verb_names
 
-    def process_world_verb_creation(self, message):
+    def process_world_verb_creation(self):
         self.world_state = self.session.user.room.world_state
         title = _('Adding verb to this world')
         body = textwrap.dedent(_("""\
@@ -177,55 +168,57 @@ class AddVerb(verb.Verb):
         return True
 
 class InspectCustomVerb(verb.Verb):
-    item_command = _('seeitemverb ')
-    world_command = _('seeworldverb')
-    room_command = _('seeroomverb')
-    command = [item_command, world_command, room_command]
+    command = _('seeverbs ')
+    room_special_name  = _('room')   # special_name for adding verbs to rooms
+    room_alt_name  = _('*room*')
+    world_special_name = _('world')  # special_name for adding verbs to worlds
+    world_alt_name  = _('*world*')
 
     def process(self, message):
-        out_message = ""
-        
-        if message == self.world_command:
-            self.inspectable_custom_verbs = self.session.user.room.world_state.custom_verbs
-        elif message == self.room_command:
-            self.inspectable_custom_verbs = self.session.user.room.custom_verbs
-        else:
-            item_name = message[len(self.item_command):]
-            selected_item = util.name_to_entity(self.session, item_name, loose_match=["saved_items"], substr_match=["room_items", "inventory"])
+        title = ""
+        body = ""
 
-            if selected_item == "many":
-                self.session.send_to_client(strings.many_found)
-                self.finish_interaction()
-                return
-            elif selected_item is None:
-                self.session.send_to_client(strings.not_found)
-                self.finish_interaction()
-                return
-            else:
-                self.inspectable_custom_verbs = selected_item.custom_verbs
-                if selected_item.is_saved():
-                    out_message += _("Saved item: {item_id}\n").format(item_id=selected_item.item_id)
-                else:
-                    out_message += _("Item: {item_name}\n").format(item_name=selected_item.name)
-                    
-        
-        if not self.inspectable_custom_verbs:
-            out_message += _("There are no verbs to show.")
-            self.session.send_to_client(out_message)
+        name = message[len(self.command):]
+        target_item = util.name_to_entity(self.session, name, loose_match=["saved_items"], substr_match=["room_items", "inventory"])
+
+        if target_item is not None and name in [self.room_special_name, self.world_special_name]:
+            if name == self.room_special_name:
+                self.session.send_to_client(_('🚧 🚧 🚧 🚧 🚧 🚧\nNote: An item with that name was found. If you want to see the the room verbs instead, you can use "seeverbs *room*"'))
+            if name == self.world_special_name:
+                self.session.send_to_client(_('🚧 🚧 🚧 🚧 🚧 🚧\nNote: An item with that name was found. If you want to see the the world verbs instead, you can use "seeverbs *world*"'))
+
+        if target_item == "many":
+            self.session.send_to_client(strings.many_found)
             self.finish_interaction()
             return
+        elif target_item is not None:
+            self.inspectable_custom_verbs = target_item.custom_verbs
+            if target_item.is_saved():
+                title = _('Verbs of saved item "{item_id}"').format(item_id=target_item.item_id)
+            else:
+                title = _('Verbs of item "{item_name}"').format(item_name=target_item.name)
+        elif name == self.room_special_name or name == self.room_alt_name:
+            title = _("Verbs of room: {room_name}").format(room_name=self.session.user.room.name)
+            self.inspectable_custom_verbs = self.session.user.room.custom_verbs
+        elif name == self.world_special_name or name == self.world_alt_name:
+            title = _("World-level verbs")
+            self.inspectable_custom_verbs = self.session.user.room.world_state.custom_verbs
 
-        out_message += _('Which verb do you want to see?\n')
-        out_message += self.get_custom_verb_list()
-        self.session.send_to_client(out_message)
-        self.process = self.process_menu_option
+        if not self.inspectable_custom_verbs:
+            body = _("There are no verbs to show.")
+            self.session.send_to_client(strings.format(title, body))
+            self.finish_interaction()
+        else:
+            body = self.get_custom_verb_list()
+            body += _("\n ᐅ Enter the number of a verb to show its commands")
+            self.session.send_to_client(strings.format(title, body, cancel=True))
+            self.process = self.process_menu_option
 
 
     def get_custom_verb_list(self):
         list = ''
         for index, custom_verb in enumerate(self.inspectable_custom_verbs):
             list += '{}. {}\n'.format(index, custom_verb.names)
-        list += _('\n\n"/" to cancel')
         return list
 
     def process_menu_option(self, message):
@@ -255,38 +248,44 @@ class InspectCustomVerb(verb.Verb):
         self.finish_interaction()
 
 class DeleteCustomVerb(verb.Verb):
-    item_command  = _('deleteitemverb ')
-    room_command  = _('deleteroomverb')
-    world_command = _('deleteworldverb')
-    command = [item_command, room_command, world_command]
+    command = _('deleteverb ')
+    room_special_name  = _('room')   # special_name for adding verbs to rooms
+    room_alt_name  = _('*room*')
+    world_special_name = _('world')  # special_name for adding verbs to worlds
+    world_alt_name  = _('*world*')
     permissions = verb.PRIVILEGED
 
     def process(self, message):
-        if message == self.world_command:
-            self.deletable_custom_verbs = self.session.user.room.world_state.custom_verbs
-            target_name = _('this world')
-        elif message == self.room_command:
-            self.deletable_custom_verbs = self.session.user.room.custom_verbs
-            target_name = _('"{room_name}" (room)').format(room_name=self.session.user.room.name)
-        else:
-            item_name = message[len(self.item_command):]
+        item_name = message[len(self.command):]
+        selected_item = util.name_to_entity(self.session, item_name, loose_match=["saved_items"], substr_match=["room_items", "inventory"])
+        
+        if selected_item is not None and item_name in [self.room_special_name, self.world_special_name]:
+            if item_name == self.room_special_name:
+                self.session.send_to_client(_('🚧 🚧 🚧 🚧 🚧 🚧\nNote: An item with that name was found. If you want to delete the the room verbs instead, you can use "deleteverb *room*"'))
+            if item_name == self.world_special_name:
+                self.session.send_to_client(_('🚧 🚧 🚧 🚧 🚧 🚧\nNote: An item with that name was found. If you want to delete the the world verbs instead, you can use "deleteverb *world*"'))
 
-            selected_item = util.name_to_entity(self.session, item_name, loose_match=["saved_items"], substr_match=["room_items", "inventory"])
-
-            if selected_item == "many":
-                self.session.send_to_client(strings.many_found)
-                self.finish_interaction()
-                return
-            elif selected_item is None:
-                self.session.send_to_client(strings.not_found)
-                self.finish_interaction()
-                return
+        if selected_item == "many":
+            self.session.send_to_client(strings.many_found)
+            self.finish_interaction()
+            return
+        elif selected_item is not None:
             target_name = (
                 _('"{item_id}" (saved item)').format(item_id=selected_item.item_id)
                 if selected_item.is_saved()
                 else _('"{item_name}" (item)').format(item_name=selected_item.name)
             )
             self.deletable_custom_verbs = selected_item.custom_verbs
+        elif item_name == self.room_special_name or item_name == self.room_alt_name:
+            self.deletable_custom_verbs = self.session.user.room.custom_verbs
+            target_name = _('"{room_name}" (room)').format(room_name=self.session.user.room.name)
+        elif item_name == self.world_special_name or item_name == self.world_alt_name:
+            self.deletable_custom_verbs = self.session.user.room.world_state.custom_verbs
+            target_name = _('this world')
+        else:
+            self.session.send_to_client(strings.not_found)
+            self.finish_interaction()
+            return
 
         if not self.deletable_custom_verbs:
             self.session.send_to_client(_("{target_name} has no verbs to delete.").format(target_name=target_name))
@@ -294,7 +293,7 @@ class DeleteCustomVerb(verb.Verb):
             return
 
         title = _("Deleting verb of {target_name}").format(target_name=target_name)
-        body  = _("Enter the number of the verb to delete.\n{verb_list}").format(target_name=target_name, verb_list=self.get_custom_verb_list())
+        body  = _("{verb_list}\n ᐅ Enter the number of the verb to delete:").format(target_name=target_name, verb_list=self.get_custom_verb_list())
         out_message = strings.format(title, body, cancel=True)
         self.session.send_to_client(out_message)
         self.process = self.process_menu_option
