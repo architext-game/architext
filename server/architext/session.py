@@ -126,7 +126,7 @@ class GhostSession(Session):
             self.user.connect(self.client_id)
             self.user.teleport(start_room)
         else:
-            self.user = entities.User(name=GHOST_USER_NAME, room=start_room, master_mode=True)
+            self.user = entities.User(name=GHOST_USER_NAME, room=start_room, master_mode=True, password='patata frita')
             self.user.connect(self.client_id)
 
     def disconnect(self):
