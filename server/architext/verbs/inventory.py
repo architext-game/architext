@@ -92,7 +92,7 @@ class Give(Verb):
         self.finish_interaction()
 
 class TakeFrom(Verb):
-    command = _("remove '")
+    command = _("takefrom '")
 
     def process(self, message):
         message = message[len(self.command):]
