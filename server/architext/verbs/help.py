@@ -1,73 +1,303 @@
 from .verb import Verb
+from .. import util
 
 class Help(Verb):
     """Shows a help message to the user"""
+    regex_command = True
 
-    command = 'ayuda'
+    general_help = _('help')
+    topic_help = _('help (?P<topic>.+)')
+    command = [general_help, topic_help]
 
     def process(self, message):
-        help = (
-"""Bienvenido a este mundo, donde tienes el poder de dar forma a la realidad.
-Estos son las acciones que puedes escribir en el juego:
+        match = util.match(self.command, message)
+        
+        topic = match.get('topic')
+        if topic is not None:
+            topic = topic.strip()
+        
+        if topic is None:
+            out = _(
+                '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
+                '┃       Architext\'s help hub       ┃\n'
+                '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n'
+                'If you are new, just try out writing the following verbs an you\'ll be good to go:\n'
+                '     "look"    "look <something>"    "go <somewhere>"     "say <something>"\n'
+                'Also note that you can use "exitworld" to travel to other worlds!\n'
+                '\n'
+                'Now go and have fun! Come here when you want to know more.\n'
+                '\n'
+                'Write "help <topic>" to see information regarding one of these topics:\n'
+                '    basics         ─ moving around and examining your sorroundings.\n'
+                '    interaction   ─ take and use what\'s around you.\n'
+                '    communication ─ talking with other Architexts\n'
+                '    building      ─ all you need to know to build incredible worlds\n'
+                '    multiverse    ─ learn about the multiverse nature of Architext.\n'
+                '    master        ─ tools for game masters to manually make things happen.\n'
+                '    interactive building ─ extra tools to make your creations alive.\n'
+                # below lines are commented out for now: I think each verb's UI is self-explanatory.
+                # '\n'
+                # 'You can also write "help <command>" to see all the details of any command\n'
+            )
+        elif topic == 'basics':
+            out = _(
+                '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
+                '┃       Architext basics       ┃\n'
+                '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n'
+                'Moving and looking\n'
+                '──────────────────\n'
+                'Getting your bearings in Architext\'s worlds is quite easy, just use:\n'
+                '  look         ─ get a description of your current room.\n'
+                '  look <thing> ─ look closely at something in your room\n'
+                '  go <exit>    ─ travel through an exit in your room.\n'
+                '  recall       ─ return to the first room of your current world\n'
+                '\n'
+                'Item\'s visibility\n'
+                '─────────────────\n'
+                'You\'ll often find items in the room\'s description. You can use:\n'
+                '  items  ─ lists all obvious items in the room.\n'
+                '  exits  ─ lists all obvious exits\n'
+                '\n'
+                'There may be hidden items that are not shown by these verbs nor in the room description. Look out for clues!\n'
+                '\n'
+                ' ⮕ Next topic: "help interaction".'
+            )
+        elif topic == 'interaction':
+            out = _(
+                '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
+                '┃       Interacting with your surroundings       ┃\n'
+                '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n'
+                'Carrying items\n'
+                '──────────────\n' 
+                'There are certain items you can take with you. These items always appear at the room\'s item list shown when you use "look".\n'
+                '\n'
+                'Use:\n'
+                '  take <item>  ─ to put an item in your inventory.\n'
+                '  drop <item>  ─ to drop an item from your inventory.\n'
+                '  inventory    ─ to see the items you are carrying.\n'
+                '\n'
+                'Closed doors\n'
+                '────────────\n'
+                'You may find closed doors in your way. Use:\n'
+                '  open <door>  ─ to open a closed door. You\'ll need the right key in your inventory.\n'
+                '\n'
+                'Custom verbs\n'
+                '────────────\n'
+                'Architexts can create their own verbs, so keep your eyes open. In some worlds/rooms, you might be able to use verbs like "sing", "hide", "turn lever", "read book" and many more. The possibilities are endless!\n'
+                '\n'
+                ' ⮕ Next topic: "help communication".'
+            )
+        elif topic == 'communication':
+            out = _(
+                '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
+                '┃       Communication       ┃\n'
+                '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n'
+                'You can use the following verbs:\n'
+                '  talk <message>  ─ to talk with other players in your room.\n'
+                '  emote <action>  ─ to dance, gesticulate or whatever you want. Just try it!\n'
+                '  shout <message> ─ all players in your world will hear you.\n'
+                '  who             ─ to see who is online\n'
+                '\n'
+                'Don\'t be shy and say hello :)\n'
+                '\n'
+                ' ⮕ Next topic: "help building".'
+            )
+        elif topic == 'multiverse':
+            out = _(
+                '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
+                '┃       Travelling the multiverse       ┃\n'
+                '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n'
+                'As an Architext you can visit multiple worlds and create your own. While in a world, use:\n'
+                '  exitworld  ─ to go to the lobby\n'
+                '\n'
+                'The Lobby\n'
+                '─────────\n'
+                'While in the lobby, you can:\n'
+                '  Travel to public worlds.\n'
+                '  Create a world.\n'
+                '  Enter an invite code to join a private world.\n'
+                '  Create your own copy of a public world snapshot.\n'
+                '  Import the text representation of a world.\n'
+                '\n'
+                'Write "?" while in the lobby to see all available actions.\n'
+                '\n'
+                'Managing your worlds\n'
+                '────────────────────\n'
+                'A newly created world will be:\n'
+                '  PRIVATE: Only you can see it in the lobby. You can share its invite code or make it public by using the editworld verb.\n'
+                '  PRIVILEGED: Only you can edit it. You can use the editworld verb to allow everyone to edit, or use:\n'
+                '    makeeditor <player>   ─ to allow that player to edit this world.\n'
+                '    removeeditor <player> ─ to revoke the edition permissions on the player.\n'
+                '\n'
+                'Note that you have a limit on the number of public worlds you can have.\n'
+                'To allow everyone to copy your world, you can use snapshots (see "help snapshots").\n'
+                '\n'
+                'World exports\n'
+                '─────────────\n'
+                'You can export you worlds using:\n'
+                '  export         ─ export the current world as text\n'
+                '  export pretty  ─ same as avobe but with a longer and more readable output\n'
+                '\n'
+                'It is advised that you export your master pieces and save them into a local text file. This way the world won\'t be lost in case of a technical problem.\n'
+                'You can import your exported worlds from the lobby, even in a different Architext server! Feel free to share your creations online.\n'
+                '\n'
+                ' ⮕ Next topic: "help master".'
+            )
+        elif topic == 'building':
+            out = _(
+                '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
+                '┃       World building       ┃\n'
+                '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n'
+                'As an Architext you can easily give life to the worlds from your imagination.\n'
+                'To use the building verbs you\'ll need to:\n' 
+                '  Be in a world you own, or\n'
+                '  be in a world that allows all users to edit, or\n'
+                '  get a world\'s creator to make you an editor there (see next topic).\n'
+                '\n'
+                'All you need to know\n'
+                '────────────────────\n'
+                'You can build anything using just these verbs:\n'
+                '  build  ─ to start creating a room adjacent to your current location.\n'
+                '  craft  ─ to add a new item to the room.\n'
+                '  reform ─ to edit your current room\n'
+                '  edit <item or exit> ─ to edit things at the curent room.\n'
+                '\n'
+                'Some extra verbs\n'
+                '────────────────\n'
+                'If you want to expand yor toolkit, use:\n'
+                '  info ─ to see all the details of your current room, like its unique number.\n'
+                '  info <item or exit> ─ as avobe, but for a particular item or exit.\n'
+                '\n'
+                '  tp <room number> ─ to teleport to any room.\n'
+                '  link ─ create exits between any two rooms.\n'
+                '\n'
+                '  deleteroom ─ to delete your current room and all its contents.\n'
+                '  deleteexit <exact exit name> ─ to delete an exit.\n'
+                '  deleteitem <exact item name> ─ to delete an item.\n'
+                '\n'
+                'Please note that delete verbs are irreversible and do not ask for confirmation.\n'
+                '\n'
+                ' ⮕ Next topic: "help multiverse".'
 
-BÁSICAS
-  - "mirar" para mirar a tu alrededor.
-  - "mirar <nombre del objeto/salida>" para mirar de cerca un objeto o una salida.
-  - "ir <salida>" para cruzar una salida.
-  - "salidas" para ver las salidas OBVIAS de tu habitación.
-  - "objetos" para ver los objetos OBVIOS de tu habitación.
-
-AVANZADAS
-  - "coger <objeto>" coge un objeto. Nota: no todos pueden cogerse.
-  - "dejar <objeto>" deja un objeto de tu inventario en la sala actual.
-  - "inventario" muestras los objetos de tu inventario.
-  - "abrir <salida>" intenta abrir una salida cerrada. Deberás tener la llave en tu inventario.
-  
-COMUNICACIÓN
-  - "decir <mensaje>" enviar un mensaje a todos los que estén en tu misma localización.
-  - "gritar <mensaje>" para enviar un mensaje a todos.
-  - "emote <acción>" para hacer una acción, y que todos los que están contigo lo vean.
-
-CONSTRUCCIÓN SENCILLA
-  - "construir" para construir una habitación adyacente a donde estás.
-  - "fabricar" para crear un objeto en la habitación donde estás.
-  - "reformar" para modificar la habitación en la que te encuentras.
-  - "editar <nombre del objeto/salida>" para modificar un objeto o salida de tu habitación.
-
-CONSTRUCCIÓN AVANZADA
-  - "info" para ver toda la información de la habitación donde estás.
-  - "info <nombre del objeto/salida> para ver la info de un objeto o salida de tu habitación.
-  - "conectar" para conectar la sala donde estás con otra sala.
-      (Necesitarás el alias de la sala, usa el comando "info")
-  - "eliminarsala" para borrar la sala donde estás. SIN REMEDIO.
-  - "eliminarsalida <nombre de la salida>" para borrar una salida. SIN REMEDIO.
-  - "eliminarobjeto <nombre del objeto>" para borrar un objeto. SIN REMEDIO.
-  - "tp <alias de la sala>" para transportarte a cualquier sala.
-      (El alias puedes consultarlo con el comando "info")
-
-CONSTRUCCIÓN INTERACTIVA
-  - "verboobjeto <objeto>" añade un verbo a un objeto.
-  - "verbosala" añade un verbo a la sala actual.
-  - "verbomundo" añade un verbo en todo el mundo.
-  - "guardar <objeto>" para guardar una copia de un objeto que esté en tu sala.
-  - "colocar <id del objeto>" para colocar un objeto previamente guardado.
-
-LLAVES
-  - "cierradirector <salida>" para cerrar una salida. No podrá cruzarse.
-  - "abredirector <salida>" para abrir una salida.
-  - "asignarllave <salida>" para hacer que un objeto pueda abrir una salida.
-
-MODO DIRECTOR
- - "director" para entrar y salir del modo director. Que permite:
-    > cruzar puertas cerradas
-    > ser invisible a los demás jugadores
-
-TEXTO DIRECTO
- - "textosala <texto>" para enviar el texto a todos los que estén en tu sala.
- - "textomundo <texto>" para enviarlo a todos los que estén en el mundo.
- - "textoa '<usuario>' <texto>" para enviarlo al usuario en concreto.
- - "textomenos '<usuario>' <texto>" para enviarlo a todos en la sala, menos a usuario.
-""")
-        self.session.send_to_client(help)
-
+            )
+        elif topic == 'interactive building':
+            out = _(
+                '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
+                '┃       Interactive Building       ┃\n'
+                '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n'
+                'Keys\n'
+                '────\n'
+                'You can close an exit and assign it a key using:\n'
+                '  masterclose <exit> ─ to close an exit.\n'
+                '  assignkey <exit>   ─ to assign a key to the exit.\n'
+                '  masteropen <exit>  ─ to open an exit without the need of a key.\n'
+                '  deletekey <exit>   ─ to delete a previously assigned key.\n'
+                '\n'
+                'Custom verbs\n'
+                '────────────\n'
+                'You can easily create your own verbs. Just try it using:\n'
+                '  verb <item>  ─ add a verb that can be used over that item.\n'
+                '  verb room    ─ add a verb that can only be used in the room.\n'
+                '  verb world   ─ add a verb that can be used anywhere.\n'
+                '\n'
+                'To see and delete existing verbs, use:\n'
+                '  seeverb <item/room/world>     ─ to show existing verbs\n'
+                '  deleteverb <item/room/world>  ─ to delete one of its verbs\n'
+                '\n'
+                'In "help master" you\'ll find the best commands to use in your custom verbs\n'
+                '\n'
+                'Other resources\n'
+                '───────────────\n'
+                'Read "help saving" to learn how to spawn previously created items from your custom verbs.\n'
+                'Read "help snapshots" to learn how to test and replay puzzles made with custom verbs.\n'
+                '\n'
+                ' ⮕ Next topic: "help saving".'
+                
+            )
+        elif topic == 'saving':
+            out = _(
+                '┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
+                '┃       Saving Items       ┃\n'
+                '┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n'
+                'As a creator, you can save and spawn items with:\n'
+                '  save <item>     ─ save the item.\n'
+                '  spawn           ─ show the list of saved items.\n'
+                '  spawn <item id> ─ spawns a copy of the item in your current room.\n'
+                '\n'
+                'Saved items are key if you want a custom verb that creates an item. Manually craft the item, save and delete it. Now you can spawn the item with a single command!\n'
+                '\n'
+                'You can also use this to create verbs that modify items. You can save a turned on "lever" and a turned off one. When a player turns the lever, you can delete the existing item and spawn the other one. Easy peasy!\n' 
+                '\n'
+                ' ⮕ Next topic: "help snapshots".'
+            )
+        elif topic == 'snapshots':
+            out = _(
+                '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
+                '┃       World Snapshots       ┃\n'
+                '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n'
+                'In interactive worlds items are carried around, doors are opened and mechanisms are actioned. This may make things like puzzles hard to test and impossible to replay. Unless you use snapshots.\n'
+                '\n'
+                'Snapshots are frozen saves of the world that you can later deploy, restoring everything to how it was when you made the snapshot.\n'
+                '\n'
+                'Snapshot verbs:\n'
+                '  snapshot  ─ create a snapshot of the current state of the world.\n'
+                '  deploy    ─ see and restore existing snapshots.\n'
+                '  deletesnapshot  ─ delete a snapshot\n'
+                '\n'
+                'Using them you can create a puzzle and then snapshot the world. After that you can test the puzzle knowing you can deploy the snapshot to restore it to its initial state.\n'
+                '\n'
+                'If you build an interactive scape room world, you can use a snapshot to restore everything to its starting position after each playthrough.\n'
+                '\n'
+                'Snapshots can also be published, so that anyone can make a copy of your world:\n'
+                '  publish    ─ make public an existing snapshot.\n'
+                '  unpublish  ─ make private an existing snapshot.\n'
+            )
+        elif topic == 'master':
+            out = _(
+                '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
+                '┃       Game master tools       ┃\n'
+                '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n'
+                'It\'s a great idea to run role playing and scape room games in Architext worlds.\n'
+                'Here are some tools that will let you spice things up as a game master.\n'
+                '\n'
+                'Master mode\n'
+                '───────────\n'
+                'Master Mode is a state in which other players won\'t see you and you\'ll be able to cross closed exits.\n'
+                '\n'
+                'Use:\n'
+                '  mastermode  ─ enter or leave the master mode\n'
+                '\n'
+                'Direct text\n'
+                '───────────\n'
+                'You may want to send text to your players telling them what has just happened, what noise is heard, etc. To send any text, use:\n'
+                '  textroom <text>         ─ sends the text to all users in the room.\n'
+                '  textworld <text>        ─ sends the text to all users in the world.\n'
+                '  textto \'<user>\' <text>  ─ sends the text to the selected user.\n'
+                '\n'
+                'Other verbs\n'
+                '───────────\n'
+                '  takefrom \'<user>\' <item> ─ move the item from the user\'s inventory to yours.\n'
+                '  tproom <room number>  ─ teleports all users in your room to the selected one.\n'
+                '  tpall <room number>   ─ teleports all users in the world to the selected room.\n'
+                '  tpuser \'<user>\' <room number>  ─ teleports the user to the selected room.\n'
+                '\n'
+                'NPCs\n'
+                '────\n'
+                'If you want to play out multiple characters in you game, keep in mind that you can connect from multiple accounts at once.\n'
+                '\n'
+                'Automation\n'
+                '──────────\n'
+                'You can create custom verbs that automatically trigger any of the commands explained avobe. This way you can create interesting items like a teleporting scroll or a fart machine. Check out "help interactive building" to find out more.\n'
+                '\n'
+                ' ⮕ Next topic: "help interactive building".'
+            )
+        else:
+            out = _(
+                'Topic "{topic}" not found in help.\n'
+                'Write just "help" to see the general help page.'
+            ).format(topic=topic)
+        
+        self.session.send_to_client(out)
         self.finish_interaction()
+
+        
