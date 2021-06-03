@@ -305,7 +305,7 @@ class DeleteSnapshot(verb.Verb):
             if index < 0:
                 raise ValueError
         except ValueError:
-            self.session.send_to_client(srings.not_a_number)
+            self.session.send_to_client(strings.not_a_number)
             return
 
         try:
