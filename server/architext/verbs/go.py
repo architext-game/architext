@@ -26,7 +26,7 @@ class Go(Verb):
     def go(self, selected_exit):
         if not self.session.user.master_mode:
             if not selected_exit.is_open:
-                self.session.send_to_client(_('You try to go that way, but the exit is closed.'))
+                self.session.send_to_client(_('It is closed.'))
                 return
 
         origin_room = self.session.user.room
