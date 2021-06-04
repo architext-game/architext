@@ -5,6 +5,7 @@ from .. import entities
 from .. import util
 import logging
 import textwrap
+import architext.resources.tutorial_world as tutorial_world
 from .. import strings
 
 class Login(Verb):
@@ -114,7 +115,14 @@ class Login(Verb):
             self.current_process_function = self.process_user_name
             return
 
+        # create user
         self.session.user = entities.User(name=self.new_name, room=None, password=self.password)
+        
+        # create tutorial world and move the user there
+        self.session.send_to_client("Building your Museum of Architexture...")
+        starting_world = util.world_from_json(tutorial_world.json, 'The Museum of Architexture', self.session.user)
+        self.session.user.enter_world(starting_world)
+        
         self.session.send_to_client(util.get_config()['sign_in_welcome'])
         self.connect()
         self.finish_interaction()

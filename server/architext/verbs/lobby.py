@@ -1,18 +1,14 @@
 import functools
 import json
 import textwrap
-import unicodedata
 
 import mongoengine
 
+from .. import util
 from .. import entities
 from . import look, verb
 
 import architext.strings as strings
-
-
-def remove_control_characters(s):
-    return "".join(ch for ch in s if unicodedata.category(ch)[0]!="C")
 
 class LobbyMenu(verb.Verb):
     '''Helper class that has the method that shows the lobby menu'''
@@ -335,8 +331,7 @@ class ImportWorld(LobbyMenu):
 
     def process(self, message):
         self.json_message = ''
-        self.new_world_state = entities.WorldState(save_on_creation=False)
-        self.new_world = entities.World(save_on_creation=False, creator=self.session.user, world_state=self.new_world_state)
+        self.world_name = ''
         self.session.send_to_client(_('Enter a name for your new world. ("/" to cancel)'))
         self.process = self.process_word_name
 
@@ -349,7 +344,7 @@ class ImportWorld(LobbyMenu):
             self.session.send_to_client(strings.is_empty)
             return
 
-        self.new_world.name = message
+        self.world_name = message
         self.session.send_to_client(_(
             'Now paste the text export of the world.\n'
             'It will be automatically divided into multiple messages if it is too long.'
@@ -367,205 +362,15 @@ class ImportWorld(LobbyMenu):
             return
         self.session.send_to_client(_("{char_number} chars received").format(char_number=len(message)))
         message_valid = False
-        message_without_control_characters = remove_control_characters(message)
+        message_without_control_characters = util.remove_control_characters(message)
         self.json_message += message_without_control_characters
         try:
-            world_dict = json.loads(self.json_message)
-            self.session.send_to_client(_('All text received, generating world.'))
-            self.populate_world_from_dict(world_dict)
+            self.session.send_to_client(_('Parsing your message. Please wait...'))
+            new_world = util.world_from_json(self.json_message, self.world_name, self.session.user)
             self.session.send_to_client(_('Your new world is ready. The items in all player inventories from the original world has been moved to your inventory.'))
             self.show_lobby_menu()
             self.finish_interaction()
         except json.decoder.JSONDecodeError:
             self.session.send_to_client(_('The text is still invalid. Waiting for more characters. ("/" to cancel)'))
-        
-
-    def populate_world_from_dict(self, world_dict):
-        items = []
-        custom_verbs = []
-        exits = []
-        other_rooms = []
-        inventories = []
-        saved_items = []
-
-        self.new_world_state.starting_room, added_items = self.room_from_dict(world_dict['starting_room'], add_world_state=False)
-        items += added_items
-
-        for room_dict in world_dict['other_rooms']:
-            room, added_items = self.room_from_dict(room_dict)
-            other_rooms.append(room)
-            items += added_items
-        
-        for verb_dict in world_dict['custom_verbs']:
-            custom_verbs.append(self.custom_verb_from_dict(verb_dict))
-
-        all_rooms = other_rooms + [self.new_world_state.starting_room]
-        rooms_dict_by_alias = { room.alias: room for room in all_rooms }
-        for exit_dict in world_dict['exits']:
-            new_exit = self.exit_from_dict(exit_dict, rooms_dict_by_alias)
-            exits.append(new_exit)
-
-        creator_inventory = self.inventory_from_dict(item_list=world_dict['inventory'], user=self.session.user)
-        inventories.append(creator_inventory)
-
-        for item_dict in world_dict['saved_items']:
-            new_item = self.item_from_dict(item_dict, saved_in=self.new_world_state)
-            saved_items.append(new_item)
-
-        self.new_world_state._next_room_id = world_dict['next_room_id']
-
-        # todo: save all in the correct order
-        # save all entities that world_state references
-        for verb in self.new_world_state.starting_room.custom_verbs:
-            verb.save()
-        self.new_world_state.starting_room.save()
-        for verb in custom_verbs:
-            verb.save()
-        self.new_world_state.custom_verbs = custom_verbs
-        # now the world state can be saved
-        self.new_world_state.save()
-        # now we can add the world_state reference to the starting room
-        self.new_world_state.starting_room.world_state = self.new_world_state
-        self.new_world_state.starting_room.save()
-        # and save the saved items
-        for item in saved_items:
-            for verb in item.custom_verbs:
-                verb.save()
-            item.save()
-        # now we can save the rest of the rooms
-        for room in other_rooms:
-            for verb in room.custom_verbs:
-                verb.save()
-            room.save()
-        # now we can save the exits and items
-        for exit in exits:
-            exit.save()
-        for item in items:
-            for verb in item.custom_verbs:
-                verb.save()
-            item.save()
-        # we finally save the inventories
-        for inventory in inventories:
-            for item in inventory.items:
-                for verb in item.custom_verbs:
-                    verb.save()
-                item.save()
-            inventory.save()
-        # and the world itself
-        self.new_world.save()
-        
 
 
-    def room_from_dict(self, room_dict, add_world_state=True):
-        custom_verbs = [self.custom_verb_from_dict(verb_dict) for verb_dict in room_dict['custom_verbs']]
-
-        new_room = entities.Room(
-            save_on_creation=False, 
-            world_state=self.new_world_state if add_world_state else None,
-            name=room_dict['name'],
-            alias=room_dict['alias'],
-            description=room_dict['description'],
-            custom_verbs=custom_verbs
-        )
-
-        items = []
-        for item_dict in room_dict['items']:
-            new_item = self.item_from_dict(item_dict, room=new_room)
-            items.append(new_item)
-        return new_room, items
-
-    def item_from_dict(self, item_dict, room=None, saved_in=None):
-        custom_verbs = [self.custom_verb_from_dict(verb_dict) for verb_dict in item_dict['custom_verbs']]
-        
-        new_item = entities.Item(
-            save_on_creation=False,
-            item_id=item_dict['item_id'],
-            name=item_dict['name'],
-            description=item_dict['description'],
-            visible=item_dict['visible'],
-            custom_verbs=custom_verbs,
-            room=room,
-            saved_in=saved_in
-        )
-
-        return new_item
-
-    def custom_verb_from_dict(self, verb_dict):
-        custom_verb = entities.CustomVerb(
-            save_on_creation=False, 
-            names=verb_dict["names"],
-            commands=verb_dict["commands"]
-        )
-        return custom_verb
-
-    def exit_from_dict(self, exit_dict, rooms_dict_by_alias):
-        room_alias = exit_dict["room"]
-        destination_alias = exit_dict["destination"]
-        room = rooms_dict_by_alias[room_alias]
-        destination = rooms_dict_by_alias[destination_alias]
-        
-        new_exit=entities.Exit(
-            save_on_creation=False,
-            name=exit_dict["name"],
-            description=exit_dict["description"],
-            destination=destination,
-            room=room,
-            visible=exit_dict['visible'],
-            is_open=exit_dict['is_open'],
-            key_names=exit_dict['key_names'],
-        )
-
-        return new_exit
-
-    def inventory_from_dict(self, item_list, user):
-        items = []
-        for item_dict in item_list:
-            new_item = self.item_from_dict(item_dict)
-            items.append(new_item)
-        
-        new_inventory = entities.Inventory(
-            save_on_creation=False,
-            user=user,
-            world_state=self.new_world_state,
-            items=items
-        )
-
-        return new_inventory
-
-"""
-Por donde me llego:
-Resulta que si el usuario mete un mensaje de mas de 4096 caracteres
-ese mensaje se divide en mas mensajes mas pequeños.
-
-Eso es un problema para el importar, ya que asume que lo va a hacer todo en el mismo mensaje.
-Debemos permitir importar solo con texto, así que hay que arreglarlo.
-
-Opcion 1: Hacer que si el mensaje se ha cortado el comando siga recibiendo mensajes y concatenandolos
-hasta que salga un mensaje no cortado
-
-    Como saber si un mensaje esta cortado?
-        Si el numero de caracteres es igual al limite
-            No es suficiente, porque puede tener justo ese numero de caracteres
-            ¿Y cómo sabemos el limite de caracteres desde architext? No podemos hardcodearlo, hay que obtenerlo.
-        + si el mensaje no está terminado (ej el json está incompleto)
-            no es suficiente, porque el mensaje puede estar mal formateado desde el principio
-        ¿Hay algun flag o algo que podamos obtener que nos diga que el mensaje está cortado?
-
-Opcion 2: Añadir una cadena de texto especial al final del mensaje para marcar el final, que hasta que no
-aparezca siga concatenando mensajes (como al escribir los comandos de los verbos custom).
-
-    Hay que tener cuidado de que esa cadena de texto no pueda aparecer justo al final de un mensaje cortado
-    por llegar al limite de caracteres, y que ese flag este en la descripcion de una sala, por ejemplo.
-    Es un caso rarisimo, pero hay que hacer que sea un caso imposible.
-
-Quiero permitir exportar e importar mediante texto para hacer el software muy longevo. Pero tambien quiero
-poder hacerlo por archivos: 
-    que al exportar se suba un archivo a anonfiles o algun sitio asi (tendría que ser asíncrono)
-    Que para importar puedas dar un enlace de descarga directo donde el servidor se baje los datos (también asíncrono)
-
-
-no se importa:
-  X ningun objeto guardado
-  X el verbo custom del mundo
-    los objetos de inventario
-"""
