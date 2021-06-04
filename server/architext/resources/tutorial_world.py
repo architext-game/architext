@@ -1,72 +1,32 @@
 from .. import util
 
 json = util.remove_control_characters(r"""
-{"next_room_id": 4, "starting_room": {"name": "The Legs Lab", "alias": "0", "description": "You
-awake in a white room. A robotic voice says:\r\n\r\nWelcome, Architext. My purpose is to awake your 
-virtual limbs and senses. Please listen carefully. Now type \"go door\" to use your legs.", 
-"custom_verbs": [], "items": []}, "other_rooms": [{"name": "The Eyes Lab", "alias": "1", 
-"description": "You cross the door into another cubic room. The wall in front of you is covered by a 
-huge curtain.\r\nIt has a big writing on it: \r\n\r\nIf your virtual eyes work, enter \"look 
-curtain\".", "custom_verbs": [], "items": [{"item_id": null, "name": "a big white curtain", 
-"description": "You get a closer look at the curtain and find that there is a black door behind it! 
-Maybe you can go through it?", "visible": "listed", "custom_verbs": []}]}, {"name": "The Hands Lab", 
-"alias": "2", "description": "The voice talks again as you cross into the next 
-room:\r\n\r\nCongrats! Let's see if you can find the exit of this one. Make me happy again.
-\r\n\r\nAn old oriental carpet covers the aseptic floor of the lab room. Oddly enough, there is a 
-small\r\nmailbox next to it. They clearly don't belong here.", "custom_verbs": [], "items": 
-[{"item_id": null, "name": "a small mailbox", "description": "It appears to be something inside, but 
-the mailbox is closed!", "visible": "obvious", "custom_verbs": [{"names": ["open"], "commands": 
-["textto '.user' You open the mailbox and find a leaflet and a key inside.", "deleteitem a small 
-mailbox", "spawn a small mailbox#2", "spawn a leaflet#1", "spawn a golden key#1"]}]}, {"item_id": 
-null, "name": "an old carpet", "description": "It is worn out and grubby. In fact, you have the 
-impression that the carpet has been dragged out of place many, many times.", "visible": "obvious", 
-"custom_verbs": [{"names": ["move", "drag", "pull", "displace", "remove"], "commands": ["textto '.
-user' You manage to move the heavy carpet and discover a hidden trapdoor beneath it.", "edit 
-trapdoor", "2", "listed", "deleteitem an old carpet", "spawn an old carpet#2"]}]}]}, {"name": "The 
-Great Museum of Architexture", "alias": "3", "description": "You are in the luxuriuous lobby of the 
-Museum of Architexture. \r\n\r\nThe corridors extend as far as the eye can see, but wherever you 
-look you only see closed doors with the sign \"UNDER CONSTRUCTION\". What a weird museum.\r\n\r\nYou 
-see a poster that says: \"LOOK AT ME\".", "custom_verbs": [], "items": [{"item_id": null, "name": "a 
-poster", "description": "_ _ _     _                        _____         _   _ _           _   
-\r\n| | | |___| |___ ___ _____ ___     |  _  |___ ___| |_|_| |_ ___ _ _| |_ \r\n| | | | -_| |  _| . 
-|     | -_|_   |     |  _|  _|   | |  _| -_|_'_|  _|\r\n|_____|___|_|___|___|_|_|_|___| |  |__|__|_| 
-|___|_|_|_|_| |___|_,_|_|  \r\n                              |_|                                     
-\r\n                              \r\nI bestbow you with all our knowledge about Architexture. Just 
-write \"help\" to see it. There you can learn all that there is to know.\r\n\r\nEverything you have 
-seen has been created by an architext like you. Did I mention that!? If you don't believe me, write 
-\"build\" to start creating a room right here. Or \"craft\" to create an item! Its easy :-
-)\r\n\r\nThis is just a tiny part of the multiverse. Write \"exitworld\" to go to the lobby. There 
-you can go to other worlds and create your own. \r\n\r\nWhat to do next? Visit the Monk's Riddle 
-world. It is an immersive escape game that lasts 30 to 60 minutes. It is better played by 2-4 people,
-so invite some friends!\r\n\r\nThe Monk's Riddle has been built using just the basic tools at \"help 
-build\". These are explained in just 20 lines! So it is a great example to learn what you can build.
-\r\n\r\nThank you so much for playing. Have fun! :-)", "visible": "listed", "custom_verbs": []}]}], 
-"custom_verbs": [], "exits": [{"name": "a white metal door", "description": null, "destination": "1",
-"room": "0", "visible": "listed", "is_open": true, "key_names": []}, {"name": "back to the Legs Lab",
-"description": null, "destination": "0", "room": "1", "visible": "listed", "is_open": true, 
-"key_names": []}, {"name": "a black door", "description": null, "destination": "2", "room": "1", 
-"visible": "hidden", "is_open": true, "key_names": []}, {"name": "back to the Eyes Lab", 
-"description": null, "destination": "1", "room": "2", "visible": "listed", "is_open": true, 
-"key_names": []}, {"name": "a trapdoor", "description": null, "destination": "3", "room": "2", 
-"visible": "hidden", "is_open": false, "key_names": ["a golden key"]}, {"name": "a ceiling trapdoor",
-"description": null, "destination": "2", "room": "3", "visible": "listed", "is_open": true, 
-"key_names": []}], "inventory": [], "saved_items": [{"item_id": "a small mailbox#1", "name": "a 
-small mailbox", "description": "It appears to be something inside, but the mailbox is closed!", 
-"visible": "listed", "custom_verbs": [{"names": ["open"], "commands": ["textto '.user' You open the 
-mailbox and find a leaflet and a key inside.", "deleteitem a small mailbox", "spawn a small 
-mailbox#2", "spawn a leaflet#1", "spawn a golden key#1"]}]}, {"item_id": "a leaflet#1", "name": "a 
-leaflet", "description": "The leafleat reads:\r\n\r\nWelcome, subject. I'm sorry about all of this 
-weird robot lab stuff, but we need to test your functions before you can consider yourself an 
-architext.\r\n\r\nI hope you find this key useful. Try to use your hands to take it writing \"take 
-key\".\r\n\r\nAnd don't forget to have a look at the beautiful carpet!", "visible": "takable", 
-"custom_verbs": []}, {"item_id": "a golden key#1", "name": "a golden key", "description": "It 
-sparkles with life.", "visible": "takable", "custom_verbs": []}, {"item_id": "a small mailbox#2", 
-"name": "a small mailbox", "description": "It's now open.", "visible": "listed", "custom_verbs": []},
-{"item_id": "an old carpet#1", "name": "an old carpet", "description": "It is worn out and grubby. 
-In fact, you have the impression that the carpet has been dragged out of place many, many times.", 
-"visible": "obvious", "custom_verbs": [{"names": ["move", "drag", "pull", "displace", "remove"], 
-"commands": ["textto '.user' You manage to move the heavy carpet and discover a hidden trapdoor 
-beneath it.", "edit trapdoor", "2", "listed", "deleteitem an old carpet", "spawn an old 
-carpet#2"]}]}, {"item_id": "an old carpet#2", "name": "an old carpet", "description": "It has been 
-moved to the side.", "visible": "obvious", "custom_verbs": []}]}
+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
+J0Z7EyS2txooxqYePy4grNUfqdd4yQ==
 """)

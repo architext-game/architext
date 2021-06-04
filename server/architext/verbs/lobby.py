@@ -364,13 +364,17 @@ class ImportWorld(LobbyMenu):
         message_valid = False
         message_without_control_characters = util.remove_control_characters(message)
         self.json_message += message_without_control_characters
-        try:
-            self.session.send_to_client(_('Parsing your message. Please wait...'))
-            new_world = util.world_from_json(self.json_message, self.world_name, self.session.user)
+
+        self.session.send_to_client(_('Parsing your message. Please wait...'))
+        
+        world_dict = util.text_to_world_dict(self.json_message)
+
+        if world_dict is not None:
+            new_world = util.world_from_dict(world_dict, self.world_name, self.session.user)
             self.session.send_to_client(_('Your new world is ready. The items in all player inventories from the original world has been moved to your inventory.'))
             self.show_lobby_menu()
             self.finish_interaction()
-        except json.decoder.JSONDecodeError:
+        else:
             self.session.send_to_client(_('The text is still invalid. Waiting for more characters. ("/" to cancel)'))
 
 

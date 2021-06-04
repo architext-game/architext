@@ -2,6 +2,7 @@ from . import verb
 from .. import entities
 import json
 import textwrap
+from .. import util
 
 class ExportWorld(verb.Verb):
     command = _("export")
@@ -12,13 +13,13 @@ class ExportWorld(verb.Verb):
         world_state = self.session.user.room.world_state
         world_state_dict_representation = self.dump_world_state(world_state)
         if message == self.pretty_command:
-            json_out = json.dumps(
+            export = json.dumps(
                 world_state_dict_representation, 
                 indent=4,
                 separators=(',', ': ')
             )
         else:
-            json_out = json.dumps(world_state_dict_representation)
+            export = util.encode_dict(world_state_dict_representation)
         header = _(
             'Your world:\n'
             '────────────────────────────────────────────────────────────\n'
@@ -27,9 +28,10 @@ class ExportWorld(verb.Verb):
             '────────────────────────────────────────────────────────────\n'
             '\n'
             'You have exported your actual world. Copy the text between the horizontal lines and save it anywhere.\n'
-            'You can import this and any exported world at the lobby.'
+            'You can import this and any exported world at the lobby.\n'
+            'Note that the "export pretty" option may mess with the whitespaces in your names and descriptions.'
         )
-        self.session.send_to_client(header + json_out + '\n' + footer)
+        self.session.send_to_client(header + export + '\n' + footer)
         self.finish_interaction()
 
     def dump_item(self, item):

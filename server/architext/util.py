@@ -7,6 +7,7 @@ import yaml
 import regex
 import json
 import unicodedata
+import json, zlib, base64, binascii
 
 
 # username to be used by the ghost session (see ghost_session.py)
@@ -294,12 +295,7 @@ def match(pattern, string):
     return None
  
 
-def world_from_json(world_json, world_name, creator):
-    """
-    raises json.decoder.JSONDecodeError
-    """
-
-    world_dict = json.loads(world_json)
+def world_from_dict(world_dict, world_name, creator):
     
     new_world_state = entities.WorldState(save_on_creation=False)
     new_world = entities.World(save_on_creation=False, name=world_name, creator=creator, world_state=new_world_state)
@@ -459,4 +455,34 @@ def inventory_from_dict(item_list, user, world_state):
 
 def remove_control_characters(s):
     return "".join(ch for ch in s if unicodedata.category(ch)[0]!="C")
+
+def encode_dict(dict):
+    json_string = json.dumps(dict)
+    bytes = json_string.encode('utf-8')
+    compressed_bytes = zlib.compress(bytes)
+    b64bytes = base64.b64encode(compressed_bytes)
+    b64string = b64bytes.decode()
+    return b64string
+
+def decode_dict(encoded_str):
+    compresed_b64bytes = base64.b64decode(encoded_str)
+    b64bytes = zlib.decompress(compresed_b64bytes)
+    json_str = b64bytes.decode()
+    dict = json.loads(json_str)
+    return dict
+
+def text_to_world_dict(text):
+    world_dict = None
+
+    # the message may be encoded or not, so we try both ways
+    try:
+        world_dict = json.loads(text)
+    except json.decoder.JSONDecodeError:
+        try:
+            world_dict = decode_dict(text)
+        except (binascii.Error, zlib.error, ValueError, json.decoder.JSONDecodeError):
+            'the message is not valid'
+
+    return world_dict
+
 

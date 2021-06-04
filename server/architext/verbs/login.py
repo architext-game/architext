@@ -7,6 +7,7 @@ import logging
 import textwrap
 import architext.resources.tutorial_world as tutorial_world
 from .. import strings
+import json
 
 class Login(Verb):
     """This is the first verb that a session starts with, and handles user log-in.
@@ -120,7 +121,10 @@ class Login(Verb):
         
         # create tutorial world and move the user there
         self.session.send_to_client("Building your Museum of Architexture...")
-        starting_world = util.world_from_json(tutorial_world.json, 'The Museum of Architexture', self.session.user)
+        
+        world_dict = util.text_to_world_dict(tutorial_world.json)
+        starting_world = util.world_from_dict(world_dict, 'The Museum of Architexture', self.session.user)
+        
         self.session.user.enter_world(starting_world)
         
         self.session.send_to_client(util.get_config()['sign_in_welcome'])
