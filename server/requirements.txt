@@ -2,4 +2,6 @@ dnspython
 pymongo
 mongoengine
 telnetserver
-Babelregex
+Babel
+regex
+pyyaml
