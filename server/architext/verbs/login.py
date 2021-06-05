@@ -160,6 +160,6 @@ class Login(Verb):
         ))
         if self.session.user.room is not None:
             self.session.send_to_others_in_room(_("Poohf! {user_name} appears.").format(user_name=name))
-            Look(self.session).show_current_room()
+            Look(self.session).show_current_room(show_world_name=True)
         else:
             lobby.LobbyMenu(self.session).show_lobby_menu()

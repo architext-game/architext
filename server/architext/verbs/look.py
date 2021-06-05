@@ -26,7 +26,7 @@ class Look(Verb):
         else:
             self.session.send_to_client(f"👁 {selected_entity.name}\n{selected_entity.description if selected_entity.description else strings.default_description}")
     
-    def show_current_room(self):
+    def show_current_room(self, show_world_name=False):
         title = self.session.user.room.name + "\n"
         description = (self.session.user.room.description if self.session.user.room.description else strings.default_description) + "\n"
 
@@ -57,4 +57,9 @@ class Look(Verb):
         underline = '─'*len(title)
         line_break = '\n' if (items or players_here or exits) else ''
         message = (f"""{title}{underline}\n{description}{line_break}{items}{players_here}{exits}""")
+        
+        if show_world_name:
+            world_name = strings.box(_('You are in ') + self.session.user.room.world_state.get_world().name)
+            message = world_name + '\n' + message
+
         self.session.send_to_client(message)

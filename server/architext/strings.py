@@ -37,3 +37,13 @@ def format(title, body, cancel=False):
     subtitle_bar = '─'*len(title)
     cancel = cancel_prompt + '\n\n' if cancel else ''
     return f'{title}\n{subtitle_bar}\n{cancel}{body}'
+
+def box(string):
+   return (
+        '┏━━━━{fillin}━━━━┓\n'
+        '┃    {string}    ┃\n'
+        '┗━━━━{fillin}━━━━┛\n'
+    ).format(
+        string=string,
+        fillin='━'*len(string),
+    )

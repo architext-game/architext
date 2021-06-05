@@ -103,7 +103,7 @@ class JoinByInviteCode(LobbyMenu):
         self.session.user.enter_world(chosen_world)
         
         self.session.send_to_client(_("Traveling to {world_name}.").format(world_name=chosen_world.name))
-        look.Look(self.session).show_current_room()
+        look.Look(self.session).show_current_room(show_world_name=True)
         self.session.send_to_others_in_room(_("Pof! {player_name} appears here.").format(player_name=self.session.user.name))
         self.finish_interaction()
 
@@ -148,18 +148,12 @@ class EnterWorld(LobbyMenu):
             self.finish_interaction()
             return
         
-        self.session.send_to_client(_(
-            '┏━━━━━━━━━━━━━━━━━{line_filli}━━━━┓\n'
-            '┃    Traveling to {world_name}    ┃\n'
-            '┗━━━━━━━━━━━━━━━━━{line_filli}━━━━┛\n'
-            '{body}'
-        ).format(
-            world_name=chosen_world.name,
-            line_filli='━'*len(chosen_world.name),
-            body=_('Returning to your last location there.') if location_save is not None else _('Going there for the first time!')
+        self.session.send_to_client(_('{body}')
+            .format(
+                body=_('Returning to your last location there.') if location_save is not None else _('Going there for the first time!')
         ))
 
-        look.Look(self.session).show_current_room()
+        look.Look(self.session).show_current_room(show_world_name=True)
         self.session.send_to_others_in_room(_("Puufh! {player_name} appears here.").format(player_name=self.session.user.name))
         self.finish_interaction()
         
@@ -220,7 +214,7 @@ class CreateWorld(LobbyMenu):
 
     def enter_to_continue(self, message):
         self.session.user.enter_world(self.new_world)
-        look.Look(self.session).show_current_room()
+        look.Look(self.session).show_current_room(show_world_name=True)
         self.finish_interaction()
 
 
