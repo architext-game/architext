@@ -1,6 +1,7 @@
 from .verb import Verb
 from .look import Look 
 from .. import util
+from .. import strings
 
 class Go(Verb):
     """Allows the user to travel between rooms, using their exits."""
