@@ -51,7 +51,7 @@ class Session:
                 self.current_verb.execute(message)
             except Exception as e:
                 self.send_to_client("An unexpected error ocurred. It has been notified and it will be soon fixed. Sorry about that.")
-                self.logger.error('ERROR: ' + str(e))
+                self.logger.exception('ERROR: ' + str(e))
                 raise e
             
             if self.current_verb.command_finished():

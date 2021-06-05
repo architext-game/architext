@@ -99,5 +99,5 @@ if __name__ == "__main__":
             # Sleep a bit. We don't want to be using 100% CPU time.
             time.sleep(0.2)
         except Exception as e:
-            logger.error('ERROR: ' + str(e))
+            logger.exception('ERROR: ' + str(e))
 
