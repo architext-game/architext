@@ -148,19 +148,21 @@ class EnterWorld(LobbyMenu):
             self.finish_interaction()
             return
         
-        if location_save is not None:
-            self.session.send_to_client(_("Returning to your last location in {world_name}").format(world_name=chosen_world.name))
-        else:
-            self.session.send_to_client(_("Traveling to {world_name} for the first time.").format(world_name=chosen_world.name))
-        
-        self.session.send_to_client(_("Press enter to continue..."))
-        self.current_process_function = self.enter_to_continue
-        
-    def enter_to_continue(self, message):
+        self.session.send_to_client(_(
+            '┏━━━━━━━━━━━━━━━━━{line_filli}━━━━┓\n'
+            '┃    Traveling to {world_name}    ┃\n'
+            '┗━━━━━━━━━━━━━━━━━{line_filli}━━━━┛\n'
+            '{body}'
+        ).format(
+            world_name=chosen_world.name,
+            line_filli='━'*len(chosen_world.name),
+            body=_('Returning to your last location there.') if location_save is not None else _('Going there for the first time!')
+        ))
+
         look.Look(self.session).show_current_room()
         self.session.send_to_others_in_room(_("Puufh! {player_name} appears here.").format(player_name=self.session.user.name))
         self.finish_interaction()
-
+        
 
 class RefreshLobby(LobbyMenu):
     verbtype = verb.LOBBYVERB
@@ -200,17 +202,22 @@ class CreateWorld(LobbyMenu):
         self.new_world.name = message
         self.new_world.save()
         self.session.send_to_client(_(
-            'You new world is ready.\n'
+            '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
+            '┃    Your new world is ready    ┃\n'
+            '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n'
             'It is a private world 🔒. You can invite your friends sharing this invite code:\n'
+            '\n'
             '{invite_code}\n'
+            '\n'
             'When it is ready, you can make the world public using the editworld command.\n'
             '\n'
-            'Press enter to continue...'
+            'Press enter to see your new world...'
         ).format(invite_code=self.new_world.id))
         self.process = self.enter_to_continue
 
     def enter_to_continue(self, message):
-        self.show_lobby_menu()
+        self.session.user.enter_world(self.new_world)
+        look.Look(self.session).show_current_room()
         self.finish_interaction()
 
 
