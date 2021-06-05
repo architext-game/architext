@@ -70,6 +70,7 @@ class LobbyHelp(LobbyMenu):
 
 class GoToLobby(LobbyMenu):
     command = _('exitworld')
+    permissions = verb.NOBOT
 
     def process(self, message):
         self.session.user.leave_world()

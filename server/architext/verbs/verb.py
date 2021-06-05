@@ -4,6 +4,7 @@ from .. import util
 FREE = 'free'
 PRIVILEGED = 'privileged'
 CREATOR = 'creator'
+NOBOT = 'nobot'
 
 LOBBYVERB = 'lobbyverb'
 WORLDVERB = 'worldverb'
@@ -25,7 +26,7 @@ class Verb():
     """
 
     command = 'verb '
-    permissions = FREE  # possible values: FREE, PRIVILEGED and CREATOR.
+    permissions = FREE  # possible values: FREE, PRIVILEGED, NOBOT and CREATOR.
     verbtype = WORLDVERB
     regex_command = False  # False: can process if message starts with command. True: command is a regex and can process if message matches the regex.
 
@@ -78,16 +79,22 @@ class Verb():
 
         world = self.session.user.room.world_state.get_world()
         
-        if self.permissions == 'free':
+        if self.permissions == FREE:
             return True
+
+        if self.permissions == NOBOT:
+            if isinstance(self.session, session.GhostSession):
+                return False
+            else:
+                return True
         
-        if self.permissions == 'privileged':
+        if self.permissions == PRIVILEGED:
             if world.all_can_edit or isinstance(self.session, session.GhostSession) or world.is_privileged(self.session.user):
                 return True
             else:
                 return False
         
-        if self.permissions == 'creator':
+        if self.permissions == CREATOR:
             if world.is_creator(self.session.user):
                 return True
             else:
