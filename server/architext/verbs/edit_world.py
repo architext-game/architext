@@ -26,7 +26,7 @@ class EditWorld(verb.Verb):
         body = _(
             'Enter the number of the value you want to edit.\n'
             '    0 - Name\n'
-            '    1 - Make public/private'
+            '    1 - Make public/private\n'
             '    2 - Edit freedom'
         )
         out_message = strings.format(title, body, cancel=True)
