@@ -178,11 +178,14 @@ class CreateWorld(LobbyMenu):
 
     def process(self, message):
         starting_room = entities.Room(
-            name=_('First room'),
+            name=_('The First of Many Rooms'),
             alias='0',
             description=_(
-                'This is the first room of your world.\n'
-                'Now you can create whatever you want!'
+                'This is the first room of your world. Here you are the Architext!\n'
+                '\n'
+                'If you don\'t know where to start, just type "help building". There you\'ll find all you need to know to build any kind of world.\n'
+                '\n'
+                'Remember that you can type "worldinfo" to see the world\'s invite code.'
             )
         )
         self.new_world = entities.World(save_on_creation=False, creator=self.session.user, starting_room=starting_room)
