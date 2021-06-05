@@ -30,3 +30,4 @@ from .lobby import EnterWorld, CreateWorld, DeployPublicSnapshot, GoToLobby, Del
 from .edit_world import EditWorld
 from .export import ExportWorld
 from .who import Who
+from .roll import RollDice

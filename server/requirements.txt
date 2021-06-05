@@ -5,3 +5,4 @@ telnetserver
 Babel
 regex
 pyyaml
+py-rolldice

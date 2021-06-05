@@ -97,6 +97,7 @@ class Help(Verb):
                 '  emote <action>  ─ to dance, gesticulate or whatever you want. Just try it!\n'
                 '  shout <message> ─ all players in your world will hear you.\n'
                 '  who             ─ to see who is online\n'
+                '  roll <dice>     ─ to roll some dice. Dice can be expressions like 1d6, 2d6+1, etc.\n'
                 '\n'
                 'Don\'t be shy and say hello :)\n'
                 '\n'
