@@ -74,27 +74,30 @@ if __name__ == "__main__":
     logger.info("server started")
     # Start game loop
     while True:
-        server.update()  # get new events
+        try:
+            server.update()  # get new events
 
-        # Handle new connections
-        for new_client in server.get_new_clients():
-            sessions[new_client] = architext.session.Session(new_client, server)
+            # Handle new connections
+            for new_client in server.get_new_clients():
+                sessions[new_client] = architext.session.Session(new_client, server)
 
-        # Handle disconnects
-        for disconnected_client in server.get_disconnected_clients():
-            if disconnected_client in sessions:
-                ended_session = sessions.pop(disconnected_client)
-                ended_session.disconnect()
+            # Handle disconnects
+            for disconnected_client in server.get_disconnected_clients():
+                if disconnected_client in sessions:
+                    ended_session = sessions.pop(disconnected_client)
+                    ended_session.disconnect()
 
-        # Let each session handle messages sent by his client
-        for sender_client, message in server.get_messages():
-            if sender_client in sessions:
-                session = sessions[sender_client]
-                if session.client_id is None:  # the session has disconnected by itself
-                    sessions.pop(sender_client)
-                else:
-                    session.process_message(message)
+            # Let each session handle messages sent by his client
+            for sender_client, message in server.get_messages():
+                if sender_client in sessions:
+                    session = sessions[sender_client]
+                    if session.client_id is None:  # the session has disconnected by itself
+                        sessions.pop(sender_client)
+                    else:
+                        session.process_message(message)
 
-        # Sleep a bit. We don't want to be using 100% CPU time.
-        time.sleep(0.2)
+            # Sleep a bit. We don't want to be using 100% CPU time.
+            time.sleep(0.2)
+        except Exception as e:
+            logger.error('ERROR: ' + str(e))
 
