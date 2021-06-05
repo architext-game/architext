@@ -171,4 +171,4 @@ class EditItem(verb.Verb):
 
 
     def can_change_to_takable(self, item_to_change):
-        return entities.Item.name_is_valid(item_to_change.name, self.session.user.room, ignore_item=item_to_change, takable=True)
+        return entities.Item.name_is_valid(item_to_change.name, item_to_change.room, ignore_item=item_to_change, takable=True)
