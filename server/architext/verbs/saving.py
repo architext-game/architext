@@ -61,7 +61,7 @@ class SaveItem(verb.Verb):
             self.session.send_to_client(strings.not_found)            
         else:
             snapshot = self.session.user.save_item(selected_item)
-            self.session.send_to_client(_('{item_name} has been saved as {item_id}. To spawn it, use "spawn {item_id}').format(item_name=snapshot.name, item_id=snapshot.item_id))
+            self.session.send_to_client(_('{item_name} has been saved as {item_id}. To spawn it, use "spawn {item_id}". You can also edit and add verbs to it.').format(item_name=snapshot.name, item_id=snapshot.item_id))
             
         self.finish_interaction()
 
