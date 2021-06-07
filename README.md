@@ -51,12 +51,16 @@ You'll need to configure mudlet when you launch it for the first time.
 
 # Demo
 ## A piece of the tutorial
-...gif pending
+![tutorial](https://user-images.githubusercontent.com/15345234/121041849-6a371400-c7b3-11eb-95ae-fab7eddefcaf.gif)
+
 ## Creating a cake 🎂
-...gif pending
+![craft cake](https://user-images.githubusercontent.com/15345234/121041892-74591280-c7b3-11eb-8b0d-9f215198945e.gif)
+
 
 ## Making the cake edible 🙆
-...gif pending
+![verb](https://user-images.githubusercontent.com/15345234/121041909-79b65d00-c7b3-11eb-8a81-bd856c59fcf3.gif)
+
+
 # Running locally for development
 To run Architext you need:
 * Python3 and Pip to run the game
