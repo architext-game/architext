@@ -1,7 +1,7 @@
 dnspython
 pymongo
 mongoengine
-telnetserver
+telnetserver>=0.5
 Babel
 regex
 pyyaml
