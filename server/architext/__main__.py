@@ -60,7 +60,7 @@ if __name__ == "__main__":
         database_connect()
         
     # Server creation for telnet communication
-    server = telnetserver.TelnetServer(error_policy='ignore')
+    server = telnetserver.TelnetServer(error_policy='ignore', port=2112)
 
     # Dict of current session. Keys are ids provided by TelnetServer, values are the user's Session object.
     sessions = {}

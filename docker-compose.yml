@@ -5,7 +5,7 @@ services:
   mud:
     build: ./server/
     ports:
-      - "1234:1234"
+      - "2112:2112"
     depends_on:
       - mud-db
     volumes:
