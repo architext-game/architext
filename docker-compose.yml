@@ -4,6 +4,7 @@ version: '3'
 services:
   mud:
     build: ./server/
+    restart: always
     ports:
       - "2112:2112"
     depends_on:
