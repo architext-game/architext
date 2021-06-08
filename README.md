@@ -1,8 +1,12 @@
+### [Play now on Grapevine](https://grapevine.haus/games/Architext/play)
+[<img alt="Click to play now" src="https://user-images.githubusercontent.com/15345234/121176454-82af3900-c85c-11eb-9798-863ac83e533a.png" height="40"/>](https://grapevine.haus/games/Architext/play)
+
 ![image](https://user-images.githubusercontent.com/15345234/120008659-76fd8000-bfdb-11eb-95cd-d170aea3dec8.png)
+
+
 # Table of contents
 - [Overwiew](#overwiew)
 - [How to play](#how-to-play)
-- [Mudlet configuration](#mudlet-configuration)
 - [Demo](#demo)
 - [Running locally for development](#running-locally-for-development)
 - [Set up your own production server](#set-up-your-own-production-server)
@@ -26,28 +30,16 @@ Architext has a tutorial that lets you learn the basics in 5 minutes. The in-gam
 
 The game is played over telnet. The official server is accesible at architext-game.com port 2112.
 
-The [Mudlet](https://www.mudlet.org/) mud client is the recommended way to connect to the game. It's open [source](https://github.com/Mudlet/Mudlet) and multiplatform. See below how to get it running.
+The most convenient and recommended way to connect to the game is by using [this link to enter the Grapevine web client](https://grapevine.haus/games/Architext/play).
+
+If you are using the [Mudlet](https://www.mudlet.org/) mud client You'll need to set the following preferences:
+* Set `Server data encoding` (under `Options` -> `Preferences`) to `UTF-8` 
+* Set `Command Separator` (at the `Input Line` tab) to `;;;`.
 
 Nevertheless, you can connect to the game using any telnet client **that supports utf-8**. In Ubuntu you can connect with the command:
 ```
 telnet architext-game.com 2112
 ``` 
-
-
-## Mudlet configuration
-You'll need to configure mudlet when you launch it for the first time.
-1. Download and install Mudlet for your platform from [the official website](https://www.mudlet.org/).
-2. Run Mudlet and click on `+New` to add a profile for Architext. 
-3. Enter the following fields:
-    * Profile Name: Architext
-    * Server Address: TODO
-    * Port: 2112
-4. Click on `Connect`
-5. Click `Options` -> `Preferences` and change the `Server data encoding` to `UTF-8`.
-6. Click on the Input Line tab and set `Command Separator` to `;;;`
-7. Click `Save`
-8. Press `Ctrl+R` to reconnect to the game using the new configuration.
-9. **Enjoy!**
 
 # Demo
 ## A piece of the tutorial
