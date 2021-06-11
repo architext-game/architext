@@ -64,7 +64,7 @@ class DeleteExit(verb.Verb):
             exit.delete()
         else:
             self.session.send_to_client(_(
-                'There is no room called "{exit_name}".\nTo delete anything you have to enter its exact name.'
+                'There is not any exit called "{exit_name}" here.\nTo delete anything you have to enter its exact name.'
             ).format(exit_name=exit_name))
 
         self.finish_interaction()
