@@ -54,7 +54,7 @@ class DeleteExit(verb.Verb):
             warning = ''
             if exit_from_there is not None:
                 warning = _(
-                    ' 🚧 Keep in mind that the exit "{exit_name}" in "{destination_name}" that leads here has not been deleted.'
+                    '\n 🚧 Keep in mind that the exit "{exit_name}" in "{destination_name}" that leads here has not been deleted.'
                 ).format(exit_name=exit_from_there.name, destination_name=destination.name)
             self.session.send_to_client(_(
                 'Exit "{exit_name}" has been deleted.\n'

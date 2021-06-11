@@ -35,7 +35,7 @@ class PlaceItem(verb.Verb):
             except entities.NameNotGloballyUnique:
                 self.session.send_to_client(_('The item could not be spawned: it is a takable item, and there is already an item with that name in this world.'))   
             else:
-                self.session.send_to_client(_('You spawned "{item_name}" in this world.').format(item_name=item_to_place.name))
+                self.session.send_to_client(_('You spawned "{item_name}"').format(item_name=item_to_place.name))
 
     def list_your_saved_messages(self):
         saved_items = entities.Item.objects(saved_in=self.session.user.room.world_state)
