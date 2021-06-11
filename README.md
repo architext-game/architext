@@ -26,7 +26,7 @@
 As a creator, Architext allows you to take a physical place from your imagination to a reality where you can share it with anyone. It's also great to build puzzle/scape room games and to create a setting to run role playing games in.
 
 # How to play
-Architext has a tutorial that lets you learn the basics in 5 minutes. The in-game help hub will teach you everithing there is to know, if you want to.
+Architext has a tutorial that lets you learn the basics in 5 minutes. The in-game help hub will teach you everything there is to know, if you want to.
 
 The game is played over telnet. The official server is accesible at architext-game.com port 2112.
 
