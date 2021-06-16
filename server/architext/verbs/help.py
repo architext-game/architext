@@ -171,7 +171,7 @@ class Help(verb.Verb):
                 '  info <item or exit> ─ as avobe, but for a particular item or exit.\n'
                 '\n'
                 '  tp <room number> ─ to teleport to any room.\n'
-                '  link ─ create exits between any two rooms.\n'
+                '  link ─ create exits between any two existing rooms.\n'
                 '\n'
                 '  deleteroom ─ to delete your current room and all its contents.\n'
                 '  deleteexit <exact exit name> ─ to delete an exit.\n'
