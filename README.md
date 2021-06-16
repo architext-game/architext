@@ -1,8 +1,7 @@
 ### [Play now on Grapevine](https://grapevine.haus/games/Architext/play)
 [<img alt="Click to play now" src="https://user-images.githubusercontent.com/15345234/121176454-82af3900-c85c-11eb-9798-863ac83e533a.png" height="40"/>](https://grapevine.haus/games/Architext/play)
 
-![image](https://user-images.githubusercontent.com/15345234/120008659-76fd8000-bfdb-11eb-95cd-d170aea3dec8.png)
-
+![architext cover v3](https://user-images.githubusercontent.com/15345234/122195601-ccb8a000-ce96-11eb-8456-21168ee35278.png)
 
 # Table of contents
 - [Overwiew](#overwiew)
