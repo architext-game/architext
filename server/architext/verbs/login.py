@@ -141,7 +141,7 @@ class Login(Verb):
         user_logger = util.setup_logger('user_'+name, 'user_'+name+'.txt')
         self.session.set_logger(user_logger)
         # log user connection
-        log_message = '{} has connected.'.format(name)
+        log_message = '{} has logged in from client_id {}.'.format(name, self.session.client_id)
         user_logger.info(log_message)
         server_logger.info(log_message)
 

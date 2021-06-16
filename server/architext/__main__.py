@@ -79,12 +79,17 @@ if __name__ == "__main__":
 
             # Handle new connections
             for new_client in server.get_new_clients():
+                logger.info(f'New connection, client_id {new_client}')
                 sessions[new_client] = architext.session.Session(new_client, server)
 
             # Handle disconnects
             for disconnected_client in server.get_disconnected_clients():
                 if disconnected_client in sessions:
                     ended_session = sessions.pop(disconnected_client)
+                    if ended_session.user:
+                        logger.info(f'{ended_session.user.name} has disconnected.')
+                    else:
+                        logger.info(f'Disconnected before login: client_id {disconnected_client}')
                     ended_session.disconnect()
 
             # Let each session handle messages sent by his client
@@ -97,7 +102,7 @@ if __name__ == "__main__":
                         session.process_message(message)
 
             # Sleep a bit. We don't want to be using 100% CPU time.
-            time.sleep(0.2)
+            time.sleep(1)
         except Exception as e:
             logger.exception('ERROR: ' + str(e))
 
