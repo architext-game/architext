@@ -58,7 +58,10 @@ class Session:
             if self.current_verb.command_finished():
                 self.current_verb = None
         else:
-            self.send_to_client(_("I don't understand that."))
+            if self.user.room is None:
+                self.send_to_client(_('I don\'t understand that. You can enter "r" to show the lobby menu again.'))
+            else: 
+                self.send_to_client(_('I don\'t understand that.'))
 
     def disconnect(self):
         if self.user is not None and self.user.client_id == self.client_id:
