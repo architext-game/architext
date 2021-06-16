@@ -5,8 +5,14 @@ cover: |-
   This is a text game where you can create and share any world you can imagine.
   If you are new, bear with me and discover the game in just 5 minutes :-)
 
+  Don't forget joining our discord server! https://discord.gg/CnQD9g3U5g
+
 sign_in_welcome: |-
   Welcome to Architext!
+
+  NEWS:
+    We are still in development, you can check the source code at
+    https://github.com/OliverLSanz/architext
 
 log_in_welcome: |-
   NEWS:
