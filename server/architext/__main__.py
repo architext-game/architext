@@ -102,7 +102,7 @@ if __name__ == "__main__":
                         session.process_message(message)
 
             # Sleep a bit. We don't want to be using 100% CPU time.
-            time.sleep(1)
+            time.sleep(0.2)
         except Exception as e:
             logger.exception('ERROR: ' + str(e))
 
