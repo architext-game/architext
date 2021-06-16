@@ -22,6 +22,7 @@ class User(mongoengine.Document):
     client_id = mongoengine.IntField(default=None)
     master_mode = mongoengine.BooleanField(default=False)
     joined_worlds = mongoengine.ListField(mongoengine.ReferenceField('World'))
+    email = mongoengine.StringField(default=None)
     _password_hash = mongoengine.BinaryField(required=True)
 
     def __init__(self, *args, password=None, save_on_creation=True,  **kwargs):

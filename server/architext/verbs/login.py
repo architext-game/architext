@@ -116,18 +116,24 @@ class Login(Verb):
             self.current_process_function = self.process_user_name
             return
 
+        self.session.send_to_client(_(
+             'ᐅ What is your email? (Optional, used for password recovery and important communications)\n'
+        ))
+        self.current_process_function = self.process_email
+
+    def process_email(self, message):
         # create user
-        self.session.user = entities.User(name=self.new_name, room=None, password=self.password)
+        self.session.user = entities.User(name=self.new_name, room=None, password=self.password, email=message)
         
         # create tutorial world and move the user there
-        self.session.send_to_client("Building your Museum of Architexture...")
+        self.session.send_to_client(util.get_config()['sign_in_welcome'])
+        self.session.send_to_client(_("Building your Museum of Architexture..."))
         
         world_dict = util.text_to_world_dict(tutorial_world.json)
-        starting_world = util.world_from_dict(world_dict, 'The Museum of Architexture', self.session.user)
+        starting_world = util.world_from_dict(world_dict, _('The Museum of Architexture'), self.session.user)
         
         self.session.user.enter_world(starting_world)
         
-        self.session.send_to_client(util.get_config()['sign_in_welcome'])
         self.connect()
         self.finish_interaction()
         
