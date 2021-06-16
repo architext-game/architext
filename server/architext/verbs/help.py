@@ -1,9 +1,10 @@
-from .verb import Verb
+from . import verb
 from .. import util
 
-class Help(Verb):
+class Help(verb.Verb):
     """Shows a help message to the user"""
     regex_command = True
+    verbtype = verb.VERSATILE
 
     general_help = _('help')
     topic_help = _('help (?P<topic>.+)')
