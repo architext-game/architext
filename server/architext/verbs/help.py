@@ -145,7 +145,7 @@ class Help(verb.Verb):
                 '\n'
                 ' ⮕ Next topic: "help master".'
             )
-        elif topic == 'building':
+        elif topic == 'building' or topic == 'build':
             out = _(
                 '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
                 '┃       World building       ┃\n'
