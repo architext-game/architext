@@ -20,7 +20,7 @@ class Build(verb.Verb):
 
     def process(self, message):
         if message == '/':
-            self.session.send_to_client(strings.cancel_prompt)
+            self.session.send_to_client(strings.cancelled)
             self.finish_interaction()
         else:
             self.current_process_function(message)
