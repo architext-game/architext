@@ -61,11 +61,11 @@ class Session:
             self.send_to_client(_("I don't understand that."))
 
     def disconnect(self):
-        self.client_id = None
         if self.user is not None and self.user.client_id == self.client_id:
             if not self.user.master_mode:
                 self.send_to_others_in_room(_("Whoop! {player_name} has gone.").format(player_name=self.user.name))
             self.user.disconnect()
+        self.client_id = None
 
     def send_to_client(self, message):
         self.send(self.client_id, "\n\r"+message)
