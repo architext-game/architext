@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-06-10 17:37+0200\n"
+"POT-Creation-Date: 2021-06-22 16:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
 
-#: server/architext/session.py:61
+#: server/architext/session.py:54
+msgid "An unexpected error ocurred. It has been notified and it will be soon fixed. You probably can continue playing without further issues."
+msgstr ""
+
+#: server/architext/session.py:62
+msgid "I don't understand that. You can enter \"r\" to show the lobby menu again."
+msgstr ""
+
+#: server/architext/session.py:64
 msgid "I don't understand that."
 msgstr ""
 
-#: server/architext/session.py:67
+#: server/architext/session.py:69
 msgid "Whoop! {player_name} has gone."
 msgstr ""
 
@@ -583,7 +591,9 @@ msgid "deleteexit "
 msgstr ""
 
 #: server/architext/verbs/delete.py:56
-msgid " 🚧 Keep in mind that the exit \"{exit_name}\" in \"{destination_name}\" that leads here has not been deleted."
+msgid ""
+"\n"
+" 🚧 Keep in mind that the exit \"{exit_name}\" in \"{destination_name}\" that leads here has not been deleted."
 msgstr ""
 
 #: server/architext/verbs/delete.py:59
@@ -595,7 +605,7 @@ msgstr ""
 
 #: server/architext/verbs/delete.py:66
 msgid ""
-"There is no room called \"{exit_name}\".\n"
+"There is not any exit called \"{exit_name}\" here.\n"
 "To delete anything you have to enter its exact name."
 msgstr ""
 
@@ -826,15 +836,15 @@ msgstr ""
 msgid "{user_name} arrives from somewhere."
 msgstr ""
 
-#: server/architext/verbs/help.py:8
+#: server/architext/verbs/help.py:9
 msgid "help"
 msgstr ""
 
-#: server/architext/verbs/help.py:9
+#: server/architext/verbs/help.py:10
 msgid "help (?P<topic>.+)"
 msgstr ""
 
-#: server/architext/verbs/help.py:20
+#: server/architext/verbs/help.py:21
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Architext's help hub       ┃\n"
@@ -855,7 +865,7 @@ msgid ""
 "    interactive building ─ extra tools to make your creations alive.\n"
 msgstr ""
 
-#: server/architext/verbs/help.py:43
+#: server/architext/verbs/help.py:44
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Architext basics       ┃\n"
@@ -879,7 +889,7 @@ msgid ""
 " ⮕ Next topic: \"help interaction\"."
 msgstr ""
 
-#: server/architext/verbs/help.py:66
+#: server/architext/verbs/help.py:67
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Interacting with your surroundings       ┃\n"
@@ -905,7 +915,7 @@ msgid ""
 " ⮕ Next topic: \"help communication\"."
 msgstr ""
 
-#: server/architext/verbs/help.py:91
+#: server/architext/verbs/help.py:92
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Communication       ┃\n"
@@ -922,7 +932,7 @@ msgid ""
 " ⮕ Next topic: \"help building\"."
 msgstr ""
 
-#: server/architext/verbs/help.py:107
+#: server/architext/verbs/help.py:108
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Travelling the multiverse       ┃\n"
@@ -964,7 +974,7 @@ msgid ""
 " ⮕ Next topic: \"help master\"."
 msgstr ""
 
-#: server/architext/verbs/help.py:148
+#: server/architext/verbs/help.py:149
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       World building       ┃\n"
@@ -990,7 +1000,7 @@ msgid ""
 "  info <item or exit> ─ as avobe, but for a particular item or exit.\n"
 "\n"
 "  tp <room number> ─ to teleport to any room.\n"
-"  link ─ create exits between any two rooms.\n"
+"  link ─ create exits between any two existing rooms.\n"
 "\n"
 "  deleteroom ─ to delete your current room and all its contents.\n"
 "  deleteexit <exact exit name> ─ to delete an exit.\n"
@@ -1001,7 +1011,7 @@ msgid ""
 " ⮕ Next topic: \"help multiverse\"."
 msgstr ""
 
-#: server/architext/verbs/help.py:185
+#: server/architext/verbs/help.py:186
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Interactive Building       ┃\n"
@@ -1035,7 +1045,7 @@ msgid ""
 " ⮕ Next topic: \"help saving\"."
 msgstr ""
 
-#: server/architext/verbs/help.py:219
+#: server/architext/verbs/help.py:220
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Saving Items       ┃\n"
@@ -1055,7 +1065,7 @@ msgid ""
 " ⮕ Next topic: \"help snapshots\"."
 msgstr ""
 
-#: server/architext/verbs/help.py:238
+#: server/architext/verbs/help.py:239
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       World Snapshots       ┃\n"
@@ -1078,7 +1088,7 @@ msgid ""
 "  unpublish  ─ make private an existing snapshot.\n"
 msgstr ""
 
-#: server/architext/verbs/help.py:260
+#: server/architext/verbs/help.py:261
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Game master tools       ┃\n"
@@ -1118,7 +1128,7 @@ msgid ""
 " ⮕ Next topic: \"help interactive building\"."
 msgstr ""
 
-#: server/architext/verbs/help.py:299
+#: server/architext/verbs/help.py:300
 msgid ""
 "Topic \"{topic}\" not found in help.\n"
 "Write just \"help\" to see the general help page."
@@ -1495,10 +1505,10 @@ msgid ""
 "  ███████ ██████  ██      ███████ ██    ██    █████     ███      ██   \n"
 "  ██   ██ ██   ██ ██      ██   ██ ██    ██    ██       ██ ██     ██   \n"
 "  ██   ██ ██   ██  ██████ ██   ██ ██    ██    ███████ ██   ██    ██ \n"
-"  ────────────────────────────────────────────────────────────────────\n"
-"                 ╔╦╗╦ ╦╔═╗  ╔═╗╔═╗╔╗╔╔╦╗╔╗ ╔═╗═╗ ╦\n"
-"                  ║ ╠═╣║╣   ╚═╗╠═╣║║║ ║║╠╩╗║ ║╔╩╦╝\n"
-"                  ╩ ╩ ╩╚═╝  ╚═╝╩ ╩╝╚╝═╩╝╚═╝╚═╝╩ ╚═\n"
+"\n"
+"  ╔══╤═══╤═══╤══╤═══╦╗╦ ╦╔═╗  ╔═╗╔═╗╔╗╔╔╦╗╔╗ ╔═╗═╗ ╦══════╤═╤═══╤╤══╤╗\n"
+"  ╟──┴┬─┬┘ ┌─┴┬─┘   ║ ╠═╣║╣   ╚═╗╠═╣║║║ ║║╠╩╗║ ║╔╩╦╝   ┌──┴─┼──┬┴┴┬─┘║\n"
+"  ╚═══╧═╧══╧══╧═════╩ ╩ ╩╚═╝  ╚═╝╩ ╩╝╚╝═╩╝╚═╝╚═╝╩ ╚════╧════╧══╧══╧══╝\n"
 "\n"
 msgstr ""
 
@@ -1555,22 +1565,34 @@ msgid ""
 " ᐅ What is your nickname?"
 msgstr ""
 
-#: server/architext/verbs/login.py:148
+#: server/architext/verbs/login.py:119
+msgid "ᐅ What is your email? (Optional, used for password recovery and important communications)\n"
+msgstr ""
+
+#: server/architext/verbs/login.py:130
+msgid "Building your Museum of Architexture..."
+msgstr ""
+
+#: server/architext/verbs/login.py:133
+msgid "The Museum of Architexture"
+msgstr ""
+
+#: server/architext/verbs/login.py:154
 msgid ""
 "LOGGED IN AS:     {user_name}\n"
 "YOU ARE IN:       {location}\n"
 "ONLINE USERS:     {user_count}"
 msgstr ""
 
-#: server/architext/verbs/login.py:155 server/architext/verbs/who.py:25
+#: server/architext/verbs/login.py:161 server/architext/verbs/who.py:25
 msgid "the lobby"
 msgstr ""
 
-#: server/architext/verbs/login.py:157
+#: server/architext/verbs/login.py:163
 msgid "{room_name} ─ {world_name}"
 msgstr ""
 
-#: server/architext/verbs/login.py:162
+#: server/architext/verbs/login.py:168
 msgid "Poohf! {user_name} appears."
 msgstr ""
 
@@ -1709,7 +1731,7 @@ msgid "The item could not be spawned: it is a takable item, and there is already
 msgstr ""
 
 #: server/architext/verbs/saving.py:38
-msgid "You spawned \"{item_name}\" in this world."
+msgid "You spawned \"{item_name}\""
 msgstr ""
 
 #: server/architext/verbs/saving.py:45
