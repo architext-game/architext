@@ -51,7 +51,7 @@ class Session:
             try:
                 self.current_verb.execute(message)
             except Exception as e:
-                self.send_to_client("An unexpected error ocurred. It has been notified and it will be soon fixed. Sorry about that.")
+                self.send_to_client(_("An unexpected error ocurred. It has been notified and it will be soon fixed. You probably can continue playing without further issues."))
                 self.logger.exception('ERROR: ' + str(e))
                 raise e
             
