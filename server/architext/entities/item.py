@@ -61,7 +61,7 @@ class Item(mongoengine.Document):
             item_conditions = {
                 'unique_in_room': {
                     'condition': item_name not in [item.name for item in local_room.items+local_room.exits if item != ignore_item],
-                    'exception': RoomNameClash()
+                    'exception': RoomNameClash(f"Repeated name {item_name} in room {local_room.alias}")
                 },
                 'there_is_no_takable_with_same_name': {
                     'condition': item_name not in [takable_item.name for takable_item in Item.get_items_in_world_state(local_room.world_state) if takable_item != ignore_item and takable_item.visible=='takable'],
