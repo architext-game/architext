@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-06-23 12:42+0200\n"
+"POT-Creation-Date: 2021-06-23 16:27+0200\n"
 "PO-Revision-Date: 2021-05-27 13:48+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en_US\n"
@@ -816,6 +816,10 @@ msgid ""
 "To delete anything you have to enter its exact name."
 msgstr ""
 
+#: server/architext/verbs/delete.py:98
+msgid "Item \"{item_name}\" has been deleted."
+msgstr ""
+
 #: server/architext/verbs/direct_text.py:10
 msgid "textto '"
 msgstr ""
@@ -1033,15 +1037,15 @@ msgstr ""
 msgid "{user_name} arrives from somewhere."
 msgstr ""
 
-#: server/architext/verbs/help.py:9
+#: server/architext/verbs/help.py:10
 msgid "help"
 msgstr ""
 
-#: server/architext/verbs/help.py:10
+#: server/architext/verbs/help.py:11
 msgid "help (?P<topic>.+)"
 msgstr ""
 
-#: server/architext/verbs/help.py:21
+#: server/architext/verbs/help.py:22
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Architext's help hub       ┃\n"
@@ -1063,6 +1067,10 @@ msgid ""
 msgstr ""
 
 #: server/architext/verbs/help.py:44
+msgid "^basics$"
+msgstr ""
+
+#: server/architext/verbs/help.py:45
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Architext basics       ┃\n"
@@ -1087,6 +1095,10 @@ msgid ""
 msgstr ""
 
 #: server/architext/verbs/help.py:67
+msgid "^interaction$"
+msgstr ""
+
+#: server/architext/verbs/help.py:68
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Interacting with your surroundings       ┃\n"
@@ -1113,6 +1125,10 @@ msgid ""
 msgstr ""
 
 #: server/architext/verbs/help.py:92
+msgid "^communication$"
+msgstr ""
+
+#: server/architext/verbs/help.py:93
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Communication       ┃\n"
@@ -1130,6 +1146,10 @@ msgid ""
 msgstr ""
 
 #: server/architext/verbs/help.py:108
+msgid "^multiverse$"
+msgstr ""
+
+#: server/architext/verbs/help.py:109
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Travelling the multiverse       ┃\n"
@@ -1172,6 +1192,10 @@ msgid ""
 msgstr ""
 
 #: server/architext/verbs/help.py:149
+msgid "^building$|^build$"
+msgstr ""
+
+#: server/architext/verbs/help.py:150
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       World building       ┃\n"
@@ -1209,6 +1233,10 @@ msgid ""
 msgstr ""
 
 #: server/architext/verbs/help.py:186
+msgid "^interactive building$"
+msgstr ""
+
+#: server/architext/verbs/help.py:187
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Interactive Building       ┃\n"
@@ -1243,6 +1271,10 @@ msgid ""
 msgstr ""
 
 #: server/architext/verbs/help.py:220
+msgid "^saving$"
+msgstr ""
+
+#: server/architext/verbs/help.py:221
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Saving Items       ┃\n"
@@ -1263,6 +1295,10 @@ msgid ""
 msgstr ""
 
 #: server/architext/verbs/help.py:239
+msgid "^snapshots$"
+msgstr ""
+
+#: server/architext/verbs/help.py:240
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       World Snapshots       ┃\n"
@@ -1286,6 +1322,10 @@ msgid ""
 msgstr ""
 
 #: server/architext/verbs/help.py:261
+msgid "^master$"
+msgstr ""
+
+#: server/architext/verbs/help.py:262
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Game master tools       ┃\n"
@@ -1309,7 +1349,8 @@ msgid ""
 "\n"
 "Other verbs\n"
 "───────────\n"
-"  takefrom '<user>' <item> ─ move the item from the user's inventory to yours.\n"
+"  takefrom '<user>' <item> ─ moves the item from the user's inventory to the room.\n"
+"  give '<user' <item> ─ moves the item from the room to the user's inventory\n"
 "  tproom <room number>  ─ teleports all users in your room to the selected one.\n"
 "  tpall <room number>   ─ teleports all users in the world to the selected room.\n"
 "  tpuser '<user>' <room number>  ─ teleports the user to the selected room.\n"
@@ -1325,7 +1366,7 @@ msgid ""
 " ⮕ Next topic: \"help interactive building\"."
 msgstr ""
 
-#: server/architext/verbs/help.py:300
+#: server/architext/verbs/help.py:302
 msgid ""
 "Topic \"{topic}\" not found in help.\n"
 "Write just \"help\" to see the general help page."
@@ -1793,7 +1834,7 @@ msgid ""
 "ONLINE USERS:     {user_count}"
 msgstr ""
 
-#: server/architext/verbs/login.py:180 server/architext/verbs/who.py:25
+#: server/architext/verbs/login.py:180 server/architext/verbs/who.py:26
 msgid "the lobby"
 msgstr ""
 
@@ -2115,13 +2156,17 @@ msgstr ""
 msgid "who"
 msgstr ""
 
-#: server/architext/verbs/who.py:20
+#: server/architext/verbs/who.py:18
+msgid "at"
+msgstr ""
+
+#: server/architext/verbs/who.py:21
 msgid ""
 "Online players:\n"
 "{users_list}"
 msgstr ""
 
-#: server/architext/verbs/who.py:28
+#: server/architext/verbs/who.py:29
 msgid "a private world"
 msgstr ""
 
@@ -2424,5 +2469,44 @@ msgstr ""
 #~ "This means that the common worlds that are going to be created now will be yours.\n"
 #~ "\n"
 #~ "Creating initial worlds..."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
+#~ "┃       Game master tools       ┃\n"
+#~ "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n"
+#~ "It's a great idea to run role playing and scape room games in Architext worlds.\n"
+#~ "Here are some tools that will let you spice things up as a game master.\n"
+#~ "\n"
+#~ "Master mode\n"
+#~ "───────────\n"
+#~ "Master Mode is a state in which other players won't see you and you'll be able to cross closed exits.\n"
+#~ "\n"
+#~ "Use:\n"
+#~ "  mastermode  ─ enter or leave the master mode\n"
+#~ "\n"
+#~ "Direct text\n"
+#~ "───────────\n"
+#~ "You may want to send text to your players telling them what has just happened, what noise is heard, etc. To send any text, use:\n"
+#~ "  textroom <text>         ─ sends the text to all users in the room.\n"
+#~ "  textworld <text>        ─ sends the text to all users in the world.\n"
+#~ "  textto '<user>' <text>  ─ sends the text to the selected user.\n"
+#~ "\n"
+#~ "Other verbs\n"
+#~ "───────────\n"
+#~ "  takefrom '<user>' <item> ─ move the item from the user's inventory to yours.\n"
+#~ "  tproom <room number>  ─ teleports all users in your room to the selected one.\n"
+#~ "  tpall <room number>   ─ teleports all users in the world to the selected room.\n"
+#~ "  tpuser '<user>' <room number>  ─ teleports the user to the selected room.\n"
+#~ "\n"
+#~ "NPCs\n"
+#~ "────\n"
+#~ "If you want to play out multiple characters in you game, keep in mind that you can connect from multiple accounts at once.\n"
+#~ "\n"
+#~ "Automation\n"
+#~ "──────────\n"
+#~ "You can create custom verbs that automatically trigger any of the commands explained avobe. This way you can create interesting items like a teleporting scroll or a fart machine. Check out \"help interactive building\" to find out more.\n"
+#~ "\n"
+#~ " ⮕ Next topic: \"help interactive building\"."
 #~ msgstr ""
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-06-23 12:42+0200\n"
+"POT-Creation-Date: 2021-06-23 16:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -815,6 +815,10 @@ msgid ""
 "To delete anything you have to enter its exact name."
 msgstr ""
 
+#: server/architext/verbs/delete.py:98
+msgid "Item \"{item_name}\" has been deleted."
+msgstr ""
+
 #: server/architext/verbs/direct_text.py:10
 msgid "textto '"
 msgstr ""
@@ -1032,15 +1036,15 @@ msgstr ""
 msgid "{user_name} arrives from somewhere."
 msgstr ""
 
-#: server/architext/verbs/help.py:9
+#: server/architext/verbs/help.py:10
 msgid "help"
 msgstr ""
 
-#: server/architext/verbs/help.py:10
+#: server/architext/verbs/help.py:11
 msgid "help (?P<topic>.+)"
 msgstr ""
 
-#: server/architext/verbs/help.py:21
+#: server/architext/verbs/help.py:22
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Architext's help hub       ┃\n"
@@ -1062,6 +1066,10 @@ msgid ""
 msgstr ""
 
 #: server/architext/verbs/help.py:44
+msgid "^basics$"
+msgstr ""
+
+#: server/architext/verbs/help.py:45
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Architext basics       ┃\n"
@@ -1086,6 +1094,10 @@ msgid ""
 msgstr ""
 
 #: server/architext/verbs/help.py:67
+msgid "^interaction$"
+msgstr ""
+
+#: server/architext/verbs/help.py:68
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Interacting with your surroundings       ┃\n"
@@ -1112,6 +1124,10 @@ msgid ""
 msgstr ""
 
 #: server/architext/verbs/help.py:92
+msgid "^communication$"
+msgstr ""
+
+#: server/architext/verbs/help.py:93
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Communication       ┃\n"
@@ -1129,6 +1145,10 @@ msgid ""
 msgstr ""
 
 #: server/architext/verbs/help.py:108
+msgid "^multiverse$"
+msgstr ""
+
+#: server/architext/verbs/help.py:109
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Travelling the multiverse       ┃\n"
@@ -1171,6 +1191,10 @@ msgid ""
 msgstr ""
 
 #: server/architext/verbs/help.py:149
+msgid "^building$|^build$"
+msgstr ""
+
+#: server/architext/verbs/help.py:150
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       World building       ┃\n"
@@ -1208,6 +1232,10 @@ msgid ""
 msgstr ""
 
 #: server/architext/verbs/help.py:186
+msgid "^interactive building$"
+msgstr ""
+
+#: server/architext/verbs/help.py:187
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Interactive Building       ┃\n"
@@ -1242,6 +1270,10 @@ msgid ""
 msgstr ""
 
 #: server/architext/verbs/help.py:220
+msgid "^saving$"
+msgstr ""
+
+#: server/architext/verbs/help.py:221
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Saving Items       ┃\n"
@@ -1262,6 +1294,10 @@ msgid ""
 msgstr ""
 
 #: server/architext/verbs/help.py:239
+msgid "^snapshots$"
+msgstr ""
+
+#: server/architext/verbs/help.py:240
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       World Snapshots       ┃\n"
@@ -1285,6 +1321,10 @@ msgid ""
 msgstr ""
 
 #: server/architext/verbs/help.py:261
+msgid "^master$"
+msgstr ""
+
+#: server/architext/verbs/help.py:262
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Game master tools       ┃\n"
@@ -1308,7 +1348,8 @@ msgid ""
 "\n"
 "Other verbs\n"
 "───────────\n"
-"  takefrom '<user>' <item> ─ move the item from the user's inventory to yours.\n"
+"  takefrom '<user>' <item> ─ moves the item from the user's inventory to the room.\n"
+"  give '<user' <item> ─ moves the item from the room to the user's inventory\n"
 "  tproom <room number>  ─ teleports all users in your room to the selected one.\n"
 "  tpall <room number>   ─ teleports all users in the world to the selected room.\n"
 "  tpuser '<user>' <room number>  ─ teleports the user to the selected room.\n"
@@ -1324,7 +1365,7 @@ msgid ""
 " ⮕ Next topic: \"help interactive building\"."
 msgstr ""
 
-#: server/architext/verbs/help.py:300
+#: server/architext/verbs/help.py:302
 msgid ""
 "Topic \"{topic}\" not found in help.\n"
 "Write just \"help\" to see the general help page."
@@ -1792,7 +1833,7 @@ msgid ""
 "ONLINE USERS:     {user_count}"
 msgstr ""
 
-#: server/architext/verbs/login.py:180 server/architext/verbs/who.py:25
+#: server/architext/verbs/login.py:180 server/architext/verbs/who.py:26
 msgid "the lobby"
 msgstr ""
 
@@ -2114,13 +2155,17 @@ msgstr ""
 msgid "who"
 msgstr ""
 
-#: server/architext/verbs/who.py:20
+#: server/architext/verbs/who.py:18
+msgid "at"
+msgstr ""
+
+#: server/architext/verbs/who.py:21
 msgid ""
 "Online players:\n"
 "{users_list}"
 msgstr ""
 
-#: server/architext/verbs/who.py:28
+#: server/architext/verbs/who.py:29
 msgid "a private world"
 msgstr ""
 

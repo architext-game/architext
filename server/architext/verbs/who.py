@@ -15,7 +15,8 @@ class Who(verb.Verb):
 
     def get_player_list(self):
         connected_users = entities.User.objects(client_id__ne=None)
-        list_rows = [f'  {user.name: <26}  - {_("at")} {self.get_location(user)}\n' for user in connected_users]
+        at = _("at")
+        list_rows = [f'  {user.name: <26}  - {at} {self.get_location(user)}\n' for user in connected_users]
         users_list = ''.join(list_rows)
         out = _("Online players:\n{users_list}").format(users_list=users_list)
         return out

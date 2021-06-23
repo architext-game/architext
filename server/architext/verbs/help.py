@@ -1,5 +1,6 @@
 from . import verb
 from .. import util
+import re
 
 class Help(verb.Verb):
     """Shows a help message to the user"""
@@ -40,7 +41,7 @@ class Help(verb.Verb):
                 # '\n'
                 # 'You can also write "help <command>" to see all the details of any command\n'
             )
-        elif topic == 'basics':
+        elif re.search(_(r"^basics$"), topic):
             out = _(
                 '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
                 '┃       Architext basics       ┃\n'
@@ -63,7 +64,7 @@ class Help(verb.Verb):
                 '\n'
                 ' ⮕ Next topic: "help interaction".'
             )
-        elif topic == 'interaction':
+        elif re.search(_(r"^interaction$"), topic):
             out = _(
                 '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
                 '┃       Interacting with your surroundings       ┃\n'
@@ -88,7 +89,7 @@ class Help(verb.Verb):
                 '\n'
                 ' ⮕ Next topic: "help communication".'
             )
-        elif topic == 'communication':
+        elif re.search(_(r"^communication$"), topic):
             out = _(
                 '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
                 '┃       Communication       ┃\n'
@@ -104,7 +105,7 @@ class Help(verb.Verb):
                 '\n'
                 ' ⮕ Next topic: "help building".'
             )
-        elif topic == 'multiverse':
+        elif re.search(_(r"^multiverse$"), topic):
             out = _(
                 '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
                 '┃       Travelling the multiverse       ┃\n'
@@ -145,7 +146,7 @@ class Help(verb.Verb):
                 '\n'
                 ' ⮕ Next topic: "help master".'
             )
-        elif topic == 'building' or topic == 'build':
+        elif re.search(_(r"^building$|^build$"), topic):
             out = _(
                 '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
                 '┃       World building       ┃\n'
@@ -182,7 +183,7 @@ class Help(verb.Verb):
                 ' ⮕ Next topic: "help multiverse".'
 
             )
-        elif topic == 'interactive building':
+        elif re.search(_(r"^interactive building$"), topic):
             out = _(
                 '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
                 '┃       Interactive Building       ┃\n'
@@ -216,7 +217,7 @@ class Help(verb.Verb):
                 ' ⮕ Next topic: "help saving".'
                 
             )
-        elif topic == 'saving':
+        elif re.search(_(r"^saving$"), topic):
             out = _(
                 '┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
                 '┃       Saving Items       ┃\n'
@@ -235,7 +236,7 @@ class Help(verb.Verb):
                 '\n'
                 ' ⮕ Next topic: "help snapshots".'
             )
-        elif topic == 'snapshots':
+        elif re.search(_(r"^snapshots$"), topic):
             out = _(
                 '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
                 '┃       World Snapshots       ┃\n'
@@ -257,7 +258,7 @@ class Help(verb.Verb):
                 '  publish    ─ make public an existing snapshot.\n'
                 '  unpublish  ─ make private an existing snapshot.\n'
             )
-        elif topic == 'master':
+        elif re.search(_(r"^master$"), topic):
             out = _(
                 '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
                 '┃       Game master tools       ┃\n'
@@ -281,7 +282,8 @@ class Help(verb.Verb):
                 '\n'
                 'Other verbs\n'
                 '───────────\n'
-                '  takefrom \'<user>\' <item> ─ move the item from the user\'s inventory to yours.\n'
+                '  takefrom \'<user>\' <item> ─ moves the item from the user\'s inventory to the room.\n'
+                '  give \'<user\' <item> ─ moves the item from the room to the user\'s inventory\n'
                 '  tproom <room number>  ─ teleports all users in your room to the selected one.\n'
                 '  tpall <room number>   ─ teleports all users in the world to the selected room.\n'
                 '  tpuser \'<user>\' <room number>  ─ teleports the user to the selected room.\n'

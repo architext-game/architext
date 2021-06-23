@@ -95,6 +95,6 @@ class DeleteItem(verb.Verb):
             ).format(item_name=item_name))
         else:
             selected_item.delete()
-            self.session.send_to_client(f'Item "{item_name}" has been deleted.')
+            self.session.send_to_client(_('Item "{item_name}" has been deleted.').format(item_name=item_name))
         self.finish_interaction()
 
