@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-06-23 12:42+0200\n"
+"POT-Creation-Date: 2021-06-23 16:07+0200\n"
 "PO-Revision-Date: 2021-05-27 13:48+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es_ES\n"
@@ -93,7 +93,7 @@ msgid ""
 "  (h) \"hidden\"  ─ it won't even be listed by the \"items\" verb.\n"
 "  (t) \"takable\" ─ players will be able to take the item into their inventory. It will be a listed item. Its name will need to be unique in the world."
 msgstr ""
-"  (l) \"listado\"  ─ el objeto será listado automáticamente en la descripción de la sala.\n"
+"  (l) \"listado\"  ─ el objeto será listado en la descripción de la sala.\n"
 "  (v) \"visible\"  ─ el objeto no será listado en la descripción de la sala.\n"
 "  (o) \"oculto\"   ─ el objeto tampoco aparecerá en el verbo \"objetos\".\n"
 "  (c) \"cogible\"  ─ los jugadores podrán cogerlo. Será un objeto listado. El nombre tiene que ser único en todo el mundo."
@@ -550,7 +550,7 @@ msgstr ""
 
 #: server/architext/verbs/add_verb.py:13
 msgid "verb "
-msgstr "verbo"
+msgstr "verbo "
 
 #: server/architext/verbs/add_verb.py:14 server/architext/verbs/add_verb.py:172
 #: server/architext/verbs/add_verb.py:252
@@ -702,7 +702,7 @@ msgstr "Verbo de mundo creado. ¡Escribe \"{verb_name}\" para desatar su poder!"
 
 #: server/architext/verbs/add_verb.py:171
 msgid "seeverbs "
-msgstr "ververbos "
+msgstr "ververbo "
 
 #: server/architext/verbs/add_verb.py:186
 msgid ""
@@ -1039,7 +1039,7 @@ msgstr "La sala y las salidas que llevan a ella se han eliminado."
 
 #: server/architext/verbs/delete.py:43
 msgid "deleteexit "
-msgstr "eliminarsalida"
+msgstr "eliminarsalida "
 
 #: server/architext/verbs/delete.py:56
 #, fuzzy
@@ -1080,6 +1080,11 @@ msgid ""
 msgstr ""
 "No hay ningún objeto llamado {item_name}.\n"
 "Para eliminar algo tienes que introducir su nombre exacto."
+
+#: server/architext/verbs/delete.py:98
+#, fuzzy
+msgid "Item \"{item_name}\" has been deleted."
+msgstr "El objeto \"{item_name}\" ha sido eliminado."
 
 #: server/architext/verbs/direct_text.py:10
 msgid "textto '"
@@ -1325,15 +1330,15 @@ msgstr "{user_name} ha llegado desde {exit_name}."
 msgid "{user_name} arrives from somewhere."
 msgstr "{user_name} ha llegado de algún sitio."
 
-#: server/architext/verbs/help.py:9
+#: server/architext/verbs/help.py:10
 msgid "help"
 msgstr "ayuda"
 
-#: server/architext/verbs/help.py:10
+#: server/architext/verbs/help.py:11
 msgid "help (?P<topic>.+)"
 msgstr "ayuda (?P<topic>.+)"
 
-#: server/architext/verbs/help.py:21
+#: server/architext/verbs/help.py:22
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Architext's help hub       ┃\n"
@@ -1362,16 +1367,20 @@ msgstr ""
 "\n"
 "¡Diviértete! Vuelve cuando quieras saber más.\n"
 "\n"
-"Escribe \"ayuda <topic>\" para ver información sobre estos temas:\n"
-"    lo básico      ─ moverte y examinar lo que te rodea.\n"
-"    interacción    ─ coger y usar objetos.\n"
-"    comunicación   ─ hablar con otros Arquitextos\n"
-"    construcción   ─ todo lo que necesitas para crear mundos increíbles\n"
-"    multiverso     ─ aprende como se gestionan los mundos.\n"
-"    director       ─ efectos especiales para rolear.\n"
-"    construcción interactiva ─ herramientas extra para dar vida a tus creaciones.\n"
+"Escribe \"ayuda <tema>\" para ver información sobre estos temas:\n"
+"    ayuda básica       ─ moverte y examinar lo que te rodea.\n"
+"    ayuda interacción  ─ coger y usar objetos.\n"
+"    ayuda comunicación ─ hablar con otros Arquitextos\n"
+"    ayuda construcción ─ todo lo que necesitas para crear mundos increíbles\n"
+"    ayuda multiverso   ─ aprende como se gestionan los mundos.\n"
+"    ayuda director     ─ efectos especiales para rolear.\n"
+"    ayuda mecanismos   ─ herramientas extra para dar vida a tus creaciones.\n"
 
 #: server/architext/verbs/help.py:44
+msgid "^basics$"
+msgstr "^basica$|^básica$|^basico$|^básico$"
+
+#: server/architext/verbs/help.py:45
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Architext basics       ┃\n"
@@ -1416,6 +1425,10 @@ msgstr ""
 " ⮕ Siguiente tema: \"ayuda interacción\"."
 
 #: server/architext/verbs/help.py:67
+msgid "^interaction$"
+msgstr "^interacción$|^interaccion$"
+
+#: server/architext/verbs/help.py:68
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Interacting with your surroundings       ┃\n"
@@ -1464,6 +1477,10 @@ msgstr ""
 " ⮕ Siguiente tema: \"ayuda comunicación\"."
 
 #: server/architext/verbs/help.py:92
+msgid "^communication$"
+msgstr "^comunicación$|^comunicacion$"
+
+#: server/architext/verbs/help.py:93
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Communication       ┃\n"
@@ -1494,6 +1511,10 @@ msgstr ""
 " ⮕ Siguiente tema: \"ayuda construcción\"."
 
 #: server/architext/verbs/help.py:108
+msgid "^multiverse$"
+msgstr "^multiverso$"
+
+#: server/architext/verbs/help.py:109
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Travelling the multiverse       ┃\n"
@@ -1557,13 +1578,13 @@ msgstr ""
 "  PRIVADO: Sólo tú puedes verlo en el lobby. Puedes compartir su código de invitación o hacerlo público usando el verbo editarmundo.\n"
 "  PRIVILEGIADO: Sólo tú puedes editarlo. Puedes usar el verbo editarmundo para permitir que todos puedan editarlo, o usa:\n"
 "    hacereditor <jugador>    ─ para permitir a ese jugador editar el mundo.\n"
-"    eliminareditor <jugador> ─ para quitar los permisos de edición al jugador.\n"
+"    quitareditor <jugador> ─ para quitar los permisos de edición al jugador.\n"
 "\n"
 "Ten en cuenta que hay un límite de mundos públicos que puedes tener.\n"
 "Para que otros puedan hacer su propia copia de tu mundo puedes usar snapshots (mira \"ayuda snapshots\").\n"
 "\n"
 "Exportar mundos\n"
-"─────────────\n"
+"───────────────\n"
 "Puedes exportar tus mundos usando:\n"
 "  exportar         ─ exportar el mundo actual como un texto \"corto\" codificado.\n"
 "  exportar bonito  ─ como el anterior pero con un texto mucho más largo pero legible para el ser humano.\n"
@@ -1574,6 +1595,10 @@ msgstr ""
 " ⮕ Siguiente tema: \"ayuda director\"."
 
 #: server/architext/verbs/help.py:149
+msgid "^building$|^build$"
+msgstr "^construcción$|^construir$|^construccion$"
+
+#: server/architext/verbs/help.py:150
 #, fuzzy
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
@@ -1645,6 +1670,10 @@ msgstr ""
 " ⮕ Siguiente tema: \"ayuda multiverso\"."
 
 #: server/architext/verbs/help.py:186
+msgid "^interactive building$"
+msgstr "^mecanismos$|^mecanismo$"
+
+#: server/architext/verbs/help.py:187
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Interactive Building       ┃\n"
@@ -1709,6 +1738,10 @@ msgstr ""
 " ⮕ Siguiente tema: \"ayuda guardar\"."
 
 #: server/architext/verbs/help.py:220
+msgid "^saving$"
+msgstr "^guardar$|^guardado$"
+
+#: server/architext/verbs/help.py:221
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Saving Items       ┃\n"
@@ -1745,6 +1778,11 @@ msgstr ""
 " ⮕ Siguiente tema: \"ayuda snapshots\"."
 
 #: server/architext/verbs/help.py:239
+#, fuzzy
+msgid "^snapshots$"
+msgstr "^snapshots$|^snapshot$"
+
+#: server/architext/verbs/help.py:240
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       World Snapshots       ┃\n"
@@ -1787,6 +1825,12 @@ msgstr ""
 "  despublicar  ─ hacer privado un snapshot público.\n"
 
 #: server/architext/verbs/help.py:261
+#, fuzzy
+msgid "^master$"
+msgstr "^director$"
+
+#: server/architext/verbs/help.py:262
+#, fuzzy
 msgid ""
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
 "┃       Game master tools       ┃\n"
@@ -1832,7 +1876,7 @@ msgstr ""
 "Aquí tienes algunas herramientas que te permitirán dar vida a tus creaciones como director del juego.\n"
 "\n"
 "Modo Director\n"
-"───────────\n"
+"─────────────\n"
 "El modo director es un estado en el que serás invisible para los demás jugadores y podrás cruzar salidas cerradas.\n"
 "\n"
 "Usa:\n"
@@ -1847,10 +1891,11 @@ msgstr ""
 "\n"
 "Otros verbos\n"
 "───────────\n"
-"  cogerde '<jugador>' <item>  ─ mueve el objeto del inventario del jugador al tuyo.\n"
+"  cogerde '<jugador>' <item>  ─ mueve el objeto del inventario del jugador a la sala.\n"
+"  dar '<jugador>' <item>     ─ mueve un objeto de la sala al inventario del jugador. "
 "  tpsala <numero de sala>     ─ teletransporta a todos los jugadors en tu sala a la sala seleccionada.\n"
 "  tptodos <numero de sala>    ─ teletransporta a todos jugadors del mundo a la sala seleccionada.\n"
-"  tpuser '<jugador>' <numero de sala>  ─ teletransporta al jugador a la sala seleccionada.\n"
+"  tpotro '<jugador>' <numero de sala>  ─ teletransporta al jugador a la sala seleccionada.\n"
 "\n"
 "NPCs\n"
 "────\n"
@@ -1860,9 +1905,9 @@ msgstr ""
 "──────────────\n"
 "Puedes crear verbos personalizados que activen automáticamente cualquiera de los comandos que puedes usar como jugador, incluídos los de esta sección. De esta forma puedes crear objetos interesantes como un pergamino de teletransporte o una máquina de pedos. Echa un vistazo a \"ayuda construcciones interactivas\" para saber más.\n"
 "\n"
-" ⮕ Siguiente tema: \"ayuda construcciones interactivas\"."
+" ⮕ Siguiente tema: \"ayuda mecanismos\"."
 
-#: server/architext/verbs/help.py:300
+#: server/architext/verbs/help.py:301
 msgid ""
 "Topic \"{topic}\" not found in help.\n"
 "Write just \"help\" to see the general help page."
@@ -2008,7 +2053,7 @@ msgstr "El objeto/usuario no está en esta sala."
 
 #: server/architext/verbs/inventory.py:95
 msgid "takefrom '"
-msgstr "quitar '"
+msgstr "cogerde '"
 
 #: server/architext/verbs/inventory.py:110
 msgid "The item is not in that user's inventory."
@@ -2415,7 +2460,7 @@ msgstr ""
 "ESTÁS EN:       {location}\n"
 "EN LÍNEA:       {user_count}"
 
-#: server/architext/verbs/login.py:180 server/architext/verbs/who.py:25
+#: server/architext/verbs/login.py:180 server/architext/verbs/who.py:26
 msgid "the lobby"
 msgstr "el lobby"
 
@@ -2541,7 +2586,7 @@ msgstr "Reforma completada."
 
 #: server/architext/verbs/roll.py:7
 msgid "roll "
-msgstr "dados "
+msgstr "lanzar "
 
 #: server/architext/verbs/roll.py:15
 msgid "That is not a valid dice expression. You can see valid expresions here: https://github.com/Fiona1729/py-rolldice#dice-syntax"
@@ -2726,7 +2771,7 @@ msgstr ""
 
 #: server/architext/verbs/teleport.py:49
 msgid "tpuser '"
-msgstr ""
+msgstr "tpotro '"
 
 #: server/architext/verbs/teleport.py:59
 msgid "Done. Note that this verb moves players but doesn't tell them that they have been moved. You can tell them using text verbs if you want to."
@@ -2760,7 +2805,12 @@ msgstr "No tienes suficientes privilegios para hacer eso."
 msgid "who"
 msgstr "quien"
 
-#: server/architext/verbs/who.py:20
+#: server/architext/verbs/who.py:18
+#, fuzzy
+msgid "at"
+msgstr "en"
+
+#: server/architext/verbs/who.py:21
 msgid ""
 "Online players:\n"
 "{users_list}"
@@ -2768,7 +2818,7 @@ msgstr ""
 "Jugadores conectados:\n"
 "{users_list}"
 
-#: server/architext/verbs/who.py:28
+#: server/architext/verbs/who.py:29
 msgid "a private world"
 msgstr "un mundo privado"
 

@@ -1,4 +1,8 @@
 public_worlds_limit: 5
+
+# Locale: en_US and es_ES are available.
+# Set the correct locale before the first log in or initial worlds will
+# be created in the wrong language.
 locale: en_US
 
 cover: |-
