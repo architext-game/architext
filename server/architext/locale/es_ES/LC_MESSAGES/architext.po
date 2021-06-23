@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-06-22 16:23+0200\n"
+"POT-Creation-Date: 2021-06-23 11:13+0200\n"
 "PO-Revision-Date: 2021-05-27 13:48+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es_ES\n"
@@ -173,6 +173,42 @@ msgstr "privado"
 #: server/architext/strings.py:34
 msgid ".user"
 msgstr ".usuario"
+
+#: server/architext/strings.py:51
+msgid ""
+"This is a text game where you can create and share any world you can imagine.\n"
+"If you are new, bear with me and discover the game in just 5 minutes :-)\n"
+"\n"
+"Don't forget to join our discord server! https://discord.gg/CnQD9g3U5g"
+msgstr ""
+"Este es un juego de texto donde puedes crear y compartir cualquier mundo que puedas imaginar.\n"
+" Si eres nuevo, quédate y descubre el juego en solo 5 minutos :-)\n"
+"\n"
+"No olvides unirte a nuestro servidor de discord! https://discord.gg/CnQD9g3U5g\n"
+
+#: server/architext/strings.py:58
+msgid ""
+"Welcome to Architext!\n"
+"\n"
+"NEWS:\n"
+"    We are still in development, you can check the source code at\n"
+"    https://github.com/OliverLSanz/architext"
+msgstr ""
+"Bienvenido a Architext!\n"
+"\n"
+"NOTICIAS:\n"
+"    Aún estamos en desarrollo, puedes ver el código fuente en\n"
+"    https://github.com/OliverLSanz/architext\n"
+
+#: server/architext/strings.py:66
+msgid ""
+"NEWS:\n"
+"    We are still in development, you can check the source code at\n"
+"    https://github.com/OliverLSanz/architext"
+msgstr ""
+"NOTICIAS:\n"
+"    Aún estamos en desarrollo, puedes ver el código fuente en\n"
+"    https://github.com/OliverLSanz/architext\n"
 
 #: server/architext/verbs/add_verb.py:13
 msgid "verb "
@@ -1935,7 +1971,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: server/architext/verbs/login.py:36
+#: server/architext/verbs/login.py:37
 msgid ""
 "\n"
 "\n"
@@ -1947,15 +1983,15 @@ msgstr ""
 "\n"
 " ᐅ ¿Cuál es tu apodo?"
 
-#: server/architext/verbs/login.py:48
+#: server/architext/verbs/login.py:49
 msgid "That name is reserved. Try with another one."
 msgstr "Ese apodo está reservado. Prueba con otro."
 
-#: server/architext/verbs/login.py:52
+#: server/architext/verbs/login.py:53
 msgid "The name can't exceed {character_limit} characters."
 msgstr "El apodo no puede tener más de {character_limit} caracteres."
 
-#: server/architext/verbs/login.py:58
+#: server/architext/verbs/login.py:59
 msgid ""
 "An avatar with that name already exists.\n"
 " ᐅ Enter {user_name}'s password or \"/\" to go back."
@@ -1963,7 +1999,7 @@ msgstr ""
 "Ya existe un avatar con ese apodo.\n"
 " ᐅ Introduce la contraseña de {user_name} o \"/\" para volver atrás."
 
-#: server/architext/verbs/login.py:67
+#: server/architext/verbs/login.py:68
 msgid ""
 "That name is not in use.\n"
 " ᐅ To create a new account with this name, enter a password.\n"
@@ -1973,11 +2009,11 @@ msgstr ""
 " ᐅ Para crear una nueva cuenta con ese nombre, introduce una contraseña.\n"
 " ᐅ Para volver atrás, introduce \"/\""
 
-#: server/architext/verbs/login.py:76 server/architext/verbs/login.py:96
+#: server/architext/verbs/login.py:77 server/architext/verbs/login.py:99
 msgid " ᐅ What is your nickname?"
 msgstr "ᐅ ¿Cuál es tu apodo?"
 
-#: server/architext/verbs/login.py:88
+#: server/architext/verbs/login.py:91
 msgid ""
 "That password is not correct.\n"
 " ᐅ What is your nickname?"
@@ -1985,15 +2021,15 @@ msgstr ""
 "La contraseña no es correcta.\n"
 " ᐅ ¿Cuál es tu apodo?"
 
-#: server/architext/verbs/login.py:102
+#: server/architext/verbs/login.py:105
 msgid "The password needs to have six or more characters. Try with another one."
 msgstr "La contraseña tiene que tener seis o más caracteres. Prueba con otra."
 
-#: server/architext/verbs/login.py:107
+#: server/architext/verbs/login.py:110
 msgid "Enter your password again to confirm."
 msgstr "Introduce tu contraseña de nuevo para confirmarla."
 
-#: server/architext/verbs/login.py:112
+#: server/architext/verbs/login.py:115
 msgid ""
 "The two passwords don't match.\n"
 " ᐅ What is your nickname?"
@@ -2001,19 +2037,19 @@ msgstr ""
 "Las dos contraseñas no coinciden.\n"
 " ᐅ ¿Cuál es tu apodo?"
 
-#: server/architext/verbs/login.py:119
+#: server/architext/verbs/login.py:122
 msgid "ᐅ What is your email? (Optional, used for password recovery and important communications)\n"
 msgstr "ᐅ Cuál es tu email? (Opcional, para recuperar tu contraseña y comunicaciones importantes)\n"
 
-#: server/architext/verbs/login.py:130
+#: server/architext/verbs/login.py:135
 msgid "Building your Museum of Architexture..."
 msgstr "Construyendo tu Museo de Arquitextura..."
 
-#: server/architext/verbs/login.py:133
+#: server/architext/verbs/login.py:138
 msgid "The Museum of Architexture"
 msgstr "El Museo de Arquitextura"
 
-#: server/architext/verbs/login.py:154
+#: server/architext/verbs/login.py:159
 msgid ""
 "LOGGED IN AS:     {user_name}\n"
 "YOU ARE IN:       {location}\n"
@@ -2023,15 +2059,15 @@ msgstr ""
 "ESTÁS EN:       {location}\n"
 "EN LÍNEA:       {user_count}"
 
-#: server/architext/verbs/login.py:161 server/architext/verbs/who.py:25
+#: server/architext/verbs/login.py:166 server/architext/verbs/who.py:25
 msgid "the lobby"
 msgstr "el lobby"
 
-#: server/architext/verbs/login.py:163
+#: server/architext/verbs/login.py:168
 msgid "{room_name} ─ {world_name}"
 msgstr ""
 
-#: server/architext/verbs/login.py:168
+#: server/architext/verbs/login.py:173
 msgid "Poohf! {user_name} appears."
 msgstr "¡Puf! {user_name} apareció."
 
@@ -2181,7 +2217,7 @@ msgstr "Este objeto no se puede colocar: es cogible y ya hay un objeto con ese n
 
 #: server/architext/verbs/saving.py:38
 #, fuzzy
-msgid "You spawned \"{item_name}\"."
+msgid "You spawned \"{item_name}\""
 msgstr "Has colocado \"{item_name}\"."
 
 #: server/architext/verbs/saving.py:45
@@ -2379,3 +2415,4 @@ msgstr ""
 #: server/architext/verbs/who.py:28
 msgid "a private world"
 msgstr "un mundo privado"
+

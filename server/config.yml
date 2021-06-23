@@ -2,19 +2,18 @@ public_worlds_limit: 5
 locale: en_US
 
 cover: |-
-  This is a text game where you can create and share any world you can imagine.
-  If you are new, bear with me and discover the game in just 5 minutes :-)
-
-  Don't forget to join our discord server! https://discord.gg/CnQD9g3U5g
+#  Remove the # symbols and write here a custom welcome text for new
+#  connections. Default is something like:
+#  
+#  This is a text game where you can create and share any world you can imagine.
+#  If you are new, bear with me and discover the game in just 5 minutes :-)
+#  
+#  Don't forget to join our discord server! https://discord.gg/CnQD9g3U5g
 
 sign_in_welcome: |-
-  Welcome to Architext!
+#  Remove the # symbols and write here a custom sign in
+#  welcome text for your users.
 
-  NEWS:
-    We are still in development, you can check the source code at
-    https://github.com/OliverLSanz/architext
-
-log_in_welcome: |-
-  NEWS:
-    We are still in development, you can check the source code at
-    https://github.com/OliverLSanz/architext
+log_in_welcome: |- 
+#  Remove the # symbols and write here a custom log in
+#  welcome text for your users.

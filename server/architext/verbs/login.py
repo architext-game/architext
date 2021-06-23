@@ -32,7 +32,8 @@ class Login(Verb):
   ╚═══╧═╧══╧══╧═════╩ ╩ ╩╚═╝  ╚═╝╩ ╩╝╚╝═╩╝╚═╝╚═╝╩ ╚════╧════╧══╧══╧══╝
 
 """)
-        out_message += util.get_config()['cover']
+        cover = util.get_config()['cover']
+        out_message += cover if cover else strings.default_cover
         out_message += _("\n\n\n ᐅ What is your nickname?")
         self.session.send_to_client(out_message)
 
@@ -81,7 +82,9 @@ class Login(Verb):
 
         if self.selected_user.match_password(message):
             self.session.user = self.selected_user
-            self.session.send_to_client(util.get_config()['log_in_welcome'])
+            log_in_welcome = util.get_config()['log_in_welcome']
+            log_in_welcome = log_in_welcome if log_in_welcome else strings.default_log_in_welcome
+            self.session.send_to_client(log_in_welcome)
             self.connect()
             self.finish_interaction()
         else:
@@ -126,7 +129,9 @@ class Login(Verb):
         self.session.user = entities.User(name=self.new_name, room=None, password=self.password, email=message)
         
         # create tutorial world and move the user there
-        self.session.send_to_client(util.get_config()['sign_in_welcome'])
+        sign_in_welcome = util.get_config()['sign_in_welcome']
+        sign_in_welcome = sign_in_welcome if sign_in_welcome else strings.default_sign_in_welcome
+        self.session.send_to_client(sign_in_welcome)
         self.session.send_to_client(_("Building your Museum of Architexture..."))
         
         world_dict = util.text_to_world_dict(tutorial_world.json)

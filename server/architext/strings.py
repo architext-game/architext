@@ -47,3 +47,24 @@ def box(string):
         string=string,
         fillin='━'*len(string),
     )
+
+default_cover = _(
+    "This is a text game where you can create and share any world you can imagine.\n"
+    "If you are new, bear with me and discover the game in just 5 minutes :-)\n"
+    "\n"
+    "Don't forget to join our discord server! https://discord.gg/CnQD9g3U5g"
+)
+
+default_sign_in_welcome = _(
+    "Welcome to Architext!\n"
+    "\n"
+    "NEWS:\n"
+    "    We are still in development, you can check the source code at\n"
+    "    https://github.com/OliverLSanz/architext"
+)
+
+default_log_in_welcome = _(
+    "NEWS:\n"
+    "    We are still in development, you can check the source code at\n"
+    "    https://github.com/OliverLSanz/architext"
+)
