@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-06-23 16:27+0200\n"
+"POT-Creation-Date: 2021-06-23 16:58+0200\n"
 "PO-Revision-Date: 2021-05-27 13:48+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en_US\n"
@@ -2124,27 +2124,27 @@ msgstr ""
 msgid "tpuser '"
 msgstr ""
 
-#: server/architext/verbs/teleport.py:59
+#: server/architext/verbs/teleport.py:61
 msgid "Done. Note that this verb moves players but doesn't tell them that they have been moved. You can tell them using text verbs if you want to."
 msgstr ""
 
-#: server/architext/verbs/teleport.py:61
-msgid "The user does not exist, it is not connected, or there is not a room with that room number."
+#: server/architext/verbs/teleport.py:63
+msgid "The user isn't on this world or there is not a room with that room number."
 msgstr ""
 
-#: server/architext/verbs/teleport.py:70
+#: server/architext/verbs/teleport.py:72
 msgid "tproom "
 msgstr ""
 
-#: server/architext/verbs/teleport.py:81
+#: server/architext/verbs/teleport.py:83
 msgid "Done. Note that this verb  moves players but doesn't tell them that they have been moved. You can tell them using text verbs if you want to."
 msgstr ""
 
-#: server/architext/verbs/teleport.py:93
+#: server/architext/verbs/teleport.py:95
 msgid "tpall "
 msgstr ""
 
-#: server/architext/verbs/teleport.py:104
+#: server/architext/verbs/teleport.py:106
 msgid "Done. Note that this verb only  players but doesn't tell them that they have been moved. You can tell them using text verbs if you want to."
 msgstr ""
 
@@ -2508,5 +2508,8 @@ msgstr ""
 #~ "You can create custom verbs that automatically trigger any of the commands explained avobe. This way you can create interesting items like a teleporting scroll or a fart machine. Check out \"help interactive building\" to find out more.\n"
 #~ "\n"
 #~ " ⮕ Next topic: \"help interactive building\"."
+#~ msgstr ""
+
+#~ msgid "The user does not exist, it is not connected, or there is not a room with that room number."
 #~ msgstr ""
 

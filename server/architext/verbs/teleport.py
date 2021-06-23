@@ -52,13 +52,15 @@ class TeleportUser(verb.Verb):
     def process (self, message):
         message = message[len(self.command):]
         target_user_name, room_alias = message.split("' ", 1)
-        target_user = next(entities.User.objects(name=target_user_name, client_id__ne=None), None)
+        target_user = next(entities.User.objects(name=target_user_name, room__ne=None, client_id__ne=None), None)
+        if target_user:
+            target_user = target_user if target_user.room.world_state == self.session.user.room.world_state else None
         target_room = next(entities.Room.objects(alias=room_alias, world_state=self.session.user.room.world_state), None)
         if target_user is not None and target_room is not None:
             target_user.teleport(target_room)
             self.session.send_to_client(_("Done. Note that this verb moves players but doesn't tell them that they have been moved. You can tell them using text verbs if you want to."))
         else:
-            self.session.send_to_client(_("The user does not exist, it is not connected, or there is not a room with that room number."))
+            self.session.send_to_client(_("The user isn't on this world or there is not a room with that room number."))
         self.finish_interaction()
 
 
