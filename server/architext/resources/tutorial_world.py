@@ -1,6 +1,6 @@
 from .. import util
 
-json = util.remove_control_characters(r"""
+json = util.remove_control_characters(_(r"""
 eJztWWtv28gV/Ssj7Qd3AUVxnN0CNRYNgsRonE3sbmI3COqFMSRH1KzJGWJmaFlI9r/vuXeGFKnIjp0W/dBWtiRyHpf3ce5r9Glq
 1E24dNbWl7qYHoofZmLqg3RBm5KHMfZpamStcDE9WyrxRpVevJHZFCtlpaWniX26K5TPnW6CtobGPtpWyJW8UkIbIcVqqYMSRHIu
 nuM7s0Hn4trqXAkv1/7wwl0Yen9QVW5rNRPPXU57bsJcvF2LpnWN9SDmRbCJ8Nq2TlxrF1pZiUrXmRfSFMIr45Wfi79XSmJHpX1Q
@@ -35,4 +35,4 @@ cGS6zVOudMXF7wN5Gxns6TeDmSszc430Zt268zoPry4udxZs2wdq8RDoP3Tadu+Q8j9woDbd2rYxQRre
 Zr+pHGXX8V4N4zi3TnUb13OLeMIdewT+jYlPmn1oF4vUl6j+lADpOcQCARkiJyYooyJ/bIoLtM+kRu5iUKdUi1EptjmvQJecGv30
 MwSYICvAeou2QskCNoe/Ly35UL9rl3UsMQlkw556cMZepFqO8qcK/aGKHP0akinZBo3npYZ5G4+gLOnyHscc0y37jgw4iBY7HQgI
 cVeVSn1dpRdq+8DlYZzsQOZDHBolEwpvdp9/4eBnfCS8pZL/nxb/l50WT7eXPMzavZFI3qIrMvqAfP8fA/8As7CN3Q==
-""")
+"""))
