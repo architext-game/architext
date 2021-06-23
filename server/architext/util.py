@@ -295,10 +295,10 @@ def match(pattern, string):
     return None
  
 
-def world_from_dict(world_dict, world_name, creator):
+def world_from_dict(world_dict, world_name, creator, public=False):
     
     new_world_state = entities.WorldState(save_on_creation=False)
-    new_world = entities.World(save_on_creation=False, name=world_name, creator=creator, world_state=new_world_state)
+    new_world = entities.World(save_on_creation=False, name=world_name, creator=creator, world_state=new_world_state, public=public)
     
     items = []
     custom_verbs = []

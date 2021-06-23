@@ -6,6 +6,7 @@ from .. import util
 import logging
 import textwrap
 import architext.resources.tutorial_world as tutorial_world
+import architext.resources.monks_riddle as monks_riddle
 from .. import strings
 import json
 
@@ -125,9 +126,22 @@ class Login(Verb):
         self.current_process_function = self.process_email
 
     def process_email(self, message):
+        # check if this is the first user in the server
+        is_first_user = not entities.User.objects() and not entities.World.objects()
+
         # create user
         self.session.user = entities.User(name=self.new_name, room=None, password=self.password, email=message)
         
+        # if is first user, create common worlds.
+        if is_first_user:
+            self.session.send_to_client(_(
+                "This is the first account created in this server. It has been established as the administrator account.\n"
+                "This means that the public worlds that are going to be created now will be yours.\n\n"
+                "Creating initial worlds..."
+            ))
+            monks_riddle_dict = util.text_to_world_dict(monks_riddle.json)
+            util.world_from_dict(monks_riddle_dict, _('The Monk\'s Riddle'), self.session.user, public=True)
+
         # create tutorial world and move the user there
         sign_in_welcome = util.get_config()['sign_in_welcome']
         sign_in_welcome = sign_in_welcome if sign_in_welcome else strings.default_sign_in_welcome

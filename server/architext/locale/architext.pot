@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-06-23 11:25+0200\n"
+"POT-Creation-Date: 2021-06-23 12:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -191,6 +191,139 @@ msgid ""
 "NEWS:\n"
 "    We are still in development, you can check the source code at\n"
 "    https://github.com/OliverLSanz/architext"
+msgstr ""
+
+#: server/architext/resources/monks_riddle.py:3
+msgid ""
+"\n"
+"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\n"
+"jSWW50JyGjNfa4ZqqeKmbvNPtG9TdMOI9QW7GS0XIGQZdW7B+U33xMuIlmMwegIjSu5Oq1Db/P2bO9Z8lT/eTTjcgrupzHYPqrp5\n"
+"/mKHg45jBJIcS6zfNUl6z7hG+FcECg81NXwAcvY3cHnVYlWfXPHvNoHy4khjNVsuQpNuigtKmPhZVhH0FEOYR5toF0euq8TZ36mX\n"
+"h4IqSKMC5WVrAo/R7KEi2sUW7KdB2wdpkwc2kZwWyMI4wmVx8llnCT90YboVjEujQF7oqQrG4vB0j13aQvqUiqMMocvC/oE5FljJ\n"
+"YfWMZYbEB2Ms6muR6Odn5nWugvqhW76kkj8nDhe8XD9TKqE31jLRd1ImCiomMU3IA9UsmsCq9VVTkEYBQCTvFJ9XpIa5ivVM/obV\n"
+"Co9sICdd124dkFZyotkcHCbGp3oWRcmU1/bHMYxpFNSsyXnKDxgTRChQZklDEmy2vRqiOWq/MgSdR1GAv+p0CJOJJURVZmGFvfwI\n"
+"bTX8qZ2ZBpWdDVXMqSHPoZD/cH7MSSAFdiB9vczH4wPSmwLAeAwxpOsis9VcdM05x4DU6hVttqmRb2ezCyjXViKySaEWgOxfnl9f\n"
+"n3+46onLi+/OxfWbc/Hp/YfLlz1x9uFcvHt/bW99J96/Em/P3/XE84/XeI33L99/eAmBxsWP5+Li3fV7cXENP5+L52ffX1/86/wl\n"
+"3KTHvr86u3xr33nx5uzD2QuECfHP5fnVFT53JRDKm/fi1cW7l1f03PWbD+fw9Nn3F9dnlxmar95/EG/g+as3Z5eXCAyfPT/7cP3m\n"
+"8mdx9u4lYnPx7lx89+79p8vzl6/Pt1zReu0PQTZ8PS1qT9XC8lWi5rjOofG/KCj4uzLrMXhTl9euUFYhV9Sm3yb1pplNIDGi1uEo\n"
+"wRY7LBxxjcbn/GLMQ0lqPTgTHqQfWGqep6hm8EDP9kDaEabRwnbmxKDCoyUtumhjkXJrMnBzT3wMEz/IoROjkCvNb4MN1Il5hsb0\n"
+"k+IDofJuzO89To/GKsFV3kj7SK+eGYeUnXABWwsqOwOLpXjl0rbPeEtrJME2pqy8bmW0Nv6ylsPYKNJzUFc7L2IPt1zFmHZxrJUr\n"
+"hAF1sc0TiWtbk66wdIetIdyy1APgaHkAAkgU2DODDNffcNL57pGMG2RhcPYa3YrrQgglxSnkr2jckQRvxX0ECz8OwHKSJaexYMJD\n"
+"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\n"
 msgstr ""
 
 #: server/architext/resources/tutorial_world.py:3
@@ -1549,14 +1682,14 @@ msgid "Parsing your message. Please wait..."
 msgstr ""
 
 #: server/architext/verbs/lobby.py:379
-msgid "Your new world is ready. The items in all player inventories from the original world has been moved to your inventory."
+msgid "Your new world is ready. The items in all player inventories from the original world have been moved to your inventory."
 msgstr ""
 
 #: server/architext/verbs/lobby.py:383
 msgid "The text is still invalid. Waiting for more characters. (\"/\" to cancel)"
 msgstr ""
 
-#: server/architext/verbs/login.py:19
+#: server/architext/verbs/login.py:20
 msgid ""
 "\n"
 "                ___       __   __         ___    ___  __  \n"
@@ -1575,7 +1708,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: server/architext/verbs/login.py:37
+#: server/architext/verbs/login.py:38
 msgid ""
 "\n"
 "\n"
@@ -1583,79 +1716,91 @@ msgid ""
 " ᐅ What is your nickname?"
 msgstr ""
 
-#: server/architext/verbs/login.py:49
+#: server/architext/verbs/login.py:50
 msgid "That name is reserved. Try with another one."
 msgstr ""
 
-#: server/architext/verbs/login.py:53
+#: server/architext/verbs/login.py:54
 msgid "The name can't exceed {character_limit} characters."
 msgstr ""
 
-#: server/architext/verbs/login.py:59
+#: server/architext/verbs/login.py:60
 msgid ""
 "An avatar with that name already exists.\n"
 " ᐅ Enter {user_name}'s password or \"/\" to go back."
 msgstr ""
 
-#: server/architext/verbs/login.py:68
+#: server/architext/verbs/login.py:69
 msgid ""
 "That name is not in use.\n"
 " ᐅ To create a new account with this name, enter a password.\n"
 " ᐅ To go back, enter \"/\""
 msgstr ""
 
-#: server/architext/verbs/login.py:77 server/architext/verbs/login.py:99
+#: server/architext/verbs/login.py:78 server/architext/verbs/login.py:100
 msgid " ᐅ What is your nickname?"
 msgstr ""
 
-#: server/architext/verbs/login.py:91
+#: server/architext/verbs/login.py:92
 msgid ""
 "That password is not correct.\n"
 " ᐅ What is your nickname?"
 msgstr ""
 
-#: server/architext/verbs/login.py:105
+#: server/architext/verbs/login.py:106
 msgid "The password needs to have six or more characters. Try with another one."
 msgstr ""
 
-#: server/architext/verbs/login.py:110
+#: server/architext/verbs/login.py:111
 msgid "Enter your password again to confirm."
 msgstr ""
 
-#: server/architext/verbs/login.py:115
+#: server/architext/verbs/login.py:116
 msgid ""
 "The two passwords don't match.\n"
 " ᐅ What is your nickname?"
 msgstr ""
 
-#: server/architext/verbs/login.py:122
+#: server/architext/verbs/login.py:123
 msgid "ᐅ What is your email? (Optional, used for password recovery and important communications)\n"
 msgstr ""
 
-#: server/architext/verbs/login.py:135
+#: server/architext/verbs/login.py:137
+msgid ""
+"This is the first account created in this server. It has been established as the administrator account.\n"
+"This means that the public worlds that are going to be created now will be yours.\n"
+"\n"
+"Creating initial worlds..."
+msgstr ""
+
+#: server/architext/verbs/login.py:143
+msgid "The Monk's Riddle"
+msgstr ""
+
+#: server/architext/verbs/login.py:149
 msgid "Building your Museum of Architexture..."
 msgstr ""
 
-#: server/architext/verbs/login.py:138
+#: server/architext/verbs/login.py:152
 msgid "The Museum of Architexture"
 msgstr ""
 
-#: server/architext/verbs/login.py:159
+#: server/architext/verbs/login.py:173
 msgid ""
 "LOGGED IN AS:     {user_name}\n"
 "YOU ARE IN:       {location}\n"
 "ONLINE USERS:     {user_count}"
 msgstr ""
 
-#: server/architext/verbs/login.py:166 server/architext/verbs/who.py:25
+#: server/architext/verbs/login.py:180 server/architext/verbs/who.py:25
 msgid "the lobby"
 msgstr ""
 
-#: server/architext/verbs/login.py:168
+#: server/architext/verbs/login.py:182
 msgid "{room_name} ─ {world_name}"
 msgstr ""
 
-#: server/architext/verbs/login.py:173
+#: server/architext/verbs/login.py:187
 msgid "Poohf! {user_name} appears."
 msgstr ""
 
