@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-06-23 16:58+0200\n"
+"POT-Creation-Date: 2021-06-25 13:12+0200\n"
 "PO-Revision-Date: 2021-05-27 13:48+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es_ES\n"
@@ -1097,9 +1097,9 @@ msgid "There are more than one user with a similiar name. Try to match case and 
 msgstr "Hay más de un usuario con un nombre similar. Intenta que coincidan las mayúsculas y los acentos para que pueda saber a quién te refieres."
 
 #: server/architext/verbs/direct_text.py:22
-#: server/architext/verbs/direct_text.py:74
-msgid "That user is not connected or does not exist"
-msgstr "Ese usuario no está conectado o no existe."
+#, fuzzy
+msgid "That user is not in this world."
+msgstr "Ese usuario no está en este mundo."
 
 #: server/architext/verbs/direct_text.py:25
 msgid "Text sent to {user_name}."
@@ -1116,6 +1116,10 @@ msgstr "textomundo "
 #: server/architext/verbs/direct_text.py:63
 msgid "textroombut '"
 msgstr "textomenos '"
+
+#: server/architext/verbs/direct_text.py:74
+msgid "That user is not connected or does not exist"
+msgstr "Ese usuario no está conectado o no existe."
 
 #: server/architext/verbs/direct_text.py:76
 msgid "Text send to all users in this room except {user_name}."
@@ -2775,28 +2779,28 @@ msgstr ""
 msgid "tpuser '"
 msgstr "tpotro '"
 
-#: server/architext/verbs/teleport.py:61
+#: server/architext/verbs/teleport.py:59
 msgid "Done. Note that this verb moves players but doesn't tell them that they have been moved. You can tell them using text verbs if you want to."
 msgstr "Hecho. Ten en cuenta que este verbo mueve a los jugadores pero no les avisa de que lo ha hecho."
 
-#: server/architext/verbs/teleport.py:63
+#: server/architext/verbs/teleport.py:61
 #, fuzzy
 msgid "The user isn't on this world or there is not a room with that room number."
 msgstr "El usuario está en este mundo o no hay ninguna sala con ese número."
 
-#: server/architext/verbs/teleport.py:72
+#: server/architext/verbs/teleport.py:70
 msgid "tproom "
 msgstr "tpsala "
 
-#: server/architext/verbs/teleport.py:83
+#: server/architext/verbs/teleport.py:81
 msgid "Done. Note that this verb  moves players but doesn't tell them that they have been moved. You can tell them using text verbs if you want to."
 msgstr "Hecho. Ten en cuenta que este verbo mueve jugadores pero no les dice que han sido movidos."
 
-#: server/architext/verbs/teleport.py:95
+#: server/architext/verbs/teleport.py:93
 msgid "tpall "
 msgstr "tptodos "
 
-#: server/architext/verbs/teleport.py:106
+#: server/architext/verbs/teleport.py:104
 msgid "Done. Note that this verb only  players but doesn't tell them that they have been moved. You can tell them using text verbs if you want to."
 msgstr "Hecho. Ten en cuenta que este verbo teletransporta a los jugadores pero no les dice que han sido movidos."
 

@@ -128,6 +128,11 @@ def name_to_entity(session, name, loose_match=[], substr_match=[], strict_match=
             elif len(matches) > 1:
                 return "many"
 
+        if "world_users" in loose_match:
+            target_user = next(entities.User.objects(name=name, room__ne=None, client_id__ne=None), None)
+            if target_user and target_user.room.world_state == session.user.room.world_state:
+                return target_user
+
         if "room_users" in loose_match:
             room_users = list(entities.User.objects(room=session.user.room, client_id__ne=None))
             matches = find_name_matches(name, room_users, lambda u: u.name, loose_match=True, substr_match=False)

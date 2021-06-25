@@ -14,12 +14,12 @@ class TextToOne(verb.Verb):
         command_length = len(self.command)
         message = message[command_length:]
         target_user_name, out_message = message.split("' ", 1)
-        target_user = util.name_to_entity(self.session, target_user_name, loose_match=['connected_users'])
+        target_user = util.name_to_entity(self.session, target_user_name, loose_match=['world_users'])
 
         if target_user == "many":
             self.session.send_to_client(_("There are more than one user with a similiar name. Try to match case and accents."))
         elif target_user is None:
-            self.session.send_to_client(_("That user is not connected or does not exist"))
+            self.session.send_to_client(_("That user is not in this world."))
         else:
             self.session.send_to_user(target_user, out_message)
             self.session.send_to_client(_("Text sent to {user_name}.").format(user_name=target_user.name))

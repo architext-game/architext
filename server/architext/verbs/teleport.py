@@ -52,9 +52,7 @@ class TeleportUser(verb.Verb):
     def process (self, message):
         message = message[len(self.command):]
         target_user_name, room_alias = message.split("' ", 1)
-        target_user = next(entities.User.objects(name=target_user_name, room__ne=None, client_id__ne=None), None)
-        if target_user:
-            target_user = target_user if target_user.room.world_state == self.session.user.room.world_state else None
+        target_user = util.name_to_entity(self.session, target_user_name, loose_match=['world_users'])
         target_room = next(entities.Room.objects(alias=room_alias, world_state=self.session.user.room.world_state), None)
         if target_user is not None and target_room is not None:
             target_user.teleport(target_room)
