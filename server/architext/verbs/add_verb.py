@@ -242,8 +242,8 @@ class InspectCustomVerb(verb.Verb):
             return
 
         message = functools.reduce(lambda a,b: '{} / {}'.format(a,b), chosen_custom_verb.names).upper() + "\n"
-        message += functools.reduce(lambda a, b: '{}\n{}'.format(a,b), chosen_custom_verb.commands)
-        message += '\nOK'
+        message += functools.reduce(lambda a, b: '{};\n{}'.format(a,b), chosen_custom_verb.commands)
+        message += ';\nOK;'
         self.session.send_to_client(message)
         self.finish_interaction()
 
