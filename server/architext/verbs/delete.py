@@ -26,7 +26,7 @@ class DeleteRoom(verb.Verb):
             for exit in room_to_delete.exits:
                 exit.delete()
 
-            room_to_escape_from_oblivion = entities.Room.objects.first()
+            room_to_escape_from_oblivion = self.session.user.room.world_state.starting_room
             self.session.user.teleport(room_to_escape_from_oblivion)
             for user in entities.User.objects(room=room_to_delete):
                 user.teleport(room_to_escape_from_oblivion)
