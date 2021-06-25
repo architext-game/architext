@@ -42,14 +42,15 @@ telnet architext-game.com 2112
 
 # Demo
 ## A piece of the tutorial
-![tutorial](https://user-images.githubusercontent.com/15345234/121041849-6a371400-c7b3-11eb-95ae-fab7eddefcaf.gif)
+![tutorial-progress-top](https://user-images.githubusercontent.com/15345234/123418325-36ccf580-d5b9-11eb-840d-5be041771e15.gif)
+
 
 ## Creating a cake 🎂
-![craft cake](https://user-images.githubusercontent.com/15345234/121041892-74591280-c7b3-11eb-8b0d-9f215198945e.gif)
+![cake-progress-top](https://user-images.githubusercontent.com/15345234/123418339-3d5b6d00-d5b9-11eb-990f-d4b55b490451.gif)
 
 
 ## Making the cake edible 🙆
-![verb](https://user-images.githubusercontent.com/15345234/121041909-79b65d00-c7b3-11eb-8a81-bd856c59fcf3.gif)
+![verb-progress-top](https://user-images.githubusercontent.com/15345234/123418348-41878a80-d5b9-11eb-9a9f-faf8b7cbe182.gif)
 
 
 # Running locally for development
