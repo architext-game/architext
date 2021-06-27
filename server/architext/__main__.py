@@ -5,6 +5,7 @@ import architext
 import mongoengine
 import telnetserver
 import atexit
+import os
 
 
 def database_connect(uri=None):
@@ -14,7 +15,9 @@ def database_connect(uri=None):
     if uri:
         mongoengine.connect(host=uri)
     else:
-        mongoengine.connect('architext', host='mud-db')
+        database = os.getenv('DATABASE', default='architext')
+        host     = host=os.environ['DB_HOST']
+        mongoengine.connect(database, host=host)
 
 def client_ids_cleanup():
     """Cleans client connection id in the database, disconnecting everyone.
