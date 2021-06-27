@@ -2,17 +2,17 @@ version: '3'
 
 
 services:
-  mud:
+  architext:
     build: ./server/
     restart: always
     ports:
       - "2112:2112"
     depends_on:
-      - mud-db
+      - architext-db
     volumes:
       - ./volumes/architext/logs:/usr/src/app/logs
     
-  mud-db:
+  architext-db:
     image: mongo
     restart: always
     volumes:
