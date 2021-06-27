@@ -10,10 +10,10 @@ services:
     depends_on:
       - mud-db
     volumes:
-      - ./volumes/mud-logs:/usr/src/app/logs
+      - ./volumes/architext/logs:/usr/src/app/logs
     
   mud-db:
     image: mongo
     restart: always
     volumes:
-      - ./volumes/mud-db:/data/db
+      - ./volumes/architext/db:/data/db
