@@ -99,5 +99,6 @@
       "description": "You now know how Architext works in general, as well as some of the specifics.\n\nArchitext has some more fancy features. You can write \"help\" inside the game. It will teach you everything there is to know about Architext!\n"
     }
   ],
-  "ref": "master"
+  "ref": "master",
+  "isPrimary": true
 }
