@@ -1,0 +1,103 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "Architext Overview",
+  "steps": [
+    {
+      "directory": "",
+      "description": "# Welcome!\n\nWelcome to the Architext code tour! \n\nArchitext is a multiplayer virtual reality text game that allows you to explore and create worlds entirely made of text. \n\nIn other words, inside Architext you can:\n - Create worlds made of interconected rooms that you describe with text.\n - Fill the rooms with items that you can make interactive.\n - Invite your friends to explore your worlds and chat with them in real time.\n\nI can hear you asking, \"how is this different from other existing MOO games?\". Well, in Architext it is much easier to create your own rooms and interactive items. No coding required!\n\nIf all this sounds weird to you, you should play the tutorial before going any further. It takes 5 minutes and will give you an overwiew of what kind of game this is. It will make understanding the code much easier!\n\nYou can play Architext here: https://grapevine.haus/games/Architext/play\n\nFrom a technical perspective, Architext is just a Python server that listens to raw text commands from the users, and answers them appropiately.\n\nThis code tour will just explain the general structure of the code. You can get a closer look to any files you want to know more of.\n\nLet's begin!"
+    },
+    {
+      "file": "server/requirements.txt",
+      "description": "# The Stack\n\nLet's get a quick glance at what Architext uses:\n- MongoDB as the database.\n- Babel for internationalization (it is available in English and Spanish!)\n- [telnetserver](https://github.com/OliverLSanz/python-telnetserver/) module for the comunication with users through plain text messages. This is a simple module I published to pip. It is just a generalized fork of [this module](https://github.com/Frimkron/mud-pi).\n\nEverything else is vanilla python :-)",
+      "line": 8,
+      "selection": {
+        "start": {
+          "line": 1,
+          "character": 1
+        },
+        "end": {
+          "line": 1,
+          "character": 10
+        }
+      }
+    },
+    {
+      "file": "server/architext/__main__.py",
+      "description": "This is the main file that runs the server. It does all the initial setup and starts an infinite loop that:\n1. Creates a new `Session` object for each newly connected user.\n2. Handles disconnects.\n3. Passes messages from each user to its corresponding `Session` object.",
+      "line": 1
+    },
+    {
+      "file": "server/architext/session.py",
+      "description": "# The Session object\n\nEach connected session has its own Session object.\n\nThe session object is responsible for implementing the following methods:\n- `process_message`: processes an incoming message from the client.\n- Methods that send messages from the perspective of the session (`send_to_client` sends to the client, `send_to_room` sends to all clients present in the room, etc).\n- `disconnect`: handles the session disconect.\n\nThis file is well documented, so you can easily explore it on your own.\n\nUnder the Session you can find the definition for the GhostSession. I'll explain it later!",
+      "line": 1
+    },
+    {
+      "file": "server/architext/session.py",
+      "description": "# The `process_message` method\n\nThe Session does not process messages on its own. It relies on `Verbs`. \n\n`Verbs` are obects that process certain kind of messages. You can think of them as the different commands of an interactive command line tool.\n\nEach `Verb` knows what kind of messages it can handle. The process_message method just goes through the list of `Verbs` and gives the message to the first `Verb` that can handle it.\n\n`Verbs` can be interactive, needing multiple messages from the user to complete. Until the `Verb` is not finished, the `Session` will save it as the `current_verb` and give it future incoming messages. \n\nBelow is the code for this behavior.",
+      "line": 33
+    },
+    {
+      "directory": "server/architext/verbs",
+      "description": "# The `verbs` module\n\nThe `verbs` module contains all the existing verbs in Architext. Let's get a look at some of them. "
+    },
+    {
+      "file": "server/architext/verbs/verb.py",
+      "description": "# The `Verb` base class\n\nThis is the definition of the `Verb` base class, that every `Verb` should extend.\n\nIt defines the base behavior of every verb:\n- A `in_the_right_context` method that checks wether the verb is eligible to run due the current game context. Possible contexts are 1: in the world selection menu (the lobby), or 2: inside a world.\n- A `user_has_enough_privileges` method that checks if the user has enough privileges to run the command. For example, you can only create rooms in worlds you own or where you have been granted editor privileges.\n- A `can_process` method that checks wether a message can be processed by the verb. A message can be processed if the message matches the specific regex that the `Verb` has defined as its `command` attribute.\n- An abstract `process` method that handles a single message. Each `Verb` should implement its own.",
+      "line": 26,
+      "selection": {
+        "start": {
+          "line": 73,
+          "character": 9
+        },
+        "end": {
+          "line": 73,
+          "character": 35
+        }
+      }
+    },
+    {
+      "file": "server/architext/verbs/say.py",
+      "description": "# A simple verb example\n\nThis is the `Say` verb. It allows you to type inside the game\n\n> say Hello everyone!\n\nAnd then every user in your room will receive the message:\n\n> Ender Wiggin says \"Hello everyone!\"\n\n(Assuming your user name is Ender Wiggin!)\n\nVerbs can't get much simpler. Take a look at the code!\n\nYou only need to import this `Verb` into the `Session` and it will be added to the game.\n\nThe verb system makes it very easy to extend the game with modular commands :-)",
+      "line": 12
+    },
+    {
+      "file": "server/architext/verbs/build.py",
+      "description": "# How a complex verb looks like\n\nThis is the Build verb. It allows users to create a new room in the world, simply by typing \"build\" and then answering some questions.\n\nEverything is done using the send methods provided by the session and some entities from the database. It is a good example of how you can build a more complex verb!\n\nI don't recommend digging deeper into this file unless you are really really interested. Let's just continue, we are almost finished!",
+      "line": 10
+    },
+    {
+      "file": "server/architext/verbs/add_verb.py",
+      "description": "# The verb to rule them all\n\nPut on your seat belt, we are getting pretty advanced here!\n\nThis is the `AddVerb` verb, the best of all. It allows you to add new verbs to the game, right inside the game. Verbception!\n\nYou just need to write verb + a target. The target can be the world, a room, or an item.\n\nLet's assume you want to add the verb to a `cake` item you have created using the `craft` verb (a verb that let's you add items to the world).\n\nThen the interactive verb will ask you to:\n1. Give a name to the verb (Let's assume the name is \"eat\").\n2. Write a series of commands that you want to execute whenever the new verb is used. Any valid verb in the game can be used, so you don't need to learn anything new.\nFor example, you could write:\n> texttoroom .user eats the cake.\n>\n> deleteitem cake\n\nThen, anyone can write \"eat cake\". The game will inform anyone in your room that \"Ender Wiggin eats the cake.\", and the cake will be deleted.\n\n(This is what the GhostSession defined in the Session module is for. It is a ghost user that executes the actions inside user defined verbs)\n\nI hear you yelling: \"A malicious user can create a verb A that executes a verb B that executes the verb A, creating an infinite loop of verbs and breaking the game!!!!\". Don't panic, there is a limit to the depth of user defined verbs. If the limit is reached, the verb just ends!",
+      "line": 11,
+      "selection": {
+        "start": {
+          "line": 120,
+          "character": 32
+        },
+        "end": {
+          "line": 120,
+          "character": 53
+        }
+      }
+    },
+    {
+      "file": "server/architext/verbs/custom_verb.py",
+      "description": "# The CustomVerb verb\n\nWhen a new custom verb is created, it is just a piece of information inside the database. It does nothing.\n\nIt is this verb, the \"CustomVerb\" which does the magic. It is a verb that returns true in its `can_process` method if the message fits any elligible custom verb in the database. Its `process` method uses the definition of the verb and executes it.\n\n",
+      "line": 8
+    },
+    {
+      "directory": "server/architext/entities",
+      "description": "# The Entities module\n\nThis module defines the MongoDB entities that are used in the game.\n\nHere is a slightly inacurrate entity relationship diagram that can help you understand the data model:\n\n![Image](https://github.com/architext-game/architext/raw/HEAD/.tours/assets/Entities.png)\n\nThe entities are:\n- **World**: represents a world in the game. Mostly used to store references and metadata. It has a reference to the WorldState where rooms and items live. Can also have several Snapshots, frozen world states that can be recovered by the world owner.\n- **WorldState**: represents an actual world the users can explore. Holds a reference to its starting room (where new users enter the world). A WorldState can either be live inside a world, or stored in a snapshot.\n- **Snapshot**: Holds metadata for a frozen WorldState that can be deployed to a world by the world owner.\n- **User**: Holds all info about a user. It's name, password hash, where she is, etc.\n- **Room**: a room inside a world. Has a name, a description and a reference to the WorldState it belongs to.\n- **Exit**: an one way exit that connects two rooms. Holds a reference to the rooms it connects.\n- **Item**: an item inside a world. Has a name and description. It holds a reference to the room it is placed in (if any)- Also holds a reference to the custom verbs that have been added to it.\n- **Inventory**: saves the items a user is carrying with him inside the world the inventory belongs to.\n\nLet's see an example!"
+    },
+    {
+      "file": "server/architext/entities/user.py",
+      "description": "# The User entity\n\nThis is the user entity, that handles all information about a user.\n\nIt follows the same structure as every other entity:\n- It defines the fields of data that each user holds.\n- It defines the methods that client code should use to mutate that data.",
+      "line": 18
+    },
+    {
+      "title": "Outro",
+      "description": "You now know how Architext works in general, as well as some of the specifics.\n\nArchitext has some more fancy features. You can write \"help\" inside the game. It will teach you everything there is to know about Architext!\n"
+    }
+  ],
+  "ref": "master"
+}
