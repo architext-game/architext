@@ -1,7 +1,8 @@
 from . import verb
 from .. import entities
-from .. import util
 import architext.strings as strings
+from architext.service_layer import services
+from architext.model.validate_target_name import validate_target_name
 
 class Build(verb.Verb):
     """This verb allows the user to create a new room connected to his current location.
@@ -13,9 +14,6 @@ class Build(verb.Verb):
 
     def __init__(self, session):
         super().__init__(session)
-        self.new_room = entities.Room(save_on_creation=False, world_state=self.session.user.room.world_state)
-        self.exit_from_here = entities.Exit(destination=self.new_room, room=self.session.user.room, save_on_creation=False)
-        self.exit_from_there = entities.Exit(destination=self.session.user.room, room=self.new_room, save_on_creation=False)
         self.current_process_function = self.process_first_message
 
     def process(self, message):
@@ -36,14 +34,14 @@ class Build(verb.Verb):
         if not message:
             self.session.send_to_client(strings.is_empty)
         else:
-            self.new_room.name = message
+            self.new_room_name = message
             self.session.send_to_client(_(' 👁 Description  [default "{default_description}"]').format(default_description=strings.default_description))
             self.current_process_function = self.process_room_description
 
     def process_room_description(self, message):
         this_room = self.session.user.room.name
-        new_room = self.new_room.name
-        self.new_room.description = message
+        new_room = self.new_room_name
+        self.new_room_description = message
         self.session.send_to_client(
             _(' ⮕ Name of the exit in "{this_room}" towards "{new_room}"\n   [Default: "to {new_room}"]')
                 .format(this_room=this_room, new_room=new_room)
@@ -52,42 +50,55 @@ class Build(verb.Verb):
 
     def process_here_exit_name(self, message):
         if not message:
-            message = _("to {room_name}").format(room_name=self.new_room.name)
-            message = self.make_exit_name_valid(message, self.session.user.room)
+            message = _("to {room_name}").format(room_name=self.new_room_name)
+            # message = self.make_exit_name_valid(message, self.session.user.room)
 
-        self.exit_from_here.name = message
+        self.entrance_name = message
         try:
-            self.exit_from_here.ensure_i_am_valid()
+            validate_target_name(
+                name=self.entrance_name, is_takable=False, is_in_a_room=True,
+                others_in_room=[item.name for item in self.session.user.room.items+self.session.user.room.exits],
+                takables_in_world=[item.name for item in entities.Item.get_items_in_world_state(self.session.user.room.world_state) if item.visible=='takable']
+            )
         except entities.WrongNameFormat:
             self.session.send_to_client(strings.wrong_format)
         except entities.RoomNameClash:
-            self.session.send_to_client(srings.room_name_clash)
+            self.session.send_to_client(strings.room_name_clash)
         except entities.TakableItemNameClash:
             self.session.send_to_client(strings.takable_name_clash)
         else:
             self.session.send_to_client(
                 _(' ⮕ Name of the exit in "{new_room}" towards "{this_room}"\n   [Default: "to {this_room}"]')
-                    .format(new_room = self.new_room.name, this_room = self.session.user.room.name)
+                    .format(new_room = self.new_room_name, this_room = self.session.user.room.name)
             )
             self.current_process_function = self.process_there_exit_name
 
     def process_there_exit_name(self, message):
         if not message:
             message = _("to {room_name}").format(room_name=self.session.user.room.name)
-            message = self.make_exit_name_valid(message, self.new_room)  
+            # message = self.make_exit_name_valid(message, self.new_room)  
 
-        self.exit_from_there.name = message
+        self.exit_name = message
         
         try:
-            self.exit_from_there.ensure_i_am_valid()
+            validate_target_name(
+                name=self.exit_name, is_takable=False, is_in_a_room=True,
+                others_in_room=[], 
+                takables_in_world=[item.name for item in entities.Item.get_items_in_world_state(self.session.user.room.world_state) if item.visible=='takable']
+            )
         except entities.WrongNameFormat:
             self.session.send_to_client(strings.wrong_format)
         except entities.TakableItemNameClash:
             self.session.send_to_client(strings.takable_name_clash)
         else:
-            self.new_room.save()
-            self.exit_from_here.save()
-            self.exit_from_there.save()
+            services.create_connected_room(
+                name=self.new_room_name, 
+                description=self.new_room_description,
+                exit_name=self.exit_name,
+                entrance_name=self.entrance_name,
+                exit_room_id=self.session.user.room.id,
+                session=self.session
+            )
 
             self.session.send_to_client(_("Your new room is ready. Good work!"))
             if not self.session.user.master_mode:
@@ -101,6 +112,3 @@ class Build(verb.Verb):
         while not entities.Exit.name_is_valid(exit_name, room):
             exit_name = _('straight {exit_name}').format(exit_name=exit_name)
         return exit_name
-
-    def cancel():
-        self.session.user.room.exits.remove(self.exit_from_here)

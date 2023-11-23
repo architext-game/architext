@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+dnspython = "*"
+pymongo = "*"
+mongoengine = "*"
+telnetserver = ">=0.5"
+babel = "*"
+regex = "*"
+pyyaml = "*"
+py-rolldice = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"

@@ -8,7 +8,7 @@ import textwrap
 import architext.resources.tutorial_world as tutorial_world
 import architext.resources.monks_riddle as monks_riddle
 from .. import strings
-import json
+import architext.service_layer.services as services
 
 class Login(Verb):
     """This is the first verb that a session starts with, and handles user log-in.
@@ -139,23 +139,20 @@ class Login(Verb):
                 "This means that the public worlds that are going to be created now will be yours.\n\n"
                 "Creating initial worlds..."
             ))
-            monks_riddle_dict = util.text_to_world_dict(monks_riddle.json)
-            util.world_from_dict(monks_riddle_dict, _('The Monk\'s Riddle'), self.session.user, public=True)
-
+            services.new_world_from_json(self.session, _('The Monk\'s Riddle'), monks_riddle.json)
         # create tutorial world and move the user there
         sign_in_welcome = util.get_config()['sign_in_welcome']
         sign_in_welcome = sign_in_welcome if sign_in_welcome else strings.default_sign_in_welcome
         self.session.send_to_client(sign_in_welcome)
         self.session.send_to_client(_("Building your Museum of Architexture..."))
-        
-        world_dict = util.text_to_world_dict(tutorial_world.json)
-        starting_world = util.world_from_dict(world_dict, _('The Museum of Architexture'), self.session.user)
-        
+
+        starting_world = services.new_world_from_json(self.session, _('The Museum of Architexture'), tutorial_world.json)
+
         self.session.user.enter_world(starting_world)
-        
+
         self.connect()
         self.finish_interaction()
-        
+
 
     def connect(self):
         self.session.user.connect(self.session.client_id)

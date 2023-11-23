@@ -15,11 +15,9 @@ class World(mongoengine.Document):
     creator = mongoengine.ReferenceField('User', required=True)
     public = mongoengine.BooleanField(default=False)
 
-    def __init__(self, *args, starting_room=None, save_on_creation=True, **kwargs):
+    def __init__(self, *args, save_on_creation=True, **kwargs):
         super().__init__(*args, **kwargs)
         if self.id is None:
-            if self.world_state is None:
-                self.world_state = world_state_module.WorldState(starting_room=starting_room)
             if save_on_creation:
                 self.save()
 

@@ -1,5 +1,7 @@
 from . import verb
 from .. import entities
+import architext.service_layer.services as services
+import architext.service_layer.exceptions as exceptions
 
 class DeleteRoom(verb.Verb):
     """This verb allows users to delete their current room.
@@ -11,27 +13,13 @@ class DeleteRoom(verb.Verb):
     permissions = verb.PRIVILEGED
 
     def process(self, message):
-        room_to_delete = self.session.user.room
-
-        if len([user for user in entities.User.objects(room=room_to_delete) if user.client_id != None]) > 1:
+        try:
+            services.delete_room(self.session, self.session.user.room.id)
+        except exceptions.CantDeleteRoomWithPlayers:
             self.session.send_to_client(_("You can't delete the room if there are other players here."))
-        if room_to_delete.alias == "0":
+        except exceptions.CantDeleteStartingRoom:
             self.session.send_to_client(_('You can\'t delete the starting room. But you can edit it if you don\'t like it :-)'))
         else:
-            # exits connecting to this room are implicitly removed from db and from exit lists in all rooms, due to its definition in entities.py
-
-            for item in room_to_delete.items:
-                item.delete()
-
-            for exit in room_to_delete.exits:
-                exit.delete()
-
-            room_to_escape_from_oblivion = self.session.user.room.world_state.starting_room
-            self.session.user.teleport(room_to_escape_from_oblivion)
-            for user in entities.User.objects(room=room_to_delete):
-                user.teleport(room_to_escape_from_oblivion)
-
-            room_to_delete.delete()
             self.session.send_to_client(_("The room and the exits leading to it have been deleted."))
             
         self.finish_interaction()
@@ -61,7 +49,7 @@ class DeleteExit(verb.Verb):
                 'It\'s destination was "{destination_name}" (number {destination_alias})\n'
                 '{warning}'
             ).format(exit_name=exit_name, destination_name=destination.name, destination_alias=destination.alias, warning=warning))
-            exit.delete()
+            services.delete_exit(self.session, exit_id=exit.id)
         else:
             self.session.send_to_client(_(
                 'There is not any exit called "{exit_name}" here.\nTo delete anything you have to enter its exact name.'
@@ -69,13 +57,6 @@ class DeleteExit(verb.Verb):
 
         self.finish_interaction()
 
-    def delete_exit(self, exit_here_name):
-        this_room = self.session.user.room
-        other_room = self.session.user.room.get_exit(exit_here_name).destination
-        
-        exit = self.session.user.room.get_exit(exit_here_name).delete()
-        # this_room.delete_exit(exit_here_name)
-            
 
 class DeleteItem(verb.Verb):
     """By using this verb users can delete items that are in their current room"""
@@ -94,7 +75,7 @@ class DeleteItem(verb.Verb):
                 "To delete anything you have to enter its exact name."
             ).format(item_name=item_name))
         else:
-            selected_item.delete()
+            services.delete_item(self.session, selected_item.id)
             self.session.send_to_client(_('Item "{item_name}" has been deleted.').format(item_name=item_name))
         self.finish_interaction()
 

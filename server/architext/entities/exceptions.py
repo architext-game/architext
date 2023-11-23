@@ -32,3 +32,6 @@ class ValueTooLong(Exception):
 
 class PublicWorldLimitReached(Exception):
     """Raised when trying to publish a world avobe the limit"""
+
+class InsufficientPrivileges(Exception):
+    pass

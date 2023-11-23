@@ -1,10 +1,10 @@
 from . import verb
-from .. import entities
 from .. import util
 import functools
 import textwrap
 import architext.strings as strings
 import re
+import architext.service_layer.services as services
 
 class AddVerb(verb.Verb):
     """This verb allows users to create new custom verbs tied to items.
@@ -145,15 +145,14 @@ class AddVerb(verb.Verb):
                 self.session.send_to_client(_("That last command is invalid. It has been ignored."))
 
     def build_verb(self):
-        new_verb = entities.CustomVerb(names=self.verb_names, commands=self.command_list)
         if self.item is not None:
-            self.item.add_custom_verb(new_verb)
+            services.create_custom_verb(names=self.verb_names, commands=self.command_list, session=self.session, item_id=self.item.id)
             self.session.send_to_client(_('Verb created. Write "{verb_name} {item_name}" to unleash its power!').format(verb_name=self.verb_names[0], item_name=self.item.name))
         elif self.room is not None:
-            self.room.add_custom_verb(new_verb)
+            services.create_custom_verb(names=self.verb_names, commands=self.command_list, session=self.session, room_id=self.room.id)
             self.session.send_to_client(_('Room verb created. Write "{verb_name}" to unleash its power!').format(verb_name=self.verb_names[0]))
         elif self.world_state is not None:
-            self.world_state.add_custom_verb(new_verb)
+            services.create_custom_verb(names=self.verb_names, commands=self.command_list, session=self.session, world_state_id=self.world_state.id)
             self.session.send_to_client(_('World verb created. Write "{verb_name}" to unleash its power!').format(verb_name=self.verb_names[0]))
         else:
             raise RuntimeError("Unreachable code reached ¯\_(ツ)_/¯")

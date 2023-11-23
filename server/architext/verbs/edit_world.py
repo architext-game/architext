@@ -2,6 +2,7 @@ from . import verb
 import textwrap
 from .. import entities
 import architext.strings as strings
+import architext.service_layer.services as services
 
 class EditWorld(verb.Verb):
     command = _('editworld')
@@ -39,7 +40,7 @@ class EditWorld(verb.Verb):
         except ValueError:
             self.session.send_to_client(strings.not_a_number)
             return
-        
+
         options = {
             0: {
                 "out_message": _('Enter the new name:'),
@@ -80,8 +81,7 @@ class EditWorld(verb.Verb):
             return
 
         world = self.session.user.room.world_state.get_world()
-        world.name = message
-        world.save()
+        services.edit_world(self.session,  world.id, name=message)
         self.finish_interaction()
         self.session.send_to_client(_("The name has been successfully changed."))
         return
@@ -89,7 +89,7 @@ class EditWorld(verb.Verb):
     def process_public_choice(self, message):
         if message.lower() in strings.yes_input_options:
             try:
-                self.world.toggle_public()
+                services.edit_world(self.session,  self.world.id, public=not self.world.public)
             except entities.PublicWorldLimitReached:
                 self.session.send_to_client(_('You have reached the limit of public worlds in this server. Try to make another world private or ask the admin to increase your limit.'))
                 self.finish_interaction()
@@ -104,12 +104,11 @@ class EditWorld(verb.Verb):
 
     def process_edit_freedom_option(self, message):
         if message == '0':
-            self.session.user.room.world_state.get_world().set_to_free_edition()
+            services.edit_world(self.session,  self.session.user.room.world_state.get_world().id, all_can_edit=True)
             self.session.send_to_client(_("Everybody can edit this world now."))
             self.finish_interaction()
         elif message == '1':
-            self.session.user.room.world_state.get_world().set_to_privileged_edition()
-            self.session.send_to_client(_("Only your designated editors and you can edit this world now."))
+            services.edit_world(self.session,  self.session.user.room.world_state.get_world().id, all_can_edit=False)
             self.finish_interaction()
         else:
             self.session.send_to_client(strings.wrong_value)

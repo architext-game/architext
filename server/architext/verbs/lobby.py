@@ -7,6 +7,7 @@ import mongoengine
 from .. import util
 from .. import entities
 from . import look, verb
+import architext.service_layer.services as services
 
 import architext.strings as strings
 
@@ -171,18 +172,6 @@ class CreateWorld(LobbyMenu):
     command = '+'
 
     def process(self, message):
-        starting_room = entities.Room(
-            name=_('The First of Many Rooms'),
-            alias='0',
-            description=_(
-                'This is the first room of your world. Here you are the Architext!\n'
-                '\n'
-                'If you don\'t know where to start, just type "help building". There you\'ll find all you need to know to build any kind of world.\n'
-                '\n'
-                'Remember that you can type "worldinfo" to see the world\'s invite code.'
-            )
-        )
-        self.new_world = entities.World(save_on_creation=False, creator=self.session.user, starting_room=starting_room)
         self.session.send_to_client(_('Enter the name for your new world. ("/" to cancel)'))
         self.process = self.process_word_name
 
@@ -195,9 +184,18 @@ class CreateWorld(LobbyMenu):
             self.session.send_to_client(strings.is_empty)
             return
 
-
-        self.new_world.name = message
-        self.new_world.save()
+        self.new_world = services.create_world(
+            self.session,
+            name=message,
+            room_name=_('The First of Many Rooms'),
+            room_description=_(
+                'This is the first room of your world. Here you are the Architext!\n'
+                '\n'
+                'If you don\'t know where to start, just type "help building". There you\'ll find all you need to know to build any kind of world.\n'
+                '\n'
+                'Remember that you can type "worldinfo" to see the world\'s invite code.'
+            ),
+        )
         self.session.send_to_client(_(
             '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
             '┃    Your new world is ready    ┃\n'

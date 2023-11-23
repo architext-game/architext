@@ -1,7 +1,7 @@
 from . import verb
-from .. import util
 from .. import entities
 import architext.strings as strings
+import architext.service_layer.services as services
 
 class Connect(verb.Verb):
     """This verb allow users to connect two existing rooms. One is the room where the user is located,
@@ -13,8 +13,6 @@ class Connect(verb.Verb):
     def __init__(self, session):
         super().__init__(session)
         self.other_room = None
-        self.exit_from_here = entities.Exit(room=self.session.user.room, save_on_creation=False)
-        self.exit_from_there = entities.Exit(destination=self.session.user.room, save_on_creation=False)
         self.current_process_function = self.process_first_message
     
     def process(self, message):
@@ -43,8 +41,6 @@ class Connect(verb.Verb):
             self.session.send_to_client(strings.is_empty)
         elif entities.Room.objects(alias=message, world_state=self.session.user.room.world_state):
             self.other_room = entities.Room.objects(alias=message, world_state=self.session.user.room.world_state).first()
-            self.exit_from_here.destination = self.other_room
-            self.exit_from_there.room = self.other_room
             out_message = _(
                 'Linking with "{destination_name}" (number {destination_alias}).\n'
                 '  ⮕ Enter the name of the exit in {this_room_name} (number {this_room_alias}) towards {destination_name} (number {destination_alias})\n'
@@ -60,10 +56,10 @@ class Connect(verb.Verb):
             message = _("to {destination_name}").format(destination_name=self.other_room.name)
             message = self.make_exit_name_valid(message, self.session.user.room)
 
-        self.exit_from_here.name = message
+        self.exit_from_here_name = message
         
         try:
-            self.exit_from_here.ensure_i_am_valid()
+            pass  # self.exit_from_here.ensure_i_am_valid()
         except entities.WrongNameFormat:
             self.session.send_to_client(strings.wrong_format)
         except entities.RoomNameClash:
@@ -84,10 +80,10 @@ class Connect(verb.Verb):
             message = _("to {destination_name}").format(destination_name=self.session.user.room.name)
             message = self.make_exit_name_valid(message, self.other_room)
 
-        self.exit_from_there.name = message
+        self.exit_from_there_name = message
 
         try:
-            self.exit_from_there.ensure_i_am_valid()
+            pass  # self.exit_from_there.ensure_i_am_valid()
         except entities.WrongNameFormat:
             self.session.send_to_client(strings.wrong_format)
         except entities.RoomNameClash:
@@ -95,10 +91,13 @@ class Connect(verb.Verb):
         except entities.TakableItemNameClash:
             self.session.send_to_client(strings.takable_name_clash)
         else:
-            self.exit_from_here.destination = self.other_room
-            self.exit_from_there.room = self.other_room
-            self.exit_from_here.save()
-            self.exit_from_there.save()
+            services.connect_rooms(
+                room_A_id=self.session.user.room.id, 
+                room_B_id=self.other_room.id, 
+                exit_A_name=self.exit_from_here_name,
+                exit_B_name=self.exit_from_there_name,
+                session=self.session
+            )
             self.session.send_to_client(_("Your new exits are ready!"))
             if not self.session.user.master_mode:
                 self.session.send_to_others_in_room(

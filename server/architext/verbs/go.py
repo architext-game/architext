@@ -2,6 +2,8 @@ from .verb import Verb
 from .look import Look 
 from .. import util
 from .. import strings
+import architext.service_layer.services as services
+import architext.service_layer.exceptions as exceptions
 
 class Go(Verb):
     """Allows the user to travel between rooms, using their exits."""
@@ -25,13 +27,14 @@ class Go(Verb):
         self.finish_interaction()
 
     def go(self, selected_exit):
-        if not self.session.user.master_mode:
-            if not selected_exit.is_open:
-                self.session.send_to_client(_('It is closed.'))
-                return
+        try:
+            pass
+        except exceptions.CantUseClosedExit:
+            self.session.send_to_client(_('It is closed.'))
+            return
 
         origin_room = self.session.user.room
-        self.session.user.move(selected_exit.name)
+        services.use_exit(self.session, exit_id=selected_exit.id)
         there_exit = [exit.name for exit in self.session.user.room.exits if exit.destination == origin_room and not exit.is_hidden()]
 
         if not self.session.user.master_mode:

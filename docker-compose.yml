@@ -11,6 +11,7 @@ services:
       - architext-db
     volumes:
       - ./volumes/architext/logs:/usr/src/app/logs
+      - ./server:/usr/src/app  # Develop
     environment:
       - DB_HOST=architext-db  # host that holds the database 
       - DATABASE=architext    # name of db in the host
