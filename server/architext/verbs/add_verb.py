@@ -155,7 +155,7 @@ class AddVerb(verb.Verb):
             services.create_custom_verb(names=self.verb_names, commands=self.command_list, session=self.session, world_state_id=self.world_state.id)
             self.session.send_to_client(_('World verb created. Write "{verb_name}" to unleash its power!').format(verb_name=self.verb_names[0]))
         else:
-            raise RuntimeError("Unreachable code reached ¯\_(ツ)_/¯")
+            raise RuntimeError("Unreachable code reached ¯\\_(ツ)_/¯")
 
     def is_valid_verb_name(self, name):
         # TODO checks if a name is a valid verb name
