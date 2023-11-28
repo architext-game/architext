@@ -2,7 +2,7 @@ import typing
 import uuid
 
 def generate_uuid():
-    return uuid.uuid4()
+    return str(uuid.uuid4())
 
 Visibility = typing.Literal['listed', 'hidden', 'obvious', 'takable']
 

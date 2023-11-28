@@ -84,6 +84,14 @@ class AbstractRepository(abc.ABC):
     def get_exit(self, id: str) -> model.Exit:
         pass
 
+    @abc.abstractmethod
+    def get_user_by_name(self, username: str) -> model.User | None:
+        pass
+
+    @abc.abstractmethod
+    def get_user_by_email(self, email: str) -> model.User | None:
+        pass
+
 
 class FakeRepository(AbstractRepository):
     def __init__(self) -> None:
@@ -95,6 +103,9 @@ class FakeRepository(AbstractRepository):
         self._user_store: typing.Dict[str, model.User] = {}
         self._exit_store: typing.Dict[str, model.Exit] = {}
         self._avatar_store: typing.Dict[(str, str), model.Avatar] = {}
+
+        from architext.service_layer.goodservices import create_user
+        create_user(name='string', password='string', email='string', repository=self)
 
     def add_world(self, world: model.World):
         self._world_store[world.id] = world
@@ -118,6 +129,7 @@ class FakeRepository(AbstractRepository):
         self._user_store[user.id] = user
 
     def get_user(self, id: str) -> model.User:
+        print("USERS", self._user_store)
         return copy.deepcopy(self._user_store[id])
 
     def get_world_state(self, id: str) -> model.WorldState:
@@ -181,3 +193,15 @@ class FakeRepository(AbstractRepository):
 
     def get_exit(self, id: str) -> model.Exit:
         return self._exit_store[id]
+
+    def get_user_by_email(self, email: str) -> model.User | None:
+        for user in self._user_store.values():
+            if user.email == email:
+                return user
+        return None
+
+    def get_user_by_name(self, username: str) -> model.User | None:
+        for user in self._user_store.values():
+            if user.name == username:
+                return user
+        return None

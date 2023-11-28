@@ -3,7 +3,7 @@ from .look import Look
 from .. import util
 from .. import strings
 import architext.service_layer.services as services
-import architext.service_layer.exceptions as exceptions
+import architext.entities.exceptions as exceptions
 
 class Go(Verb):
     """Allows the user to travel between rooms, using their exits."""

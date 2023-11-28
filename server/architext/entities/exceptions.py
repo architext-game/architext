@@ -35,3 +35,39 @@ class PublicWorldLimitReached(Exception):
 
 class InsufficientPrivileges(Exception):
     pass
+
+class CantDeleteRoomWithPlayers(Exception):
+    pass
+
+class CantDeleteStartingRoom(Exception):
+    pass
+
+class CantUseClosedExit(Exception):
+    pass
+
+class CantUseExitInAnotherRoom(Exception):
+    pass
+
+class EmailAlreadyInUse(Exception):
+    def __init__(self, mensaje="Email already in use"):
+        super().__init__(mensaje)
+
+class NameAlreadyInUse(Exception):
+    def __init__(self, mensaje="Name already in use"):
+        super().__init__(mensaje)
+
+class UserDoesNotExist(Exception):
+    pass
+
+class IncorrectPassword(Exception):
+    pass
+
+class TargetNotFound(Exception):
+    pass
+
+class BadTargetType(Exception):
+    pass
+
+class UserDoesNotExist(Exception):
+    def __init__(self, mensaje="User does not exist"):
+        super().__init__(mensaje)

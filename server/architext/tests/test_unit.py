@@ -139,7 +139,6 @@ def test_use_exit():
     world = repo.get_world(world_id)
     exit_room = repo.get_starting_room_of_world(world_id)
     assert len(exit_room.exit_ids) == 0
-    print("----------------", exit_room.exit_ids)
     new_room_id = services.create_connected_room(
         description='this is a new room',
         entrance_name='to new room',
@@ -160,10 +159,20 @@ def test_use_exit():
 
     services.use_exit(
         repository=repo,
-        exit_id=exit_room.exit_ids[0],
+        exit_name='new',
         user_id=user_id
     )
 
     avatar = repo.get_avatar(user_id=user_id, world_state_id=world.world_state_id)
     assert avatar.current_room_id == new_room_id
 
+def test_look():
+    repo = FakeRepository()
+    user_id = services.create_user(
+        repository=repo,
+        name="Oliver",
+        password="rush2112",
+        email="oliver@mail.com",
+    )
+    data = services.look(repository=repo, user_id=user_id)
+    assert data == {'room': 'First room', 'description': 'Your first room is this', 'exits': []}

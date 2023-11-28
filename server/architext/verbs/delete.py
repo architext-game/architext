@@ -1,7 +1,7 @@
 from . import verb
 from .. import entities
 import architext.service_layer.services as services
-import architext.service_layer.exceptions as exceptions
+import architext.entities.exceptions as exceptions
 
 class DeleteRoom(verb.Verb):
     """This verb allows users to delete their current room.
