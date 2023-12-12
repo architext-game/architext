@@ -2,6 +2,13 @@ import abc
 import architext.domain.model as model
 import typing
 import copy
+from dataclasses import dataclass
+
+@dataclass
+class RoomAndContents:
+    room: model.Room
+    exits: typing.List[model.Exit]
+    items: typing.List[model.Item]
 
 class AbstractRepository(abc.ABC):
     @abc.abstractmethod
@@ -30,6 +37,10 @@ class AbstractRepository(abc.ABC):
 
     @abc.abstractmethod
     def get_user(self, id: str) -> model.User:
+        pass
+
+    @abc.abstractmethod
+    def get_user_room(self, id: str) -> model.Room | None:
         pass
 
     @abc.abstractmethod
@@ -92,6 +103,30 @@ class AbstractRepository(abc.ABC):
     def get_user_by_email(self, email: str) -> model.User | None:
         pass
 
+    @abc.abstractmethod
+    def is_server_virgin(self) -> bool:
+        pass  # no users AND no worlds
+
+    @abc.abstractmethod
+    def get_user_room_and_contents(self, id: str) -> RoomAndContents:
+        pass
+
+    @abc.abstractmethod
+    def get_visible_users_in_room(self, id: str) -> typing.List[model.User]:
+        pass  # Connected, not master mode
+
+    @abc.abstractmethod
+    def get_users_in_room(self, id: str) -> typing.List[model.User]:
+        pass
+
+    @abc.abstractmethod
+    def get_active_avatar_of_user(self, id: str) -> model.Avatar:
+        pass
+
+    @abc.abstractmethod
+    def get_user_by_connection(self, id: str) -> model.User:
+        pass
+
 
 class FakeRepository(AbstractRepository):
     def __init__(self) -> None:
@@ -129,7 +164,6 @@ class FakeRepository(AbstractRepository):
         self._user_store[user.id] = user
 
     def get_user(self, id: str) -> model.User:
-        print("USERS", self._user_store)
         return copy.deepcopy(self._user_store[id])
 
     def get_world_state(self, id: str) -> model.WorldState:
@@ -192,16 +226,56 @@ class FakeRepository(AbstractRepository):
         self._avatar_store[(avatar.user_id, avatar.world_state_id)] = avatar
 
     def get_exit(self, id: str) -> model.Exit:
-        return self._exit_store[id]
+        return copy.deepcopy(self._exit_store[id])
 
     def get_user_by_email(self, email: str) -> model.User | None:
         for user in self._user_store.values():
             if user.email == email:
-                return user
+                return copy.deepcopy(user)
         return None
 
     def get_user_by_name(self, username: str) -> model.User | None:
         for user in self._user_store.values():
             if user.name == username:
-                return user
+                return copy.deepcopy(user)
         return None
+
+    def get_active_avatar_of_user(self, id: str) -> model.Avatar | None:
+        user = self.get_user(id)
+        if not user.current_world_state_id:
+            return None
+        return copy.deepcopy(self.get_avatar(user_id=user.id, world_state_id=user.current_world_state_id))
+
+    def get_user_room(self, id: str) -> model.Room | None:
+        avatar = self.get_active_avatar_of_user(id)
+        if avatar:
+            return copy.deepcopy(self.get_room(avatar.current_room_id))
+        return None
+
+    def is_server_virgin(self) -> bool:
+        return len(self._user_store) == 0 and len(self._world_store) == 0
+
+    def get_user_room_and_contents(self, id: str) -> RoomAndContents:
+        room = copy.deepcopy(self.get_user_room(id))
+        exits = copy.deepcopy(self.get_exits_in_room(room.id))
+        items = copy.deepcopy([])  # TODO
+        return RoomAndContents(room=room, exits=exits, items=items)
+
+    def get_visible_users_in_room(self, id: str) -> typing.List[model.User]:
+        return copy.deepcopy([
+            self.get_user(a.user_id) for a in self._avatar_store.values()
+            if not a.master_mode and a.current_room_id == id
+            and self.get_user(a.user_id).current_world_state_id == a.world_state_id
+            and self.get_user(a.user_id).is_online()
+        ])
+
+    def get_users_in_room(self, id: str) -> typing.List[model.User]:
+        return copy.deepcopy([
+            self.get_user(a.user_id) for a in self._avatar_store.values()
+            if a.current_room_id == id
+            and self.get_user(a.user_id).current_world_state_id == a.world_state_id
+            and self.get_user(a.user_id).is_online()
+        ])
+
+    def get_user_by_connection(self, id: str) -> model.User | None:
+        return next((u for u in self._user_store.values() if u.connection_id == id), None)

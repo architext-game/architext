@@ -1,5 +1,11 @@
 from .. import session
 from .. import util
+from architext.adapters.sender import AbstractSender
+from architext.adapters.repository import AbstractRepository
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from architext.session import Session
 
 FREE = 'free'
 PRIVILEGED = 'privileged'
@@ -30,8 +36,10 @@ class Verb():
     verbtype = WORLDVERB
     regex_command = False  # False: can process if message starts with command. True: command is a regex and can process if message matches the regex.
 
+    # bypassed
     @classmethod
     def in_the_right_context(cls, session):
+        return True
         if cls.verbtype == WORLDVERB and session.user.room is None:
             return False
 
@@ -59,17 +67,18 @@ class Verb():
     def can_process(cls, message, session):
         return cls.in_the_right_context(session) and cls.message_matches_command(message)
 
-    def __init__(self, session):
+    def __init__(self, session: 'Session'):
         self.session = session
         self.finished = False
 
     def execute(self, message):
-        if self.user_has_enough_privileges():
+        if True or self.user_has_enough_privileges():
             self.process(message)
         else:
-            self.session.send_to_client(_('You don\'t have enough privileges to do that here.'))
+            self._sender.send_to_client(_('You don\'t have enough privileges to do that here.'))
             self.finish_interaction()
 
+    # unused
     def user_has_enough_privileges(self):
         if self.session.user is None:
             return True

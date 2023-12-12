@@ -1,5 +1,4 @@
 import logging
-from . import entities
 import os
 import re
 import io

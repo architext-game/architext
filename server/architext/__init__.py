@@ -12,4 +12,3 @@ gnu_translations = _gettext.translation(
 gnu_translations.install()  # Magically make the _ function globally available
 
 import architext.session
-import architext.entities

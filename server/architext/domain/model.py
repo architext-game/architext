@@ -84,6 +84,12 @@ class Exit():
         self.is_open = is_open
         self.key_names = key_names
 
+    def is_hidden(self):
+        return self.visible == 'hidden'
+
+    def is_listed(self):
+        return self.visible == 'listed'
+
 class Room():
     def __init__(
         self,
@@ -114,12 +120,17 @@ class User():
         password_hash: str,
         current_world_state_id: str = None,
         id: typing.Optional[str] = None,
+        connection_id: str | None = None
     ) -> None:
         self.name = name
         self.email = email
         self.id: str = id if id else generate_uuid()
         self.current_world_state_id = current_world_state_id
         self.password_hash = password_hash
+        self.connection_id = connection_id
+
+    def is_online(self):
+        return self.connection_id is not None
 
 
 class Avatar():
@@ -128,7 +139,9 @@ class Avatar():
         current_room_id: str,
         user_id: str,
         world_state_id: str,
+        master_mode: bool = False,
     ) -> None:
         self.current_room_id = current_room_id
         self.user_id = user_id
         self.world_state_id = world_state_id
+        self.master_mode = master_mode

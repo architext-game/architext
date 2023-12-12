@@ -71,3 +71,6 @@ class BadTargetType(Exception):
 class UserDoesNotExist(Exception):
     def __init__(self, mensaje="User does not exist"):
         super().__init__(mensaje)
+
+class AmbiguousName(Exception):
+    pass

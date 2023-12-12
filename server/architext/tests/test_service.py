@@ -115,7 +115,7 @@ def test_enter_world_first_time():
     services.enter_world(
         repository=repo,
         user_id=user_id,
-        world_state_id=world.world_state_id
+        world_id=world.id
     )
     assert world_state.id == repo.get_user(user_id).current_world_state_id
     assert repo.get_avatar(user_id=user_id, world_state_id=world_state.id).current_room_id == world_state.starting_room_id
@@ -152,7 +152,7 @@ def test_use_exit():
     services.enter_world(
         repository=repo,
         user_id=user_id,
-        world_state_id=world.world_state_id
+        world_id=world.id
     )
 
     exit_room = repo.get_starting_room_of_world(world_id)
@@ -175,4 +175,5 @@ def test_look():
         email="oliver@mail.com",
     )
     data = services.look(repository=repo, user_id=user_id)
-    assert data == {'room': 'First room', 'description': 'Your first room is this', 'exits': []}
+    print(data)
+    assert data == {'room': {'name': 'First room', 'description': 'Your first room is this'}, 'exits': []}

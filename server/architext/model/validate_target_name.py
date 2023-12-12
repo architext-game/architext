@@ -1,7 +1,5 @@
-import architext.entities.exceptions as exceptions
+import architext.domain.exceptions as exceptions
 import re
-import architext.entities as entities
-import architext.domain.model as model
 
 def validate_non_placed_name(
     name: str

@@ -1,7 +1,7 @@
 from typing import Optional, Literal
 import architext.entities as entities
 from architext.model.validate_target_name import validate_target_name
-import architext.entities.exceptions as exceptions
+import architext.domain.exceptions as exceptions
 import architext.util as util
 
 def create_custom_verb(

@@ -4,7 +4,7 @@ from flask import jsonify, request
 import architext.service_layer.goodservices as services
 from flask_jwt_extended import create_access_token
 import datetime
-import architext.entities.exceptions as exceptions
+import architext.domain.exceptions as exceptions
 
 class UserLoginSchema(Schema):
     username = fields.Str(required=True)

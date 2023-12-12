@@ -1,9 +1,10 @@
 """Defines the Session class, used to handle user interaction.
 """
-from . import entities
 from . import verbs as v
 from . import util
 import textwrap
+from architext.adapters.sender import AbstractSender
+from architext.adapters.repository import AbstractRepository
 
 class Session:
     """This class handles interaction with a single user, though it can send messages to other users as well, to inform them of the session's user actions.
@@ -15,112 +16,62 @@ class Session:
     """
 
     # List of all verbs supported by the session, ordered by priority: if two verbs can handle the same message, the first will have preference.
-    verbs = [v.ExportWorld, v.ImportWorld, v.DeleteWorld, v.JoinByInviteCode, v.EnterWorld, v.CreateWorld, v.DeployPublicSnapshot, v.GoToLobby, v.CustomVerb, v.Build, v.Emote, v.Go, v.Help, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.TeleportClient, v.TeleportUser, v.TeleportAllInRoom, v.TeleportAllInWorld, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.WorldInfo, v.Info, v.Items, v.Exits, v.AddVerb, v.MasterMode, v.TextToOne, v.TextToRoom, v.TextToRoomUnless, v.TextToWorld, v.Take, v.Drop, v.Inventory, v.MasterOpen, v.MasterClose, v.AssignKey, v.Open, v.SaveItem, v.PlaceItem, v.CreateSnapshot, v.DeploySnapshot, v.CheckForItem, v.Give, v.TakeFrom, v.MakeEditor, v.RemoveEditor, v.PubishSnapshot, v.UnpubishSnapshot, v.DeleteSnapshot, v.InspectCustomVerb, v.DeleteCustomVerb, v.EditWorld, v.DeleteKey, v.Who, v.RefreshLobby, v.Recall, v.LobbyHelp, v.RollDice]
+    verbs = [v.Build, v.Go, v.Look]
 
-    def __init__(self, client_id, server):
+    def __init__(self, sender: AbstractSender, repository: AbstractRepository, connection_id: str):
         self.logger = None  # logger for recording user interaction
-        self.server = server  # server used to send messages
-        self.client_id = client_id  # direction to send messages to our client
+        self.sender = sender  # server used to send messages
+        self.repository = repository
         self.current_verb = v.Login(self)  # verb that is currently handling interaction. It starts with the log-in process.
-        self.user = None  # here we'll have an User entity once the log-in is completed.
+        self.user_id: str | None = None  # here we'll have an User id once the log-in is completed.
         self.world_list_cache = None  # when the lobby is shown its values are cached here (see #122).
-    
+        self.connection_id = connection_id
 
     def process_message(self, message):
         """This method processes a message sent by the client.
         It polls all verbs, using their can_process method to find a verb that can process the message.
         Then makes that verb the current_verb and lets it handle the message.
         """
-        if self.user is not None:
-            self.user.reload()
-            if self.user.client_id != self.client_id:  # another session has been opened for the same user
-                self.send_to_client('Otra sesión ha sido abierta para el mismo usuario. Tu sesión ha sido cerrada.')
-                self.disconnect()
-                return
-
         if self.logger:
             self.logger.info('client\n'+message)
-        
+
         if self.current_verb is None:
             for verb in self.verbs:
                 if verb.can_process(message, self):
                     self.current_verb = verb(self)
                     break
-        
+
         if self.current_verb is not None:
             try:
                 self.current_verb.execute(message)
             except Exception as e:
-                self.send_to_client(_("An unexpected error ocurred. It has been notified and it will be soon fixed. You probably can continue playing without further issues."))
-                self.logger.exception('ERROR: ' + str(e))
+                self.sender.send_to_client(_("An unexpected error ocurred. It has been notified and it will be soon fixed. You probably can continue playing without further issues."))
+                if self.logger: self.logger.exception('ERROR: ' + str(e))
                 raise e
-            
+
             if self.current_verb.command_finished():
                 self.current_verb = None
         else:
-            if self.user.room is None:
-                self.send_to_client(_('I don\'t understand that. You can enter "r" to show the lobby menu again.'))
-            else: 
-                self.send_to_client(_('I don\'t understand that.'))
+            if False and self.user.room is None:  # TODO
+                self.sender.send_to_client(_('I don\'t understand that. You can enter "r" to show the lobby menu again.'))
+            else:
+                self.sender.send_to_client(_('I don\'t understand that.'))
 
     def disconnect(self):
-        if self.user is not None and self.user.client_id == self.client_id:
-            if not self.user.master_mode:
-                self.send_to_others_in_room(_("Whoop! {player_name} has gone.").format(player_name=self.user.name))
-            self.user.disconnect()
+        if self.user_id is not None:
+            if not self.repository.get_user(self.user_id).master_mode:
+                self.sender.send_to_others_in_room(_("Whoop! {player_name} has gone.").format(player_name=self.user.name))
+            # self.user.disconnect()  # TODO
         self.client_id = None
-
-    def send_to_client(self, message):
-        self.send(self.client_id, "\n\r"+message)
-        if self.logger:
-            self.logger.info('server\n'+message)
-
-    def send_to_user(self, user, message):
-        if user.client_id is not None:
-            self.send(user.client_id, "\n\r"+message)
-
-    def send_to_room_except(self, exception_user, message):
-        users_in_this_room = entities.User.objects(room=self.user.room)
-        for user in users_in_this_room:
-            if user != exception_user:
-                self.send(user.client_id, message)
-
-    def send_to_others_in_room(self, message):
-        self.send_to_room_except(self.user, message)
-
-    def send_to_room(self, message):
-        users_in_this_room = entities.User.objects(room=self.user.room)
-        for user in users_in_this_room:
-            self.send(user.client_id, message)
-
-    def send_to_all(self, message):
-        for user in entities.User.objects:
-            self.send(user.client_id, message)
-
-    def send(self, client_id, message):
-        # Wrap the message to 80 characters
-        message = '\n'.join(
-            # Wrap each line individually 
-            ['\n'.join(textwrap.wrap(line, 80, 
-                replace_whitespace=False,
-                expand_tabs=False,
-                drop_whitespace=False,
-                break_on_hyphens=False,
-                break_long_words=False
-                ))
-            for line in message.splitlines()]
-        )
-            
-        self.server.send_message(client_id, message)
 
     def set_logger(self, logger):
         self.logger = logger
 
 
-class GhostSession(Session):
+class GhostSession(Session):  # TODO
     """This is a ghost session that the system uses to perform automated tasks
     like player defined verbs. The tasks are executed as normal messages that
-    a ghost session processes as if it were a normal session. 
+    a ghost session processes as if it were a normal session.
 
     The differences whith a normal session are:
      - A ghost session doesn't respond to the client that is issuing it

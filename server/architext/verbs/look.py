@@ -1,6 +1,5 @@
 from .verb import Verb
 from .. import util
-from .. import entities
 from .. import strings
 
 class Look(Verb):
@@ -20,32 +19,33 @@ class Look(Verb):
         selected_entity = util.name_to_entity(self.session, partial_name, substr_match=['room_items', 'room_exits', 'inventory'])
 
         if selected_entity == 'many':
-            self.session.send_to_client(strings.many_found)
+            self.session.sender.send_to_client(strings.many_found)
         elif selected_entity is None:
-            self.session.send_to_client(strings.not_found)
+            self.session.sender.send_to_client(strings.not_found)
         else:
-            self.session.send_to_client(f"👁 {selected_entity.name}\n{selected_entity.description if selected_entity.description else strings.default_description}")
-    
-    def show_current_room(self, show_world_name=False):
-        title = self.session.user.room.name + "\n"
-        description = (self.session.user.room.description if self.session.user.room.description else strings.default_description) + "\n"
+            self.session.sender.send_to_client(f"👁 {selected_entity.name}\n{selected_entity.description if selected_entity.description else strings.default_description}")
 
-        listed_exits = [exit.name for exit in self.session.user.room.exits if exit.is_listed()]
+    def show_current_room(self, show_world_name=False):
+        here = self.session.repository.get_user_room_and_contents(self.session.user_id)
+        title = here.room.name + "\n"
+        description = (here.room.description if here.room.description else strings.default_description) + "\n"
+
+        listed_exits = [exit.name for exit in here.exits if exit.is_listed()]
         if len(listed_exits) > 0:
             exits = (', '.join(listed_exits))
             exits = _("⮕ Exits: {exits}.\n").format(exits=exits)
         else:
             exits = ""
 
-        listed_items = [item.name for item in self.session.user.room.items if item.is_listed()]
+        listed_items = [item.name for item in here.items if item.is_listed()]
         if len(listed_items) > 0:
             items = _('👁 You see ')+(', '.join(listed_items))
             items = items + '.\n'
         else:
             items = ''
 
-        players_here = entities.User.objects(room=self.session.user.room, client_id__ne=None, master_mode=False)
-        players_here = [user for user in players_here if user != self.session.user]
+        players_here = self.session.repository.get_visible_users_in_room(here.room.id)
+        players_here = [user for user in players_here if user.id != self.session.user_id]
         if len(players_here) < 1:
             players_here = ""
         elif len(players_here) == 1:
@@ -59,7 +59,7 @@ class Look(Verb):
         message = (f"""{title}{underline}\n{description}{line_break}{items}{players_here}{exits}""")
         
         if show_world_name:
-            world_name = strings.box(_('You are in ') + self.session.user.room.world_state.get_world().name)
+            world_name = strings.box(_('You are in ') + self.session.repository.get_world_by_state_id(here.room.world_state_id).name)
             message = world_name + '\n' + message
 
-        self.session.send_to_client(message)
+        self.session.sender.send_to_client(message)

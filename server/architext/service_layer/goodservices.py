@@ -8,7 +8,7 @@ import architext.util as util
 import architext.adapters.repository as repository
 import architext.domain.model as model
 import hashlib
-import architext.entities.exceptions as exceptions
+import architext.domain.exceptions as exceptions
 from architext.domain.name_to_target import name_to_target as _name_to_target
 
 def create_world(
@@ -50,9 +50,19 @@ def create_user(repository: repository.AbstractRepository, name: str, password: 
     repository.add_user(user)
     world_id = create_world(name='First World', repository=repository, room_description='Your first room is this', room_name='First room', user_id=user.id)
     world = repository.get_world(world_id)
-    enter_world(repository=repository, user_id=user.id, world_state_id=world.world_state_id)
+    enter_world(repository=repository, user_id=user.id, world_id=world.id)
 
     return user.id
+
+def connect(repository: repository.AbstractRepository, user_id: str, connection_id: str):
+    user = repository.get_user(user_id)
+    user.connection_id = connection_id
+    repository.add_user(user)
+
+def disconnect(repository: repository.AbstractRepository, user_id: str):
+    user = repository.get_user(user_id)
+    user.connection_id = None
+    repository.add_user(user)
 
 def create_exit(
         user_id: str,
@@ -147,12 +157,13 @@ def create_connected_room(
 def enter_world(
     repository: repository.AbstractRepository,
     user_id: str,
-    world_state_id: str
+    world_id: str
 ):
     # read
-    avatar = repository.get_avatar(user_id=user_id, world_state_id=world_state_id)
+    world = repository.get_world(world_id)
+    world_state = repository.get_world_state(world.world_state_id)
+    avatar = repository.get_avatar(user_id=user_id, world_state_id=world_state.id)
     user = repository.get_user(user_id)
-    world_state = repository.get_world_state(world_state_id)
 
     # validate
     # does the world state, the room, etc, exist?
@@ -164,7 +175,7 @@ def enter_world(
             user_id=user_id,
             world_state_id=world_state.id
         )
-    user.current_world_state_id = world_state_id
+    user.current_world_state_id = world_state.id
 
     # write
     repository.add_avatar(avatar)  # may be unchanged
@@ -184,11 +195,15 @@ def use_exit(
         raise exceptions.TargetNotFound()
     if target['type'] != 'exit':
         raise exceptions.BadTargetType()
+    if target == 'many':
+        raise exceptions.AmbiguousName()
 
     exit = repository.get_exit(target['id'])
     avatar.current_room_id = exit.destination_id
 
     repository.add_avatar(avatar)
+
+    return target['id']
 
 
 def login(
