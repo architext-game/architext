@@ -4,6 +4,7 @@ from . import entities
 from . import verbs as v
 from . import util
 import textwrap
+from architext.adapters.sender import AbstractSender
 
 class Session:
     """This class handles interaction with a single user, though it can send messages to other users as well, to inform them of the session's user actions.
@@ -17,14 +18,13 @@ class Session:
     # List of all verbs supported by the session, ordered by priority: if two verbs can handle the same message, the first will have preference.
     verbs = [v.ExportWorld, v.ImportWorld, v.DeleteWorld, v.JoinByInviteCode, v.EnterWorld, v.CreateWorld, v.DeployPublicSnapshot, v.GoToLobby, v.CustomVerb, v.Build, v.Emote, v.Go, v.Help, v.Look, v.Remodel, v.Say, v.Shout, v.Craft, v.EditItem, v.Connect, v.TeleportClient, v.TeleportUser, v.TeleportAllInRoom, v.TeleportAllInWorld, v.DeleteRoom, v.DeleteItem, v.DeleteExit, v.WorldInfo, v.Info, v.Items, v.Exits, v.AddVerb, v.MasterMode, v.TextToOne, v.TextToRoom, v.TextToRoomUnless, v.TextToWorld, v.Take, v.Drop, v.Inventory, v.MasterOpen, v.MasterClose, v.AssignKey, v.Open, v.SaveItem, v.PlaceItem, v.CreateSnapshot, v.DeploySnapshot, v.CheckForItem, v.Give, v.TakeFrom, v.MakeEditor, v.RemoveEditor, v.PubishSnapshot, v.UnpubishSnapshot, v.DeleteSnapshot, v.InspectCustomVerb, v.DeleteCustomVerb, v.EditWorld, v.DeleteKey, v.Who, v.RefreshLobby, v.Recall, v.LobbyHelp, v.RollDice]
 
-    def __init__(self, client_id, server):
+    def __init__(self, client_id, sender: AbstractSender):
+        self.sender = sender
         self.logger = None  # logger for recording user interaction
-        self.server = server  # server used to send messages
         self.client_id = client_id  # direction to send messages to our client
         self.current_verb = v.Login(self)  # verb that is currently handling interaction. It starts with the log-in process.
         self.user = None  # here we'll have an User entity once the log-in is completed.
         self.world_list_cache = None  # when the lobby is shown its values are cached here (see #122).
-    
 
     def process_message(self, message):
         """This method processes a message sent by the client.
@@ -52,7 +52,10 @@ class Session:
                 self.current_verb.execute(message)
             except Exception as e:
                 self.send_to_client(_("An unexpected error ocurred. It has been notified and it will be soon fixed. You probably can continue playing without further issues."))
-                self.logger.exception('ERROR: ' + str(e))
+                if self.logger:
+                    self.logger.exception('ERROR: ' + str(e))
+                else:
+                    print('ERROR: ' + str(e))
                 raise e
             
             if self.current_verb.command_finished():
@@ -97,21 +100,22 @@ class Session:
         for user in entities.User.objects:
             self.send(user.client_id, message)
 
-    def send(self, client_id, message):
-        # Wrap the message to 80 characters
-        message = '\n'.join(
-            # Wrap each line individually 
-            ['\n'.join(textwrap.wrap(line, 80, 
-                replace_whitespace=False,
-                expand_tabs=False,
-                drop_whitespace=False,
-                break_on_hyphens=False,
-                break_long_words=False
-                ))
-            for line in message.splitlines()]
-        )
-            
-        self.server.send_message(client_id, message)
+    def send(self, client_id, message, wrap=False):
+        if wrap:
+            # Wrap the message to 80 characters
+            message = '\n'.join(
+                # Wrap each line individually 
+                ['\n'.join(textwrap.wrap(line, 80, 
+                    replace_whitespace=False,
+                    expand_tabs=False,
+                    drop_whitespace=False,
+                    break_on_hyphens=False,
+                    break_long_words=False
+                    ))
+                for line in message.splitlines()]
+            )
+
+        self.sender.send(client_id, message)
 
     def set_logger(self, logger):
         self.logger = logger

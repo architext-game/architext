@@ -19,7 +19,7 @@ class User(mongoengine.Document):
 
     name = mongoengine.StringField(required=True, validation=validate_user_name)
     room = mongoengine.ReferenceField('Room')
-    client_id = mongoengine.IntField(default=None)
+    client_id = mongoengine.StringField(default=None)
     master_mode = mongoengine.BooleanField(default=False)
     joined_worlds = mongoengine.ListField(mongoengine.ReferenceField('World'))
     email = mongoengine.StringField(default=None)
