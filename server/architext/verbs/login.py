@@ -9,6 +9,7 @@ import architext.resources.tutorial_world as tutorial_world
 import architext.resources.monks_riddle as monks_riddle
 from .. import strings
 import json
+from architext.adapters.sender import MessageOptions
 
 class Login(Verb):
     """This is the first verb that a session starts with, and handles user log-in.
@@ -17,7 +18,7 @@ class Login(Verb):
 
     def __init__(self, session):
         super().__init__(session)
-        out_message  = _("""
+        art = _("""
                 ___       __   __         ___    ___  __  
           |  | |__  |    /  ` /  \  |\/| |__      |  /  \ 
           |/\| |___ |___ \__, \__/  |  | |___     |  \__/ 
@@ -34,9 +35,10 @@ class Login(Verb):
 
 """)
         cover = util.get_config()['cover']
-        out_message += cover if cover else strings.default_cover
+        out_message = cover if cover else strings.default_cover
         out_message += _("\n\n\n ᐅ What is your nickname?")
-        self.session.send_to_client(out_message)
+        self.session.send_to_client(art, options=MessageOptions(display='fit'))
+        self.session.send_to_client(out_message, options=MessageOptions(section=False))
 
         self.current_process_function = self.process_user_name
 
@@ -170,19 +172,6 @@ class Login(Verb):
         user_logger.info(log_message)
         server_logger.info(log_message)
 
-        self.session.send_to_client(_(
-            'LOGGED IN AS:     {user_name}\n'
-            'YOU ARE IN:       {location}\n'
-            'ONLINE USERS:     {user_count}'
-        ).format(
-            user_name=self.session.user.name,
-            location=(
-                _('the lobby')
-                if self.session.user.room is None else
-                _('{room_name} ─ {world_name}').format(room_name=self.session.user.room.name, world_name=self.session.user.room.world_state.get_world().name)
-            ),
-            user_count=len(entities.User.objects(client_id__ne=None))
-        ))
         if self.session.user.room is not None:
             self.session.send_to_others_in_room(_("Poohf! {user_name} appears.").format(user_name=name))
             Look(self.session).show_current_room(show_world_name=True)

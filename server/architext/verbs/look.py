@@ -1,3 +1,4 @@
+from architext.adapters.sender import MessageOptions
 from .verb import Verb
 from .. import util
 from .. import entities
@@ -59,7 +60,8 @@ class Look(Verb):
         message = (f"""{title}{underline}\n{description}{line_break}{items}{players_here}{exits}""")
         
         if show_world_name:
-            world_name = strings.box(_('You are in ') + self.session.user.room.world_state.get_world().name)
-            message = world_name + '\n' + message
-
-        self.session.send_to_client(message)
+            world_name = _('You are in ') + self.session.user.room.world_state.get_world().name
+            self.session.send_to_client(world_name, MessageOptions(display='box'))
+            self.session.send_to_client(message, MessageOptions(section='false'))
+        else:
+            self.session.send_to_client(message)

@@ -5,6 +5,7 @@ from . import verbs as v
 from . import util
 import textwrap
 from architext.adapters.sender import AbstractSender
+from architext.adapters.sender import MessageOptions
 
 class Session:
     """This class handles interaction with a single user, though it can send messages to other users as well, to inform them of the session's user actions.
@@ -73,34 +74,34 @@ class Session:
             self.user.disconnect()
         self.client_id = None
 
-    def send_to_client(self, message):
-        self.send(self.client_id, "\n\r"+message)
+    def send_to_client(self, message, options: MessageOptions = MessageOptions()):
+        self.send(self.client_id, "\n\r"+message, options=options)
         if self.logger:
             self.logger.info('server\n'+message)
 
-    def send_to_user(self, user, message):
+    def send_to_user(self, user, message, options: MessageOptions = MessageOptions()):
         if user.client_id is not None:
-            self.send(user.client_id, "\n\r"+message)
+            self.send(user.client_id, "\n\r"+message, options=options)
 
-    def send_to_room_except(self, exception_user, message):
+    def send_to_room_except(self, exception_user, message, options: MessageOptions = MessageOptions(section=False)):
         users_in_this_room = entities.User.objects(room=self.user.room)
         for user in users_in_this_room:
             if user != exception_user:
-                self.send(user.client_id, message)
+                self.send(user.client_id, message, options=options)
 
-    def send_to_others_in_room(self, message):
-        self.send_to_room_except(self.user, message)
+    def send_to_others_in_room(self, message, options: MessageOptions = MessageOptions(section=False)):
+        self.send_to_room_except(self.user, message, options=options)
 
-    def send_to_room(self, message):
+    def send_to_room(self, message, options: MessageOptions = MessageOptions(section=False)):
         users_in_this_room = entities.User.objects(room=self.user.room)
         for user in users_in_this_room:
-            self.send(user.client_id, message)
+            self.send(user.client_id, message, options=options)
 
-    def send_to_all(self, message):
+    def send_to_all(self, message, options: MessageOptions = MessageOptions(section=False)):
         for user in entities.User.objects:
-            self.send(user.client_id, message)
+            self.send(user.client_id, message, options=options)
 
-    def send(self, client_id, message, wrap=False):
+    def send(self, client_id, message, wrap=False, options: MessageOptions = MessageOptions()):
         if wrap:
             # Wrap the message to 80 characters
             message = '\n'.join(
@@ -115,7 +116,7 @@ class Session:
                 for line in message.splitlines()]
             )
 
-        self.sender.send(client_id, message)
+        self.sender.send(client_id, message, options=options)
 
     def set_logger(self, logger):
         self.logger = logger
