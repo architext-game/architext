@@ -5,6 +5,7 @@ from . import verbs as v
 from . import util
 import textwrap
 from architext.adapters.sender import MessageOptions, Message, AbstractSender
+import architext.strings as strings
 
 class Session:
     """This class handles interaction with a single user, though it can send messages to other users as well, to inform them of the session's user actions.
@@ -117,12 +118,11 @@ class Session:
 
         self.sender.send(client_id, message=Message(text=message, display=options.display, section=options.section))
 
-    # def send_formatted(self, title, body, cancel=False):
-    #     self.send_to_client()
-    #     subtitle_bar = '─'*len(title)
-    #     cancel = cancel_prompt + '\n\n' if cancel else ''
-    #     return f'{title}\n{subtitle_bar}\n{cancel}{body}'
-
+    def send_formatted(self, title, body, cancel=False):
+        self.send_to_client(title, options=MessageOptions(display='underline'))
+        if cancel:
+            self.send_to_client(strings.cancel_prompt, options=MessageOptions(section=False))
+        self.send_to_client(body, options=MessageOptions(section=False))
 
     def set_logger(self, logger):
         self.logger = logger

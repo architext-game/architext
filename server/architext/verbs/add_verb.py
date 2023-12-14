@@ -70,7 +70,7 @@ class AddVerb(verb.Verb):
         else:
             title = _('Adding verb to item "{item_id}"').format(item_id=self.item.name)
 
-        self.session.send_to_client(strings.format(title, body, cancel=True))
+        self.session.send_formatted(title, body, cancel=True)
         self.current_process_function = self.process_verb_names
 
     def process_room_verb_creation(self):
@@ -84,7 +84,7 @@ class AddVerb(verb.Verb):
 
             Verb name/s:"""
         ))
-        self.session.send_to_client(strings.format(title, body, cancel=True))
+        self.session.send_formatted(title, body, cancel=True)
         self.current_process_function = self.process_verb_names
 
     def process_world_verb_creation(self):
@@ -98,7 +98,7 @@ class AddVerb(verb.Verb):
 
             Verb name/s:"""
         ))
-        self.session.send_to_client(strings.format(title, body, cancel=True))
+        self.session.send_formatted(title, body, cancel=True)
         self.current_process_function = self.process_verb_names
 
     def process_verb_names(self, message):
@@ -206,12 +206,12 @@ class InspectCustomVerb(verb.Verb):
 
         if not self.inspectable_custom_verbs:
             body = _("There are no verbs to show.")
-            self.session.send_to_client(strings.format(title, body))
+            self.session.send_formatted(title, body)
             self.finish_interaction()
         else:
             body = self.get_custom_verb_list()
             body += _("\n ᐅ Enter the number of a verb to show its commands")
-            self.session.send_to_client(strings.format(title, body, cancel=True))
+            self.session.send_formatted(title, body, cancel=True)
             self.process = self.process_menu_option
 
 
@@ -294,7 +294,7 @@ class DeleteCustomVerb(verb.Verb):
 
         title = _("Deleting verb of {target_name}").format(target_name=target_name)
         body  = _("{verb_list}\n ᐅ Enter the number of the verb to delete:").format(target_name=target_name, verb_list=self.get_custom_verb_list())
-        self.session.send_to_client(strings.format(title, body, cancel=True))
+        self.session.send_formatted(title, body, cancel=True)
         self.process = self.process_menu_option
 
     def get_custom_verb_list(self):

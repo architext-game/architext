@@ -128,7 +128,7 @@ class Info(verb.Verb):
             players_online=players_online,
             players_offline=players_offline,
         )
-        self.session.send_to_client(strings.format(title, body))
+        self.session.send_formatted(title, body)
 
     def visible_output(self, item):
         if item.visible == 'takable':

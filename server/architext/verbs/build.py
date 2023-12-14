@@ -28,7 +28,7 @@ class Build(verb.Verb):
     def process_first_message(self, message):
         title = _('You start building a new room.')
         body = _('Enter the following fields\n ⚑ Room\'s name')
-        self.session.send_to_client(strings.format(title, body, cancel=True))
+        self.session.send_formatted(title, body, cancel=True)
         self.current_process_function = self.process_room_name
 
     def process_room_name(self, message):

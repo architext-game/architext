@@ -34,7 +34,7 @@ class Connect(verb.Verb):
             'Enter the number of the room you want to connect it to (you can check it using the "info" verb).\n\n'
             'Destination room number:'
         )
-        self.session.send_to_client(strings.format(title, body, cancel=True))
+        self.session.send_formatted(title, body, cancel=True)
         self.current_process_function = self.process_room_alias
 
     def process_room_alias(self, message):

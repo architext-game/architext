@@ -28,50 +28,59 @@ function boxx(string: string): string {
   return `┏━━━━${fillin}━━━━┓\n┃    ${string}    ┃\n┗━━━━${fillin}━━━━┛\n`;
 }
 
+// Function to split the text into lines based on the maxWidth
+function wrapText(text: string, maxWidth: number): string[] {
+  let words = text.split(' ');
+  let lines: string[] = [];
+  let currentLine = '';
+
+  words.forEach(word => {
+    if (word.length > maxWidth) {
+      // If the current line is not empty, push it to lines
+      if (currentLine) {
+        lines.push(currentLine.trim());
+        currentLine = '';
+      }
+      // Split the long word and add it as separate lines
+      while (word.length > 0) {
+        let part = word.substring(0, maxWidth);
+        lines.push(part);
+        word = word.substring(maxWidth);
+      }
+    } else if (currentLine.length + word.length + 1 <= maxWidth) {
+      currentLine += (currentLine.length > 0 ? ' ' : '') + word;
+    } else {
+      lines.push(currentLine.trim());
+      currentLine = word;
+    }
+  });
+
+  if (currentLine) {
+    lines.push(currentLine.trim());
+  }
+
+  return lines;
+}
+
+// Function to center text within the given maxWidth
+function centerText(text: string, maxWidth: number): string {
+  let space = maxWidth - text.length;
+  let paddingStart = Math.floor(space / 2);
+  let paddingEnd = space - paddingStart;
+  return ' '.repeat(paddingStart) + text + ' '.repeat(paddingEnd);
+}
+
+function underline(text: string, maxWidth: number): string {
+  let lines = wrapText(text, maxWidth)
+  let longestLenght = lines.reduce<number>(((length, line) => (_.max([length, line.length]) ?? length)), 0)
+  lines.push('━'.repeat(longestLenght));
+  console.log('lines', lines.length)
+  const result = lines.reduce(((str, line) => str += '\n'+line), "").trim()
+  return result
+}
+
 function box(text: string, maxWidth: number): string {
   maxWidth = maxWidth - 8
-  // Function to split the text into lines based on the maxWidth
-  function wrapText(text: string, maxWidth: number): string[] {
-    let words = text.split(' ');
-    let lines: string[] = [];
-    let currentLine = '';
-  
-    words.forEach(word => {
-      if (word.length > maxWidth) {
-        // If the current line is not empty, push it to lines
-        if (currentLine) {
-          lines.push(currentLine.trim());
-          currentLine = '';
-        }
-        // Split the long word and add it as separate lines
-        while (word.length > 0) {
-          let part = word.substring(0, maxWidth);
-          lines.push(part);
-          word = word.substring(maxWidth);
-        }
-      } else if (currentLine.length + word.length + 1 <= maxWidth) {
-        currentLine += (currentLine.length > 0 ? ' ' : '') + word;
-      } else {
-        lines.push(currentLine.trim());
-        currentLine = word;
-      }
-    });
-  
-    if (currentLine) {
-      lines.push(currentLine.trim());
-    }
-  
-    return lines;
-  }
-  
-
-  // Function to center text within the given maxWidth
-  function centerText(text: string, maxWidth: number): string {
-    let space = maxWidth - text.length;
-    let paddingStart = Math.floor(space / 2);
-    let paddingEnd = space - paddingStart;
-    return ' '.repeat(paddingStart) + text + ' '.repeat(paddingEnd);
-  }
 
   // Split and center the text
   let lines = wrapText(text, maxWidth)
@@ -137,7 +146,9 @@ function App() {
     const message: Message = {
       ...receivedMessage,
       type: 'server',
+      text: receivedMessage.display === 'fit' ? receivedMessage.text : receivedMessage.text.trim()
     }
+    console.log(`-${message.text}-`)
     setMessages((prevMessages) => [...prevMessages, message])
   }
 
@@ -208,10 +219,10 @@ function App() {
     for (let i = highlightedMessages.length - 1; i >= 0; i--) {
       highlightedMessages[i] = true
       if(messages[i].section){
-        highlightedMessages[i] = true
         break
       }
     }
+    console.log(highlightedMessages)
   } else {
 
   }
@@ -231,11 +242,12 @@ function App() {
                 className={classNames(
                   "px-2 text-left",
                   { 'text-soft border-t-2 border-muted pb-4 pt-2': message.type == 'user' },
-                  { 'pb-2': message.type == 'server' },
+                  { 'pb-2': message.type == 'server' && message.display !== 'underline' },
                   { 'text-soft': scrolledBottom ? !highlightedMessages[index] : message.visible === false },
                 )}
                 text={
                   message.display === 'box' ? box(message.text, charsWidth - 2)
+                  : message.display === 'underline' ? underline(message.text, charsWidth - 2)
                   : message.text
                 }
                 onIntersectionChange={v => handleIntersectionChange(v, index)}

@@ -28,8 +28,8 @@ class Look(Verb):
             self.session.send_to_client(f"👁 {selected_entity.name}\n{selected_entity.description if selected_entity.description else strings.default_description}")
     
     def show_current_room(self, show_world_name=False):
-        title = self.session.user.room.name + "\n"
-        description = (self.session.user.room.description if self.session.user.room.description else strings.default_description) + "\n"
+        title = self.session.user.room.name
+        description = (self.session.user.room.description if self.session.user.room.description else strings.default_description) + '\n'
 
         listed_exits = [exit.name for exit in self.session.user.room.exits if exit.is_listed()]
         if len(listed_exits) > 0:
@@ -55,13 +55,14 @@ class Look(Verb):
             players_list = ', '.join([f'{user.name}' for user in players_here])
             players_here = _("Players here: {players_list}").format(players_list=players_list)
         players_here = f'👤 {players_here}.' + '\n' if players_here != '' else ''
-        underline = '─'*len(title)
         line_break = '\n' if (items or players_here or exits) else ''
-        message = (f"""{title}{underline}\n{description}{line_break}{items}{players_here}{exits}""")
+        message = (f"{description}{line_break}{items}{players_here}{exits}")
         
         if show_world_name:
             world_name = _('You are in ') + self.session.user.room.world_state.get_world().name
             self.session.send_to_client(world_name, MessageOptions(display='box'))
-            self.session.send_to_client(message, MessageOptions(section='false'))
+            self.session.send_to_client(title, MessageOptions(section=False, display='underline'))
+            self.session.send_to_client(message, MessageOptions(section=False))
         else:
-            self.session.send_to_client(message)
+            self.session.send_to_client(title, MessageOptions(display='underline'))
+            self.session.send_to_client(message, MessageOptions(section=False))

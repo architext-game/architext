@@ -54,7 +54,7 @@ class EditItem(verb.Verb):
                 '    1 - Description\n'
                 '    2 - Visibility'
             )
-            self.session.send_to_client(strings.format(title, body, cancel=True))
+            self.session.send_formatted(title, body, cancel=True)
             self.current_process_function = self.process_item_edit_option_number
 
         elif isinstance(selected_entity, entities.Exit):
@@ -68,7 +68,7 @@ class EditItem(verb.Verb):
                 '    2 - Visibility\n'
                 '    3 - Destination'
             )
-            self.session.send_to_client(strings.format(title, body, cancel=True))
+            self.session.send_formatted(title, body, cancel=True)
             self.current_process_function = self.process_exit_edit_option_number
 
         else:

@@ -37,7 +37,7 @@ class Craft(verb.Verb):
             title = _("You start crafting an item")
             body = _("Enter the following fields\n ⚑ Item's name")
         
-        self.session.send_to_client(strings.format(title, body, cancel=True))
+        self.session.send_formatted(title, body, cancel=True)
         self.current_process_function = self.process_item_name
 
     def process_item_name(self, message):
