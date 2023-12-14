@@ -228,22 +228,22 @@ function App() {
   }
 
   return (
-    <div className="bg-bg w-screen h-screen text-white font-console break-words">
+    <div className="bg-bg w-screen h-screen text-white font-console break-words text-sm sm:text-base">
       <div className="flex flex-col h-screen justify-end">
         <div
-          className="flex-1 overflow-auto p-4 space-y-2 whitespace-pre-wrap"
+          className="flex-1 flex-col items-end align-bottom overflow-auto p-3 sm:p-6 space-y-2 whitespace-pre-wrap content-end"
           ref={scrollRef} onScroll={handleScroll}
         >
-          <div className="max-w-3xl mx-auto" ref={messageListRef}>
+          <div className="flex-1 self-end mx-auto max-w-3xl" ref={messageListRef}>
             {messages.map((message, index, array) => (
               <Message
                 charAspectRatio={charAspectRatio}
                 key={index}
                 className={classNames(
-                  "px-2 text-left",
-                  { 'text-soft border-t-2 border-muted pb-4 pt-2': message.type == 'user' },
-                  { 'pb-2': message.type == 'server' && message.display !== 'underline' },
-                  { 'text-soft': scrolledBottom ? !highlightedMessages[index] : message.visible === false },
+                  "text-left",
+                  { 'text-soft border-muted pb-4 pt-2': message.type == 'user' },
+                  { 'pb-2': message.type === 'server' && message.display !== 'underline' && message.display !== 'box' },
+                  { 'text-soft': scrolledBottom ? !highlightedMessages[index] : false && message.visible === false },
                 )}
                 text={
                   message.display === 'box' ? box(message.text, charsWidth - 2)

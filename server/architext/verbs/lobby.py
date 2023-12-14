@@ -4,6 +4,8 @@ import textwrap
 
 import mongoengine
 
+from architext.adapters.sender import MessageOptions
+
 from .. import util
 from .. import entities
 from . import look, verb
@@ -198,10 +200,8 @@ class CreateWorld(LobbyMenu):
 
         self.new_world.name = message
         self.new_world.save()
+        self.session.send_to_client(_('Your new world is ready'), MessageOptions(display='box'))
         self.session.send_to_client(_(
-            '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
-            '┃    Your new world is ready    ┃\n'
-            '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n'
             'It is a private world 🔒. You can invite your friends sharing this invite code:\n'
             '\n'
             '{invite_code}\n'
@@ -209,7 +209,7 @@ class CreateWorld(LobbyMenu):
             'When it is ready, you can make the world public using the editworld command.\n'
             '\n'
             'Press enter to see your new world...'
-        ).format(invite_code=self.new_world.id))
+        ).format(invite_code=self.new_world.id), MessageOptions(section=False))
         self.process = self.enter_to_continue
 
     def enter_to_continue(self, message):

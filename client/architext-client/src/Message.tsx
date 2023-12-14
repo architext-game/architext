@@ -45,7 +45,7 @@ export const Message: FC<MessageProps> = ({ text, onIntersectionChange, intersec
   return (
     <div
       className={classNames(className)}
-      style={fit? {fontSize: fitFontSize} : {}}
+      style={fit? {fontSize: fitFontSize, lineHeight: '130%'} : {}}
     >
       <div style={{height: 1}} ref={ref}/>
       { text }

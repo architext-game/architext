@@ -20,9 +20,9 @@ class Help(verb.Verb):
         
         if topic is None:
             out = _(
-                '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
-                '┃       Architext\'s help hub       ┃\n'
-                '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n'
+                '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
+                '┃   Architext\'s help hub   ┃\n'
+                '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n'
                 'If you are new, just try out writing the following verbs an you\'ll be good to go:\n'
                 '     "look"    "look <something>"    "go <somewhere>"     "say <something>"\n'
                 'Also note that you can use "exitworld" to travel to other worlds!\n'
@@ -43,9 +43,9 @@ class Help(verb.Verb):
             )
         elif re.search(_(r"^basics$"), topic):
             out = _(
-                '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
-                '┃       Architext basics       ┃\n'
-                '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n'
+                '┏━━━━━━━━━━━━━━━━━━━━━━┓\n'
+                '┃   Architext basics   ┃\n'
+                '┗━━━━━━━━━━━━━━━━━━━━━━┛\n'
                 'Moving and looking\n'
                 '──────────────────\n'
                 'Getting your bearings in Architext\'s worlds is quite easy, just use:\n'
@@ -66,9 +66,9 @@ class Help(verb.Verb):
             )
         elif re.search(_(r"^interaction$"), topic):
             out = _(
-                '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
-                '┃       Interacting with your surroundings       ┃\n'
-                '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n'
+                '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
+                '┃   Interacting with your surroundings   ┃\n'
+                '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n'
                 'Carrying items\n'
                 '──────────────\n' 
                 'There are certain items you can take with you. These items always appear at the room\'s item list shown when you use "look".\n'
