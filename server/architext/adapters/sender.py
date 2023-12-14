@@ -3,28 +3,33 @@ import typing
 import dataclasses
 
 @dataclasses.dataclass
+class Message():
+    text: str
+    display: typing.Literal['wrap', 'box', 'underline', 'fit'] = 'wrap'
+    section: bool = True
+
+@dataclasses.dataclass
 class MessageOptions():
     display: typing.Literal['wrap', 'box', 'underline', 'fit'] = 'wrap'
     section: bool = True
 
 class AbstractSender(abc.ABC):
     @abc.abstractmethod
-    def send(self, connection_id: str, message: str) -> None:
+    def send(self, connection_id: str, message: Message) -> None:
         pass
 
 class FakeSender(AbstractSender):
     def __init__(self):
         self._sent = []
 
-    def send(self, connection_id: str, message: str) -> None:
-        print(message)
-        self._sent.append(('client', message))
+    def send(self, connection_id: str, message: Message) -> None:
+        print(dataclasses.asdict(message))
+        self._sent.append(message)
 
 class SocketIOSender(AbstractSender):
     def __init__(self, sio):
         self.sio = sio
 
-    def send(self, socket_id, message, options: MessageOptions = MessageOptions()):
-        if socket_id is not None:
-            self.sio.emit('message', (message, dataclasses.asdict(options)), to=socket_id)
-
+    def send(self, connection_id: str, message: Message) -> None:
+        if connection_id is not None:
+            self.sio.emit('message', dataclasses.asdict(message), to=connection_id)

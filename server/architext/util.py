@@ -489,5 +489,3 @@ def text_to_world_dict(text):
             'the message is not valid'
 
     return world_dict
-
-

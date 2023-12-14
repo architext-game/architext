@@ -294,8 +294,7 @@ class DeleteCustomVerb(verb.Verb):
 
         title = _("Deleting verb of {target_name}").format(target_name=target_name)
         body  = _("{verb_list}\n ᐅ Enter the number of the verb to delete:").format(target_name=target_name, verb_list=self.get_custom_verb_list())
-        out_message = strings.format(title, body, cancel=True)
-        self.session.send_to_client(out_message)
+        self.session.send_to_client(strings.format(title, body, cancel=True))
         self.process = self.process_menu_option
 
     def get_custom_verb_list(self):

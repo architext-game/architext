@@ -27,8 +27,7 @@ class Remodel(verb.Verb):
             '    0 - Name\n'
             '    1 - Description'
         ) 
-        out_message = strings.format(title, body, cancel=True) 
-        self.session.send_to_client(out_message)
+        self.session.send_to_client(strings.format(title, body, cancel=True))
         self.current_process_function = self.process_reform_option
 
     def process_reform_option(self, message):

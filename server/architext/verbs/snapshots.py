@@ -28,8 +28,7 @@ class CreateSnapshot(verb.Verb):
             '\n'
             'Enter a name for your snapshot:'
         )
-        out_message = strings.format(title, body, cancel=True)
-        self.session.send_to_client(out_message)
+        self.session.send_to_client(strings.format(title, body, cancel=True))
         self.current_process_function = self.process_snapshot_name
 
     def process_snapshot_name(self, message):
@@ -209,8 +208,7 @@ class PubishSnapshot(verb.Verb):
         for i, snapshot in enumerate(publishable_snapshots):
             body += ' {} - {}\n'.format(i, snapshot.name)
 
-        out_message = strings.format(title, body, cancel=True)
-        self.session.send_to_client(out_message)
+        self.session.send_to_client(strings.format(title, body, cancel=True))
 
 
 class UnpubishSnapshot(verb.Verb):

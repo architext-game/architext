@@ -29,8 +29,7 @@ class EditWorld(verb.Verb):
             '    1 - Make public/private\n'
             '    2 - Edit freedom'
         )
-        out_message = strings.format(title, body, cancel=True)
-        self.session.send_to_client(out_message)
+        self.session.send_to_client(strings.format(title, body, cancel=True))
         self.current_process_function = self.process_option_number
 
     def process_option_number(self, message):

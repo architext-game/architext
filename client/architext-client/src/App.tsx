@@ -17,7 +17,8 @@ interface Message {
   section: boolean
 }
 
-interface MessageOptions {
+interface ReceivedMessage {
+  text: string,
   display: 'wrap' | 'box' | 'underline' | 'fit',
   section: boolean
 }
@@ -132,12 +133,10 @@ function App() {
     };
   }, [messageListRef.current, characterMeasureRef.current, updateCharWidth]);
 
-  const addServerMessage = (text: string, options: MessageOptions) => {
+  const addServerMessage = (receivedMessage: ReceivedMessage) => {
     const message: Message = {
-      text: text.replace(/^\n|\n$/g, ''),
+      ...receivedMessage,
       type: 'server',
-      display: options.display,
-      section: options.section
     }
     setMessages((prevMessages) => [...prevMessages, message])
   }
@@ -184,8 +183,8 @@ function App() {
 
   useEffect(() => {
     if (socket) {
-      socket.on('message', (message: string, options: MessageOptions) => {
-        addServerMessage(message, options)
+      socket.on('message', (receivedMessage: ReceivedMessage) => {
+        addServerMessage(receivedMessage)
       });
 
       socket.on('connect', () => {
