@@ -5,8 +5,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN yarn install
 COPY . .
-ARG SERVER_URL
-ENV VITE_SERVER_URL $SERVER_URL
+ARG SERVER_ADDRESS
+ENV VITE_SERVER_ADDRESS $SERVER_ADDRESS
 RUN yarn build
 
 # Stage 2: Serve the application

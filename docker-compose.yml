@@ -19,7 +19,7 @@ services:
       context: ./client/architext-client
       dockerfile: Dockerfile
       args:
-        - SERVER_URL=${SELF_ADDRESS}
+        - SERVER_ADDRESS=${SERVER_ADDRESS}
     restart: always
     ports:
       - "80:80"

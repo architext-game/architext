@@ -7,7 +7,7 @@ import classNames from 'classnames'
 import { Message } from './Message';
 import _ from 'lodash';
 
-const SOCKET_SERVER_URL = import.meta.env.VITE_SERVER_URL;
+const SOCKET_SERVER_ADDRESS = import.meta.env.VITE_SERVER_ADDRESS;
 
 interface Message {
   text: string,
@@ -186,7 +186,7 @@ function App() {
   }, [messages.length])
 
   useEffect(() => {
-    const newSocket = io(SOCKET_SERVER_URL, /*{secure: true} TODO */);
+    const newSocket = io(SOCKET_SERVER_ADDRESS, /*{secure: true} TODO */);
     setSocket(newSocket);
 
     return () => { newSocket.disconnect() };
