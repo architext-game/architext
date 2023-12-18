@@ -6,3 +6,6 @@ Babel
 regex
 pyyaml
 py-rolldice
+python-socketio
+python-dotenv
+eventlet

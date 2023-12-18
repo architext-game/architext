@@ -4,3 +4,4 @@ server/logs/
 .vscode/
 logs/
 super-secret.txt
+venv

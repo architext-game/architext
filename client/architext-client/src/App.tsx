@@ -7,7 +7,7 @@ import classNames from 'classnames'
 import { Message } from './Message';
 import _ from 'lodash';
 
-const SOCKET_SERVER_URL = 'http://localhost:5000';
+const SOCKET_SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 interface Message {
   text: string,
