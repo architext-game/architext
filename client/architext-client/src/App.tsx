@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react'
-import './App.css'
 import io from 'socket.io-client';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
 import { Socket } from 'socket.io-client';
@@ -112,6 +111,7 @@ function App() {
   const scrollRef = useRef<HTMLDivElement>(null)
   const messageListRef = useRef<HTMLDivElement>(null)
   const characterMeasureRef = useRef<HTMLDivElement>(null)
+  const textInputContainerRef = useRef<HTMLDivElement>(null)
 
   const updateCharWidth = () => {
     if(messageListRef.current && characterMeasureRef.current){
@@ -228,13 +228,12 @@ function App() {
   }
 
   return (
-    <div className="bg-bg w-screen h-screen text-white font-console break-words text-sm sm:text-base">
-      <div className="flex flex-col h-screen justify-end">
+    <div className="bg-bg h-screen w-screen flex flex-col justify-end text-white font-console break-words text-sm sm:text-base">
         <div
-          className="flex-1 flex-col items-end align-bottom overflow-auto p-3 sm:p-6 space-y-2 whitespace-pre-wrap content-end"
+          className="flex-1 px-3 sm:px-6 whitespace-pre-wrap overflow-auto flex flex-col"
           ref={scrollRef} onScroll={handleScroll}
         >
-          <div className="flex-1 self-end mx-auto max-w-3xl" ref={messageListRef}>
+          <div className="grow shrink-0 basis-auto mx-auto max-w-3xl flex flex-col justify-end" ref={messageListRef}>
             {messages.map((message, index, array) => (
               <Message
                 charAspectRatio={charAspectRatio}
@@ -255,22 +254,23 @@ function App() {
                 fit={message.display === 'fit'}
               />
             ))}
-          <div ref={bottomRef} />
-          <div ref={characterMeasureRef} className="h-0 w-fit overflow-hidden">W</div>
+            <div ref={bottomRef}/>
+            <div style={{height: textInputContainerRef.current?.clientHeight}}/> {/* Fill height blocked by textInput */}
+            <div ref={characterMeasureRef} className="h-0 w-fit overflow-hidden">W</div>
           </div>
         </div>
-        <div className="p-4 max-w-3xl mx-auto w-screen">
+        <div className="bg-bg fixed bottom-0 w-screen p-4f flex justify-center py-4 px-2" ref={textInputContainerRef}>
           <input
             autoFocus
+            autoCapitalize="none"
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="p-2 border rounded w-full bg-bg"
+            className="p-2 border rounded w-full bg-bg max-w-3xl"
             placeholder="Type a message"
           />
         </div>
-      </div>
     </div>
   )
 }

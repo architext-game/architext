@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, FC } from 'react'
-import './App.css'
 import classNames from 'classnames'
 import _ from "lodash"
 
@@ -38,7 +37,7 @@ export const Message: FC<MessageProps> = ({ text, onIntersectionChange, intersec
     if(fit){
       let lines: string[] = text.split('\n');
       const longestLine = _.max(lines.map(l => l.length)) ?? 0
-      setFitFontSize(((ref.current?.clientWidth ?? 0) - 40) / longestLine / charAspectRatio)
+      setFitFontSize(((ref.current?.clientWidth ?? 0) - 30) / longestLine / charAspectRatio)
     }
   })
 

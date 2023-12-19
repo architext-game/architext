@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        console: ['Consolas', 'Courier New', 'monospace'],
+        console: ['mononoki-Regular', 'monospace'],
       },
       colors: {
         bg: '#2F0A23',

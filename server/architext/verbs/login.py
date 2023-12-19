@@ -36,7 +36,7 @@ class Login(Verb):
 """)
         cover = util.get_config()['cover']
         out_message = cover if cover else strings.default_cover
-        out_message += _("\n\n\n ᐅ What is your nickname?")
+        out_message += _("\n\n ᐅ What is your nickname?")
         self.session.send_to_client(art, options=MessageOptions(display='fit'))
         self.session.send_to_client(out_message, options=MessageOptions(section=False))
 
