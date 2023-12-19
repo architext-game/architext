@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, FC } from 'react'
+import { useState, useEffect, useRef, forwardRef } from 'react'
 import classNames from 'classnames'
 import _ from "lodash"
 
@@ -11,8 +11,8 @@ interface MessageProps {
   fit?: boolean,
 }
 
-export const Message: FC<MessageProps> = ({ text, onIntersectionChange, intersectionMargin, className, fit, charAspectRatio }) => {
-  const ref = useRef<HTMLDivElement>(null)
+export const Message = forwardRef<HTMLDivElement, MessageProps>(({ text, onIntersectionChange, intersectionMargin, className, fit, charAspectRatio }, ref) => {
+  const internalRef = useRef<HTMLDivElement>(null)
   const [fitFontSize, setFitFontSize] = useState<number>()
 
   useEffect(() => {
@@ -22,22 +22,22 @@ export const Message: FC<MessageProps> = ({ text, onIntersectionChange, intersec
       },
       { rootMargin: intersectionMargin }
     );
-    if(ref.current){
-      observer.observe(ref.current)
-      const frozenRef = ref.current
+    if(internalRef.current){
+      observer.observe(internalRef.current)
+      const frozenRef = internalRef.current
       return () => {
-        if(ref.current){
+        if(internalRef.current){
           observer.unobserve(frozenRef)
         }
       }
     }
-  }, [ref.current]);
+  }, [internalRef.current]);
 
   useEffect(() => {
     if(fit){
       let lines: string[] = text.split('\n');
       const longestLine = _.max(lines.map(l => l.length)) ?? 0
-      setFitFontSize(((ref.current?.clientWidth ?? 0) - 30) / longestLine / charAspectRatio)
+      setFitFontSize(((internalRef.current?.clientWidth ?? 0) - 30) / longestLine / charAspectRatio)
     }
   })
 
@@ -46,8 +46,9 @@ export const Message: FC<MessageProps> = ({ text, onIntersectionChange, intersec
       className={classNames(className)}
       style={fit? {fontSize: fitFontSize, lineHeight: '130%'} : {}}
     >
+      <div style={{height: 1}} ref={internalRef}/>
       <div style={{height: 1}} ref={ref}/>
       { text }
     </div>
   )
-}
+})

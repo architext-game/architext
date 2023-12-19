@@ -73,7 +73,6 @@ function underline(text: string, maxWidth: number): string {
   let lines = wrapText(text, maxWidth)
   let longestLenght = lines.reduce<number>(((length, line) => (_.max([length, line.length]) ?? length)), 0)
   lines.push('━'.repeat(longestLenght));
-  console.log('lines', lines.length)
   const result = lines.reduce(((str, line) => str += '\n'+line), "").trim()
   return result
 }
@@ -107,7 +106,9 @@ function App() {
   const [scrolledBottom, setScrolledBottom] = useState<boolean>(false)
   const [charsWidth, setCharsWidth] = useState<number>(0)
   const [charAspectRatio, setCharAspectRatio] = useState<number>(1)
+  const [previousLastSection, setPreviousLastSection] = useState<number>(-1)
   const bottomRef = useRef<HTMLDivElement>(null)
+  const lastSectionRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const messageListRef = useRef<HTMLDivElement>(null)
   const characterMeasureRef = useRef<HTMLDivElement>(null)
@@ -148,7 +149,6 @@ function App() {
       type: 'server',
       text: receivedMessage.display === 'fit' ? receivedMessage.text : receivedMessage.text.trim()
     }
-    console.log(`-${message.text}-`)
     setMessages((prevMessages) => [...prevMessages, message])
   }
 
@@ -159,21 +159,22 @@ function App() {
     setInputValue('')
   }
 
-  const handleScroll = () => {
-    if(!scrollRef.current) return
-
-    const { scrollTop, clientHeight, scrollHeight } = scrollRef.current;
-
-    if (scrollHeight - scrollTop - clientHeight < 10 ) {
-      if(!scrolledBottom){
-        setScrolledBottom(true)
-      }
-    } else {
-      if(scrolledBottom){
-        setScrolledBottom(false)
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setScrolledBottom(entry.isIntersecting);
+      },
+    );
+    if(bottomRef.current){
+      observer.observe(bottomRef.current)
+      const frozenRef = bottomRef.current
+      return () => {
+        if(bottomRef.current){
+          observer.unobserve(frozenRef)
+        }
       }
     }
-  }
+  }, [bottomRef.current]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -182,8 +183,15 @@ function App() {
   }
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'instant' })
-  }, [messages.length])
+    if(!messages.some(m => m.type == 'user')){
+      bottomRef.current?.scrollIntoView({ behavior: 'instant' })
+    }else if(previousLastSection !== lastSectionIndex){
+      lastSectionRef.current?.scrollIntoView({ behavior: 'instant' })
+    }else if(scrolledBottom){
+      bottomRef.current?.scrollIntoView({ behavior: 'instant' })
+    }
+    setPreviousLastSection(lastSectionIndex)
+  }, [messages.length, lastSectionRef, bottomRef])
 
   useEffect(() => {
     const newSocket = io(SOCKET_SERVER_ADDRESS, /*{secure: true} TODO */);
@@ -215,45 +223,65 @@ function App() {
 
   const highlightedMessages: boolean[] = new Array(messages.length).fill(false);
 
+  let lastSectionIndex = -1
+
+  for (let i = messages.length - 1; i >= 0; i--) {
+    if(messages[i].section){
+      lastSectionIndex = i
+      break
+    }
+  }
+
   if(scrolledBottom){
     for (let i = highlightedMessages.length - 1; i >= 0; i--) {
       highlightedMessages[i] = true
       if(messages[i].section){
+        lastSectionIndex = i
         break
       }
     }
-    console.log(highlightedMessages)
   } else {
 
   }
 
+  useEffect(() => {
+    window.visualViewport?.addEventListener('resize', (ev) => {
+      console.log("adasd", ev);
+    })
+  }, [])
+
   return (
-    <div className="bg-bg h-screen w-screen flex flex-col justify-end text-white font-console break-words text-sm sm:text-base">
+    <div className="bg-bg min-h-screen w-screen flex flex-col justify-end text-white font-console break-words text-sm sm:text-base">
         <div
           className="flex-1 px-3 sm:px-6 whitespace-pre-wrap overflow-auto flex flex-col"
-          ref={scrollRef} onScroll={handleScroll}
+          ref={scrollRef}
         >
           <div className="grow shrink-0 basis-auto mx-auto max-w-3xl flex flex-col justify-end" ref={messageListRef}>
-            {messages.map((message, index, array) => (
-              <Message
-                charAspectRatio={charAspectRatio}
-                key={index}
-                className={classNames(
-                  "text-left",
-                  { 'text-soft border-muted pb-4 pt-2': message.type == 'user' },
-                  { 'pb-2': message.type === 'server' && message.display !== 'underline' && message.display !== 'box' },
-                  { 'text-soft': scrolledBottom ? !highlightedMessages[index] : false && message.visible === false },
-                )}
-                text={
-                  message.display === 'box' ? box(message.text, charsWidth - 2)
-                  : message.display === 'underline' ? underline(message.text, charsWidth - 2)
-                  : message.text
-                }
-                onIntersectionChange={v => handleIntersectionChange(v, index)}
-                intersectionMargin='-0px'
-                fit={message.display === 'fit'}
-              />
-            ))}
+            {messages.map((message, index, array) => {
+              return (
+                <Message
+                  charAspectRatio={charAspectRatio}
+                  key={index}
+                  className={classNames(
+                    "text-left",
+                    { 'text-soft border-muted pb-4 pt-2': message.type == 'user' },
+                    { 'pb-2': message.type === 'server' && message.display !== 'underline' && message.display !== 'box' },
+                    { 'text-soft': scrolledBottom ? !highlightedMessages[index] : false && message.visible === false },
+                  )}
+                  text={
+                    message.display === 'box' ? box(message.text, charsWidth - 2)
+                    : message.display === 'underline' ? underline(message.text, charsWidth - 2)
+                    : message.text
+                  }
+                  onIntersectionChange={v => handleIntersectionChange(v, index)}
+                  intersectionMargin='-0px'
+                  fit={message.display === 'fit'}
+                  ref={
+                    lastSectionIndex === index ? lastSectionRef : null
+                  }
+                />
+              )
+              })}
             <div ref={bottomRef}/>
             <div style={{height: textInputContainerRef.current?.clientHeight}}/> {/* Fill height blocked by textInput */}
             <div ref={characterMeasureRef} className="h-0 w-fit overflow-hidden">W</div>
@@ -270,6 +298,12 @@ function App() {
             className="p-2 border rounded w-full bg-bg max-w-3xl"
             placeholder="Type a message"
           />
+          {
+            !scrolledBottom &&
+            <div className='absolute mx-auto -top-4 left-0 right-0 text-center flex justify-center'>
+              <div className='bg-bg px-3 py-2 rounded-sm border border-white'>↓ 👁️ ↓</div>
+            </div>
+          }
         </div>
     </div>
   )
