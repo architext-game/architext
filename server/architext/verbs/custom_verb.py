@@ -57,7 +57,7 @@ class CustomVerb(Verb):
 
         try:
             creator_session = self.session if not isinstance(self.session, session.GhostSession) else self.session.creator_session
-            ghost = session.GhostSession(self.session.server, self.session.user.room, creator_session, depth=depth)
+            ghost = session.GhostSession(self.session.sender, self.session.user.room, creator_session, depth=depth)
         except session.GhostSessionMaxDepthExceeded:
             #TODO log max recursion depth exceeded (this self.session has no logger)
             pass
