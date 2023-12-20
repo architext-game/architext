@@ -7,11 +7,13 @@ class Message():
     text: str
     display: typing.Literal['wrap', 'box', 'underline', 'fit'] = 'wrap'
     section: bool = True
+    fillInput: typing.Optional[str] = None
 
 @dataclasses.dataclass
 class MessageOptions():
     display: typing.Literal['wrap', 'box', 'underline', 'fit'] = 'wrap'
     section: bool = True
+    fillInput: typing.Optional[str] = None
 
 class AbstractSender(abc.ABC):
     @abc.abstractmethod

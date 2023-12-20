@@ -3,6 +3,8 @@ from .. import util
 from .. import entities
 import textwrap
 import architext.strings as strings
+from architext.adapters.sender import MessageOptions
+import logging
 
 class EditItem(verb.Verb):
     """This verb allows users to edit properties of an item or exit that is in their current room"""
@@ -18,6 +20,7 @@ class EditItem(verb.Verb):
         self.current_process_function = self.start_editing
 
     def process(self, message):
+        self.session.logger.info('EDIT RECEIVED\n'+message)
         if message == '/':
             self.session.send_to_client(strings.cancelled)
             self.finish_interaction()
@@ -83,9 +86,13 @@ class EditItem(verb.Verb):
             return
 
         # max_number = 2
-        if 0 <= message <= 1:
+        if message == 0:
             self.option_number = message
-            self.session.send_to_client(_('Enter the new value:'))
+            self.session.send_to_client(_('Enter the new name:'), options=MessageOptions(fillInput=self.item_to_edit.name))
+            self.current_process_function = self.process_reform_value
+        elif message == 1:
+            self.option_number = message
+            self.session.send_to_client(_('Enter the new description:'), options=MessageOptions(fillInput=self.item_to_edit.description))
             self.current_process_function = self.process_reform_value
         elif message == 2:
             self.option_number = message

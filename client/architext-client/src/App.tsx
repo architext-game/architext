@@ -19,7 +19,8 @@ interface Message {
 interface ReceivedMessage {
   text: string,
   display: 'wrap' | 'box' | 'underline' | 'fit',
-  section: boolean
+  section: boolean,
+  fillInput?: string
 }
 
 function boxx(string: string): string {
@@ -107,12 +108,14 @@ function App() {
   const [charsWidth, setCharsWidth] = useState<number>(0)
   const [charAspectRatio, setCharAspectRatio] = useState<number>(1)
   const [previousLastSection, setPreviousLastSection] = useState<number>(-1)
+  const [shouldSelect, setShouldSelect] = useState<boolean>(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const lastSectionRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const messageListRef = useRef<HTMLDivElement>(null)
   const characterMeasureRef = useRef<HTMLDivElement>(null)
   const textInputContainerRef = useRef<HTMLDivElement>(null)
+  const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
   const updateCharWidth = () => {
     if(messageListRef.current && characterMeasureRef.current){
@@ -176,8 +179,9 @@ function App() {
     }
   }, [bottomRef.current]);
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault()
       addUserMessage()
     }
   }
@@ -201,9 +205,20 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if(shouldSelect && textAreaRef.current){
+      textAreaRef.current.select()
+      setShouldSelect(false)
+    }
+  }, [shouldSelect])
+
+  useEffect(() => {
     if (socket) {
       socket.on('message', (receivedMessage: ReceivedMessage) => {
         addServerMessage(receivedMessage)
+        if(receivedMessage.fillInput){
+          setInputValue(receivedMessage.fillInput)
+          setShouldSelect(true)
+        }
       });
 
       socket.on('connect', () => {
@@ -245,11 +260,12 @@ function App() {
   }
 
   useEffect(() => {
-    window.visualViewport?.addEventListener('resize', (ev) => {
-      console.log("adasd", ev);
-    })
-  }, [])
-
+    if (textAreaRef?.current) {
+      textAreaRef.current.style.height = 'auto'; // Reset height to shrink if needed
+      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`; // Set to scroll height
+    }
+  }, [textAreaRef, inputValue]);
+  
   return (
     <div className="bg-bg min-h-screen w-screen flex flex-col justify-end text-white font-console break-words text-sm sm:text-base">
         <div
@@ -288,16 +304,21 @@ function App() {
           </div>
         </div>
         <div className="bg-bg fixed bottom-0 w-screen p-4f flex justify-center py-4 px-2" ref={textInputContainerRef}>
-          <input
+          <textarea 
+            rows={1} 
+            wrap="on"
+            style={{resize: "none"}}
             autoFocus
             autoCapitalize="none"
-            type="text"
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="p-2 border rounded w-full bg-bg max-w-3xl"
+            onChange={(e) => { setInputValue(e.target.value) }}
+            className="p-2 border rounded w-full bg-bg max-w-3xl h-fit max-h-32 sm:max-h-48 md:max-h-96"
             placeholder="Type a message"
-          />
+            onKeyDown={handleKeyDown}
+            ref={textAreaRef}
+          >
+          </textarea>
+
           {
             !scrolledBottom &&
             <div className='absolute mx-auto -top-4 left-0 right-0 text-center flex justify-center'>

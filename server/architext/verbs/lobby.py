@@ -23,7 +23,9 @@ class LobbyMenu(verb.Verb):
         
         if world_list:
             out_message += _('Enter the number of the world you want to enter\n')
-            world_names_with_index = [f' {index: < 4} {world.name: <36}  {world.get_connected_users()}{chr(128100)} by {world.creator.name} {"" if world.public else chr(128274)}' for index, world in enumerate(world_list)]
+            # Padding is great for desktop but bad for mobile
+            # world_names_with_index = [f' {index: < 4} {world.name: <36}  {world.get_connected_users()}{chr(128100)} by {world.creator.name} {"" if world.public else chr(128274)}' for index, world in enumerate(world_list)]
+            world_names_with_index = [f' {index} {world.name}  [{world.get_connected_users()}{chr(128100)} {world.creator.name}{"" if world.public else f" {chr(128274)}"}]' for index, world in enumerate(world_list)]
             out_message += functools.reduce(lambda a, b: '{}\n{}'.format(a, b), world_names_with_index)
         else:
             out_message += _('There are not public or known private worlds in this server.')
@@ -55,12 +57,12 @@ class LobbyHelp(LobbyMenu):
     def process(self, message):
         out_message = _(
             'You can use these commands from the lobby:\n'
-            '  +      to create a new world.\n'
-            '  -      to delete one of your worlds.\n'
-            '  r      to reload and show the list of worlds.\n'
-            '  *      to deploy a public world snapshot.\n'
-            '  >      to import a world from text.\n'
-            '  who    to see who is connected right now.\n'
+            '  +    to create a new world.\n'
+            '  -    to delete one of your worlds.\n'
+            '  r    to reload and show the list of worlds.\n'
+            '  *    to deploy a public world snapshot.\n'
+            '  >    to import a world from text.\n'
+            '  who  to see who is connected right now.\n'
             '\n'
             'Enter the number of a world in the world list to go there.\n'
             'Enter the invite code of a world to go there.'

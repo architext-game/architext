@@ -1,3 +1,4 @@
+from architext.adapters.sender import MessageOptions
 from . import verb
 import textwrap
 from .. import entities
@@ -42,6 +43,7 @@ class EditWorld(verb.Verb):
         options = {
             0: {
                 "out_message": _('Enter the new name:'),
+                "options": MessageOptions(fillInput=self.world.name),
                 "next_process_function": self.process_new_world_name,
             },
             1: {
@@ -70,7 +72,10 @@ class EditWorld(verb.Verb):
             self.session.send_to_client(strings.wrong_value)
             return
 
-        self.session.send_to_client(chosen_option["out_message"])
+        if(chosen_option.get("options")):
+            self.session.send_to_client(chosen_option["out_message"], options=chosen_option["options"])
+        else:
+            self.session.send_to_client(chosen_option["out_message"])
         self.current_process_function = chosen_option["next_process_function"]
 
     def process_new_world_name(self, message):

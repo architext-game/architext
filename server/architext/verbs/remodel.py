@@ -2,6 +2,8 @@
 
 from . import verb
 import architext.strings as strings
+from architext.adapters.sender import MessageOptions
+
 class Remodel(verb.Verb):
     """Lets players edit every aspect of a room"""
 
@@ -37,10 +39,13 @@ class Remodel(verb.Verb):
             self.session.send_to_client(strings.not_a_number)
             return
 
-        max_number = 1
-        if 0 <= message <= max_number:
+        if message == 0:
             self.option_number = message
-            self.session.send_to_client(_('Enter the new value'))
+            self.session.send_to_client(_('Enter the new name'), options=MessageOptions(fillInput=self.session.user.room.name))
+            self.current_process_function = self.process_reform_value
+        elif message == 1:
+            self.option_number = message
+            self.session.send_to_client(_('Enter the new description'), options=MessageOptions(fillInput=self.session.user.room.description))
             self.current_process_function = self.process_reform_value
         else:
             self.session.send_to_client(strings.wrong_value)

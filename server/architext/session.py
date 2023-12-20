@@ -75,13 +75,13 @@ class Session:
         self.client_id = None
 
     def send_to_client(self, message, options: MessageOptions = MessageOptions()):
-        self.send(self.client_id, "\n\r"+message, options=options)
+        self.send(self.client_id, message, options=options)
         if self.logger:
             self.logger.info('server\n'+message)
 
     def send_to_user(self, user, message, options: MessageOptions = MessageOptions()):
         if user.client_id is not None:
-            self.send(user.client_id, "\n\r"+message, options=options)
+            self.send(user.client_id, message, options=options)
 
     def send_to_room_except(self, exception_user, message, options: MessageOptions = MessageOptions(section=False)):
         users_in_this_room = entities.User.objects(room=self.user.room)
@@ -116,7 +116,7 @@ class Session:
                 for line in message.splitlines()]
             )
 
-        self.sender.send(client_id, message=Message(text=message, display=options.display, section=options.section))
+        self.sender.send(client_id, message=Message(text=message, display=options.display, section=options.section, fillInput=options.fillInput))
 
     def send_formatted(self, title, body, cancel=False):
         self.send_to_client(title, options=MessageOptions(display='underline'))
