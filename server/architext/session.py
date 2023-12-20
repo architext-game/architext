@@ -116,7 +116,7 @@ class Session:
                 for line in message.splitlines()]
             )
 
-        self.sender.send(client_id, message=Message(text=message, display=options.display, section=options.section, fillInput=options.fillInput))
+        self.sender.send(client_id, message=Message(text=message, display=options.display, section=options.section, fillInput=options.fillInput, asksForPassword=options.asksForPassword))
 
     def send_formatted(self, title, body, cancel=False):
         self.send_to_client(title, options=MessageOptions(display='underline'))

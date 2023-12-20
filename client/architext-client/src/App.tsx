@@ -20,7 +20,8 @@ interface ReceivedMessage {
   text: string,
   display: 'wrap' | 'box' | 'underline' | 'fit',
   section: boolean,
-  fillInput?: string
+  fillInput?: string,
+  asksForPassword?: boolean,
 }
 
 function boxx(string: string): string {
@@ -109,6 +110,7 @@ function App() {
   const [charAspectRatio, setCharAspectRatio] = useState<number>(1)
   const [previousLastSection, setPreviousLastSection] = useState<number>(-1)
   const [shouldSelect, setShouldSelect] = useState<boolean>(false)
+  const [privateInput, setPrivateInput] = useState<boolean>(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const lastSectionRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -160,6 +162,7 @@ function App() {
     const message: Message = { text: inputValue, type: 'user', display: 'wrap', section: false }
     setMessages((prevMessages) => [...prevMessages, message])
     setInputValue('')
+    setPrivateInput(false)
   }
 
   useEffect(() => {
@@ -180,6 +183,13 @@ function App() {
   }, [bottomRef.current]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault()
+      addUserMessage()
+    }
+  }
+
+  const handleKeyDownInput = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault()
       addUserMessage()
@@ -218,6 +228,9 @@ function App() {
         if(receivedMessage.fillInput){
           setInputValue(receivedMessage.fillInput)
           setShouldSelect(true)
+        }
+        if(receivedMessage.asksForPassword){
+          setPrivateInput(true)
         }
       });
 
@@ -304,7 +317,21 @@ function App() {
           </div>
         </div>
         <div className="bg-bg fixed bottom-0 w-screen p-4f flex justify-center py-4 px-2" ref={textInputContainerRef}>
-          <textarea 
+          {
+            privateInput ? 
+            <input 
+            type="password"
+            style={{resize: "none"}}
+            autoFocus
+            autoCapitalize="none"
+            value={inputValue}
+            onChange={(e) => { setInputValue(e.target.value) }}
+            className="p-2 border rounded w-full bg-bg max-w-3xl h-fit max-h-32 sm:max-h-48 md:max-h-96"
+            placeholder="Type a message"
+            onKeyDown={handleKeyDownInput}
+            />
+            :
+            <textarea 
             rows={1} 
             wrap="on"
             style={{resize: "none"}}
@@ -316,8 +343,7 @@ function App() {
             placeholder="Type a message"
             onKeyDown={handleKeyDown}
             ref={textAreaRef}
-          >
-          </textarea>
+          ></textarea>}
 
           {
             !scrolledBottom &&

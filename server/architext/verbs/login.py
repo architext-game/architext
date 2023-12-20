@@ -62,7 +62,7 @@ class Login(Verb):
                 self.session.send_to_client(_(
                     'An avatar with that name already exists.\n'
                     ' ᐅ Enter {user_name}\'s password or "/" to go back.'
-                ).format(user_name=message))
+                ).format(user_name=message), MessageOptions(asksForPassword=True))
                 self.current_process_function = self.process_login_password
 
             # new user or returning user mispelling its name
@@ -72,7 +72,7 @@ class Login(Verb):
                     'That name is not in use.\n'
                     ' ᐅ To create a new account with this name, enter a password.\n'
                     ' ᐅ To go back, enter "/"'
-                ))
+                ), MessageOptions(asksForPassword=True))
                 self.current_process_function = self.process_sign_in_password        
 
     def process_login_password(self, message):
@@ -107,10 +107,10 @@ class Login(Verb):
         if len(message) < 6:
             self.session.send_to_client(_(
                 'The password needs to have six or more characters. Try with another one.'
-            ))
+            ), MessageOptions(asksForPassword=True))
             return
         self.password = message
-        self.session.send_to_client(_('Enter your password again to confirm.'))
+        self.session.send_to_client(_('Enter your password again to confirm.'), MessageOptions(asksForPassword=True))
         self.current_process_function = self.process_repeat_password
 
     def process_repeat_password(self, message):

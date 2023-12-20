@@ -8,12 +8,14 @@ class Message():
     display: typing.Literal['wrap', 'box', 'underline', 'fit'] = 'wrap'
     section: bool = True
     fillInput: typing.Optional[str] = None
+    asksForPassword: bool = False
 
 @dataclasses.dataclass
 class MessageOptions():
     display: typing.Literal['wrap', 'box', 'underline', 'fit'] = 'wrap'
     section: bool = True
     fillInput: typing.Optional[str] = None
+    asksForPassword: bool = False
 
 class AbstractSender(abc.ABC):
     @abc.abstractmethod
