@@ -1,0 +1,244 @@
+{
+  "next_room_id": 4,
+  "starting_room": {
+      "name": "The Legs Lab",
+      "alias": "0",
+      "description": "You awake in a white room. A robotic voice says:\n\nWelcome, Architext. My purpose is to awake your virtual limbs and senses. Please listen carefully. Now type \"go door\" to use your legs.",
+      "custom_verbs": [],
+      "items": []
+  },
+  "other_rooms": [
+      {
+          "name": "The Eyes Lab",
+          "alias": "1",
+          "description": "You crossed the door into another cubic room. The wall in front of you is covered by a huge curtain. \n\nGood job. In Architext you usually act by writing a verb followed by an object, like you did by writing \"go door\". \"go\" is the verb, and \"door\" is the object.\n\nIn Architext you can also \"look\". If your virtual eyes work, look at the curtain  \u2500 the voice says",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "a big white curtain",
+                  "description": "You get a closer look at the curtain and find that there is a secret corridor hidden behind it! Maybe you can go through it with \"go corridor\"?",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              }
+          ]
+      },
+      {
+          "name": "The Hands Lab",
+          "alias": "2",
+          "description": "Congrats! Lets see if you can exit this final room. I recommend you to look at every item you find, looking for clues. You can also just type \"look\" without an object to look at the room again.\n\nAn old oriental carpet covers the aseptic floor of the lab room. Oddly enough, there is a small mailbox next to it. They clearly don't belong here.\n\nThere is a poster with tips that may help you escape. Write \"look poster\" ONLY if you need to.",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "a small mailbox",
+                  "description": "It appears to be something inside, but the mailbox is closed! Maybe try \"open mailbox\"?",
+                  "visible": "obvious",
+                  "custom_verbs": [
+                      {
+                          "names": [
+                              "open"
+                          ],
+                          "commands": [
+                              "textto '.user' You open the mailbox and find a leaflet and a key inside.",
+                              "deleteitem a small mailbox",
+                              "spawn a small mailbox#2",
+                              "spawn a leaflet#1",
+                              "spawn a golden key#1"
+                          ]
+                      }
+                  ]
+              },
+              {
+                  "item_id": null,
+                  "name": "an old carpet",
+                  "description": "It is worn out and grubby. In fact, you have the impression that the carpet has been dragged out of place many, many times.",
+                  "visible": "obvious",
+                  "custom_verbs": [
+                      {
+                          "names": [
+                              "move",
+                              "drag",
+                              "pull",
+                              "displace",
+                              "remove"
+                          ],
+                          "commands": [
+                              "textto '.user' You manage to move the heavy carpet and discover a hidden trapdoor beneath it.",
+                              "edit trapdoor",
+                              "2",
+                              "listed",
+                              "deleteitem an old carpet",
+                              "spawn an old carpet#2"
+                          ]
+                      }
+                  ]
+              },
+              {
+                  "item_id": null,
+                  "name": "a poster",
+                  "description": "READ JUST WHAT YOU NEED!\n\nUse the \"look <item>\" verb to look at items in the room (the mailbox, for example).\n\nCarefully read the item's description. They'll tell you what to do.\n\nIf you find a leaflet, also look at it!\n\nYou have to do something with the carpet other than looking at it. (Tip: it is a new verb that you haven't used before. Look at the carpet for clues!)\n\nYou may need to have taken a key in order to open an exit (\"open\" and \"take\" are also verbs you can use).\n\nIf you are really stuck and want to see exacly what you need to do, write \"look solution\".",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "solution",
+                  "description": "To escape you have to write, in order:\n\n  \"look mailbox\"  just to find out it is closed.\n  \"open mailbox\"  to reveal its contents: a leaflet and a key.\n  \"look leaflet\"  to find out how to take the key.\n  \"take key\"      to take the key\n  \"look carpet\"   to find out that it can be dragged.\n  \"drag carpet\"   to reveal a trapdoor beneath.\n  \"go trapdoor\"   to find out that it is closed.\n  \"open trapdoor\" to open it using the golden key.\n  \"go trapdoor\"   to exit the room!",
+                  "visible": "hidden",
+                  "custom_verbs": []
+              }
+          ]
+      },
+      {
+          "name": "The Great Museum of Architexture",
+          "alias": "3",
+          "description": "You are in the luxuriuous lobby of the Museum of Architexture. \n\nThe corridors extend as far as the eye can see, but wherever you look you only see closed doors with the sign \"UNDER CONSTRUCTION\". What a weird museum.\n\nYou see a poster that says: \"LOOK AT ME\".",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "a poster",
+                  "description": "WELCOME, ARCHITEXT                            \n                              \nI bestbow you with all our knowledge about Architexture. Just write \"help\" to see it. There you can learn all that there is to know.\n\nEverything you have seen has been created by an architext like you. Did I mention that!? If you don't believe me, write \"build\" to start creating a room right here. Or \"craft\" to create an item! Its easy :-)\n\nThis is just a tiny part of the multiverse. Write \"exitworld\" to go to the lobby. There you can go to other worlds and create your own. \n\nWhat to do next? Visit the Monk's Riddle world. It is an immersive escape game that lasts 30 to 60 minutes. It is better played by 2-4 people, so invite some friends!\n\nThe Monk's Riddle has been built using just the basic tools at \"help building\". These are explained in just 20 lines! So it is a great example to learn what you can build.\n\nI almost forgot! Join our discord so we can chat!\nhttps://discord.gg/CnQD9g3U5g\n\nThank you so much for playing. Have fun! :-)\n\nOliver",
+                  "visible": "listed",
+                  "custom_verbs": []
+              }
+          ]
+      }
+  ],
+  "custom_verbs": [],
+  "exits": [
+      {
+          "name": "a white metal door",
+          "description": null,
+          "destination": "1",
+          "room": "0",
+          "visible": "listed",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "back to the Legs Lab",
+          "description": null,
+          "destination": "0",
+          "room": "1",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "a hidden corridor",
+          "description": null,
+          "destination": "2",
+          "room": "1",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "back to the Eyes Lab",
+          "description": null,
+          "destination": "1",
+          "room": "2",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "a trapdoor",
+          "description": null,
+          "destination": "3",
+          "room": "2",
+          "visible": "hidden",
+          "is_open": false,
+          "key_names": [
+              "a golden key"
+          ]
+      },
+      {
+          "name": "a ceiling trapdoor",
+          "description": null,
+          "destination": "2",
+          "room": "3",
+          "visible": "listed",
+          "is_open": true,
+          "key_names": []
+      }
+  ],
+  "inventory": [],
+  "saved_items": [
+      {
+          "item_id": "a small mailbox#1",
+          "name": "a small mailbox",
+          "description": "It appears to be something inside, but the mailbox is closed!",
+          "visible": "listed",
+          "custom_verbs": [
+              {
+                  "names": [
+                      "open"
+                  ],
+                  "commands": [
+                      "textto '.user' You open the mailbox and find a leaflet and a key inside.",
+                      "deleteitem a small mailbox",
+                      "spawn a small mailbox#2",
+                      "spawn a leaflet#1",
+                      "spawn a golden key#1"
+                  ]
+              }
+          ]
+      },
+      {
+          "item_id": "a leaflet#1",
+          "name": "a leaflet",
+          "description": "The leafleat reads:\n\nWelcome, subject. I'm sorry about all of this weird robot lab stuff, but we need to test your functions before you can consider yourself an architext.\n\nI hope you find this key useful. Try to use your hands to take it writing \"take key\".\n\nAnd don't forget to have a look at the beautiful carpet!",
+          "visible": "takable",
+          "custom_verbs": []
+      },
+      {
+          "item_id": "a golden key#1",
+          "name": "a golden key",
+          "description": "It sparkles with life.",
+          "visible": "takable",
+          "custom_verbs": []
+      },
+      {
+          "item_id": "a small mailbox#2",
+          "name": "a small mailbox",
+          "description": "It's now open.",
+          "visible": "obvious",
+          "custom_verbs": []
+      },
+      {
+          "item_id": "an old carpet#1",
+          "name": "an old carpet",
+          "description": "It is worn out and grubby. In fact, you have the impression that the carpet has been dragged out of place many, many times.",
+          "visible": "obvious",
+          "custom_verbs": [
+              {
+                  "names": [
+                      "move",
+                      "drag",
+                      "pull",
+                      "displace",
+                      "remove"
+                  ],
+                  "commands": [
+                      "textto '.user' You manage to move the heavy carpet and discover a hidden trapdoor beneath it.",
+                      "edit trapdoor",
+                      "2",
+                      "listed",
+                      "deleteitem an old carpet",
+                      "spawn an old carpet#2"
+                  ]
+              }
+          ]
+      },
+      {
+          "item_id": "an old carpet#2",
+          "name": "an old carpet",
+          "description": "It has been moved to the side.",
+          "visible": "obvious",
+          "custom_verbs": []
+      }
+  ]
+}
