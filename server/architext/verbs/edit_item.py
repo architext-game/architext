@@ -84,15 +84,17 @@ class EditItem(verb.Verb):
         except ValueError:
             self.session.send_to_client(strings.not_a_number)
             return
+        
+        object_to_edit = self.item_to_edit if self.item_to_edit else self.exit_to_edit
 
         # max_number = 2
         if message == 0:
             self.option_number = message
-            self.session.send_to_client(_('Enter the new name:'), options=MessageOptions(fillInput=self.item_to_edit.name))
+            self.session.send_to_client(_('Enter the new name:'), options=MessageOptions(fillInput=object_to_edit.name))
             self.current_process_function = self.process_reform_value
         elif message == 1:
             self.option_number = message
-            self.session.send_to_client(_('Enter the new description:'), options=MessageOptions(fillInput=self.item_to_edit.description))
+            self.session.send_to_client(_('Enter the new description:'), options=MessageOptions(fillInput=object_to_edit.description))
             self.current_process_function = self.process_reform_value
         elif message == 2:
             self.option_number = message
