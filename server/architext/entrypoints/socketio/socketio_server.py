@@ -6,6 +6,7 @@ import architext
 import mongoengine
 import atexit
 import os
+import json
 from dotenv import load_dotenv
 
 def database_connect(uri=None):
@@ -64,7 +65,8 @@ if __name__ == "__main__":
     # Add exit handler: something that will be done when server stops
     atexit.register(lambda: logger.info('server stopped'))
 
-    sio = socketio.Server(cors_allowed_origins=os.getenv('CLIENT_URL', default='*'))
+    allowed = json.loads(os.environ['ALLOWED_ORIGINS'])
+    sio = socketio.Server(cors_allowed_origins=allowed)
 
     sessions: typing.Dict[str, Session] = {}
     userid_to_sid: typing.Dict[str, str] = {}
