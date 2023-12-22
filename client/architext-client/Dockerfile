@@ -6,7 +6,9 @@ COPY package*.json ./
 RUN yarn install
 COPY . .
 ARG SERVER_ADDRESS
+ARG BASE_PATH
 ENV VITE_SERVER_ADDRESS $SERVER_ADDRESS
+ENV VITE_BASE_PATH $BASE_PATH
 RUN yarn build
 
 # Stage 2: Serve the application

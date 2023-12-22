@@ -1,0 +1,23 @@
+public_worlds_limit: 5
+
+# Locale: en_US and es_ES are available.
+# Set the correct locale before the first log in or initial worlds will
+# be created in the wrong language.
+locale: es_ES
+
+cover: |-
+#  Remove the # symbols and write here a custom welcome text for new
+#  connections. Default is something like:
+#  
+#  This is a text game where you can create and share any world you can imagine.
+#  If you are new, bear with me and discover the game in just 5 minutes :-)
+#  
+#  Don't forget to join our discord server! https://discord.gg/CnQD9g3U5g
+
+sign_in_welcome: |-
+#  Remove the # symbols and write here a custom sign in
+#  welcome text for your users.
+
+log_in_welcome: |- 
+#  Remove the # symbols and write here a custom log in
+#  welcome text for your users.
