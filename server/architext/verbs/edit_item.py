@@ -20,7 +20,6 @@ class EditItem(verb.Verb):
         self.current_process_function = self.start_editing
 
     def process(self, message):
-        self.session.logger.info('EDIT RECEIVED\n'+message)
         if message == '/':
             self.session.send_to_client(strings.cancelled)
             self.finish_interaction()
