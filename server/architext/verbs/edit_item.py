@@ -162,8 +162,9 @@ class EditItem(verb.Verb):
                     self.session.send_to_client(strings.wrong_value)
                     return
             elif self.option_number == 3:  # edit exit's destination
-                if entities.Room.objects(alias=message):
-                    object_to_edit.destination = entities.Room.objects(alias=message).first()
+                destination_room = entities.Room.objects(alias=message, world_state=self.session.user.room.world_state)
+                if destination_room:
+                    object_to_edit.destination = destination_room.first()
                 else:
                     self.session.send_to_client(strings.room_not_found)
                     self.finish_interaction()
