@@ -81,7 +81,7 @@ class DeploySnapshot(verb.Verb):
             
         try:
             index = int(message)
-            if index < 0:
+            if index < 1:
                 raise ValueError
         except ValueError:
             self.session.send_to_client(strings.not_a_number)
@@ -92,7 +92,7 @@ class DeploySnapshot(verb.Verb):
         snapshots = world.snapshots
 
         try:
-            chosen_snapshot = snapshots[index]
+            chosen_snapshot = snapshots[index-1]
         except IndexError:
             self.session.send_to_client(strings.wrong_value)
             return
@@ -116,7 +116,7 @@ class DeploySnapshot(verb.Verb):
         snapshots = world.snapshots
 
         for i, snapshot in enumerate(snapshots):
-            message += ' {} - {}\n'.format(i, snapshot.name)
+            message += ' {} - {}\n'.format(i+1, snapshot.name)
 
         self.session.send_to_client(message)
 
@@ -167,7 +167,7 @@ class PubishSnapshot(verb.Verb):
             
         try:
             index = int(message)
-            if index < 0:
+            if index < 1:
                 raise ValueError
         except ValueError:
             self.session.send_to_client(strings.not_a_number)
@@ -178,7 +178,7 @@ class PubishSnapshot(verb.Verb):
         publishable_snapshots = list(filter(lambda s: s.public==False and s.name!=_backup_snapshot_name, world.snapshots))
 
         try:
-            chosen_snapshot = publishable_snapshots[index]
+            chosen_snapshot = publishable_snapshots[index-1]
         except IndexError:
             self.session.send_to_client(strings.wrong_value)
             return
@@ -206,7 +206,7 @@ class PubishSnapshot(verb.Verb):
         )
 
         for i, snapshot in enumerate(publishable_snapshots):
-            body += ' {} - {}\n'.format(i, snapshot.name)
+            body += ' {} - {}\n'.format(i+1, snapshot.name)
 
         self.session.send_formatted(title, body, cancel=True)
 
@@ -227,7 +227,7 @@ class UnpubishSnapshot(verb.Verb):
             
         try:
             index = int(message)
-            if index < 0:
+            if index < 1:
                 raise ValueError
         except ValueError:
             self.session.send_to_client(strings.not_a_number)
@@ -237,7 +237,7 @@ class UnpubishSnapshot(verb.Verb):
         your_public_snapshots = [(snapshot, world) for world in your_worlds for snapshot in world.snapshots if snapshot.public]
 
         try:
-            chosen_snapshot = your_public_snapshots[index][0]
+            chosen_snapshot = your_public_snapshots[index-1][0]
         except IndexError:
             self.session.send_to_client(strings.wrong_value)
             return
@@ -259,7 +259,7 @@ class UnpubishSnapshot(verb.Verb):
         message = _('Enter the number of the snapshot to unpublish ("/" to cancel)\n')
 
         for i, (snapshot, world) in enumerate(your_public_snapshots):
-            message += _(' {index} - {snapshot_name: <24} World: {world_name}\n').format(index=i, snapshot_name=snapshot.name, world_name=world.name)
+            message += _(' {index} - {snapshot_name: <24} World: {world_name}\n').format(index=i+1, snapshot_name=snapshot.name, world_name=world.name)
 
         self.session.send_to_client(message)
 
@@ -288,7 +288,7 @@ class DeleteSnapshot(verb.Verb):
         )
 
         for i, snapshot in enumerate(self.deletable_snapshots):
-            message += ' {} - {}\n'.format(i, snapshot.name)
+            message += ' {} - {}\n'.format(i+1, snapshot.name)
 
         self.session.send_to_client(message)
 
@@ -300,14 +300,14 @@ class DeleteSnapshot(verb.Verb):
 
         try:
             index = int(message)
-            if index < 0:
+            if index < 1:
                 raise ValueError
         except ValueError:
             self.session.send_to_client(strings.not_a_number)
             return
 
         try:
-            chosen_snapshot = self.deletable_snapshots[index]
+            chosen_snapshot = self.deletable_snapshots[index-1]
         except IndexError:
             self.session.send_to_client(strings.wrong_value)
             return

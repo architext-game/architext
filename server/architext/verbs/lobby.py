@@ -25,7 +25,7 @@ class LobbyMenu(verb.Verb):
             out_message += _('Enter the number of the world you want to enter\n')
             # Padding is great for desktop but bad for mobile
             # world_names_with_index = [f' {index: < 4} {world.name: <36}  {world.get_connected_users()}{chr(128100)} by {world.creator.name} {"" if world.public else chr(128274)}' for index, world in enumerate(world_list)]
-            world_names_with_index = [f' {index} {world.name}  [{world.get_connected_users()}{chr(128100)} {world.creator.name}{"" if world.public else f" {chr(128274)}"}]' for index, world in enumerate(world_list)]
+            world_names_with_index = [f' {index+1} {world.name}  [{world.get_connected_users()}{chr(128100)} {world.creator.name}{"" if world.public else f" {chr(128274)}"}]' for index, world in enumerate(world_list)]
             out_message += functools.reduce(lambda a, b: '{}\n{}'.format(a, b), world_names_with_index)
         else:
             out_message += _('There are not public or known private worlds in this server.')
@@ -131,13 +131,15 @@ class EnterWorld(LobbyMenu):
 
     def process_world_number(self, message):
         try:
-            index = int(message)
+            index = int(message) - 1
         except ValueError:
             self.session.send_to_client(strings.not_a_number)
             self.finish_interaction()
             return
         
         try:
+            if index < 0:
+                raise IndexError
             chosen_world = self.session.world_list_cache[index]
         except IndexError:
             self.session.send_to_client(strings.wrong_value)
@@ -234,7 +236,7 @@ class DeployPublicSnapshot(LobbyMenu):
 
         message = _('Which world do you want to deploy? ("/" to cancel)\n')
         for index, snapshot in enumerate(self.public_snapshots):
-            message += '{}. {}\n'.format(index, snapshot.name)
+            message += '{}. {}\n'.format(index+1, snapshot.name)
         self.session.send_to_client(message)
         self.process = self.process_menu_option
 
@@ -247,14 +249,14 @@ class DeployPublicSnapshot(LobbyMenu):
             
         try:
             index = int(message)
-            if index < 0:
+            if index < 1:
                 raise ValueError
         except ValueError:
-            self.session.send_to_client(strings.not_a_number)
+            self.session.send_to_client(strings.wrong_value)
             return
 
         try:
-            self.chosen_snapshot = self.public_snapshots[index]
+            self.chosen_snapshot = self.public_snapshots[index-1]
         except IndexError:
             self.session.send_to_client(strings.wrong_value)
             return
@@ -296,7 +298,7 @@ class DeleteWorld(LobbyMenu):
 
         message = _('Choose the world to delete. YOU WON\'T BE ABLE TO GET IT BACK. Consider making a backup first. ("/" to cancel)\n')
         for index, world in enumerate(self.your_worlds):
-            message += "{}. {}\n".format(index, world.name)
+            message += "{}. {}\n".format(index+1, world.name)
         self.session.send_to_client(message)
         self.process = self.process_menu_option
 
@@ -309,14 +311,14 @@ class DeleteWorld(LobbyMenu):
 
         try:
             index = int(message)
-            if index < 0:
+            if index < 1:
                 raise ValueError
         except ValueError:
             self.session.send_to_client(strings.not_a_number)
             return
 
         try:
-            world_to_delete = self.your_worlds[index]
+            world_to_delete = self.your_worlds[index-1]
         except IndexError:
             self.session.send_to_client(strings.wrong_value)
             return

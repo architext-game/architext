@@ -144,7 +144,7 @@ class DeleteKey(verb.Verb):
             if len(self.chosen_exit.key_names) > 0:
                 out_message = _('{exit_name}: Which key do you want to remove?').format(exit_name=self.chosen_exit.name)
                 for index, key in enumerate(self.chosen_exit.key_names):
-                    out_message += f"\n    {index}. {key}"
+                    out_message += f"\n    {index + 1}. {key}"
                 out_message += _("\n\n* To remove all assigned keys.")
                 out_message += _("\n/ to cancel.")
                 self.session.send_to_client(out_message)
@@ -159,13 +159,13 @@ class DeleteKey(verb.Verb):
         else:
             try:
                 index = int(message)
-                if index < 0:
+                if index < 1:
                     raise ValueError
             except ValueError:
-                self.session.send_to_client(strings.not_a_number)
+                self.session.send_to_client(strings.wrong_value)
                 return
             try:
-                keys_to_delete = [ self.chosen_exit.key_names[index] ]
+                keys_to_delete = [ self.chosen_exit.key_names[index - 1] ]
             except IndexError:
                 self.session.send_to_client(strings.wrong_value)
                 return

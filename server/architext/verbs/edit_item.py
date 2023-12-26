@@ -52,9 +52,9 @@ class EditItem(verb.Verb):
 
             body = _(
                 'Enter the number of the value to edit.\n'
-                '    0 - Name\n'
-                '    1 - Description\n'
-                '    2 - Visibility'
+                '    1 - Name\n'
+                '    2 - Description\n'
+                '    3 - Visibility'
             )
             self.session.send_formatted(title, body, cancel=True)
             self.current_process_function = self.process_item_edit_option_number
@@ -65,10 +65,10 @@ class EditItem(verb.Verb):
             title = _('Editing exit {exit_name}').format(exit_name=self.exit_to_edit.name)
             body = _(
                 'Enter the number of the value to edit.\n'
-                '    0 - Name\n'
-                '    1 - Description\n'
-                '    2 - Visibility\n'
-                '    3 - Destination'
+                '    1 - Name\n'
+                '    2 - Description\n'
+                '    3 - Visibility\n'
+                '    4 - Destination'
             )
             self.session.send_formatted(title, body, cancel=True)
             self.current_process_function = self.process_exit_edit_option_number
@@ -86,16 +86,15 @@ class EditItem(verb.Verb):
         
         object_to_edit = self.item_to_edit if self.item_to_edit else self.exit_to_edit
 
-        # max_number = 2
-        if message == 0:
+        if message == 1:
             self.option_number = message
             self.session.send_to_client(_('Enter the new name:'), options=MessageOptions(fillInput=object_to_edit.name))
             self.current_process_function = self.process_reform_value
-        elif message == 1:
+        elif message == 2:
             self.option_number = message
             self.session.send_to_client(_('Enter the new description:'), options=MessageOptions(fillInput=object_to_edit.description))
             self.current_process_function = self.process_reform_value
-        elif message == 2:
+        elif message == 3:
             self.option_number = message
             self.session.send_to_client(
                 _('Choose the new visibility:\n') +
@@ -112,7 +111,7 @@ class EditItem(verb.Verb):
             self.session.send_to_client(strings.not_a_number)
             return
 
-        if message == 3:
+        if message == 4:
             self.option_number = message
             self.session.send_to_client(_('Enter the room number of the new destination. You can find it using the "info" command.'))
             self.current_process_function = self.process_reform_value
@@ -123,7 +122,7 @@ class EditItem(verb.Verb):
         object_to_edit = self.item_to_edit if self.item_to_edit else self.exit_to_edit
         
         if message:
-            if self.option_number == 0:  # edit name
+            if self.option_number == 1:  # edit name
                 object_to_edit.name = message
                 try:
                     object_to_edit.ensure_i_am_valid()
@@ -142,9 +141,9 @@ class EditItem(verb.Verb):
                 except entities.TakableItemNameClash:
                     self.session.send_to_client(strings.takable_name_clash)
                     return
-            elif self.option_number == 1:  # edit description
+            elif self.option_number == 2:  # edit description
                 object_to_edit.description = message
-            elif self.option_number == 2:  # edit visibility
+            elif self.option_number == 3:  # edit visibility
                 if message.lower() in strings.visible_input_options:
                     object_to_edit.visible = 'obvious'
                 elif message.lower() in strings.listed_input_options:
@@ -161,7 +160,7 @@ class EditItem(verb.Verb):
                 else:
                     self.session.send_to_client(strings.wrong_value)
                     return
-            elif self.option_number == 3:  # edit exit's destination
+            elif self.option_number == 4:  # edit exit's destination
                 destination_room = entities.Room.objects(alias=message, world_state=self.session.user.room.world_state)
                 if destination_room:
                     object_to_edit.destination = destination_room.first()
