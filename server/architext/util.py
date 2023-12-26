@@ -8,6 +8,7 @@ import regex
 import json
 import unicodedata
 import json, zlib, base64, binascii
+import typing
 
 
 # username to be used by the ghost session (see ghost_session.py)
@@ -250,6 +251,29 @@ def get_config():
     with io.open('config.yml') as file:
         config = yaml.load(file, Loader=yaml.FullLoader)
     return config
+
+
+def create_world(user, world=typing.Literal['riddle', 'tutorial'], public=False):
+    locale = get_config()['locale']
+    if world == 'riddle':
+        if locale == 'es_ES':
+            filename = './architext/resources/monks_riddle_es.json'
+            world_name = "El Enigma del Monasterio"
+        else:
+            filename = './architext/resources/monks_riddle_en.json'
+            world_name = "The Monk's Riddle"
+    elif world == 'tutorial':
+        if locale == 'es_ES':
+            filename = './architext/resources/museum_es.json'
+            world_name = "El Museo de Arquitextura"
+        else:
+            filename = './architext/resources/museum_en.json'
+            world_name = "The Museum of Architexture"
+
+    with open(filename, 'r') as file:
+        # remove_control_characters
+        world_dict = json.load(file)
+    return world_from_dict(world_dict, world_name, user, public)
 
 def match(pattern, string):
     """

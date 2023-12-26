@@ -62,7 +62,7 @@
                           "commands": [
                               "textoa '.usuario' Al retirar la pesada alfombra descubres una trampilla escondida debajo de ella.",
                               "editar trampilla",
-                              "2",
+                              "3",
                               "listado",
                               "eliminarobjeto una vieja alfombra",
                               "colocar una vieja alfombra#2"
@@ -229,7 +229,7 @@
                   "commands": [
                       "textoa '.usuario' Al retirar la pesada alfombra descubres una trampilla escondida debajo de ella.",
                       "editar trampilla",
-                      "2",
+                      "3",
                       "listado",
                       "eliminarobjeto una vieja alfombra",
                       "colocar una vieja alfombra#2"

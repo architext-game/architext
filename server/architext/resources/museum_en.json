@@ -66,7 +66,7 @@
                           "commands": [
                               "textto '.user' You manage to move the heavy carpet and discover a hidden trapdoor beneath it.",
                               "edit trapdoor",
-                              "2",
+                              "3",
                               "listed",
                               "deleteitem an old carpet",
                               "spawn an old carpet#2"
@@ -225,7 +225,7 @@
                   "commands": [
                       "textto '.user' You manage to move the heavy carpet and discover a hidden trapdoor beneath it.",
                       "edit trapdoor",
-                      "2",
+                      "3",
                       "listed",
                       "deleteitem an old carpet",
                       "spawn an old carpet#2"

@@ -5,8 +5,6 @@ from .. import entities
 from .. import util
 import logging
 import textwrap
-import architext.resources.tutorial_world as tutorial_world
-import architext.resources.monks_riddle as monks_riddle
 from .. import strings
 import json
 from architext.adapters.sender import MessageOptions
@@ -141,8 +139,7 @@ class Login(Verb):
                 "This means that the public worlds that are going to be created now will be yours.\n\n"
                 "Creating initial worlds..."
             ))
-            monks_riddle_dict = util.text_to_world_dict(monks_riddle.json)
-            util.world_from_dict(monks_riddle_dict, _('The Monk\'s Riddle'), self.session.user, public=True)
+            util.create_world(self.session.user, world='riddle', public=True)
 
         # create tutorial world and move the user there
         sign_in_welcome = util.get_config()['sign_in_welcome']
@@ -150,9 +147,8 @@ class Login(Verb):
         self.session.send_to_client(sign_in_welcome)
         self.session.send_to_client(_("Building your Museum of Architexture..."))
         
-        world_dict = util.text_to_world_dict(tutorial_world.json)
-        starting_world = util.world_from_dict(world_dict, _('The Museum of Architexture'), self.session.user)
-        
+        starting_world = util.create_world(self.session.user, world='tutorial')
+
         self.session.user.enter_world(starting_world)
         
         self.connect()
