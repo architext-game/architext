@@ -285,7 +285,7 @@ function App() {
           className="flex-1 px-3 sm:px-6 whitespace-pre-wrap overflow-auto flex flex-col"
           ref={scrollRef}
         >
-          <div className="grow shrink-0 basis-auto mx-auto max-w-3xl flex flex-col justify-end" ref={messageListRef}>
+          <div className="grow shrink-0 basis-auto mx-auto max-w-xl flex flex-col justify-end" ref={messageListRef}>
             {messages.map((message, index, array) => {
               return (
                 <Message
@@ -326,7 +326,7 @@ function App() {
             autoCapitalize="none"
             value={inputValue}
             onChange={(e) => { setInputValue(e.target.value) }}
-            className="p-2 border rounded w-full bg-bg max-w-3xl h-fit max-h-32 sm:max-h-48 md:max-h-96"
+            className="p-2 border rounded w-full bg-bg max-w-xl h-fit max-h-32 sm:max-h-48 md:max-h-96"
             placeholder="Type a message"
             onKeyDown={handleKeyDownInput}
             />
@@ -339,7 +339,7 @@ function App() {
             autoCapitalize="none"
             value={inputValue}
             onChange={(e) => { setInputValue(e.target.value) }}
-            className="p-2 border rounded w-full bg-bg max-w-3xl h-fit max-h-32 sm:max-h-48 md:max-h-96"
+            className="p-2 border rounded w-full bg-bg max-w-xl h-fit max-h-32 sm:max-h-48 md:max-h-96"
             placeholder="Type a message"
             onKeyDown={handleKeyDown}
             ref={textAreaRef}
