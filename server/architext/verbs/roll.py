@@ -1,10 +1,11 @@
-from .verb import Verb
+from .verb import Verb, NOBOT
 import rolldice
 
 class RollDice(Verb):
     """Rolls dice. Dice are specified using CritDice notation."""
 
     command = _('roll ')
+    permissions = NOBOT
 
     def process(self, message):
         command_length = len(self.command)

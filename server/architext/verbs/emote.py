@@ -1,4 +1,4 @@
-from .verb import Verb
+from .verb import Verb, NOBOT
 
 class Emote(Verb):
     """With this verb users can communicate with users in their same room using acts instead of words (kind of).
@@ -7,6 +7,7 @@ class Emote(Verb):
     Message send to all: "Oliver sits down"
     """
     command = 'emote '
+    permissions = NOBOT
 
     def process(self, message):
         command_length = len(self.command)

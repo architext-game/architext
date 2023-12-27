@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-12-26 13:58+0100\n"
+"POT-Creation-Date: 2023-12-27 19:34+0100\n"
 "PO-Revision-Date: 2021-05-27 13:48+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es_ES\n"
@@ -70,7 +70,7 @@ msgstr "Ya hay un objeto cogible con ese nombre en este mundo. Los objetos cogib
 msgid "There is not a room with that room number. Try another one."
 msgstr "No hay una sala con ese número. Prueba con otro."
 
-#: server/architext/strings.py:10 server/architext/verbs/add_verb.py:235
+#: server/architext/strings.py:10 server/architext/verbs/add_verb.py:236
 msgid "Please enter a number."
 msgstr "Por favor, introduce un número."
 
@@ -213,23 +213,23 @@ msgstr ""
 msgid "verb "
 msgstr "verbo "
 
-#: server/architext/verbs/add_verb.py:14 server/architext/verbs/add_verb.py:172
-#: server/architext/verbs/add_verb.py:252
+#: server/architext/verbs/add_verb.py:14 server/architext/verbs/add_verb.py:173
+#: server/architext/verbs/add_verb.py:253
 msgid "room"
 msgstr "sala"
 
-#: server/architext/verbs/add_verb.py:15 server/architext/verbs/add_verb.py:173
-#: server/architext/verbs/add_verb.py:253
+#: server/architext/verbs/add_verb.py:15 server/architext/verbs/add_verb.py:174
+#: server/architext/verbs/add_verb.py:254
 msgid "*room*"
 msgstr "*sala*"
 
-#: server/architext/verbs/add_verb.py:16 server/architext/verbs/add_verb.py:174
-#: server/architext/verbs/add_verb.py:254
+#: server/architext/verbs/add_verb.py:16 server/architext/verbs/add_verb.py:175
+#: server/architext/verbs/add_verb.py:255
 msgid "world"
 msgstr "mundo"
 
-#: server/architext/verbs/add_verb.py:17 server/architext/verbs/add_verb.py:175
-#: server/architext/verbs/add_verb.py:255
+#: server/architext/verbs/add_verb.py:17 server/architext/verbs/add_verb.py:176
+#: server/architext/verbs/add_verb.py:256
 msgid "*world*"
 msgstr "*mundo*"
 
@@ -324,6 +324,7 @@ msgid ""
 "            Now write the actions to perform when the verb is executed.\n"
 "              ● You can use any action that you would normally do as a player or editor.\n"
 "              ● When the verb is used, an invisible ghost player will perform the actions you provided.\n"
+"              ● The ghost player can't use \"say\" or \"shout\", use \"textroom\" instead.\n"
 "              ● If you write \"{user_name_placeholder}\" in any action, it will be substituted by the name of the player that used the verb.\n"
 "              \n"
 "            You can write as many actions as you like, one per line, as you would do while playing. You won't see any answer to your commands. When you are finished, write \"OK\".\n"
@@ -335,37 +336,38 @@ msgstr ""
 "            Escribe las acciones a realizar cuando se ejecute el verbo.\n"
 "              ● Puedes usar cualquier acción que normalmente harías como jugador privilegiado.\n"
 "              ● Cuando se use el verbo un jugador fantasma hará las acciones que hayas indicado. \n"
+"              ● El jugador fantasma no puede "decir" ni "gritar". Usa "textosala" en su lugar. \n"
 "              ● Si escribes \"{user_name_placeholder}\" en cualquier acción, será sustituida por el nombre del jugador que usó el verbo.\n"
 "              \n"
 "            Puedes escribir tantas acciones como quieras, una por línea, como lo harías mientras juegas. No verás ninguna respuesta a tus comandos. Cuando acabes, escribe \"OK\".\n"
 "              \n"
 "            Acciones del verbo: (\"OK\" para terminar)"
 
-#: server/architext/verbs/add_verb.py:132
+#: server/architext/verbs/add_verb.py:133
 msgid "Note: your multiline message will be treated as one single command. If you want to send multiple commands in one message, write \";\" at the end of each of them."
 msgstr "Nota: tu mensaje de varias líneas se va a procesar como un solo comando. Si quieres mandar múltiples comandos en un solo mensaje, escribe \";\" al final de cada línea."
 
-#: server/architext/verbs/add_verb.py:145
+#: server/architext/verbs/add_verb.py:146
 msgid "That last command is invalid. It has been ignored."
 msgstr "Ese último comando no es válido. Va a ser ignorado."
 
-#: server/architext/verbs/add_verb.py:151
+#: server/architext/verbs/add_verb.py:152
 msgid "Verb created. Write \"{verb_name} {item_name}\" to unleash its power!"
 msgstr "Verbo creado. ¡Escribe \"{verb_name} {item_name}\" para desatar su poder!"
 
-#: server/architext/verbs/add_verb.py:154
+#: server/architext/verbs/add_verb.py:155
 msgid "Room verb created. Write \"{verb_name}\" to unleash its power!"
 msgstr "Verbo de sala creado. ¡Escribe \"{verb_name}\" para desatar su poder!"
 
-#: server/architext/verbs/add_verb.py:157
+#: server/architext/verbs/add_verb.py:158
 msgid "World verb created. Write \"{verb_name}\" to unleash its power!"
 msgstr "Verbo de mundo creado. ¡Escribe \"{verb_name}\" para desatar su poder!"
 
-#: server/architext/verbs/add_verb.py:171
+#: server/architext/verbs/add_verb.py:172
 msgid "seeverbs "
 msgstr "ververbo "
 
-#: server/architext/verbs/add_verb.py:186
+#: server/architext/verbs/add_verb.py:187
 msgid ""
 "🚧 🚧 🚧 🚧 🚧 🚧\n"
 "Note: An item with that name was found. If you want to see the the room verbs instead, you can use \"seeverbs *room*\""
@@ -373,7 +375,7 @@ msgstr ""
 "🚧 🚧 🚧 🚧 🚧 🚧\n"
 "Nota: Se ha encontrado un objeto con ese nombre. Si quieres ver los verbos de la sala en su lugar, puedes usar \"ververbos *sala*\""
 
-#: server/architext/verbs/add_verb.py:188
+#: server/architext/verbs/add_verb.py:189
 msgid ""
 "🚧 🚧 🚧 🚧 🚧 🚧\n"
 "Note: An item with that name was found. If you want to see the the world verbs instead, you can use \"seeverbs *world*\""
@@ -381,27 +383,27 @@ msgstr ""
 "🚧 🚧 🚧 🚧 🚧 🚧\n"
 "Nota: Se ha encontrado un objeto con ese nombre. Si quieres ver los verbos del mundo en su lugar, puedes usar \"ververbos *mundo*\""
 
-#: server/architext/verbs/add_verb.py:197
+#: server/architext/verbs/add_verb.py:198
 msgid "Verbs of saved item \"{item_id}\""
 msgstr "Verbos del objeto guardado \"{item_id}\""
 
-#: server/architext/verbs/add_verb.py:199
+#: server/architext/verbs/add_verb.py:200
 msgid "Verbs of item \"{item_name}\""
 msgstr "Verbos del objeto \"{item_name}\""
 
-#: server/architext/verbs/add_verb.py:201
+#: server/architext/verbs/add_verb.py:202
 msgid "Verbs of room: {room_name}"
 msgstr "Verbos de la sala: {room_name}"
 
-#: server/architext/verbs/add_verb.py:204
+#: server/architext/verbs/add_verb.py:205
 msgid "World-level verbs"
 msgstr "Verbos del mundo"
 
-#: server/architext/verbs/add_verb.py:208
+#: server/architext/verbs/add_verb.py:209
 msgid "There are no verbs to show."
 msgstr "No hay verbos que mostrar."
 
-#: server/architext/verbs/add_verb.py:213
+#: server/architext/verbs/add_verb.py:214
 msgid ""
 "\n"
 " ᐅ Enter the number of a verb to show its commands"
@@ -409,16 +411,16 @@ msgstr ""
 "\n"
 " ᐅ Introduce el número de un verbo para ver sus comandos"
 
-#: server/architext/verbs/add_verb.py:241
-#: server/architext/verbs/add_verb.py:323
+#: server/architext/verbs/add_verb.py:242
+#: server/architext/verbs/add_verb.py:324
 msgid "Please introduce the number of one of the listed verbs."
 msgstr "Por favor, introduce el número de uno de los verbos listados."
 
-#: server/architext/verbs/add_verb.py:251
+#: server/architext/verbs/add_verb.py:252
 msgid "deleteverb "
 msgstr "eliminarverbo "
 
-#: server/architext/verbs/add_verb.py:264
+#: server/architext/verbs/add_verb.py:265
 msgid ""
 "🚧 🚧 🚧 🚧 🚧 🚧\n"
 "Note: An item with that name was found. If you want to delete the the room verbs instead, you can use \"deleteverb *room*\""
@@ -426,7 +428,7 @@ msgstr ""
 "🚧 🚧 🚧 🚧 🚧 🚧\n"
 "Se ha encontrado un objeto con ese nombre. Si quieres eliminar los verbos de la sala en su lugar, puedes usar \"eliminarverbo *sala*\""
 
-#: server/architext/verbs/add_verb.py:266
+#: server/architext/verbs/add_verb.py:267
 msgid ""
 "🚧 🚧 🚧 🚧 🚧 🚧\n"
 "Note: An item with that name was found. If you want to delete the the world verbs instead, you can use \"deleteverb *world*\""
@@ -434,31 +436,31 @@ msgstr ""
 "🚧 🚧 🚧 🚧 🚧 🚧\n"
 "Nota: Se ha encontrado un objeto con ese nombre. Si quieres eliminar los verbos del mundo en su lugar, puedes usar \"eliminarverbo *mundo*\""
 
-#: server/architext/verbs/add_verb.py:274
+#: server/architext/verbs/add_verb.py:275
 msgid "\"{item_id}\" (saved item)"
 msgstr "\"{item_id}\" (objeto guardado)"
 
-#: server/architext/verbs/add_verb.py:276
+#: server/architext/verbs/add_verb.py:277
 msgid "\"{item_name}\" (item)"
 msgstr "\"{item_name}\" (objeto)"
 
-#: server/architext/verbs/add_verb.py:281
+#: server/architext/verbs/add_verb.py:282
 msgid "\"{room_name}\" (room)"
 msgstr "\"{room_name}\" (sala)"
 
-#: server/architext/verbs/add_verb.py:284
+#: server/architext/verbs/add_verb.py:285
 msgid "this world"
 msgstr "este mundo"
 
-#: server/architext/verbs/add_verb.py:291
+#: server/architext/verbs/add_verb.py:292
 msgid "{target_name} has no verbs to delete."
 msgstr "{target_name} no tiene verbos para eliminar."
 
-#: server/architext/verbs/add_verb.py:295
+#: server/architext/verbs/add_verb.py:296
 msgid "Deleting verb of {target_name}"
 msgstr "Eliminando verbo de {target_name}"
 
-#: server/architext/verbs/add_verb.py:296
+#: server/architext/verbs/add_verb.py:297
 msgid ""
 "{verb_list}\n"
 " ᐅ Enter the number of the verb to delete:"
@@ -466,11 +468,11 @@ msgstr ""
 "{verb_list}\n"
 " ᐅ Introduce el número del verbo a eliminar:"
 
-#: server/architext/verbs/add_verb.py:317
+#: server/architext/verbs/add_verb.py:318
 msgid "Please enter a number"
 msgstr "Por favor, introduce un número"
 
-#: server/architext/verbs/add_verb.py:327
+#: server/architext/verbs/add_verb.py:328
 msgid "The verb has been deleted."
 msgstr "El verbo se ha eliminado."
 
@@ -1691,8 +1693,8 @@ msgid "give '"
 msgstr "dar '"
 
 #: server/architext/verbs/inventory.py:88
-#: server/architext/verbs/inventory.py:108 server/architext/verbs/lobby.py:278
-#: server/architext/verbs/lobby.py:331
+#: server/architext/verbs/inventory.py:108 server/architext/verbs/lobby.py:277
+#: server/architext/verbs/lobby.py:330
 msgid "Done."
 msgstr "Hecho."
 
@@ -1806,15 +1808,15 @@ msgstr "La salida \"{exit_name}\" no tiene llaves asignadas."
 msgid "Key/s deleted."
 msgstr "Llave/s eliminada/s."
 
-#: server/architext/verbs/lobby.py:25
+#: server/architext/verbs/lobby.py:24
 msgid "Enter the number of the world you want to enter\n"
 msgstr "Introduce el número del mundo en el que quieres entrar\n"
 
-#: server/architext/verbs/lobby.py:31
+#: server/architext/verbs/lobby.py:30
 msgid "There are not public or known private worlds in this server."
 msgstr "No hay mundos públicos ni privados conocidos en este servidor."
 
-#: server/architext/verbs/lobby.py:32
+#: server/architext/verbs/lobby.py:31
 msgid ""
 "Options:\n"
 "  +  to create a new world.\n"
@@ -1824,7 +1826,7 @@ msgstr ""
 "  +  para crear un nuevo mundo.\n"
 "  ?  para ver todas las acciones disponibles."
 
-#: server/architext/verbs/lobby.py:58
+#: server/architext/verbs/lobby.py:57
 msgid ""
 "You can use these commands from the lobby:\n"
 "  +    to create a new world.\n"
@@ -1848,47 +1850,47 @@ msgstr ""
 "Introduce el número de un mundo en la lista de mundos para ir allí.\n"
 "Introduce el código de invitación de un mundo para ir allí."
 
-#: server/architext/verbs/lobby.py:76
+#: server/architext/verbs/lobby.py:75
 msgid "exitworld"
 msgstr "salirmundo"
 
-#: server/architext/verbs/lobby.py:103
+#: server/architext/verbs/lobby.py:102
 msgid "I don't understand that"
 msgstr "No te entiendo"
 
-#: server/architext/verbs/lobby.py:109
+#: server/architext/verbs/lobby.py:108
 msgid "Traveling to {world_name}."
 msgstr "Viajando a {world_name}."
 
-#: server/architext/verbs/lobby.py:111
+#: server/architext/verbs/lobby.py:110
 msgid "Pof! {player_name} appears here."
 msgstr "¡Puf! {player_name} apareció."
 
-#: server/architext/verbs/lobby.py:153
+#: server/architext/verbs/lobby.py:152
 msgid "This world no longer exists. Enter 'r' to reload the lobby."
 msgstr "Este mundo ya no existe. Introduce 'r' para recargar el lobby."
 
-#: server/architext/verbs/lobby.py:157
+#: server/architext/verbs/lobby.py:156
 msgid "{body}"
 msgstr ""
 
-#: server/architext/verbs/lobby.py:159
+#: server/architext/verbs/lobby.py:158
 msgid "Returning to your last location there."
 msgstr "Volviendo a tu última localización en ese mundo."
 
-#: server/architext/verbs/lobby.py:159
+#: server/architext/verbs/lobby.py:158
 msgid "Going there for the first time!"
 msgstr "¡Visitando el mundo por primera vez!"
 
-#: server/architext/verbs/lobby.py:163
+#: server/architext/verbs/lobby.py:162
 msgid "Puufh! {player_name} appears here."
 msgstr "¡Puf! {player_name} apareció."
 
-#: server/architext/verbs/lobby.py:181
+#: server/architext/verbs/lobby.py:180
 msgid "The First of Many Rooms"
 msgstr "La Primera Sala de Muchas"
 
-#: server/architext/verbs/lobby.py:183
+#: server/architext/verbs/lobby.py:182
 msgid ""
 "This is the first room of your world. Here you are the Architext!\n"
 "\n"
@@ -1902,15 +1904,15 @@ msgstr ""
 "\n"
 "Recuerda que puedes escribir \"infomundo\" para ver el código de invitación del mundo."
 
-#: server/architext/verbs/lobby.py:192
+#: server/architext/verbs/lobby.py:191
 msgid "Enter the name for your new world. (\"/\" to cancel)"
 msgstr "Introduce el nombre para tu nuevo mundo.(\"/\" para cancelar)"
 
-#: server/architext/verbs/lobby.py:207
+#: server/architext/verbs/lobby.py:206
 msgid "Your new world is ready"
 msgstr "Tu nuevo mundo está listo"
 
-#: server/architext/verbs/lobby.py:208
+#: server/architext/verbs/lobby.py:207
 msgid ""
 "It is a private world 🔒. You can invite your friends sharing this invite code:\n"
 "\n"
@@ -1928,35 +1930,35 @@ msgstr ""
 "\n"
 "Pulsa intro para ver tu nuevo mundo..."
 
-#: server/architext/verbs/lobby.py:233
+#: server/architext/verbs/lobby.py:232
 msgid "There are no public worlds to deploy."
 msgstr "No hay mundos públicos para desplegar."
 
-#: server/architext/verbs/lobby.py:237
+#: server/architext/verbs/lobby.py:236
 msgid "Which world do you want to deploy? (\"/\" to cancel)\n"
 msgstr "¿Qué mundo quieres desplegar? (\"/\" para cancelar)\n"
 
-#: server/architext/verbs/lobby.py:264
+#: server/architext/verbs/lobby.py:263
 msgid "How do you want to name the new world? (\"/\" to cancel)"
 msgstr "¿Cómo quieres llamar al nuevo mundo? (\"/\" para cancelar)"
 
-#: server/architext/verbs/lobby.py:295
+#: server/architext/verbs/lobby.py:294
 msgid "You have not created any world."
 msgstr "No has creado ningún mundo."
 
-#: server/architext/verbs/lobby.py:299
+#: server/architext/verbs/lobby.py:298
 msgid "Choose the world to delete. YOU WON'T BE ABLE TO GET IT BACK. Consider making a backup first. (\"/\" to cancel)\n"
 msgstr "Elige el mundo para eliminar. ES IRREVERSIBLE. Considera hacer primero una copia de seguridad. (\"/\" para cancelar)\n"
 
-#: server/architext/verbs/lobby.py:329
+#: server/architext/verbs/lobby.py:328
 msgid "It can not be deleted: {error}"
 msgstr "No se puede eliminar: {error}"
 
-#: server/architext/verbs/lobby.py:344
+#: server/architext/verbs/lobby.py:343
 msgid "Enter a name for your new world. (\"/\" to cancel)"
 msgstr "Introduce el nombre para tu nuevo mundo. (\"/\" para cancelar)"
 
-#: server/architext/verbs/lobby.py:357
+#: server/architext/verbs/lobby.py:356
 msgid ""
 "Now paste the text export of the world.\n"
 "It will be automatically divided into multiple messages if it is too long.The server won't consider the text as received until it is valid.\n"
@@ -1966,13 +1968,17 @@ msgstr ""
 "Se dividirá automáticamente en varios mensajes si es demasiado largo. El servidor no considerará el texto como recibido hasta que sea válido.\n"
 "Si has introducido el texto equivocado, envía \"/\" para cancelar."
 
-#: server/architext/verbs/lobby.py:372
+#: server/architext/verbs/lobby.py:371
 msgid "{char_number} chars received"
 msgstr "{char_number} caracteres recibidos"
 
-#: server/architext/verbs/lobby.py:377
+#: server/architext/verbs/lobby.py:376
 msgid "Parsing your message. Please wait..."
 msgstr "Analizando tu mensaje. Por favor, espera..."
+
+#: server/architext/verbs/lobby.py:381
+msgid "Text is correct, creating world. Please wait..."
+msgstr "El texto es correcto, creando el mundo. Por favor, espere..."
 
 #: server/architext/verbs/lobby.py:383
 msgid "Your new world is ready. The items in all player inventories from the original world have been moved to your inventory."
@@ -2209,11 +2215,11 @@ msgstr "Reforma completada."
 msgid "roll "
 msgstr "lanzar "
 
-#: server/architext/verbs/roll.py:15
+#: server/architext/verbs/roll.py:16
 msgid "That is not a valid dice expression. You can see valid expresions here: https://github.com/Fiona1729/py-rolldice#dice-syntax"
 msgstr "No es ua expresión de dados válida. Puedes ver las expresiones válidas aquí: https://github.com/Fiona1729/py-rolldice#dice-syntax"
 
-#: server/architext/verbs/roll.py:17
+#: server/architext/verbs/roll.py:18
 msgid "{user_name} rolls {dice_str} and gets a {result} ({explanation})"
 msgstr "{user_name} lanza {dice_str} y obtiene un {result} ({explanation})"
 
