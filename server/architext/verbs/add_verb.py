@@ -142,6 +142,7 @@ class AddVerb(verb.Verb):
                 self.finish_interaction()
             elif self.is_valid_command(command):
                 self.command_list.append(command)
+                self.session.send_to_client(_(command))
             else:
                 self.session.send_to_client(_("That last command is invalid. It has been ignored."))
 
