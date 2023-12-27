@@ -27,11 +27,12 @@ class Session:
         self.user = None  # here we'll have an User entity once the log-in is completed.
         self.world_list_cache = None  # when the lobby is shown its values are cached here (see #122).
 
-    def process_message(self, message):
+    def process_message(self, message: str):
         """This method processes a message sent by the client.
         It polls all verbs, using their can_process method to find a verb that can process the message.
         Then makes that verb the current_verb and lets it handle the message.
         """
+        message = message.strip()
         if self.user is not None:
             self.user.reload()
             if self.user.client_id != self.client_id:  # another session has been opened for the same user
