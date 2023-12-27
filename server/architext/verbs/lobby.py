@@ -1,7 +1,6 @@
 import functools
 import json
 import textwrap
-
 import mongoengine
 
 from architext.adapters.sender import MessageOptions
@@ -379,7 +378,8 @@ class ImportWorld(LobbyMenu):
         world_dict = util.text_to_world_dict(self.json_message)
 
         if world_dict is not None:
-            new_world = util.world_from_dict(world_dict, self.world_name, self.session.user)
+            self.session.send_to_client(_('Text is correct, creating world. Please wait...'))
+            util.world_from_dict(world_dict, self.world_name, self.session.user)
             self.session.send_to_client(_('Your new world is ready. The items in all player inventories from the original world have been moved to your inventory.'))
             self.show_lobby_menu()
             self.finish_interaction()

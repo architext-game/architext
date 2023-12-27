@@ -1,3 +1,5 @@
+import eventlet
+eventlet.monkey_patch(socket=True, time=True)
 import socketio
 from architext.session import Session
 from architext.adapters.sender import SocketIOSender
@@ -103,5 +105,4 @@ if __name__ == "__main__":
     app = socketio.WSGIApp(sio)
 
     # Use eventlet or gevent for asynchronous server
-    import eventlet
     eventlet.wsgi.server(eventlet.listen(('', 5000)), app)
