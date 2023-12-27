@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-12-27 20:20+0100\n"
+"POT-Creation-Date: 2023-12-27 20:44+0100\n"
 "PO-Revision-Date: 2021-05-27 13:48+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en_US\n"
@@ -18,19 +18,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.14.0\n"
 
-#: server/architext/session.py:55
+#: server/architext/session.py:56
 msgid "An unexpected error ocurred. It has been notified and it will be soon fixed. You probably can continue playing without further issues."
 msgstr ""
 
-#: server/architext/session.py:66
+#: server/architext/session.py:67
 msgid "I don't understand that. You can enter \"r\" to show the lobby menu again."
 msgstr ""
 
-#: server/architext/session.py:68
+#: server/architext/session.py:69
 msgid "I don't understand that."
 msgstr ""
 
-#: server/architext/session.py:73
+#: server/architext/session.py:74
 msgid "Whoop! {player_name} has gone."
 msgstr ""
 
@@ -649,40 +649,40 @@ msgstr ""
 msgid "Item \"{item_name}\" has been deleted."
 msgstr ""
 
-#: server/architext/verbs/direct_text.py:10
-msgid "textto '"
-msgstr ""
-
-#: server/architext/verbs/direct_text.py:20
-#: server/architext/verbs/direct_text.py:72
-msgid "There are more than one user with a similiar name. Try to match case and accents."
+#: server/architext/verbs/direct_text.py:11
+msgid "textto (?P<user_name>.+) - (?P<text>.+)"
 msgstr ""
 
 #: server/architext/verbs/direct_text.py:22
+#: server/architext/verbs/direct_text.py:74
+msgid "There are more than one user with a similiar name. Try to match case and accents."
+msgstr ""
+
+#: server/architext/verbs/direct_text.py:24
 msgid "That user is not in this world."
 msgstr ""
 
-#: server/architext/verbs/direct_text.py:25
+#: server/architext/verbs/direct_text.py:27
 msgid "Text sent to {user_name}."
 msgstr ""
 
-#: server/architext/verbs/direct_text.py:35
+#: server/architext/verbs/direct_text.py:37
 msgid "textroom "
 msgstr ""
 
-#: server/architext/verbs/direct_text.py:49
+#: server/architext/verbs/direct_text.py:51
 msgid "textworld "
 msgstr ""
 
-#: server/architext/verbs/direct_text.py:63
+#: server/architext/verbs/direct_text.py:65
 msgid "textroombut '"
 msgstr ""
 
-#: server/architext/verbs/direct_text.py:74
+#: server/architext/verbs/direct_text.py:76
 msgid "That user is not connected or does not exist"
 msgstr ""
 
-#: server/architext/verbs/direct_text.py:76
+#: server/architext/verbs/direct_text.py:78
 msgid "Text send to all users in this room except {user_name}."
 msgstr ""
 
@@ -1177,15 +1177,15 @@ msgid ""
 "You may want to send text to your players telling them what has just happened, what noise is heard, etc. To send any text, use:\n"
 "  textroom <text> ─ sends the text to all users in the room.\n"
 "  textworld <text> ─ sends the text to all users in the world.\n"
-"  textto '<user>' <text> ─ sends the text to the selected user.\n"
+"  textto <user> - <text> ─ sends the text to the selected user (the \"-\" is important!) \n"
 "\n"
 "Other verbs\n"
 "───────────\n"
-"  takefrom '<user>' <item> ─ moves the item from the user's inventory to the room.\n"
-"  give '<user>' <item> ─ moves the item from the room to the user's inventory\n"
+"  takefrom <user> - <item> ─ moves the item from the user's inventory to the room.\n"
+"  give <user> - <item> ─ moves the item from the room to the user's inventory\n"
 "  tproom <room number> ─ teleports all users in your room to the selected one.\n"
 "  tpall <room number> ─ teleports all users in the world to the selected room.\n"
-"  tpuser '<user>' <room number> ─ teleports the user to the selected room.\n"
+"  tpuser <user> - <room number> ─ teleports the user to the selected room.\n"
 "\n"
 "NPCs\n"
 "────\n"
@@ -1303,29 +1303,29 @@ msgid ""
 "{inventory_list}"
 msgstr ""
 
-#: server/architext/verbs/inventory.py:77
-msgid "give '"
+#: server/architext/verbs/inventory.py:78
+msgid "give (?P<user_name>.+) - (?P<item_name>.+)"
 msgstr ""
 
-#: server/architext/verbs/inventory.py:88
-#: server/architext/verbs/inventory.py:108 server/architext/verbs/lobby.py:277
+#: server/architext/verbs/inventory.py:90
+#: server/architext/verbs/inventory.py:112 server/architext/verbs/lobby.py:277
 #: server/architext/verbs/lobby.py:330
 msgid "Done."
 msgstr ""
 
-#: server/architext/verbs/inventory.py:90
+#: server/architext/verbs/inventory.py:92
 msgid "The item/user is not in this room."
 msgstr ""
 
-#: server/architext/verbs/inventory.py:95
-msgid "takefrom '"
+#: server/architext/verbs/inventory.py:98
+msgid "takefrom (?P<user_name>.+) - (?P<item_name>.+)"
 msgstr ""
 
-#: server/architext/verbs/inventory.py:110
+#: server/architext/verbs/inventory.py:114
 msgid "The item is not in that user's inventory."
 msgstr ""
 
-#: server/architext/verbs/inventory.py:112
+#: server/architext/verbs/inventory.py:116
 msgid "That user is not here."
 msgstr ""
 
@@ -1937,31 +1937,31 @@ msgstr ""
 msgid "tp "
 msgstr ""
 
-#: server/architext/verbs/teleport.py:49
-msgid "tpuser '"
+#: server/architext/verbs/teleport.py:46
+msgid "tpuser (?P<user_name>.+) - (?P<room_alias>.+)"
 msgstr ""
 
-#: server/architext/verbs/teleport.py:59
+#: server/architext/verbs/teleport.py:57
 msgid "Done. Note that this verb moves players but doesn't tell them that they have been moved. You can tell them using text verbs if you want to."
 msgstr ""
 
-#: server/architext/verbs/teleport.py:61
+#: server/architext/verbs/teleport.py:59
 msgid "The user isn't on this world or there is not a room with that room number."
 msgstr ""
 
-#: server/architext/verbs/teleport.py:70
+#: server/architext/verbs/teleport.py:68
 msgid "tproom "
 msgstr ""
 
-#: server/architext/verbs/teleport.py:81
+#: server/architext/verbs/teleport.py:79
 msgid "Done. Note that this verb  moves players but doesn't tell them that they have been moved. You can tell them using text verbs if you want to."
 msgstr ""
 
-#: server/architext/verbs/teleport.py:93
+#: server/architext/verbs/teleport.py:91
 msgid "tpall "
 msgstr ""
 
-#: server/architext/verbs/teleport.py:104
+#: server/architext/verbs/teleport.py:102
 msgid "Done. Note that this verb only  players but doesn't tell them that they have been moved. You can tell them using text verbs if you want to."
 msgstr ""
 
@@ -2079,5 +2079,56 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "deletekey "
+#~ msgstr ""
+
+#~ msgid "textto '"
+#~ msgstr ""
+
+#~ msgid "give '"
+#~ msgstr ""
+
+#~ msgid "takefrom '"
+#~ msgstr ""
+
+#~ msgid "tpuser '"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "HELP: GAME MASTER TOOLS\n"
+#~ "\n"
+#~ "It's a great idea to run role playing and scape room games in Architext worlds.\n"
+#~ "Here are some tools that will let you spice things up as a game master.\n"
+#~ "\n"
+#~ "Master mode\n"
+#~ "───────────\n"
+#~ "Master Mode is a state in which other players won't see you and you'll be able to cross closed exits.\n"
+#~ "\n"
+#~ "Use:\n"
+#~ "  mastermode ─ enter or leave the master mode\n"
+#~ "\n"
+#~ "Direct text\n"
+#~ "───────────\n"
+#~ "You may want to send text to your players telling them what has just happened, what noise is heard, etc. To send any text, use:\n"
+#~ "  textroom <text> ─ sends the text to all users in the room.\n"
+#~ "  textworld <text> ─ sends the text to all users in the world.\n"
+#~ "  textto '<user>' <text> ─ sends the text to the selected user.\n"
+#~ "\n"
+#~ "Other verbs\n"
+#~ "───────────\n"
+#~ "  takefrom '<user>' <item> ─ moves the item from the user's inventory to the room.\n"
+#~ "  give '<user>' <item> ─ moves the item from the room to the user's inventory\n"
+#~ "  tproom <room number> ─ teleports all users in your room to the selected one.\n"
+#~ "  tpall <room number> ─ teleports all users in the world to the selected room.\n"
+#~ "  tpuser '<user>' <room number> ─ teleports the user to the selected room.\n"
+#~ "\n"
+#~ "NPCs\n"
+#~ "────\n"
+#~ "If you want to play out multiple characters in you game, keep in mind that you can connect from multiple accounts at once.\n"
+#~ "\n"
+#~ "Automation\n"
+#~ "──────────\n"
+#~ "You can create custom verbs that automatically trigger any of the commands explained avobe. This way you can create interesting items like a teleporting scroll or a fart machine. Check out \"help interactive building\" to find out more.\n"
+#~ "\n"
+#~ " ⮕ Next topic: \"help interactive building\"."
 #~ msgstr ""
 

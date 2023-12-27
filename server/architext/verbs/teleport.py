@@ -42,16 +42,14 @@ class TeleportClient(verb.Verb):
 
 
 class TeleportUser(verb.Verb):
-    """Allows a creator to move one user to any room. Usage:
-    command 'username' room_alias
-    """
-
-    command = _("tpuser '")
+    regex_command = True
+    command = _("tpuser (?P<user_name>.+) - (?P<room_alias>.+)")
     permissions = verb.PRIVILEGED
 
     def process (self, message):
-        message = message[len(self.command):]
-        target_user_name, room_alias = message.split("' ", 1)
+        match = util.match(self.command, message)
+        target_user_name = match['user_name'].strip()
+        room_alias = match['room_alias'].strip()
         target_user = util.name_to_entity(self.session, target_user_name, loose_match=['world_users'])
         target_room = next(entities.Room.objects(alias=room_alias, world_state=self.session.user.room.world_state), None)
         if target_user is not None and target_room is not None:

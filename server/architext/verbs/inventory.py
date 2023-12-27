@@ -74,11 +74,13 @@ class Inventory(Verb):
 
 
 class Give(Verb):
-    command = _("give '")
+    regex_command = True
+    command = _("give (?P<user_name>.+) - (?P<item_name>.+)")
 
     def process(self, message):
-        message = message[len(self.command):]
-        target_user_name, target_item_name = message.split("' ", 1)
+        match = util.match(self.command, message)
+        target_user_name = match['user_name'].strip()
+        target_item_name = match['item_name'].strip()
 
         target_user = next(entities.User.objects(name=target_user_name, room=self.session.user.room, client_id__ne=None), None)
         item = next(entities.Item.objects(name=target_item_name, room=self.session.user.room, visible='takable'), None)
@@ -92,11 +94,13 @@ class Give(Verb):
         self.finish_interaction()
 
 class TakeFrom(Verb):
-    command = _("takefrom '")
+    regex_command = True
+    command = _("takefrom (?P<user_name>.+) - (?P<item_name>.+)")
 
     def process(self, message):
-        message = message[len(self.command):]
-        target_user_name, target_item_name = message.split("' ", 1)
+        match = util.match(self.command, message)
+        target_user_name = match['user_name'].strip()
+        target_item_name = match['item_name'].strip()
 
         target_user = next(entities.User.objects(name=target_user_name, room=self.session.user.room, client_id__ne=None), None)
         

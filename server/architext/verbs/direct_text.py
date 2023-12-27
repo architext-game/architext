@@ -7,21 +7,23 @@ class TextToOne(verb.Verb):
     command 'username' text
     """
 
-    command = _("textto '")
+    regex_command = True
+    command = _("textto (?P<user_name>.+) - (?P<text>.+)")
     permissions = verb.PRIVILEGED
 
     def process(self, message):
-        command_length = len(self.command)
-        message = message[command_length:]
-        target_user_name, out_message = message.split("' ", 1)
-        target_user = util.name_to_entity(self.session, target_user_name, loose_match=['world_users'])
+        match = util.match(self.command, message)
+        user_name = match['user_name'].strip()
+        text = match['text'].strip()
+
+        target_user = util.name_to_entity(self.session, user_name, loose_match=['world_users'])
 
         if target_user == "many":
             self.session.send_to_client(_("There are more than one user with a similiar name. Try to match case and accents."))
         elif target_user is None:
             self.session.send_to_client(_("That user is not in this world."))
         else:
-            self.session.send_to_user(target_user, out_message)
+            self.session.send_to_user(target_user, text)
             self.session.send_to_client(_("Text sent to {user_name}.").format(user_name=target_user.name))
 
         self.finish_interaction()
