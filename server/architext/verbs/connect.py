@@ -107,6 +107,6 @@ class Connect(verb.Verb):
             self.finish_interaction()
 
     def make_exit_name_valid(self, exit_name, room):
-        while not entities.Exit.name_is_valid(exit_name, room):
+        while not entities.Exit.name_is_valid(exit_name, room) or self.exit_from_here.name == exit_name:
             exit_name = _('straight {exit_name}').format(exit_name=exit_name)
         return exit_name
