@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-12-27 19:34+0100\n"
+"POT-Creation-Date: 2023-12-27 20:20+0100\n"
 "PO-Revision-Date: 2021-05-27 13:48+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es_ES\n"
@@ -336,7 +336,7 @@ msgstr ""
 "            Escribe las acciones a realizar cuando se ejecute el verbo.\n"
 "              ● Puedes usar cualquier acción que normalmente harías como jugador privilegiado.\n"
 "              ● Cuando se use el verbo un jugador fantasma hará las acciones que hayas indicado. \n"
-"              ● El jugador fantasma no puede "decir" ni "gritar". Usa "textosala" en su lugar. \n"
+"              ● El jugador fantasma no puede \"decir\" ni \"gritar\". Usa \"textosala\" en su lugar. \n"
 "              ● Si escribes \"{user_name_placeholder}\" en cualquier acción, será sustituida por el nombre del jugador que usó el verbo.\n"
 "              \n"
 "            Puedes escribir tantas acciones como quieras, una por línea, como lo harías mientras juegas. No verás ninguna respuesta a tus comandos. Cuando acabes, escribe \"OK\".\n"
@@ -1081,7 +1081,7 @@ msgstr ""
 "  mirar ─ para ver la descripción de la sala en la que estás.\n"
 "  mirar <objeto o salida> ─ mirar de cerca algo de la sala\n"
 "  ir <salida> ─ viajar por una salida en tu sala.\n"
-"  recall ─ volver a la primera sala del mundo en el que estás\n"
+"  regreso ─ volver a la primera sala del mundo en el que estás\n"
 "\n"
 "Visibilidad de los objetos\n"
 "──────────────────────────\n"
@@ -1341,9 +1341,9 @@ msgid ""
 "────\n"
 "You can close an exit and assign it a key using:\n"
 "  masterclose <exit> ─ to close an exit.\n"
-"  assignkey <exit> ─ to assign a key to the exit.\n"
+"  addkey <exit> ─ to assign a key to the exit.\n"
 "  masteropen <exit> ─ to open an exit without the need of a key.\n"
-"  deletekey <exit> ─ to delete a previously assigned key.\n"
+"  removekey <exit> ─ to delete a previously assigned key.\n"
 "\n"
 "Custom verbs\n"
 "────────────\n"
@@ -1506,7 +1506,7 @@ msgid ""
 "Other verbs\n"
 "───────────\n"
 "  takefrom '<user>' <item> ─ moves the item from the user's inventory to the room.\n"
-"  give '<user' <item> ─ moves the item from the room to the user's inventory\n"
+"  give '<user>' <item> ─ moves the item from the room to the user's inventory\n"
 "  tproom <room number> ─ teleports all users in your room to the selected one.\n"
 "  tpall <room number> ─ teleports all users in the world to the selected room.\n"
 "  tpuser '<user>' <room number> ─ teleports the user to the selected room.\n"
@@ -1747,8 +1747,9 @@ msgid "The exit \"{exit_name}\" is now open."
 msgstr "La salida \"{exit_name}\" ahora está abierta."
 
 #: server/architext/verbs/keys.py:46
-msgid "assignkey "
-msgstr "asignarllave "
+#, fuzzy
+msgid "addkey "
+msgstr "coger "
 
 #: server/architext/verbs/keys.py:75
 msgid "What is the name of the item that will open \"{exit_name}\"? (\"/\" to cancel)"
@@ -1775,7 +1776,7 @@ msgid "{exit_name}: You try to open it, but fail."
 msgstr "{exit_name}: Intentas abrirla, pero no lo consigues."
 
 #: server/architext/verbs/keys.py:117
-msgid "deletekey "
+msgid "removekey "
 msgstr "eliminarllave "
 
 #: server/architext/verbs/keys.py:145
@@ -2389,7 +2390,7 @@ msgstr "Snapshot borrado"
 
 #: server/architext/verbs/teleport.py:10
 msgid "recall"
-msgstr ""
+msgstr "regreso"
 
 #: server/architext/verbs/teleport.py:22
 msgid "tp "
@@ -2450,4 +2451,5 @@ msgstr "el lobby"
 #: server/architext/verbs/who.py:29
 msgid "a private world"
 msgstr "un mundo privado"
+
 

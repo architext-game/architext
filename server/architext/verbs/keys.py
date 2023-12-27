@@ -43,7 +43,7 @@ class MasterOpen(verb.Verb):
 
 
 class AssignKey(verb.Verb):
-    command = _("assignkey ")
+    command = _("addkey ")
     permissions = verb.PRIVILEGED
 
     def __init__(self, session):
@@ -114,7 +114,7 @@ class Open(verb.Verb):
 
 
 class DeleteKey(verb.Verb):
-    command = _("deletekey ")
+    command = _("removekey ")
     permissions = verb.PRIVILEGED
 
     def __init__(self, session):
