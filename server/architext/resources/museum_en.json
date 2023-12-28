@@ -40,7 +40,7 @@
                               "open"
                           ],
                           "commands": [
-                              "textto '.user' You open the mailbox and find a leaflet and a key inside.",
+                              "textto .user - You open the mailbox and find a leaflet and a key inside.",
                               "deleteitem a small mailbox",
                               "spawn a small mailbox#2",
                               "spawn a leaflet#1",
@@ -64,7 +64,7 @@
                               "remove"
                           ],
                           "commands": [
-                              "textto '.user' You manage to move the heavy carpet and discover a hidden trapdoor beneath it.",
+                              "textto .user - You manage to move the heavy carpet and discover a hidden trapdoor beneath it.",
                               "edit trapdoor",
                               "3",
                               "listed",
@@ -178,7 +178,7 @@
                       "open"
                   ],
                   "commands": [
-                      "textto '.user' You open the mailbox and find a leaflet and a key inside.",
+                      "textto .user - You open the mailbox and find a leaflet and a key inside.",
                       "deleteitem a small mailbox",
                       "spawn a small mailbox#2",
                       "spawn a leaflet#1",
@@ -223,7 +223,7 @@
                       "remove"
                   ],
                   "commands": [
-                      "textto '.user' You manage to move the heavy carpet and discover a hidden trapdoor beneath it.",
+                      "textto .user - You manage to move the heavy carpet and discover a hidden trapdoor beneath it.",
                       "edit trapdoor",
                       "3",
                       "listed",

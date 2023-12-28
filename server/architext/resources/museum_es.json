@@ -60,7 +60,7 @@
                               "retirar"
                           ],
                           "commands": [
-                              "textoa '.usuario' Al retirar la pesada alfombra descubres una trampilla escondida debajo de ella.",
+                              "textoa .usuario - Al retirar la pesada alfombra descubres una trampilla escondida debajo de ella.",
                               "editar trampilla",
                               "3",
                               "listado",
@@ -81,7 +81,7 @@
                               "abrir"
                           ],
                           "commands": [
-                              "textoa '.usuario' Abres el buz\u00f3n. Dentro encuentras una llave dorada y un folleto.",
+                              "textoa .usuario - Abres el buz\u00f3n. Dentro encuentras una llave dorada y un folleto.",
                               "eliminarobjeto un peque\u00f1o buz\u00f3n",
                               "colocar un peque\u00f1o buz\u00f3n#2",
                               "colocar un folleto#1",
@@ -180,7 +180,7 @@
                       "abrir"
                   ],
                   "commands": [
-                      "textoa '.usuario' Abres el buz\u00f3n. Dentro encuentras una llave dorada y un folleto.",
+                      "textoa .usuario - Abres el buz\u00f3n. Dentro encuentras una llave dorada y un folleto.",
                       "eliminarobjeto un peque\u00f1o buz\u00f3n",
                       "colocar un peque\u00f1o buz\u00f3n#2",
                       "colocar un folleto#1",
@@ -227,7 +227,7 @@
                       "retirar"
                   ],
                   "commands": [
-                      "textoa '.usuario' Al retirar la pesada alfombra descubres una trampilla escondida debajo de ella.",
+                      "textoa .usuario - Al retirar la pesada alfombra descubres una trampilla escondida debajo de ella.",
                       "editar trampilla",
                       "3",
                       "listado",
