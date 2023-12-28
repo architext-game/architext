@@ -24,11 +24,6 @@ interface ReceivedMessage {
   asksForPassword?: boolean,
 }
 
-function boxx(string: string): string {
-  const fillin: string = '━'.repeat(string.length);
-  return `┏━━━━${fillin}━━━━┓\n┃    ${string}    ┃\n┗━━━━${fillin}━━━━┛\n`;
-}
-
 // Function to split the text into lines based on the maxWidth
 function wrapText(text: string, maxWidth: number): string[] {
   let words = text.split(' ');
@@ -208,7 +203,7 @@ function App() {
   }, [messages.length, lastSectionRef, bottomRef])
 
   useEffect(() => {
-    const newSocket = io(SOCKET_SERVER_ADDRESS, /*{secure: true} TODO */);
+    const newSocket = io(SOCKET_SERVER_ADDRESS, {secure: true});
     setSocket(newSocket);
 
     return () => { newSocket.disconnect() };
@@ -236,6 +231,16 @@ function App() {
 
       socket.on('connect', () => {
         console.log("connected")
+      });
+
+      socket.on('connect_error', (err) => {
+        const message: Message = {
+          display: 'wrap',
+          section: true,
+          type: 'server',
+          text: "Error connecting to server. Check your connection. Contact oliverlsanz@gmail.com if the issue persists."
+        }
+        setMessages((prevMessages) => [...prevMessages, message])
       });
     }
   }, [socket]);
