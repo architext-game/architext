@@ -238,7 +238,7 @@ function App() {
           display: 'wrap',
           section: true,
           type: 'server',
-          text: "Error connecting to server. Check your connection. Contact oliverlsanz@gmail.com if the issue persists."
+          text: `Error connecting to server at ${SOCKET_SERVER_ADDRESS}. Check your connection. Contact oliverlsanz@gmail.com if the issue persists.`
         }
         setMessages((prevMessages) => [...prevMessages, message])
       });

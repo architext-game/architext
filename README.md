@@ -1,3 +1,5 @@
+> This readme is outdated, sorry.  So many things, so little time .-.
+
 ### [Play now on architext-game.com](https://architext-game.com)
 
 ![architext cover v3](https://user-images.githubusercontent.com/15345234/122195601-ccb8a000-ce96-11eb-8456-21168ee35278.png)
