@@ -18,10 +18,12 @@ interface Message {
 
 interface ReceivedMessage {
   text: string,
-  display: 'wrap' | 'box' | 'underline' | 'fit',
-  section: boolean,
-  fillInput?: string,
-  asksForPassword?: boolean,
+  options: {
+    display: 'wrap' | 'box' | 'underline' | 'fit',
+    section: boolean,
+    fillInput?: string,
+    asksForPassword?: boolean,
+  },
 }
 
 // Function to split the text into lines based on the maxWidth
@@ -145,9 +147,10 @@ function App() {
 
   const addServerMessage = (receivedMessage: ReceivedMessage) => {
     const message: Message = {
-      ...receivedMessage,
+      display: receivedMessage.options.display,
+      section: receivedMessage.options.section,
       type: 'server',
-      text: receivedMessage.display === 'fit' ? receivedMessage.text : receivedMessage.text.trim()
+      text: receivedMessage.options.display === 'fit' ? receivedMessage.text : receivedMessage.text.trim()
     }
     setMessages((prevMessages) => [...prevMessages, message])
   }
@@ -220,11 +223,11 @@ function App() {
     if (socket) {
       socket.on('message', (receivedMessage: ReceivedMessage) => {
         addServerMessage(receivedMessage)
-        if(receivedMessage.fillInput){
-          setInputValue(receivedMessage.fillInput)
+        if(receivedMessage.options.fillInput){
+          setInputValue(receivedMessage.options.fillInput)
           setShouldSelect(true)
         }
-        if(receivedMessage.asksForPassword){
+        if(receivedMessage.options.asksForPassword){
           setPrivateInput(true)
         }
       });

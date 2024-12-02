@@ -3,19 +3,16 @@ import typing
 import dataclasses
 
 @dataclasses.dataclass
-class Message():
-    text: str
+class MessageOptions():
     display: typing.Literal['wrap', 'box', 'underline', 'fit'] = 'wrap'
     section: bool = True
     fillInput: typing.Optional[str] = None
     asksForPassword: bool = False
 
 @dataclasses.dataclass
-class MessageOptions():
-    display: typing.Literal['wrap', 'box', 'underline', 'fit'] = 'wrap'
-    section: bool = True
-    fillInput: typing.Optional[str] = None
-    asksForPassword: bool = False
+class Message():
+    text: str
+    options: MessageOptions
 
 class AbstractSender(abc.ABC):
     @abc.abstractmethod
@@ -36,4 +33,5 @@ class SocketIOSender(AbstractSender):
 
     def send(self, connection_id: str, message: Message) -> None:
         if connection_id is not None:
+            print(dataclasses.asdict(message))
             self.sio.emit('message', dataclasses.asdict(message), to=connection_id)
