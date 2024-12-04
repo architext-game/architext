@@ -1,14 +1,17 @@
 from architext.clean.domain.entities.user import User
-from architext.clean.domain.repositories.user_repository import UserRepository
+from architext.clean.domain.unit_of_work.unit_of_work import UnitOfWork
 
-def create_user(user_repository: UserRepository, name: str, email: str, password: str) -> str:
+def create_user(uow: UnitOfWork, name: str, email: str, password: str) -> str:
     # Business rule: validate user inputs
     if not name or not email or not password:
         raise ValueError("Name, email, and password are required")
 
     password_hash = _hash_password(password)
     user = User(name=name, email=email, password_hash=password_hash)
-    user_repository.save_user(user)
+
+    with uow:
+        uow.users.save_user(user)
+        uow.commit()
 
     return user.name
 
