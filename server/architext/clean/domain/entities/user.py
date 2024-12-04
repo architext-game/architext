@@ -4,6 +4,7 @@ import hashlib
 
 @dataclass
 class User:
+    id: str
     name: str
     password_hash: bytes
     room_id: Optional[str] = None

@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 
 @dataclass
 class Exit:
+    """Exits are part of the Room aggregate"""
     name: str
     destination_room_id: str
     description: str

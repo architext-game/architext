@@ -17,13 +17,13 @@ def uow() -> FakeUnitOfWork:
 @pytest.fixture
 def user_in_room() -> User:
     """Crea un usuario que está en una habitación."""
-    return User(name="John", email="john@example.com", room_id="room1", password_hash=b"asdasd")
+    return User(id="0", name="John", email="john@example.com", room_id="room1", password_hash=b"asdasd")
 
 
 @pytest.fixture
 def user_not_in_room() -> User:
     """Crea un usuario que no está en ninguna habitación."""
-    return User(name="Alice", email="alice@example.com", room_id=None, password_hash=b"asdasd")
+    return User(id="1", name="Alice", email="alice@example.com", room_id=None, password_hash=b"asdasd")
 
 
 def test_get_current_room_success(uow: FakeUnitOfWork, user_in_room: User):
@@ -43,7 +43,7 @@ def test_get_current_room_user_not_in_room(uow: FakeUnitOfWork, user_not_in_room
 
 def test_get_current_room_invalid_room_id(uow: FakeUnitOfWork):
     """Test para verificar que se maneja un ID de habitación inválido."""
-    invalid_user = User(name="Invalid User", email="invalid@example.com", room_id="invalid_room", password_hash=b"asdasd")
+    invalid_user = User(id="99", name="Invalid User", email="invalid@example.com", room_id="invalid_room", password_hash=b"asdasd")
 
     with pytest.raises(KeyError):  # Suponemos que se lanza KeyError para IDs de habitación inválidos
         get_current_room(uow=uow, user=invalid_user)

@@ -14,5 +14,5 @@ def put_user_in_room(uow: UnitOfWork, user_id: str, room_id: str) -> None:
         
         user.room_id = room_id
         uow.users.save_user(user)
-        uow.publish_events([UserChangedRoom(user_id=user.name, room_entered=room_id, room_left=user.room_id)])
+        uow.publish_events([UserChangedRoom(user_id=user.id, room_entered=room_id, room_left=user.room_id)])
         uow.commit()

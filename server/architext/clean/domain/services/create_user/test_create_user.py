@@ -8,7 +8,7 @@ def uow() -> FakeUnitOfWork:
 
 
 def test_create_user_success(uow: FakeUnitOfWork):
-    user_name = create_user(
+    user_id = create_user(
         uow=uow,
         name="John Doe",
         email="john.doe@example.com",
@@ -16,12 +16,12 @@ def test_create_user_success(uow: FakeUnitOfWork):
     )
 
     # Verifica que el usuario fue guardado en el repositorio
-    saved_user = uow.users.get_user_by_id("John Doe")
+    saved_user = uow.users.get_user_by_id(user_id)
+    assert user_id is not None
     assert uow.committed
     assert saved_user.name == "John Doe"
     assert saved_user.email == "john.doe@example.com"
     assert saved_user.password_hash is not None
-    assert user_name == "John Doe"
 
 
 def test_create_user_missing_fields(uow: FakeUnitOfWork):

@@ -27,12 +27,14 @@ def uow() -> FakeUnitOfWork:
         exits=[]
     )
     user1 = User(
+        id="in_room",
         name="UserInRoom",
         email="john@example.com",
         room_id="room1",
         password_hash=b"asdasd"
     )
     user2 = User(
+        id="not_in_room",
         name="UserNotInRoom",
         email="Alice@example.com",
         room_id=None,
@@ -46,32 +48,32 @@ def uow() -> FakeUnitOfWork:
 
 
 def test_traverse_exit_success(uow: FakeUnitOfWork):
-    new_room_id = traverse_exit(uow, "UserInRoom", exit_name="To Kitchen")
+    new_room_id = traverse_exit(uow, "in_room", exit_name="To Kitchen")
 
     assert new_room_id == "room2"
-    assert uow.users.get_user_by_id("UserInRoom").room_id == "room2"
+    assert uow.users.get_user_by_id("in_room").room_id == "room2" 
 
 
 def test_traverse_exit_user_not_in_room(uow: FakeUnitOfWork):
     with pytest.raises(ValueError, match="User is not in a room."):
-        traverse_exit(uow, "UserNotInRoom", exit_name="To Kitchen")
+        traverse_exit(uow, "not_in_room", exit_name="To Kitchen")
 
 
 def test_traverse_exit_invalid_exit_name(uow: FakeUnitOfWork):
     with pytest.raises(ValueError, match="An exit with that name was not found in the room."):
-        traverse_exit(uow, "UserInRoom", exit_name="Invalid Exit")
+        traverse_exit(uow, "in_room", exit_name="Invalid Exit")
 
 
 def test_user_changed_room_event_gets_invoked_with_exit_used_null(uow: FakeUnitOfWork):
     spy = Mock()
     def handler(event: UserChangedRoom):
-        assert event.user_id is "UserInRoom"
+        assert event.user_id is "in_room"
         assert event.room_entered is "room2"
         assert event.room_left is "room1"
         assert event.exit_used is "To Kitchen"
         spy()
     handlers = {UserChangedRoom: [handler]}
     uow.messagebus = MessageBus(handlers=handlers)
-    traverse_exit(uow, "UserInRoom", exit_name="To Kitchen")
+    traverse_exit(uow, "in_room", exit_name="To Kitchen")
     assert spy.called
 

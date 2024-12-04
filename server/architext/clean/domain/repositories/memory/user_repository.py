@@ -11,7 +11,7 @@ class MemoryUserRepository(UserRepository):
         return self._users[user_id]
 
     def save_user(self, user: User) -> None:
-        self._users[user.name] = user
+        self._users[user.id] = user
 
     def delete_user(self, user_id: str) -> None:
         del self._users[user_id]
