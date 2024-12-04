@@ -1,6 +1,6 @@
 from typing import List, Optional
 from dataclasses import dataclass, field
-from .exit import Exit
+from architext.clean.domain.entities.exit import Exit
 
 @dataclass
 class Room:

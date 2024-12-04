@@ -1,16 +1,21 @@
-from architext.clean.domain.entities.user import User
-from architext.clean.domain.repositories.room_repository import RoomRepository
+from architext.clean.domain.unit_of_work.unit_of_work import UnitOfWork
+from architext.clean.domain.events.events import UserChangedRoom
 
-def traverse_exit(room_repository: RoomRepository, user: User, exit_name: str) -> str:
-    if user.room_id is None:
-        raise ValueError("User is not in a room.")
+def traverse_exit(uow: UnitOfWork, user_id: str, exit_name: str) -> str:
+    with uow:
+        user = uow.users.get_user_by_id(user_id=user_id)
+
+        if user.room_id is None:
+            raise ValueError("User is not in a room.")
     
-    current_room = room_repository.get_room_by_id(user.room_id)
-    exit_id = current_room.get_exit_destination_id(exit_name)
+        previous_room = uow.rooms.get_room_by_id(user.room_id)
+        destination_id = previous_room.get_exit_destination_id(exit_name)
     
-    if exit_id is None:
-        raise ValueError("An exit with that name was not found in the room.")
+        if destination_id is None:
+            raise ValueError("An exit with that name was not found in the room.")
 
-    user.room_id = exit_id
+        user.room_id = destination_id
 
-    return user.room_id
+        uow.publish_events([UserChangedRoom(user_id=user_id, exit_used=exit_name, room_entered=destination_id, room_left=previous_room.id)])
+
+        return user.room_id

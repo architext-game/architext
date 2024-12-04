@@ -1,8 +1,11 @@
 import pytest
+from unittest.mock import Mock
 from architext.clean.domain.entities.user import User
 from architext.clean.domain.entities.room import Room
 from architext.clean.domain.unit_of_work.fake_unit_of_work import FakeUnitOfWork
 from architext.clean.domain.services.put_user_in_room.put_user_in_room import put_user_in_room
+from architext.clean.domain.events.events import UserChangedRoom
+from architext.clean.domain.events.messagebus import MessageBus
 
 
 @pytest.fixture
@@ -15,7 +18,6 @@ def uow() -> FakeUnitOfWork:
     return uow
 
 def test_put_user_in_room_success(uow: FakeUnitOfWork):
-    """Test para verificar que un usuario es asignado exitosamente a una habitación."""
     put_user_in_room(uow, user_id="John", room_id="room1")
 
     user = uow.users.get_user_by_id("John")
@@ -24,14 +26,23 @@ def test_put_user_in_room_success(uow: FakeUnitOfWork):
 
 
 def test_put_user_in_room_invalid_room(uow: FakeUnitOfWork):
-    """Test para verificar que no se puede asignar un usuario a una habitación inexistente."""
     with pytest.raises(KeyError):
         put_user_in_room(uow, user_id="John", room_id="invalid_room")
     assert not uow.committed
 
 
 def test_put_user_in_room_invalid_user(uow: FakeUnitOfWork):
-    """Test para verificar que no se puede asignar una habitación a un usuario inexistente."""
     with pytest.raises(KeyError):
         put_user_in_room(uow, user_id="invalid_user", room_id="room1")
     assert not uow.committed
+
+
+def test_user_changed_room_event_gets_invoked_with_exit_used_null(uow: FakeUnitOfWork):
+    spy = Mock()
+    def handler(event: UserChangedRoom):
+        assert event.exit_used is None
+        spy()
+    handlers = {UserChangedRoom: [handler]}
+    uow.messagebus = MessageBus(handlers=handlers)
+    put_user_in_room(uow, user_id="John", room_id="room1")
+    assert spy.called
