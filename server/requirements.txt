@@ -9,3 +9,5 @@ py-rolldice
 python-socketio
 python-dotenv
 eventlet
+mypy
+pytest
