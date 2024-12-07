@@ -3,8 +3,8 @@ import pytest
 from architext.clean.domain.entities.user import User
 from architext.clean.domain.entities.room import Room
 from architext.clean.domain.entities.exit import Exit
-from architext.clean.domain.unit_of_work.fake_unit_of_work import FakeUnitOfWork
-from architext.clean.domain.services.traverse_exit.traverse_exit import traverse_exit
+from architext.clean.domain.unit_of_work.fake.fake_uow import FakeUnitOfWork
+from architext.clean.domain.services.traverse_exit.traverse_exit import traverse_exit, TraverseExitInput
 from architext.clean.domain.events.events import UserChangedRoom
 from architext.clean.domain.events.messagebus import MessageBus
 
@@ -17,7 +17,7 @@ def uow() -> FakeUnitOfWork:
         name="Living Room",
         description="A cozy living room",
         exits=[
-            Exit(name="To Kitchen", destination_room_id="room2", description="", is_open=True, key_names=[], visibility="listed")
+            Exit(name="To Kitchen", destination_room_id="room2", description="")
         ]
     )
     room2 = Room(
@@ -48,20 +48,22 @@ def uow() -> FakeUnitOfWork:
 
 
 def test_traverse_exit_success(uow: FakeUnitOfWork):
-    new_room_id = traverse_exit(uow, "in_room", exit_name="To Kitchen")
+    out = traverse_exit(uow, TraverseExitInput(exit_name="To Kitchen"), client_user_id="in_room")
 
-    assert new_room_id == "room2"
-    assert uow.users.get_user_by_id("in_room").room_id == "room2" 
+    assert out.new_room_id == "room2"
+    user = uow.users.get_user_by_id("in_room")
+    assert user is not None
+    assert user.room_id == "room2" 
 
 
 def test_traverse_exit_user_not_in_room(uow: FakeUnitOfWork):
     with pytest.raises(ValueError, match="User is not in a room."):
-        traverse_exit(uow, "not_in_room", exit_name="To Kitchen")
+        traverse_exit(uow, TraverseExitInput(exit_name="To Kitchen"), client_user_id="not_in_room")
 
 
 def test_traverse_exit_invalid_exit_name(uow: FakeUnitOfWork):
     with pytest.raises(ValueError, match="An exit with that name was not found in the room."):
-        traverse_exit(uow, "in_room", exit_name="Invalid Exit")
+        traverse_exit(uow, TraverseExitInput(exit_name="Invalid Exit"), client_user_id="in_room")
 
 
 def test_user_changed_room_event_gets_invoked_with_exit_used_null(uow: FakeUnitOfWork):
@@ -74,6 +76,6 @@ def test_user_changed_room_event_gets_invoked_with_exit_used_null(uow: FakeUnitO
         spy()
     handlers = {UserChangedRoom: [handler]}
     uow.messagebus = MessageBus(handlers=handlers)
-    traverse_exit(uow, "in_room", exit_name="To Kitchen")
+    traverse_exit(uow, TraverseExitInput(exit_name="To Kitchen"), client_user_id="in_room")
     assert spy.called
 

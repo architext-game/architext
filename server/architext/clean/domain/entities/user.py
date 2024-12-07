@@ -1,5 +1,5 @@
 from typing import List, Optional
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 import hashlib
 
 @dataclass
@@ -8,9 +8,6 @@ class User:
     name: str
     password_hash: bytes
     room_id: Optional[str] = None
-    client_id: Optional[str] = None
-    joined_worlds_ids: List[str] = field(default_factory=list)
-    master_mode: bool = False
     email: Optional[str] = None
 
     def _hash_password(self, password: str) -> bytes:

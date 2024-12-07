@@ -1,8 +1,11 @@
-from typing import Protocol, Optional, List
+from typing import Protocol, List, Optional
 from ..entities.user import User
 
 class UserRepository(Protocol):
-    def get_user_by_id(self, user_id: str) -> User:
+    def get_user_by_id(self, user_id: str) -> Optional[User]:
+        pass
+
+    def get_user_by_email(self, user_email: str) -> Optional[User]:
         pass
 
     def save_user(self, user: User) -> None:

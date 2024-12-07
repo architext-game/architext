@@ -1,14 +1,17 @@
-from typing import Dict, List
+from typing import Dict, List, Optional
 from architext.clean.domain.entities.user import User
 from architext.clean.domain.repositories.user_repository import UserRepository
 import copy
 
 class MemoryUserRepository(UserRepository):
-    def __init__(self):
-        self._users = {}
+    def __init__(self) -> None:
+        self._users: Dict[str, User] = {}
 
-    def get_user_by_id(self, user_id: str) -> User:
-        return self._users[user_id]
+    def get_user_by_id(self, user_id: str) -> Optional[User]:
+        return self._users.get(user_id, None)
+    
+    def get_user_by_email(self, user_email: str) -> Optional[User]:
+        return next((user for user in self._users.values() if user.email == user_email), None)
 
     def save_user(self, user: User) -> None:
         self._users[user.id] = user

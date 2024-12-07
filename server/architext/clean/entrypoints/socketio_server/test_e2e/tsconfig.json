@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": "./dist",
+    "types": ["mocha", "jest", "node"]  // Asegúrate de incluir "jest" aquí
+  },
+  "include": ["**/*.ts"]
+}

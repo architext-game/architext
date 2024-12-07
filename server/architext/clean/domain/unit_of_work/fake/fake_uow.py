@@ -1,6 +1,6 @@
 from architext.clean.domain.unit_of_work.unit_of_work import UnitOfWork
-from architext.clean.domain.repositories.memory.room_repository import MemoryRoomRepository
-from architext.clean.domain.repositories.memory.user_repository import MemoryUserRepository
+from architext.clean.domain.unit_of_work.fake.room_repository import MemoryRoomRepository
+from architext.clean.domain.unit_of_work.fake.user_repository import MemoryUserRepository
 from architext.clean.domain.events.messagebus import MessageBus
 
 

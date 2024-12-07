@@ -11,3 +11,6 @@ python-dotenv
 eventlet
 mypy
 pytest
+pydantic
+pydantic[email]
+pyjwt

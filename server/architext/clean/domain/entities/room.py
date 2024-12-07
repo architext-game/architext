@@ -11,3 +11,11 @@ class Room:
 
     def get_exit_destination_id(self, exit_name: str) -> Optional[str]:
         return next((exit.destination_room_id for exit in self.exits if exit.name == exit_name), None)
+    
+
+DEFAULT_ROOM = Room(
+    id="DEFAULT",
+    name="Initial room",
+    description="This is the initial room.",
+    exits=[]
+)

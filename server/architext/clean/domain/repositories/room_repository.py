@@ -1,8 +1,8 @@
-from typing import Protocol, Optional, List
+from typing import Protocol, List, Optional
 from ..entities.room import Room
 
 class RoomRepository(Protocol):
-    def get_room_by_id(self, room_id: str) -> Room:
+    def get_room_by_id(self, room_id: str) -> Optional[Room]:
         pass
 
     def save_room(self, room: Room) -> None:
