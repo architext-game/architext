@@ -43,11 +43,15 @@ export interface GetCurrentRoomResponse {
   data?: {
     id: string;
     name: string;
-    description?: string;
-    exits?: {
+    description: string;
+    exits: {
       name: string;
       description: string;
       destination_room_id: string;
+    }[];
+    people: {
+      id: string;
+      name: string;
     }[];
   } | null;
   error?: string | null;

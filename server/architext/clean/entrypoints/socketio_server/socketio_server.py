@@ -26,6 +26,8 @@ from architext.clean.entrypoints.socketio_server.models import ResponseModel
 from architext.clean.entrypoints.socketio_server.sio_event import event, models
 from architext.clean.entrypoints.socketio_server.pydantic_to_typescript import generate_typescript_defs
 import argparse
+from architext.clean.domain.events.events import UserChangedRoom
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -34,14 +36,17 @@ if __name__ == "__main__":
 
     load_dotenv()
 
-    uow = FakeUnitOfWork()
-    setup(uow)  # run setup according to domain rules
-
     #allowed = json.loads(os.environ['ALLOWED_ORIGINS'])
     allowed = ['http://amritb.github.io', 'https://firecamp.dev']
     sio = socketio.Server(cors_allowed_origins=allowed)
     # dictionary relating authenticated sockets with their user ids
     sid_to_user_id: Dict[str, str] = {}
+
+    uow = FakeUnitOfWork()
+    setup(uow)  # run setup according to domain rules
+
+    def notify_other_changed_room(event: UserChangedRoom):
+        pass
 
     @sio.event
     def connect(sid, environ, auth):

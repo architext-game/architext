@@ -24,6 +24,8 @@ def traverse_exit(uow: UnitOfWork, input: TraverseExitInput, client_user_id: str
 
         user.room_id = destination_id
 
+        uow.users.save_user(user)
         uow.publish_events([UserChangedRoom(user_id=user.id, exit_used=input.exit_name, room_entered=destination_id, room_left=previous_room.id)])
+        uow.commit()
 
         return TraverseExitOutput(new_room_id= user.room_id)

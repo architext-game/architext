@@ -12,6 +12,7 @@ def uow() -> FakeUnitOfWork:
     uow.rooms.save_room(Room(id="room2", name="Kitchen", description="A modern kitchen", exits=[]))
     uow.users.save_user(User(id="0", name="John", email="john@example.com", room_id="room1", password_hash=b"asdasd"))
     uow.users.save_user(User(id="1", name="Alice", email="alice@example.com", room_id=None, password_hash=b"asdasd"))
+    uow.users.save_user(User(id="2", name="Paul", email="paul@example.com", room_id="room1", password_hash=b"asdasd"))
     return uow
 
 
@@ -32,3 +33,10 @@ def test_get_current_room_user_not_in_room(uow: FakeUnitOfWork):
 def test_get_current_room_invalid_user_id(uow: FakeUnitOfWork):
     with pytest.raises(ValueError):
         room = get_current_room(uow=uow, client_user_id="invalid")
+
+
+def test_get_current_room_lists_people_in_room(uow: FakeUnitOfWork):
+    room = get_current_room(uow=uow, client_user_id="0")
+    assert room is not None
+    assert len(room.people) == 2
+    assert "John" in [person.name for person in room.people]

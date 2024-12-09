@@ -16,3 +16,6 @@ class UserRepository(Protocol):
 
     def list_users(self) -> List[User]:
         pass
+
+    def get_users_in_room(self, room_id: str):
+        pass
