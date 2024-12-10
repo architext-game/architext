@@ -66,7 +66,7 @@ def test_traverse_exit_invalid_exit_name(uow: FakeUnitOfWork):
         traverse_exit(uow, TraverseExitInput(exit_name="Invalid Exit"), client_user_id="in_room")
 
 
-def test_user_changed_room_event_gets_invoked_with_exit_used_null(uow: FakeUnitOfWork):
+def test_user_changed_room_event_gets_invoked(uow: FakeUnitOfWork):
     spy = Mock()
     def handler(event: UserChangedRoom):
         assert event.user_id is "in_room"

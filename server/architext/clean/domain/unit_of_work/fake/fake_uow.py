@@ -11,7 +11,7 @@ class FakeUnitOfWork(UnitOfWork):
         self.users = MemoryUserRepository()
         self.messagebus = messagebus
 
-    def commit(self):
+    def _commit(self):
         self.committed = True
 
     def __enter__(self):

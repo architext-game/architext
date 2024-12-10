@@ -5,6 +5,12 @@
 /* Do not modify it by hand - just update the pydantic models and then re-run the script
 */
 
+export interface OtherEnteredRoomData {
+  user_name: string;
+}
+export interface OtherLeftRoomData {
+  user_name: string;
+}
 export interface LoginResponse {
   success: boolean;
   data?: {

@@ -11,7 +11,7 @@ import atexit
 import os
 import json
 from dotenv import load_dotenv
-from pydantic import ValidationError, BaseModel
+from pydantic import BaseModel
 from architext.clean.domain.unit_of_work.fake.fake_uow import FakeUnitOfWork
 from architext.clean.entrypoints.socketio_server.jwt_tokens import generate_jwt, decode_jwt
 from architext.clean.domain.services.create_user.create_user import create_user, CreateUserInput, CreateUserOutput
@@ -20,13 +20,13 @@ from architext.clean.domain.services.create_connected_room.create_connected_room
 from architext.clean.domain.services.traverse_exit.traverse_exit import traverse_exit, TraverseExitInput, TraverseExitOutput
 from architext.clean.domain.services.login.login import login, LoginInput
 from architext.clean.domain.services.setup.setup import setup
-from typing import Dict, Generic, Optional, TypeVar
-import dataclasses
+
 from architext.clean.entrypoints.socketio_server.models import ResponseModel
 from architext.clean.entrypoints.socketio_server.sio_event import event, models
 from architext.clean.entrypoints.socketio_server.pydantic_to_typescript import generate_typescript_defs
 import argparse
 from architext.clean.domain.events.events import UserChangedRoom
+from bidict import bidict
 
 
 if __name__ == "__main__":
@@ -40,13 +40,52 @@ if __name__ == "__main__":
     allowed = ['http://amritb.github.io', 'https://firecamp.dev']
     sio = socketio.Server(cors_allowed_origins=allowed)
     # dictionary relating authenticated sockets with their user ids
-    sid_to_user_id: Dict[str, str] = {}
+
+
+    sid_to_user_id: bidict[str, str] = bidict()
 
     uow = FakeUnitOfWork()
     setup(uow)  # run setup according to domain rules
 
-    def notify_other_changed_room(event: UserChangedRoom):
-        pass
+    class OtherEnteredRoomEvent(BaseModel):
+        user_name: str
+
+    models.append(OtherEnteredRoomEvent)
+
+    def notify_other_entered_room(event: UserChangedRoom):
+        user_who_moved = uow.users.get_user_by_id(event.user_id)
+        assert user_who_moved is not None
+        users = uow.users.get_users_in_room(event.room_entered)
+        for user in users:
+            socket_id = sid_to_user_id.inverse[user.id]
+            sio.emit(
+                'other_entered_room', 
+                OtherEnteredRoomEvent(user_name=user_who_moved.name).model_dump(), 
+                socket_id
+            )
+
+    class OtherLeftRoomEvent(BaseModel):
+        user_name: str
+
+    models.append(OtherLeftRoomEvent)
+
+    def notify_other_left_room(event: UserChangedRoom):
+        user_who_moved = uow.users.get_user_by_id(event.user_id)
+        assert user_who_moved is not None
+        users = uow.users.get_users_in_room(event.room_left)
+        for user in users:
+            print("EMITED")
+            socket_id = sid_to_user_id.inverse[user.id]
+            sio.emit(
+                'other_left_room',
+                OtherLeftRoomEvent(user_name=user_who_moved.name).model_dump(),
+                socket_id
+            )
+
+    uow.messagebus.add_handlers({
+        UserChangedRoom: [notify_other_left_room, notify_other_entered_room],
+    })
+        
 
     @sio.event
     def connect(sid, environ, auth):
