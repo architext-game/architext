@@ -1,5 +1,9 @@
 volumes/
 **/__pycache__/
+**/.venv/
+**/.pytest_cache/
+**/node_modules/
+**/*.egg-info/
 server/logs/
 .vscode/
 logs/
