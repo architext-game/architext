@@ -43,6 +43,11 @@ if __name__ == "__main__":
 
 
     sid_to_user_id: bidict[str, str] = bidict()
+    def auth(socket: str, user_id: str):
+        if sid_to_user_id.inverse.get(user_id, None) is not None:
+            del sid_to_user_id.inverse[user_id]
+        sid_to_user_id[socket] = user_id
+    
 
     uow = FakeUnitOfWork()
     setup(uow)  # run setup according to domain rules
@@ -57,12 +62,13 @@ if __name__ == "__main__":
         assert user_who_moved is not None
         users = uow.users.get_users_in_room(event.room_entered)
         for user in users:
-            socket_id = sid_to_user_id.inverse[user.id]
-            sio.emit(
-                'other_entered_room', 
-                OtherEnteredRoomEvent(user_name=user_who_moved.name).model_dump(), 
-                socket_id
-            )
+            socket_id = sid_to_user_id.inverse.get(user.id, None)
+            if socket_id is not None:
+                sio.emit(
+                    'other_entered_room', 
+                    OtherEnteredRoomEvent(user_name=user_who_moved.name).model_dump(), 
+                    socket_id
+                )
 
     class OtherLeftRoomEvent(BaseModel):
         user_name: str
@@ -70,17 +76,19 @@ if __name__ == "__main__":
     models.append(OtherLeftRoomEvent)
 
     def notify_other_left_room(event: UserChangedRoom):
+        print("Otherleftroom")
         user_who_moved = uow.users.get_user_by_id(event.user_id)
         assert user_who_moved is not None
         users = uow.users.get_users_in_room(event.room_left)
         for user in users:
-            print("EMITED")
-            socket_id = sid_to_user_id.inverse[user.id]
-            sio.emit(
-                'other_left_room',
-                OtherLeftRoomEvent(user_name=user_who_moved.name).model_dump(),
-                socket_id
-            )
+            socket_id = sid_to_user_id.inverse.get(user.id, None)
+            print(f"Emiting to {user.name} at {socket_id}")
+            if socket_id is not None:
+                sio.emit(
+                    'other_left_room',
+                    OtherLeftRoomEvent(user_name=user_who_moved.name).model_dump(),
+                    socket_id
+                )
 
     uow.messagebus.add_handlers({
         UserChangedRoom: [notify_other_left_room, notify_other_entered_room],
@@ -99,7 +107,7 @@ if __name__ == "__main__":
     def login_event(sid, params: LoginInput) -> LoginOutput:
         user_data = login(uow=uow, input=params)
         token = generate_jwt(**user_data.model_dump())
-        sid_to_user_id[sid] = user_data.user_id
+        auth(sid, user_data.user_id)
         return LoginOutput(jwt_token=token)
 
 
@@ -112,16 +120,13 @@ if __name__ == "__main__":
     @event(sio=sio, on='authenticate', In=AuthenticateParams, Out=ResponseModel[AuthenticateOutput])
     def authenticate(sid, params: AuthenticateParams) -> AuthenticateOutput:
         decoded = decode_jwt(params.jwt_token)
-        sid_to_user_id[sid] = decoded['user_id']
+        auth(sid, decoded['user_id'])
         return AuthenticateOutput(user_id=decoded['user_id'])
     
 
     @event(sio=sio, on='signup', In=CreateUserInput, Out=ResponseModel[CreateUserOutput])
     def signup(sid, params: CreateUserInput) -> CreateUserOutput:
         out = create_user(uow=uow, input=params)
-        print("==================================")
-        print(out)
-        print('________________________')
         return out    
 
     @event(sio=sio, on='get_current_room', Out=ResponseModel[GetCurrentRoomOutput])

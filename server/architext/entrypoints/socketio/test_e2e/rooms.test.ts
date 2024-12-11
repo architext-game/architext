@@ -1,4 +1,4 @@
-import { setupUser, User } from './util';
+import { setupUser, User, setupRoom, Room, emitPromise } from './util';
 import { 
   GetCurrentRoomResponse,
   CreateConnectedRoomParams, CreateConnectedRoomResponse,
@@ -6,145 +6,144 @@ import {
   OtherLeftRoomData,
   OtherEnteredRoomData
 } from "./types"
-import { Socket } from 'socket.io-client';
+import { Socket, io } from 'socket.io-client';
+import { v4 as uuidv4 } from 'uuid';
 
 describe("Socket.IO End-to-End Tests", () => {
-  let alice: User;
-  let bob: User;
-  let charlie: User;
-  let dave: User;
-
-  beforeAll(async () => {
-    // Connect to the server before tests
-    alice = await setupUser('alice');
-    bob = await setupUser('bob');
-    charlie = await setupUser('cha');
-    dave = await setupUser('dave');
-  });
+  const sockets: Socket[] = []
 
   afterAll(() => {
-    // Disconnect after tests
-    if (alice.socket.connected) {
-      alice.socket.disconnect();
-    }
-    if (bob.socket.connected) {
-      bob.socket.disconnect();
-    }
-    if (charlie.socket.connected) {
-      charlie.socket.disconnect();
-    }
-    if (dave.socket.connected) {
-      dave.socket.disconnect();
-    }
+    sockets.forEach(s => s.disconnect())
+  })
+
+  test("Get current room event should return room data", async () => {
+    const alice = await setupUser('alice')
+    sockets.push(alice.socket)
+    const response = await emitPromise<GetCurrentRoomResponse>(alice.socket, "get_current_room", {})
+    expect(response).toBeDefined();
+    expect(response.success).toBe(true);
+    expect(response.data?.name).toBeDefined();
   });
 
-  test("Get current room event should return room data", (done) => {
-    alice.socket.emit("get_current_room", {}, (response: GetCurrentRoomResponse) => {
-      try {
-        expect(response).toBeDefined();
-        expect(response.success).toBe(true);
-        expect(response.data?.name).toBeDefined();
-        done();
-      } catch (error) {
-        done(error);
-      }
-    });
-  });
+  test("Create connected room event should return room creation data", async () => {
+    const alice = await setupUser('alice')
+    sockets.push(alice.socket)
 
+    const uuid = uuidv4()
+    const room_name = `${uuid}`.slice(0, 30)
+    const exit_name = `${uuid}`.slice(0, 10)
+    const return_name = `back${uuid}`.slice(0, 10)
 
-  function emitCreateConnectedRoom(socket: Socket, params: CreateConnectedRoomParams, callback: (response: CreateConnectedRoomResponse) => void){
-    socket.emit('create_connected_room', params, callback)
-  }
-
-  function onOtherLeftRoom(socket: Socket, callback: (event: OtherLeftRoomData) => void){
-    socket.on('other_left_room', callback)
-  }
-
-  test("Create connected room event should return room creation data", (done) => {
     const roomInput: CreateConnectedRoomParams = {
-      name: "Nueva sala",
-      description: "molona",
-      exit_to_new_room_name: "ja",
-      exit_to_new_room_description: "ja",
-      exit_to_old_room_name: "ja",
-      exit_to_old_room_description: "ja"
+      name: room_name,
+      description: "Bot made this",
+      exit_to_new_room_name: exit_name,
+      exit_to_new_room_description: "Bot made this",
+      exit_to_old_room_name: return_name,
+      exit_to_old_room_description: "Bot made this"
     }
 
-    alice.socket.emit("create_connected_room", roomInput, (response: CreateConnectedRoomResponse) => {
-      try {
-        expect(response).toBeDefined();
-        expect(response.success).toBe(true);
-        expect(response.data?.name).toBe("Nueva sala");
-        done();
-      } catch (error) {
-        done(error);
-      }
-    });
+    const response = await emitPromise<CreateConnectedRoomResponse>(alice.socket, "create_connected_room", roomInput)
+    expect(response).toBeDefined();
+    expect(response.success).toBe(true);
+    expect(response.data?.name).toBe(room_name);
   });
 
-  test("Traverse exit event should return traversal data", (done) => {
+  test("Traverse exit event should return traversal data", async () => {
+    const alice = await setupUser('alice')
+    sockets.push(alice.socket)
+
+    const room = await setupRoom('', alice)
+
     const traverseInput: TraverseExitParams = {
-      exit_name: "ja",
+      exit_name: (await room).exit_name,
     };
 
-    alice.socket.emit("traverse_exit", traverseInput, (response: TraverseExitResponse) => {
-      try {
-        expect(response).toBeDefined();
-        expect(response.success).toBe(true);
-        expect(response.data).toBeDefined();
-        expect(response.data?.new_room_id).toBeDefined();
-        done();
-      } catch (error) {
-        done(error);
-      }
-    });
+    const response = await emitPromise<TraverseExitResponse>(alice.socket, "traverse_exit", traverseInput)
+    expect(response).toBeDefined();
+    expect(response.success).toBe(true);
+    expect(response.data).toBeDefined();
+    expect(response.data?.new_room_id).toBe(room.id);
   });
 
   test("User gets notified when another user leaves the room", async () => {
+    const alice = await setupUser('alice');
+    const bob = await setupUser('bob');
+
+    console.log(alice)
+    console.log(bob)
+
+    sockets.push(alice.socket)
+    sockets.push(bob.socket)
+
+    const room = await setupRoom('leaves', alice)
     const traverseInput: TraverseExitParams = {
-      exit_name: "ja",
+      exit_name: room.exit_name,
     };
 
     const spy = jest.fn((x: OtherLeftRoomData) => {})
     
     const expectedEventPromise =  new Promise<void>((resolve) => {
-      dave.socket.on("other_left_room", (event: OtherLeftRoomData) => {
-        if(event.user_name == charlie.name){
+      bob.socket.on("other_left_room", (event: OtherLeftRoomData) => {
+        console.log(event)
+        if(event.user_name == alice.name){
           spy(event);
           resolve();
         }
       });
     });
 
-    charlie.socket.emit("traverse_exit", traverseInput);
+    const response = await emitPromise(alice.socket, "traverse_exit", traverseInput);
+    console.log(response)
     await expectedEventPromise
 
     expect(spy).toHaveBeenCalled();
     expect(spy.mock.calls[0][0]).toBeDefined();
-    expect(spy.mock.calls[0][0].user_name).toBe(charlie.name);
+    expect(spy.mock.calls[0][0].user_name).toBe(alice.name);
+
+    alice.socket.disconnect()
+    bob.socket.disconnect()
   });
 
   test("User gets notified when another user enters the room", async () => {
-    const traverseInput: TraverseExitParams = {
-      exit_name: "ja",
-    };
+    const alice = await setupUser('alice');
+    const bob = await setupUser('bob');
 
+    console.log(alice)
+    console.log(bob)
+
+    sockets.push(alice.socket)
+    sockets.push(bob.socket)
+
+    const room = await setupRoom('leaves', alice)
+    const traverseInput: TraverseExitParams = {
+      exit_name: room.exit_name,
+    };
+    await emitPromise(alice.socket, "traverse_exit", traverseInput);
+    
     const spy = jest.fn((x: OtherLeftRoomData) => {})
     
     const expectedEventPromise =  new Promise<void>((resolve) => {
-      charlie.socket.on("other_entered_room", (event: OtherEnteredRoomData) => {
-        if(event.user_name == dave.name){
+      bob.socket.on("other_entered_room", (event: OtherEnteredRoomData) => {
+        console.log(event)
+        if(event.user_name == alice.name){
           spy(event);
           resolve();
         }
       });
     });
 
-    dave.socket.emit("traverse_exit", traverseInput);
+    await emitPromise(alice.socket, "traverse_exit", {exit_name: room.there_exit_name});
+
+    const response = await emitPromise(alice.socket, "traverse_exit", traverseInput);
+    console.log(response)
     await expectedEventPromise
 
     expect(spy).toHaveBeenCalled();
     expect(spy.mock.calls[0][0]).toBeDefined();
-    expect(spy.mock.calls[0][0].user_name).toBe(dave.name);
+    expect(spy.mock.calls[0][0].user_name).toBe(alice.name);
+
+    alice.socket.disconnect()
+    bob.socket.disconnect()
   });
 });

@@ -19,6 +19,7 @@ class UnitOfWork(Protocol):
     def _publish_events(self):
         for event in self._events:
             self.messagebus.handle(event=event)
+        self._events = []
 
     def commit(self) -> None:
         self._commit()

@@ -10,11 +10,10 @@ class MessageBus:
               existing_handlers = self._handlers.get(event_type, [])
               self._handlers[event_type] = existing_handlers + handlers[event_type]
 
-    def handle(self, event: Event):
+    def handle(self, event: Event) -> None:
         for handler in self._handlers.get(type(event), []):
             try:
                 handler(event)
             except Exception as e:
                 print(e)
-        self._handlers = []
 
