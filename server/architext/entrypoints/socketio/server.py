@@ -12,20 +12,20 @@ import os
 import json
 from dotenv import load_dotenv
 from pydantic import BaseModel
-from architext.domain.unit_of_work.fake.fake_uow import FakeUnitOfWork
+from architext.core.domain.unit_of_work.fake.fake_uow import MemoryUnitOfWork
 from architext.entrypoints.socketio.jwt_tokens import generate_jwt, decode_jwt
-from architext.domain.services.create_user.create_user import create_user, CreateUserInput, CreateUserOutput
-from architext.domain.services.get_current_room.get_current_room import get_current_room, GetCurrentRoomOutput
-from architext.domain.services.create_connected_room.create_connected_room import create_connected_room, CreateConnectedRoomInput, CreateConnectedRoomOutput
-from architext.domain.services.traverse_exit.traverse_exit import traverse_exit, TraverseExitInput, TraverseExitOutput
-from architext.domain.services.login.login import login, LoginInput
-from architext.domain.services.setup.setup import setup
+from architext.core.domain.services.create_user.create_user import create_user, CreateUserInput, CreateUserOutput
+from architext.core.domain.services.get_current_room.get_current_room import get_current_room, GetCurrentRoomOutput
+from architext.core.domain.services.create_connected_room.create_connected_room import create_connected_room, CreateConnectedRoomInput, CreateConnectedRoomOutput
+from architext.core.domain.services.traverse_exit.traverse_exit import traverse_exit, TraverseExitInput, TraverseExitOutput
+from architext.core.domain.services.login.login import login, LoginInput
+from architext.core.domain.services.setup.setup import setup
 
 from architext.entrypoints.socketio.models import ResponseModel
 from architext.entrypoints.socketio.sio_event import event, models
 from architext.entrypoints.socketio.pydantic_to_typescript import generate_typescript_defs
 import argparse
-from architext.domain.events.events import UserChangedRoom
+from architext.core.domain.events import UserChangedRoom
 from bidict import bidict
 
 
@@ -49,7 +49,7 @@ if __name__ == "__main__":
         sid_to_user_id[socket] = user_id
     
 
-    uow = FakeUnitOfWork()
+    uow = MemoryUnitOfWork()
     setup(uow)  # run setup according to domain rules
 
 
