@@ -1,6 +1,7 @@
 import pytest
 from architext.adapters.memory_uow import MemoryUnitOfWork
-from architext.core.services.create_connected_room.create_connected_room import CreateConnectedRoomInput, create_connected_room
+from architext.core.services.create_connected_room import create_connected_room, CreateConnectedRoomInput
+
 from architext.core.domain.entities.room import Room
 from architext.core.domain.entities.user import User
 

@@ -1,6 +1,6 @@
 from unittest.mock import Mock
 from architext.adapters.memory_uow import MemoryUnitOfWork
-from architext.core.services.traverse_exit.traverse_exit import TraverseExitInput, traverse_exit
+from architext.core.services.traverse_exit import TraverseExitInput, traverse_exit
 import pytest
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.room import Room

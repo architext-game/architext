@@ -1,8 +1,8 @@
 from architext.adapters.memory_uow import MemoryUnitOfWork
-from architext.core.services.create_connected_room.create_connected_room import CreateConnectedRoomInput, create_connected_room
-from architext.core.services.create_user.create_user import CreateUserInput, create_user
-from architext.core.services.setup.setup import setup
-from architext.core.services.traverse_exit.traverse_exit import TraverseExitInput, traverse_exit
+from architext.core.services.create_connected_room import CreateConnectedRoomInput, create_connected_room
+from architext.core.services.create_user import CreateUserInput, create_user
+from architext.core.services.setup import setup
+from architext.core.services.traverse_exit import TraverseExitInput, traverse_exit
 
 def test_users_get_notified_if_other_enters_or_leaves_room() -> None:
     uow = MemoryUnitOfWork()

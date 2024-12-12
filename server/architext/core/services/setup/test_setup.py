@@ -1,5 +1,5 @@
 from architext.adapters.memory_uow import MemoryUnitOfWork
-from architext.core.services.setup.setup import setup
+from architext.core.services.setup import setup
 import pytest
 from architext.core.domain.entities.room import DEFAULT_ROOM, Room
 import copy

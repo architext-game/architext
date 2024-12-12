@@ -1,5 +1,5 @@
 from architext.adapters.memory_uow import MemoryUnitOfWork
-from architext.core.services.get_current_room.get_current_room import get_current_room
+from architext.core.services.get_current_room import get_current_room
 import pytest
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.room import Room

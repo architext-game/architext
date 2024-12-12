@@ -1,5 +1,5 @@
 from architext.adapters.memory_uow import MemoryUnitOfWork
-from architext.core.services.create_user.create_user import CreateUserInput, create_user
+from architext.core.services.create_user import CreateUserInput, create_user
 import pytest
 from pydantic import ValidationError
 
