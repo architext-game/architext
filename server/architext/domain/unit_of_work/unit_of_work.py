@@ -3,11 +3,13 @@ from architext.domain.repositories.room_repository import RoomRepository
 from architext.domain.repositories.user_repository import UserRepository
 from architext.domain.events.messagebus import MessageBus
 from architext.domain.events.events import Event
+from architext.domain.notifications.notification_adapter import NotificationAdapter
 
 class UnitOfWork(Protocol):
     messagebus: MessageBus
     rooms: RoomRepository
     users: UserRepository
+    notifications: NotificationAdapter
     _events: List[Event] = []
 
     def __exit__(self, *args) -> None:
@@ -18,7 +20,7 @@ class UnitOfWork(Protocol):
 
     def _publish_events(self):
         for event in self._events:
-            self.messagebus.handle(event=event)
+            self.messagebus.handle(uow=self, event=event)
         self._events = []
 
     def commit(self) -> None:

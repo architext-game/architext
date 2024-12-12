@@ -68,7 +68,7 @@ def test_traverse_exit_invalid_exit_name(uow: FakeUnitOfWork):
 
 def test_user_changed_room_event_gets_invoked(uow: FakeUnitOfWork):
     spy = Mock()
-    def handler(event: UserChangedRoom):
+    def handler(uow: FakeUnitOfWork, event: UserChangedRoom):
         assert event.user_id is "in_room"
         assert event.room_entered is "room2"
         assert event.room_left is "room1"

@@ -52,48 +52,6 @@ if __name__ == "__main__":
     uow = FakeUnitOfWork()
     setup(uow)  # run setup according to domain rules
 
-    class OtherEnteredRoomEvent(BaseModel):
-        user_name: str
-
-    models.append(OtherEnteredRoomEvent)
-
-    def notify_other_entered_room(event: UserChangedRoom):
-        user_who_moved = uow.users.get_user_by_id(event.user_id)
-        assert user_who_moved is not None
-        users = uow.users.get_users_in_room(event.room_entered)
-        for user in users:
-            socket_id = sid_to_user_id.inverse.get(user.id, None)
-            if socket_id is not None:
-                sio.emit(
-                    'other_entered_room', 
-                    OtherEnteredRoomEvent(user_name=user_who_moved.name).model_dump(), 
-                    socket_id
-                )
-
-    class OtherLeftRoomEvent(BaseModel):
-        user_name: str
-
-    models.append(OtherLeftRoomEvent)
-
-    def notify_other_left_room(event: UserChangedRoom):
-        print("Otherleftroom")
-        user_who_moved = uow.users.get_user_by_id(event.user_id)
-        assert user_who_moved is not None
-        users = uow.users.get_users_in_room(event.room_left)
-        for user in users:
-            socket_id = sid_to_user_id.inverse.get(user.id, None)
-            print(f"Emiting to {user.name} at {socket_id}")
-            if socket_id is not None:
-                sio.emit(
-                    'other_left_room',
-                    OtherLeftRoomEvent(user_name=user_who_moved.name).model_dump(),
-                    socket_id
-                )
-
-    uow.messagebus.add_handlers({
-        UserChangedRoom: [notify_other_left_room, notify_other_entered_room],
-    })
-        
 
     @sio.event
     def connect(sid, environ, auth):
