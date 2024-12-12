@@ -1,6 +1,7 @@
 from architext.adapters.memory_uow import MemoryUnitOfWork
 from architext.core.services.get_current_room import get_current_room
-import pytest
+from architext.core.commands import GetCurrentRoom
+import pytest # type: ignore
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.room import Room
 
@@ -17,26 +18,26 @@ def uow() -> MemoryUnitOfWork:
 
 
 def test_get_current_room_success(uow: MemoryUnitOfWork):
-    room = get_current_room(uow=uow, client_user_id="0")
+    result = get_current_room(uow=uow, command=GetCurrentRoom(), client_user_id="0")
 
-    assert room is not None
-    assert room.id == "room1"
-    assert room.name == "Living Room"
-    assert room.description == "A cozy living room"
+    assert result.current_room is not None
+    assert result.current_room.id == "room1"
+    assert result.current_room.name == "Living Room"
+    assert result.current_room.description == "A cozy living room"
 
 
 def test_get_current_room_user_not_in_room(uow: MemoryUnitOfWork):
-    room = get_current_room(uow=uow, client_user_id="1")
-    assert room is None
+    result = get_current_room(uow=uow, command=GetCurrentRoom(), client_user_id="1")
+    assert result.current_room is None
 
 
 def test_get_current_room_invalid_user_id(uow: MemoryUnitOfWork):
     with pytest.raises(ValueError):
-        room = get_current_room(uow=uow, client_user_id="invalid")
+        result = get_current_room(uow=uow, command=GetCurrentRoom(), client_user_id="invalid")
 
 
 def test_get_current_room_lists_people_in_room(uow: MemoryUnitOfWork):
-    room = get_current_room(uow=uow, client_user_id="0")
-    assert room is not None
-    assert len(room.people) == 2
-    assert "John" in [person.name for person in room.people]
+    result = get_current_room(uow=uow, command=GetCurrentRoom(), client_user_id="0")
+    assert result.current_room is not None
+    assert len(result.current_room.people) == 2
+    assert "John" in [person.name for person in result.current_room.people]

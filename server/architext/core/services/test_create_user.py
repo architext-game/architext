@@ -1,6 +1,7 @@
+import pytest # type: ignore
 from architext.adapters.memory_uow import MemoryUnitOfWork
-from architext.core.services.create_user import CreateUserInput, create_user
-import pytest
+from architext.core.services.create_user import create_user
+from architext.core.commands import CreateUser
 from pydantic import ValidationError
 
 @pytest.fixture
@@ -9,7 +10,7 @@ def uow() -> MemoryUnitOfWork:
 
 
 def test_create_user_success(uow: MemoryUnitOfWork):
-    input = CreateUserInput(
+    input = CreateUser(
         name="John Doe",
         email="john.doe@example.com",
         password="securepassword123"
@@ -17,7 +18,7 @@ def test_create_user_success(uow: MemoryUnitOfWork):
 
     out = create_user(
         uow=uow,
-        input=input
+        command=input
     )
 
     # Verifica que el usuario fue guardado en el repositorio
@@ -32,42 +33,42 @@ def test_create_user_success(uow: MemoryUnitOfWork):
 
 def test_create_user_missing_fields(uow: MemoryUnitOfWork):
     with pytest.raises(ValidationError):
-        input = CreateUserInput(name="", email="john.doe@example.com", password="123")
-        create_user(uow=uow, input=input)
+        input = CreateUser(name="", email="john.doe@example.com", password="123")
+        create_user(uow=uow, command=input)
     assert not uow.committed
 
     with pytest.raises(ValidationError):
-        input = CreateUserInput(name="John Doe", email="", password="123")
-        create_user(uow=uow, input=input)
+        input = CreateUser(name="John Doe", email="", password="123")
+        create_user(uow=uow, command=input)
     assert not uow.committed
 
 
     with pytest.raises(ValidationError):
-        input = CreateUserInput(name="John Doe", email="john.doe@example.com", password="")
-        create_user(uow=uow, input=input)
+        input = CreateUser(name="John Doe", email="john.doe@example.com", password="")
+        create_user(uow=uow, command=input)
     assert not uow.committed
 
 @pytest.mark.skip(reason="to do")
 def test_create_user_duplicate_name(uow: MemoryUnitOfWork):
-    input = CreateUserInput(
+    input = CreateUser(
         name="John Doe",
         email="john.doe@example.com",
         password="securepassword123"
     )
     create_user(
         uow=uow,
-        input=input
+        command=input
     )
 
     with pytest.raises(KeyError):
-        input = CreateUserInput(
+        input = CreateUser(
             name="John Doe",
             email="john.doe2@example.com",
             password="anotherpassword"
         )
         create_user(
             uow=uow,
-            input=input
+            command=input
         )
     assert not uow.committed
 
@@ -75,7 +76,7 @@ def test_create_user_duplicate_name(uow: MemoryUnitOfWork):
 def test_create_user_list_users(uow: MemoryUnitOfWork):
     create_user(
         uow=uow,
-        input=CreateUserInput(
+        command=CreateUser(
             name="Alice",
             email="alice@example.com",
             password="password123"
@@ -83,7 +84,7 @@ def test_create_user_list_users(uow: MemoryUnitOfWork):
     )
     create_user(
         uow=uow,
-        input=CreateUserInput(
+        command=CreateUser(
             name="Bob",
             email="bob@example.com",
             password="password456"

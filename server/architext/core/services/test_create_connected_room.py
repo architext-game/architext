@@ -1,6 +1,7 @@
-import pytest
+import pytest # type: ignore
 from architext.adapters.memory_uow import MemoryUnitOfWork
-from architext.core.services.create_connected_room import create_connected_room, CreateConnectedRoomInput
+from architext.core.services.create_connected_room import create_connected_room
+from architext.core.commands import CreateConnectedRoom
 
 from architext.core.domain.entities.room import Room
 from architext.core.domain.entities.user import User
@@ -17,7 +18,7 @@ def uow() -> MemoryUnitOfWork:
 def test_create_connected_room_success(uow: MemoryUnitOfWork):
     out = create_connected_room(
         uow=uow,
-        input=CreateConnectedRoomInput(
+        command=CreateConnectedRoom(
             name="Living Room",
             description="A cozy living room",
             exit_to_new_room_name="Door to living room",
@@ -28,7 +29,7 @@ def test_create_connected_room_success(uow: MemoryUnitOfWork):
         client_user_id="0"
     )
 
-    new_room = uow.rooms.get_room_by_id(out.id)
+    new_room = uow.rooms.get_room_by_id(out.room_id)
     old_room = uow.rooms.get_room_by_id("kitchen")
     assert uow.committed
     assert new_room is not None

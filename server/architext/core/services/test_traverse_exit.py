@@ -1,7 +1,8 @@
 from unittest.mock import Mock
 from architext.adapters.memory_uow import MemoryUnitOfWork
-from architext.core.services.traverse_exit import TraverseExitInput, traverse_exit
-import pytest
+from architext.core.services.traverse_exit import traverse_exit
+from architext.core.commands import TraverseExit
+import pytest # type: ignore
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.room import Room
 from architext.core.domain.entities.exit import Exit
@@ -48,7 +49,7 @@ def uow() -> MemoryUnitOfWork:
 
 
 def test_traverse_exit_success(uow: MemoryUnitOfWork):
-    out = traverse_exit(uow, TraverseExitInput(exit_name="To Kitchen"), client_user_id="in_room")
+    out = traverse_exit(uow, TraverseExit(exit_name="To Kitchen"), client_user_id="in_room")
 
     assert out.new_room_id == "room2"
     user = uow.users.get_user_by_id("in_room")
@@ -58,12 +59,12 @@ def test_traverse_exit_success(uow: MemoryUnitOfWork):
 
 def test_traverse_exit_user_not_in_room(uow: MemoryUnitOfWork):
     with pytest.raises(ValueError, match="User is not in a room."):
-        traverse_exit(uow, TraverseExitInput(exit_name="To Kitchen"), client_user_id="not_in_room")
+        traverse_exit(uow, TraverseExit(exit_name="To Kitchen"), client_user_id="not_in_room")
 
 
 def test_traverse_exit_invalid_exit_name(uow: MemoryUnitOfWork):
     with pytest.raises(ValueError, match="An exit with that name was not found in the room."):
-        traverse_exit(uow, TraverseExitInput(exit_name="Invalid Exit"), client_user_id="in_room")
+        traverse_exit(uow, TraverseExit(exit_name="Invalid Exit"), client_user_id="in_room")
 
 
 def test_user_changed_room_event_gets_invoked(uow: MemoryUnitOfWork):
@@ -76,6 +77,6 @@ def test_user_changed_room_event_gets_invoked(uow: MemoryUnitOfWork):
         spy()
     handlers = {UserChangedRoom: [handler]}
     uow.messagebus = MessageBus(handlers=handlers)
-    traverse_exit(uow, TraverseExitInput(exit_name="To Kitchen"), client_user_id="in_room")
+    traverse_exit(uow, TraverseExit(exit_name="To Kitchen"), client_user_id="in_room")
     assert spy.called
 

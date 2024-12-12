@@ -1,6 +1,7 @@
+import pytest # type: ignore
 from architext.adapters.memory_uow import MemoryUnitOfWork
-from architext.core.services.setup import setup
-import pytest
+from architext.core.services.create_initial_data import create_initial_data
+from architext.core.commands import CreateInitialData
 from architext.core.domain.entities.room import DEFAULT_ROOM, Room
 import copy
 
@@ -11,7 +12,7 @@ def uow() -> MemoryUnitOfWork:
 
 def test_setup_creates_default_room(uow: MemoryUnitOfWork):
     with uow:
-        setup(uow)
+        create_initial_data(uow, command=CreateInitialData())
         uow.commit()
     print("**"+str(uow.rooms.list_rooms()))
     assert uow.committed
@@ -26,7 +27,7 @@ def test_setup_does_not_recreate_the_default_room_if_exists(uow: MemoryUnitOfWor
         uow.commit()
 
     with uow:
-        setup(uow)
+        create_initial_data(uow, command=CreateInitialData())
         uow.commit()
 
     room = uow.rooms.get_room_by_id(DEFAULT_ROOM.id)

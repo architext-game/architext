@@ -1,25 +1,26 @@
 from architext.adapters.memory_uow import MemoryUnitOfWork
-from architext.core.services.create_connected_room import CreateConnectedRoomInput, create_connected_room
-from architext.core.services.create_user import CreateUserInput, create_user
-from architext.core.services.setup import setup
-from architext.core.services.traverse_exit import TraverseExitInput, traverse_exit
+from architext.core.commands import TraverseExit, CreateInitialData, CreateConnectedRoom, CreateUser
+from architext.core.services.create_connected_room import create_connected_room
+from architext.core.services.create_user import create_user
+from architext.core.services.create_initial_data import create_initial_data
+from architext.core.services.traverse_exit import traverse_exit
 
 def test_users_get_notified_if_other_enters_or_leaves_room() -> None:
     uow = MemoryUnitOfWork()
-    setup(uow=uow)
-    user_a = create_user(uow=uow, input=CreateUserInput(
+    create_initial_data(uow=uow, command=CreateInitialData())
+    user_a = create_user(uow=uow, command=CreateUser(
         email='test@test.com',
         name='testerA',
         password='asdasd'
     ))
-    user_b = create_user(uow=uow, input=CreateUserInput(
+    user_b = create_user(uow=uow, command=CreateUser(
         email='test@test.com',
         name='testerB',
         password='asdasd'
     ))
     room = create_connected_room(
         uow=uow, 
-        input=CreateConnectedRoomInput(
+        command=CreateConnectedRoom(
             name='rrom',
             description='descripdsdas',
             exit_to_new_room_name='go',
@@ -31,7 +32,7 @@ def test_users_get_notified_if_other_enters_or_leaves_room() -> None:
     )
     traverse_exit(
         uow=uow,
-        input=TraverseExitInput(
+        command=TraverseExit(
             exit_name='go'
         ),
         client_user_id=user_a.user_id
