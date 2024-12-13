@@ -1,7 +1,7 @@
 from unittest.mock import Mock
 from architext.adapters.memory_uow import MemoryUnitOfWork
 from architext.core.services.traverse_exit import traverse_exit
-from architext.core.commands import TraverseExit
+from architext.core.commands import TraverseExit, TraverseExitResult
 import pytest # type: ignore
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.room import Room
@@ -47,9 +47,13 @@ def uow() -> MemoryUnitOfWork:
     uow.users.save_user(user2)
     return uow
 
+@pytest.fixture
+def message_bus() -> MessageBus:
+    return MessageBus() 
 
-def test_traverse_exit_success(uow: MemoryUnitOfWork):
-    out = traverse_exit(uow, TraverseExit(exit_name="To Kitchen"), client_user_id="in_room")
+
+def test_traverse_exit_success(uow: MemoryUnitOfWork, message_bus: MessageBus):
+    out: TraverseExitResult = message_bus.handle(uow, TraverseExit(exit_name="To Kitchen"), client_user_id="in_room")[0]
 
     assert out.new_room_id == "room2"
     user = uow.users.get_user_by_id("in_room")
@@ -57,15 +61,14 @@ def test_traverse_exit_success(uow: MemoryUnitOfWork):
     assert user.room_id == "room2" 
 
 
-def test_traverse_exit_user_not_in_room(uow: MemoryUnitOfWork):
+def test_traverse_exit_user_not_in_room(uow: MemoryUnitOfWork, message_bus: MessageBus):
     with pytest.raises(ValueError, match="User is not in a room."):
-        traverse_exit(uow, TraverseExit(exit_name="To Kitchen"), client_user_id="not_in_room")
+        message_bus.handle(uow, TraverseExit(exit_name="To Kitchen"), client_user_id="not_in_room")
 
 
-def test_traverse_exit_invalid_exit_name(uow: MemoryUnitOfWork):
+def test_traverse_exit_invalid_exit_name(uow: MemoryUnitOfWork, message_bus: MessageBus):
     with pytest.raises(ValueError, match="An exit with that name was not found in the room."):
-        traverse_exit(uow, TraverseExit(exit_name="Invalid Exit"), client_user_id="in_room")
-
+        message_bus.handle(uow, TraverseExit(exit_name="Invalid Exit"), client_user_id="in_room")
 
 def test_user_changed_room_event_gets_invoked(uow: MemoryUnitOfWork):
     spy = Mock()
@@ -76,7 +79,7 @@ def test_user_changed_room_event_gets_invoked(uow: MemoryUnitOfWork):
         assert event.exit_used is "To Kitchen"
         spy()
     handlers = {UserChangedRoom: [handler]}
-    uow.messagebus = MessageBus(handlers=handlers)
-    traverse_exit(uow, TraverseExit(exit_name="To Kitchen"), client_user_id="in_room")
+    message_bus = MessageBus(event_handlers=handlers)
+    message_bus.handle(uow, TraverseExit(exit_name="To Kitchen"), client_user_id="in_room")
     assert spy.called
 

@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from architext.ports.unit_of_work import UnitOfWork
 from architext.core.domain.events import UserChangedRoom
+from typing import List
 
 @dataclass
 class OtherEnteredRoomNotification:

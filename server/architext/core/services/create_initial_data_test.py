@@ -1,3 +1,4 @@
+from architext.core.messagebus import MessageBus
 import pytest # type: ignore
 from architext.adapters.memory_uow import MemoryUnitOfWork
 from architext.core.services.create_initial_data import create_initial_data
@@ -9,17 +10,20 @@ import copy
 def uow() -> MemoryUnitOfWork:
     return MemoryUnitOfWork()
 
+@pytest.fixture
+def message_bus() -> MessageBus:
+    return MessageBus() 
 
-def test_setup_creates_default_room(uow: MemoryUnitOfWork):
+def test_setup_creates_default_room(uow: MemoryUnitOfWork, message_bus: MessageBus):
     with uow:
-        create_initial_data(uow, command=CreateInitialData())
+        message_bus.handle(uow, CreateInitialData())
         uow.commit()
     print("**"+str(uow.rooms.list_rooms()))
     assert uow.committed
     assert uow.rooms.get_room_by_id(DEFAULT_ROOM.id) == DEFAULT_ROOM
 
 
-def test_setup_does_not_recreate_the_default_room_if_exists(uow: MemoryUnitOfWork):
+def test_setup_does_not_recreate_the_default_room_if_exists(uow: MemoryUnitOfWork, message_bus: MessageBus):
     with uow:
         default_room = copy.deepcopy(DEFAULT_ROOM)
         default_room.description = "Modified description"
@@ -27,7 +31,7 @@ def test_setup_does_not_recreate_the_default_room_if_exists(uow: MemoryUnitOfWor
         uow.commit()
 
     with uow:
-        create_initial_data(uow, command=CreateInitialData())
+        message_bus.handle(uow, CreateInitialData())
         uow.commit()
 
     room = uow.rooms.get_room_by_id(DEFAULT_ROOM.id)

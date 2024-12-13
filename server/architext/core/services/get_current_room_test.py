@@ -1,6 +1,7 @@
 from architext.adapters.memory_uow import MemoryUnitOfWork
+from architext.core.messagebus import MessageBus
 from architext.core.services.get_current_room import get_current_room
-from architext.core.commands import GetCurrentRoom
+from architext.core.commands import GetCurrentRoom, GetCurrentRoomResult
 import pytest # type: ignore
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.room import Room
@@ -16,9 +17,13 @@ def uow() -> MemoryUnitOfWork:
     uow.users.save_user(User(id="2", name="Paul", email="paul@example.com", room_id="room1", password_hash=b"asdasd"))
     return uow
 
+@pytest.fixture
+def message_bus() -> MessageBus:
+    return MessageBus() 
 
-def test_get_current_room_success(uow: MemoryUnitOfWork):
-    result = get_current_room(uow=uow, command=GetCurrentRoom(), client_user_id="0")
+
+def test_get_current_room_success(uow: MemoryUnitOfWork, message_bus: MessageBus):
+    result: GetCurrentRoomResult = message_bus.handle(uow, GetCurrentRoom(), client_user_id="0")[0]
 
     assert result.current_room is not None
     assert result.current_room.id == "room1"
@@ -26,18 +31,18 @@ def test_get_current_room_success(uow: MemoryUnitOfWork):
     assert result.current_room.description == "A cozy living room"
 
 
-def test_get_current_room_user_not_in_room(uow: MemoryUnitOfWork):
-    result = get_current_room(uow=uow, command=GetCurrentRoom(), client_user_id="1")
+def test_get_current_room_user_not_in_room(uow: MemoryUnitOfWork, message_bus: MessageBus):
+    result: GetCurrentRoomResult = message_bus.handle(uow, GetCurrentRoom(), client_user_id="1")[0]
     assert result.current_room is None
 
 
-def test_get_current_room_invalid_user_id(uow: MemoryUnitOfWork):
+def test_get_current_room_invalid_user_id(uow: MemoryUnitOfWork, message_bus: MessageBus):
     with pytest.raises(ValueError):
-        result = get_current_room(uow=uow, command=GetCurrentRoom(), client_user_id="invalid")
+        result: GetCurrentRoomResult = message_bus.handle(uow, GetCurrentRoom(), client_user_id="invalid")[0]
 
 
-def test_get_current_room_lists_people_in_room(uow: MemoryUnitOfWork):
-    result = get_current_room(uow=uow, command=GetCurrentRoom(), client_user_id="0")
+def test_get_current_room_lists_people_in_room(uow: MemoryUnitOfWork, message_bus: MessageBus):
+    result: GetCurrentRoomResult = message_bus.handle(uow, GetCurrentRoom(), client_user_id="0")[0]
     assert result.current_room is not None
     assert len(result.current_room.people) == 2
     assert "John" in [person.name for person in result.current_room.people]

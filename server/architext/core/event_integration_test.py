@@ -1,5 +1,6 @@
 from architext.adapters.memory_uow import MemoryUnitOfWork
 from architext.core.commands import TraverseExit, CreateInitialData, CreateConnectedRoom, CreateUser
+from architext.core.messagebus import MessageBus
 from architext.core.services.create_connected_room import create_connected_room
 from architext.core.services.create_user import create_user
 from architext.core.services.create_initial_data import create_initial_data
@@ -7,20 +8,21 @@ from architext.core.services.traverse_exit import traverse_exit
 
 def test_users_get_notified_if_other_enters_or_leaves_room() -> None:
     uow = MemoryUnitOfWork()
-    create_initial_data(uow=uow, command=CreateInitialData())
-    user_a = create_user(uow=uow, command=CreateUser(
+    bus = MessageBus()
+    bus.handle(uow, CreateInitialData())
+    user_a = bus.handle(uow, CreateUser(
         email='test@test.com',
         name='testerA',
         password='asdasd'
-    ))
-    user_b = create_user(uow=uow, command=CreateUser(
+    ))[0]
+    user_b = bus.handle(uow, CreateUser(
         email='test@test.com',
         name='testerB',
         password='asdasd'
-    ))
-    room = create_connected_room(
+    ))[0]
+    room = bus.handle(
         uow=uow, 
-        command=CreateConnectedRoom(
+        message=CreateConnectedRoom(
             name='rrom',
             description='descripdsdas',
             exit_to_new_room_name='go',
@@ -29,10 +31,10 @@ def test_users_get_notified_if_other_enters_or_leaves_room() -> None:
             exit_to_old_room_description='hoho'
         ),
         client_user_id=user_a.user_id
-    )
-    traverse_exit(
+    )[0]
+    bus.handle(
         uow=uow,
-        command=TraverseExit(
+        message=TraverseExit(
             exit_name='go'
         ),
         client_user_id=user_a.user_id

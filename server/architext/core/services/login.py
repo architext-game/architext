@@ -1,7 +1,7 @@
 from architext.ports.unit_of_work import UnitOfWork
 from architext.core.commands import Login, LoginResult
 
-def login(uow: UnitOfWork, command: Login) -> LoginResult:
+def login(uow: UnitOfWork, command: Login, client_user_id: str = "") -> LoginResult:
     with uow:
         user = uow.users.get_user_by_email(command.email)
         assert user is not None
