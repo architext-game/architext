@@ -1,12 +1,12 @@
 import pytest # type: ignore
-from architext.adapters.memory_uow import MemoryUnitOfWork
+from architext.adapters.fake_uow import FakeUnitOfWork
 from architext.core.services.create_user import create_user
 from architext.core.commands import CreateUser, CreateUserResult
 from pydantic import ValidationError
 
 from architext.core.messagebus import MessageBus
 from architext.adapters.fake_notificator import FakeNotificator
-from architext.adapters.memory_uow import MemoryUnitOfWork
+from architext.adapters.fake_uow import FakeUnitOfWork
 from architext.ports.unit_of_work import UnitOfWork
 import pytest # type: ignore
 from architext.core.commands import CreateInitialData
@@ -14,8 +14,8 @@ from architext.core.domain.entities.room import DEFAULT_ROOM
 
 
 @pytest.fixture
-def uow() -> MemoryUnitOfWork:
-    uow = MemoryUnitOfWork()
+def uow() -> FakeUnitOfWork:
+    uow = FakeUnitOfWork()
     MessageBus().handle(uow, CreateInitialData())
     uow.committed = False
     return uow
@@ -25,7 +25,7 @@ def message_bus() -> MessageBus:
     return MessageBus() 
 
 
-def test_create_user_success(uow: MemoryUnitOfWork, message_bus: MessageBus):
+def test_create_user_success(uow: FakeUnitOfWork, message_bus: MessageBus):
     command = CreateUser(
         name="John Doe",
         email="john.doe@example.com",
@@ -33,8 +33,8 @@ def test_create_user_success(uow: MemoryUnitOfWork, message_bus: MessageBus):
     )
     out = message_bus.handle(uow, command)
     
-    assert type(out[0]) is CreateUserResult
-    result: CreateUserResult = out[0]
+    assert type(out) is CreateUserResult
+    result: CreateUserResult = out
     assert uow.committed
     assert result.user_id is not None
     saved_user = uow.users.get_user_by_id(result.user_id)
@@ -44,7 +44,7 @@ def test_create_user_success(uow: MemoryUnitOfWork, message_bus: MessageBus):
     assert saved_user.match_password(command.password)
 
 
-def test_create_user_missing_fields(uow: MemoryUnitOfWork, message_bus: MessageBus):
+def test_create_user_missing_fields(uow: FakeUnitOfWork, message_bus: MessageBus):
     with pytest.raises(ValidationError):
         command = CreateUser(name="", email="john.doe@example.com", password="123")
         message_bus.handle(uow, command)
@@ -61,7 +61,7 @@ def test_create_user_missing_fields(uow: MemoryUnitOfWork, message_bus: MessageB
     assert not uow.committed
 
 @pytest.mark.skip(reason="to do")
-def test_create_user_duplicate_name(uow: MemoryUnitOfWork, message_bus: MessageBus):
+def test_create_user_duplicate_name(uow: FakeUnitOfWork, message_bus: MessageBus):
     command = CreateUser(
         name="John Doe",
         email="john.doe@example.com",
@@ -79,10 +79,10 @@ def test_create_user_duplicate_name(uow: MemoryUnitOfWork, message_bus: MessageB
     assert not uow.committed
 
 
-def test_create_user_list_users(uow: MemoryUnitOfWork, message_bus: MessageBus):
+def test_create_user_list_users(uow: FakeUnitOfWork, message_bus: MessageBus):
     message_bus.handle(
         uow=uow,
-        message=CreateUser(
+        command=CreateUser(
             name="Alice",
             email="alice@example.com",
             password="password123"
@@ -90,7 +90,7 @@ def test_create_user_list_users(uow: MemoryUnitOfWork, message_bus: MessageBus):
     )
     message_bus.handle(
         uow=uow,
-        message=CreateUser(
+        command=CreateUser(
             name="Bob",
             email="bob@example.com",
             password="password456"

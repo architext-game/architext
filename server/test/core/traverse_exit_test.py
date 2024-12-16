@@ -1,5 +1,5 @@
 from unittest.mock import Mock
-from architext.adapters.memory_uow import MemoryUnitOfWork
+from architext.adapters.fake_uow import FakeUnitOfWork
 from architext.core.commands import TraverseExit, TraverseExitResult, CreateInitialData, CreateConnectedRoom, CreateUser
 import pytest # type: ignore
 from architext.core.domain.entities.user import User
@@ -10,8 +10,8 @@ from architext.core.messagebus import MessageBus
 
 
 @pytest.fixture
-def uow() -> MemoryUnitOfWork:
-    uow = MemoryUnitOfWork()
+def uow() -> FakeUnitOfWork:
+    uow = FakeUnitOfWork()
     room1 = Room(
         id="room1",
         name="Living Room",
@@ -51,8 +51,8 @@ def message_bus() -> MessageBus:
     return MessageBus() 
 
 
-def test_traverse_exit_success(uow: MemoryUnitOfWork, message_bus: MessageBus):
-    out: TraverseExitResult = message_bus.handle(uow, TraverseExit(exit_name="To Kitchen"), client_user_id="in_room")[0]
+def test_traverse_exit_success(uow: FakeUnitOfWork, message_bus: MessageBus):
+    out: TraverseExitResult = message_bus.handle(uow, TraverseExit(exit_name="To Kitchen"), client_user_id="in_room")
 
     assert out.new_room_id == "room2"
     user = uow.users.get_user_by_id("in_room")
@@ -60,18 +60,18 @@ def test_traverse_exit_success(uow: MemoryUnitOfWork, message_bus: MessageBus):
     assert user.room_id == "room2" 
 
 
-def test_traverse_exit_user_not_in_room(uow: MemoryUnitOfWork, message_bus: MessageBus):
+def test_traverse_exit_user_not_in_room(uow: FakeUnitOfWork, message_bus: MessageBus):
     with pytest.raises(ValueError, match="User is not in a room."):
         message_bus.handle(uow, TraverseExit(exit_name="To Kitchen"), client_user_id="not_in_room")
 
 
-def test_traverse_exit_invalid_exit_name(uow: MemoryUnitOfWork, message_bus: MessageBus):
+def test_traverse_exit_invalid_exit_name(uow: FakeUnitOfWork, message_bus: MessageBus):
     with pytest.raises(ValueError, match="An exit with that name was not found in the room."):
         message_bus.handle(uow, TraverseExit(exit_name="Invalid Exit"), client_user_id="in_room")
 
-def test_user_changed_room_event_gets_invoked(uow: MemoryUnitOfWork):
+def test_user_changed_room_event_gets_invoked(uow: FakeUnitOfWork):
     spy = Mock()
-    def handler(uow: MemoryUnitOfWork, event: UserChangedRoom):
+    def handler(uow: FakeUnitOfWork, event: UserChangedRoom):
         assert event.user_id is "in_room"
         assert event.room_entered is "room2"
         assert event.room_left is "room1"
@@ -84,22 +84,22 @@ def test_user_changed_room_event_gets_invoked(uow: MemoryUnitOfWork):
 
 
 def test_users_get_notified_if_other_enters_or_leaves_room() -> None:
-    uow = MemoryUnitOfWork()
+    uow = FakeUnitOfWork()
     bus = MessageBus()
     bus.handle(uow, CreateInitialData())
     user_a = bus.handle(uow, CreateUser(
         email='test@test.com',
         name='testerA',
         password='asdasd'
-    ))[0]
+    ))
     user_b = bus.handle(uow, CreateUser(
         email='test@test.com',
         name='testerB',
         password='asdasd'
-    ))[0]
+    ))
     room = bus.handle(
         uow=uow, 
-        message=CreateConnectedRoom(
+        command=CreateConnectedRoom(
             name='rrom',
             description='descripdsdas',
             exit_to_new_room_name='go',
@@ -108,10 +108,10 @@ def test_users_get_notified_if_other_enters_or_leaves_room() -> None:
             exit_to_old_room_description='hoho'
         ),
         client_user_id=user_a.user_id
-    )[0]
+    )
     bus.handle(
         uow=uow,
-        message=TraverseExit(
+        command=TraverseExit(
             exit_name='go'
         ),
         client_user_id=user_a.user_id
@@ -122,5 +122,5 @@ def test_users_get_notified_if_other_enters_or_leaves_room() -> None:
     assert len(userb_notifications) == 1
     userb_noti = userb_notifications[0]
     assert userb_noti.event == 'other_left_room'
-    assert userb_noti.data.user_name == 'testerA'
+    assert userb_noti.data["user_name"] == 'testerA'
 

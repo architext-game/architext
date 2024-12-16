@@ -84,7 +84,7 @@ export async function setupRoom(name: string, user: User): Promise<Room>{
   const response = await emitPromise<CreateConnectedRoomResponse>(user.socket, "create_connected_room", createParams)
   
   return {
-    id: response.data?.id || '',
+    id: response.data?.room_id || '',
     name: room_name,
     exit_name: exit_name,
     there_exit_name: return_exit_name

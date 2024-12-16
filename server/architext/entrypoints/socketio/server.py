@@ -12,21 +12,26 @@ import os
 import json
 from dotenv import load_dotenv
 from pydantic import BaseModel
-from architext.core.domain.unit_of_work.fake.fake_uow import MemoryUnitOfWork
+from architext.adapters.memory_uow import MemoryUnitOfWork
+from architext.core.messagebus import MessageBus
 from architext.entrypoints.socketio.jwt_tokens import generate_jwt, decode_jwt
-from architext.core.domain.services.create_user.create_user import create_user, CreateUserInput, CreateUserOutput
-from architext.core.domain.services.get_current_room.get_current_room import get_current_room, GetCurrentRoomOutput
-from architext.core.domain.services.create_connected_room.create_connected_room import create_connected_room, CreateConnectedRoomInput, CreateConnectedRoomOutput
-from architext.core.domain.services.traverse_exit.traverse_exit import traverse_exit, TraverseExitInput, TraverseExitOutput
-from architext.core.domain.services.login.login import login, LoginInput
-from architext.core.domain.services.setup.setup import setup
-
+from architext.core.commands import (
+    CreateUser, CreateUserResult,
+    GetCurrentRoom, GetCurrentRoomResult,
+    CreateConnectedRoom, CreateConnectedRoomResult,
+    TraverseExit, TraverseExitResult,
+    Login, LoginResult,
+    CreateInitialData, CreateInitialDataResult,
+)
 from architext.entrypoints.socketio.models import ResponseModel
 from architext.entrypoints.socketio.sio_event import event, models
 from architext.entrypoints.socketio.pydantic_to_typescript import generate_typescript_defs
 import argparse
 from architext.core.domain.events import UserChangedRoom
 from bidict import bidict
+from dataclasses import asdict
+from architext.adapters.sio_notificator import SocketIONotificator
+
 
 
 if __name__ == "__main__":
@@ -44,13 +49,17 @@ if __name__ == "__main__":
 
     sid_to_user_id: bidict[str, str] = bidict()
     def auth(socket: str, user_id: str):
+        """Links a socket with an user_id"""
         if sid_to_user_id.inverse.get(user_id, None) is not None:
             del sid_to_user_id.inverse[user_id]
         sid_to_user_id[socket] = user_id
     
+    
 
-    uow = MemoryUnitOfWork()
-    setup(uow)  # run setup according to domain rules
+    uow = MemoryUnitOfWork(notificator=SocketIONotificator(sio, sid_to_user_id.inverse))
+    bus = MessageBus()
+
+    bus.handle(uow, CreateInitialData())
 
 
     @sio.event
@@ -58,15 +67,20 @@ if __name__ == "__main__":
         print(f'New connection, client_id {sid}')
 
 
-    class LoginOutput(BaseModel):
+    @sio.event
+    def disconnect(sid):
+        print(f'{sid} disconnected')
+
+
+    class LoginResponse(BaseModel):
         jwt_token: str
 
-    @event(sio=sio, on='login', In=LoginInput, Out=ResponseModel[LoginOutput])
-    def login_event(sid, params: LoginInput) -> LoginOutput:
-        user_data = login(uow=uow, input=params)
-        token = generate_jwt(**user_data.model_dump())
-        auth(sid, user_data.user_id)
-        return LoginOutput(jwt_token=token)
+    @event(sio=sio, on='login', In=Login, Out=ResponseModel[LoginResponse])
+    def login_event(sid, command: Login) -> LoginResponse:
+        out = bus.handle(uow, command)
+        token = generate_jwt(**asdict(out))
+        auth(sid, out.user_id)
+        return LoginResponse(jwt_token=token)
 
 
     class AuthenticateParams(BaseModel):
@@ -82,41 +96,55 @@ if __name__ == "__main__":
         return AuthenticateOutput(user_id=decoded['user_id'])
     
 
-    @event(sio=sio, on='signup', In=CreateUserInput, Out=ResponseModel[CreateUserOutput])
-    def signup(sid, params: CreateUserInput) -> CreateUserOutput:
-        out = create_user(uow=uow, input=params)
-        return out    
+    @event(sio=sio, on='signup', In=CreateUser, Out=ResponseModel[CreateUserResult])
+    def signup(sid, command: CreateUser) -> CreateUserResult:
+        return bus.handle(uow, command)
 
-    @event(sio=sio, on='get_current_room', Out=ResponseModel[GetCurrentRoomOutput])
-    def get_current_room_event(sid) -> GetCurrentRoomOutput:
+
+    @event(sio=sio, on='get_current_room', Out=ResponseModel[GetCurrentRoomResult])
+    def get_current_room_event(sid) -> GetCurrentRoomResult:
         client_user_id = sid_to_user_id[sid]
-        return get_current_room(uow, client_user_id=client_user_id)  
+        return bus.handle(uow, GetCurrentRoom(), client_user_id=client_user_id)  
         
 
-    @event(sio=sio, on='create_connected_room', In=CreateConnectedRoomInput, Out=ResponseModel[CreateConnectedRoomOutput])
-    def create_connected_room_event(sid, params: CreateConnectedRoomInput) -> CreateConnectedRoomOutput:  
+    @event(sio=sio, on='create_connected_room', In=CreateConnectedRoom, Out=ResponseModel[CreateConnectedRoomResult])
+    def create_connected_room_event(sid, params: CreateConnectedRoom) -> CreateConnectedRoomResult:  
         client_user_id = sid_to_user_id[sid]
-        return create_connected_room(uow, input=params, client_user_id=client_user_id)  
+        return bus.handle(uow, params, client_user_id=client_user_id)  
 
 
-    @event(sio=sio, on='traverse_exit', In=TraverseExitInput, Out=ResponseModel[TraverseExitOutput])
-    def traverse_exit_event(sid, input: TraverseExitInput) -> TraverseExitOutput:
+    @event(sio=sio, on='traverse_exit', In=TraverseExit, Out=ResponseModel[TraverseExitResult])
+    def traverse_exit_event(sid, input: TraverseExit) -> TraverseExitResult:
         client_user_id = sid_to_user_id[sid]
-        return traverse_exit(uow, input=input, client_user_id=client_user_id)  
-
-
-    @sio.event
-    def disconnect(sid):
-        print(f'{sid} disconnected')
+        return bus.handle(uow, input, client_user_id=client_user_id)  
     
 
     if args.types:
-        generate_typescript_defs(models=models, output='./architext/clean/entrypoints/socketio/generated_types.ts')
-        # import shutil
-        # shutil.copy(
-        #     './architext/clean/entrypoints/socketio/generated_types.ts',
-        #     './architext/clean/entrypoints/socketio/test_e2e/types.ts'
-        # )
+        from architext.core.handlers.notify_other_entered_room import OtherEnteredRoomNotification
+        from architext.core.handlers.notify_other_left_room import OtherLeftRoomNotification
+        from pydantic.dataclasses import dataclass as pydantic_dataclass
+        from dataclasses import fields, is_dataclass
+        from pydantic import BaseModel, create_model
+
+        def dataclass_to_pydantic_model(dataclass_type):
+            if not is_dataclass(dataclass_type):
+                raise ValueError("Provided class is not a dataclass")
+            
+            # Extract fields from the dataclass
+            pydantic_fields = {
+                field.name: (field.type, ...)
+                for field in fields(dataclass_type)
+            }
+            # Create a new Pydantic model dynamically
+            return create_model(dataclass_type.__name__, **pydantic_fields)
+        
+        models += [dataclass_to_pydantic_model(OtherLeftRoomNotification), dataclass_to_pydantic_model(OtherEnteredRoomNotification)]
+        generate_typescript_defs(models=models, output='./architext/entrypoints/socketio/generated_types.ts')
+        import shutil
+        shutil.copy(
+            './architext/entrypoints/socketio/generated_types.ts',
+            '/home/oliver/vps/apps/architext/server/test/e2e/types.ts'
+        )  # too lazy to copy it myself
         print("Done")
     else:
         print("Hello, I am the server, nice to meet you.")

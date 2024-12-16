@@ -5,18 +5,13 @@
 /* Do not modify it by hand - just update the pydantic models and then re-run the script
 */
 
-export interface OtherEnteredRoomData {
-  user_name: string;
-}
-export interface OtherLeftRoomData {
-  user_name: string;
-}
 export interface LoginResponse {
   success: boolean;
-  data?: {
-    jwt_token: string;
-  } | null;
+  data?: LoginResponse1 | null;
   error?: string | null;
+}
+export interface LoginResponse1 {
+  jwt_token: string;
 }
 export interface LoginParams {
   email: string;
@@ -47,32 +42,26 @@ export interface SignupParams {
 export interface GetCurrentRoomResponse {
   success: boolean;
   data?: {
-    id: string;
-    name: string;
-    description: string;
-    exits: {
-      name: string;
-      description: string;
-      destination_room_id: string;
-    }[];
-    people: {
+    current_room: {
       id: string;
       name: string;
-    }[];
+      description: string;
+      exits: {
+        name: string;
+        description: string;
+      }[];
+      people: {
+        id: string;
+        name: string;
+      }[];
+    } | null;
   } | null;
   error?: string | null;
 }
 export interface CreateConnectedRoomResponse {
   success: boolean;
   data?: {
-    id: string;
-    name: string;
-    description?: string;
-    exits?: {
-      name: string;
-      description: string;
-      destination_room_id: string;
-    }[];
+    room_id: string;
   } | null;
   error?: string | null;
 }
@@ -93,4 +82,10 @@ export interface TraverseExitResponse {
 }
 export interface TraverseExitParams {
   exit_name: string;
+}
+export interface OtherLeftRoomNotification {
+  user_name: string;
+}
+export interface OtherEnteredRoomNotification {
+  user_name: string;
 }

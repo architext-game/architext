@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from architext.ports.unit_of_work import UnitOfWork
 from architext.core.domain.events import UserChangedRoom
 from typing import List
@@ -19,5 +19,5 @@ def notify_other_entered_room(uow: UnitOfWork, event: UserChangedRoom):
         uow.notifications.notify_user(
             user.id,
             'other_entered_room',
-            OtherEnteredRoomNotification(user_name=user_who_moved.name)
+            asdict(OtherEnteredRoomNotification(user_name=user_who_moved.name))
         )

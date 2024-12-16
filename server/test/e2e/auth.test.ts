@@ -37,7 +37,6 @@ describe("Socket.IO End-to-End Tests", () => {
 
     socket.emit("signup", params, (response: SignupResponse) => {
       try {
-        console.log(response)
         expect(response).toBeDefined();
         expect(response.success).toBe(true);
         expect(response.data?.user_id).toBeDefined();
