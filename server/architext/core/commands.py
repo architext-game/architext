@@ -1,3 +1,18 @@
+"""
+# Commands module
+
+ - This module defines all commands and command results.
+ - Therefore, this module defines de outward facing facade of the `core` module.
+ - Commands and results are simple data containers.
+ - Each command defines the intent of an user or external system to
+ drive this system, and all the needed input params.
+ - Results are the object returned by each command as response.
+ - Commands perform validation, enforcing some restraints on the input data and
+ ensuring that the passed values _seem_ valid (there may still be ids of things
+ that do not exist, for example). They use pydantic for that.
+ - Responses are simple dataclasses.
+"""
+
 from typing import Dict, List, Optional
 from pydantic import BaseModel, Field, EmailStr
 from dataclasses import dataclass

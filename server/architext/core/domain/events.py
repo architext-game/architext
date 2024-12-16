@@ -1,3 +1,8 @@
+"""
+The events that can happen in our system (see messagebus).
+"""
+
+
 from dataclasses import dataclass
 from typing import Optional
 

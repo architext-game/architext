@@ -1,3 +1,12 @@
+"""
+# Services module
+
+ - This module defines the services, aka the command handlers called
+ by the messagebus.
+ - This init file links each handler with its command from the `commands` module.
+"""
+
+
 from architext.core.commands import (
     CreateConnectedRoom,
     CreateInitialData,

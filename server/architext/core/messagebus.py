@@ -1,3 +1,23 @@
+"""
+# Messagebus module
+
+ - This is the facade of the `core` module, along with the `commands` module.
+ - The `MessageBus` `handle` method is the method used by external systems to
+ drive the `core` module.
+ - It will be passed one or more Commands (see `commands` module) and a `UnitOfWork`.
+ - For each command handled by the `MessageBus`, it will also handle all events
+ reported by the `UnitOfWork`.
+ - Commands and events are different concepts and handled differently.
+ - Commands capture intent to change our system from an outside system.
+ - They are stated in imperative mood.
+ - They return information on success and prevent other messages from being handled
+ if they fail.
+ - Events capture things that have happened in the system.
+ - They are stated in a declarative past way.
+ - They don't return information on success.
+ - They fail silently and don't prevent other events from being handled.
+"""
+
 from typing import List, Dict, Callable, Type, Union
 from architext.core.domain.events import Event
 from architext.core.commands import Command
@@ -32,15 +52,15 @@ class MessageBus:
         while queue:
             message = queue.pop(0)
             if isinstance(message, Event):
-                self.handle_event(uow, message, queue)
+                self._handle_event(uow, message, queue)
             elif isinstance(message, Command):
-                cmd_result = self.handle_command(uow, message, queue, client_user_id)
+                cmd_result = self._handle_command(uow, message, queue, client_user_id)
                 results.append(cmd_result)
             else:
                 raise Exception(f'{message} was not an Event or Command')
         return results
 
-    def handle_event(self, uow: UnitOfWork, event: Event, queue: List[Message]):
+    def _handle_event(self, uow: UnitOfWork, event: Event, queue: List[Message]):
         for handler in self._event_handlers.get(type(event), []):
             try:
                 logger.debug('handling event %s with handler %s', event, handler)
@@ -50,7 +70,7 @@ class MessageBus:
                 logger.exception('Exception handling event %s', event)
                 continue
 
-    def handle_command(self, uow: UnitOfWork, command: Command, queue: List[Message], client_user_id: str):
+    def _handle_command(self, uow: UnitOfWork, command: Command, queue: List[Message], client_user_id: str):
         logger.debug('handling command %s', command)
         try:
             handler = self._command_handlers[type(command)]
