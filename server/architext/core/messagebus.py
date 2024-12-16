@@ -18,7 +18,7 @@
  - They fail silently and don't prevent other events from being handled.
 """
 
-from typing import List, Dict, Callable, Type, Union
+from typing import List, Dict, Callable, Type, TypeVar, Union, Any
 from architext.core.domain.events import Event
 from architext.core.commands import Command
 from architext.core.handlers import EVENT_HANDLERS
@@ -30,6 +30,8 @@ logger = logging.getLogger(__name__)
 
 Message = Union[Event, Command]
 
+T = TypeVar("T")
+
 class MessageBus:
     def __init__(
             self,
@@ -39,7 +41,7 @@ class MessageBus:
         self._event_handlers = event_handlers
         self._command_handlers = command_handlers
 
-    def handle(self, uow: UnitOfWork, message: Message, client_user_id: str = "") -> List:
+    def handle(self, uow: UnitOfWork, command: Command[T], client_user_id: str = "") -> T:
         """
         Handler for events and commands. Both are handled a bit differently:
         - Commands: Fail noisily stopping the request and notify on success.
@@ -48,7 +50,7 @@ class MessageBus:
             Each event may have zero or multiple handlers.
         """
         results = []
-        queue = [message]
+        queue: List[Union[Event, Command[Any]]] = [command]
         while queue:
             message = queue.pop(0)
             if isinstance(message, Event):
@@ -58,7 +60,7 @@ class MessageBus:
                 results.append(cmd_result)
             else:
                 raise Exception(f'{message} was not an Event or Command')
-        return results
+        return results[0]
 
     def _handle_event(self, uow: UnitOfWork, event: Event, queue: List[Message]):
         for handler in self._event_handlers.get(type(event), []):

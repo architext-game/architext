@@ -13,14 +13,20 @@
  - Responses are simple dataclasses.
 """
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, TypeVar, Generic
 from pydantic import BaseModel, Field, EmailStr
 from dataclasses import dataclass
 
-class Command(BaseModel):
+T = TypeVar('T')
+
+class Command(BaseModel, Generic[T]):
     pass
 
-class CreateConnectedRoom(Command):
+@dataclass
+class CreateConnectedRoomResult:
+    room_id: str
+
+class CreateConnectedRoom(Command[CreateConnectedRoomResult]):
     name: str = Field(min_length=1, max_length=30)
     description: str = Field(max_length=3000)
     exit_to_new_room_name: str
@@ -28,27 +34,22 @@ class CreateConnectedRoom(Command):
     exit_to_old_room_name: str
     exit_to_old_room_description: str
 
-@dataclass
-class CreateConnectedRoomResult:
-    room_id: str
-
-class TraverseExit(Command):
-    exit_name: str
 
 @dataclass
 class TraverseExitResult:
     new_room_id: str
 
-class Login(Command):
-    email: EmailStr
-    password: str = Field(min_length=3, max_length=50)
+class TraverseExit(Command[TraverseExitResult]):
+    exit_name: str
 
 @dataclass
 class LoginResult:
     user_id: str
 
-class GetCurrentRoom(Command):
-    pass
+class Login(Command[LoginResult]):
+    email: EmailStr
+    password: str = Field(min_length=3, max_length=50)
+
 
 @dataclass
 class PersonInRoom:
@@ -72,18 +73,24 @@ class CurrentRoom:
 class GetCurrentRoomResult:
     current_room: Optional[CurrentRoom]
 
-class CreateUser(Command):
-    email: EmailStr
-    name: str = Field(min_length=3, max_length=10)
-    password: str = Field(min_length=3, max_length=50)
+class GetCurrentRoom(Command[GetCurrentRoomResult]):
+    pass
 
 @dataclass
 class CreateUserResult:
     user_id: str
 
-class CreateInitialData(Command):
-    pass
+class CreateUser(Command[CreateUserResult]):
+    email: EmailStr
+    name: str = Field(min_length=3, max_length=10)
+    password: str = Field(min_length=3, max_length=50)
+
 
 @dataclass
 class CreateInitialDataResult:
     pass
+
+class CreateInitialData(Command[CreateInitialDataResult]):
+    pass
+
+
