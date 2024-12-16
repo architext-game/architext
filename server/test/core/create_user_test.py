@@ -8,7 +8,7 @@ from architext.core.messagebus import MessageBus
 from architext.adapters.fake_notificator import FakeNotificator
 from architext.adapters.memory_uow import MemoryUnitOfWork
 from architext.ports.unit_of_work import UnitOfWork
-import pytest
+import pytest # type: ignore
 from architext.core.commands import CreateInitialData
 from architext.core.domain.entities.room import DEFAULT_ROOM
 

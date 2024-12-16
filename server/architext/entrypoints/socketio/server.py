@@ -112,11 +112,11 @@ if __name__ == "__main__":
 
     if args.types:
         generate_typescript_defs(models=models, output='./architext/clean/entrypoints/socketio/generated_types.ts')
-        import shutil
-        shutil.copy(
-            './architext/clean/entrypoints/socketio/generated_types.ts',
-            './architext/clean/entrypoints/socketio/test_e2e/types.ts'
-        )
+        # import shutil
+        # shutil.copy(
+        #     './architext/clean/entrypoints/socketio/generated_types.ts',
+        #     './architext/clean/entrypoints/socketio/test_e2e/types.ts'
+        # )
         print("Done")
     else:
         print("Hello, I am the server, nice to meet you.")
