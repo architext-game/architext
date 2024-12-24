@@ -1,3 +1,5 @@
+# PYTHON VERSION 3.12.8
+
 # Clean refactor
 
 A brief overview of what I'm doing so I don't get lost.

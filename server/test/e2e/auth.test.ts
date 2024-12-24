@@ -2,12 +2,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { setupSocket } from './util';
 import { io, Socket } from "socket.io-client";
 import { 
-  SignupParams, SignupResponse,
-  LoginParams, LoginResponse,
-  AuthenticateParams, AuthenticateResponse,
-  GetCurrentRoomResponse,
-  CreateConnectedRoomParams, CreateConnectedRoomResponse,
-  TraverseExitParams, TraverseExitResponse,
+  signup, SignupParams,
+  login, LoginParams,
+  authenticate, AuthenticateParams,
 } from "./types"
 
 
@@ -28,61 +25,42 @@ describe("Socket.IO End-to-End Tests", () => {
     }
   });
 
-  test("Signup event should create a user", (done) => {
+  test("Signup event should create a user", async () => {
     const params: SignupParams = {
       name: username,
       email: email,
       password: password,
     }
 
-    socket.emit("signup", params, (response: SignupResponse) => {
-      try {
-        expect(response).toBeDefined();
-        expect(response.success).toBe(true);
-        expect(response.data?.user_id).toBeDefined();
-        done();
-      } catch (error) {
-        done(error);
-      }
-    });
+    const response = await signup(socket, params)
+
+    expect(response).toBeDefined();
+    expect(response.success).toBe(true);
+    expect(response.data?.user_id).toBeDefined();
   });
 
-  test("Login event should return a JWT token", (done) => {
+  test("Login event should return a JWT token", async () => {
     const loginParams: LoginParams = {
       email: email,
       password: password,
     };
 
-    socket.emit("login", loginParams, (response: LoginResponse) => {
-      try {
-        expect(response).toBeDefined();
-        expect(response.success).toBe(true);
-        expect(response.data?.jwt_token).toBeDefined();
-        jwt_token = response.data?.jwt_token
-        done();
-      } catch (error) {
-        console.log("Error: " + response.error)
-        done(error);
-      }
-    });
+    const response = await login(socket, loginParams)
+    expect(response).toBeDefined();
+    expect(response.success).toBe(true);
+    expect(response.data?.jwt_token).toBeDefined();
+    jwt_token = response.data?.jwt_token
   });
 
 
-  test("Authenticate event should return user_id", (done) => {
+  test("Authenticate event should return user_id", async () => {
     const authenticateInput: AuthenticateParams = {
       jwt_token: jwt_token ?? "bad_token", // Replace with a valid token
     };
 
-    socket.emit("authenticate", authenticateInput, (response: AuthenticateResponse) => {
-      try {
-        expect(response).toBeDefined();
-        expect(response.success).toBe(true);
-        expect(response.data).toHaveProperty("user_id");
-        done();
-      } catch (error) {
-        console.log("Error: " + response.error)
-        done(error);
-      }
-    });
+    const response = await authenticate(socket, authenticateInput)
+    expect(response).toBeDefined();
+    expect(response.success).toBe(true);
+    expect(response.data).toHaveProperty("user_id");
   });
 });

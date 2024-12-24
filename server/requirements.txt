@@ -8,3 +8,5 @@ pydantic[email]
 pyjwt
 jsonref
 pydantic-to-typescript
+eventlet
+py_writes_ts

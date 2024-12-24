@@ -1,9 +1,10 @@
 import { setupUser, User, setupRoom, Room, emitPromise } from './util';
 import { 
-  GetCurrentRoomResponse,
-  CreateConnectedRoomParams, CreateConnectedRoomResponse,
-  TraverseExitParams, TraverseExitResponse,
-  OtherLeftRoomNotification, OtherEnteredRoomNotification
+  getCurrentRoom,
+  createConnectedRoom, CreateConnectedRoomParams,
+  traverseExit, TraverseExitParams,
+  OtherLeftRoomNotification,
+  OtherEnteredRoomNotification
 } from "./types"
 import { Socket, io } from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
@@ -18,7 +19,7 @@ describe("Socket.IO End-to-End Tests", () => {
   test("Get current room event should return room data", async () => {
     const alice = await setupUser('alice')
     sockets.push(alice.socket)
-    const response = await emitPromise<GetCurrentRoomResponse>(alice.socket, "get_current_room", {})
+    const response = await getCurrentRoom(alice.socket, null)
     expect(response).toBeDefined();
     expect(response.success).toBe(true);
     expect(response.data?.current_room?.name).toBeDefined();
@@ -42,7 +43,7 @@ describe("Socket.IO End-to-End Tests", () => {
       exit_to_old_room_description: "Bot made this"
     }
 
-    const response = await emitPromise<CreateConnectedRoomResponse>(alice.socket, "create_connected_room", roomInput)
+    const response = await createConnectedRoom(alice.socket, roomInput)
     expect(response).toBeDefined();
     expect(response.success).toBe(true);
     expect(response.data?.room_id).toBeDefined();
@@ -58,7 +59,7 @@ describe("Socket.IO End-to-End Tests", () => {
       exit_name: (await room).exit_name,
     };
 
-    const response = await emitPromise<TraverseExitResponse>(alice.socket, "traverse_exit", traverseInput)
+    const response = await traverseExit(alice.socket, traverseInput)
     expect(response).toBeDefined();
     expect(response.success).toBe(true);
     expect(response.data).toBeDefined();
@@ -88,7 +89,7 @@ describe("Socket.IO End-to-End Tests", () => {
       });
     });
 
-    const response = await emitPromise(alice.socket, "traverse_exit", traverseInput);
+    const response = await traverseExit(alice.socket, traverseInput);
     await expectedEventPromise
 
     expect(spy).toHaveBeenCalled();
@@ -110,7 +111,7 @@ describe("Socket.IO End-to-End Tests", () => {
     const traverseInput: TraverseExitParams = {
       exit_name: room.exit_name,
     };
-    await emitPromise(alice.socket, "traverse_exit", traverseInput);
+    await traverseExit(alice.socket, traverseInput);
     
     const spy = jest.fn((x: OtherLeftRoomNotification) => {})
     
@@ -123,9 +124,9 @@ describe("Socket.IO End-to-End Tests", () => {
       });
     });
 
-    await emitPromise(alice.socket, "traverse_exit", {exit_name: room.there_exit_name});
+    await traverseExit(alice.socket, {exit_name: room.there_exit_name});
 
-    const response = await emitPromise(alice.socket, "traverse_exit", traverseInput);
+    const response = await traverseExit(alice.socket, traverseInput);
     await expectedEventPromise
 
     expect(spy).toHaveBeenCalled();
