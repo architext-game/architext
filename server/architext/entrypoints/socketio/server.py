@@ -42,9 +42,9 @@ if __name__ == "__main__":
 
     load_dotenv()
 
-    #allowed = json.loads(os.environ['ALLOWED_ORIGINS'])
-    allowed = ['http://amritb.github.io', 'https://firecamp.dev']
-    sio = socketio.Server(cors_allowed_origins=allowed)
+    # allowed = json.loads(os.environ['ALLOWED_ORIGINS'])
+    # allowed = ['http://207.180.194.96:3000', 'http://amritb.github.io', 'https://firecamp.dev']
+    sio = socketio.Server(cors_allowed_origins='*')
     # dictionary relating authenticated sockets with their user ids
 
 
