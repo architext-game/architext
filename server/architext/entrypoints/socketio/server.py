@@ -5,6 +5,9 @@ add --types to generate types
 """
 
 import eventlet
+
+from architext.core.domain.entities.user import User
+from architext.core.services.create_user import create_user
 eventlet.monkey_patch(socket=True, time=True)
 import socketio
 import atexit
@@ -24,8 +27,7 @@ from architext.core.commands import (
     CreateInitialData, CreateInitialDataResult,
 )
 from architext.entrypoints.socketio.models import ResponseModel
-from architext.entrypoints.socketio.sio_event import event, models, model_to_facade_name, endpoints
-from architext.entrypoints.socketio.pydantic_to_typescript import generate_typescript_defs
+from architext.entrypoints.socketio.sio_event import event, endpoints
 import argparse
 from architext.core.domain.events import UserChangedRoom
 from bidict import bidict
@@ -58,6 +60,7 @@ if __name__ == "__main__":
     
 
     uow = MemoryUnitOfWork(notificator=SocketIONotificator(sio, sid_to_user_id.inverse))
+    create_user(uow=uow, command=CreateUser(email='oli@sanz.com', name='oliver', password='oliver'))
     bus = MessageBus()
 
     bus.handle(uow, CreateInitialData())
@@ -122,47 +125,33 @@ if __name__ == "__main__":
     
 
     if args.types:
-        from py_writes_ts import generate_typescript_interfaces, rename_interfaces, generate_typescript_function, generate_typescript_import, ts_name
         from architext.core.handlers.notify_other_entered_room import OtherEnteredRoomNotification
         from architext.core.handlers.notify_other_left_room import OtherLeftRoomNotification
+        from architext.entrypoints.socketio.sdk_generator import generate_sdk, Event
 
-        code = ""
-        code += generate_typescript_import("socket.io-client", ["Socket"])
-        code += "\n"
+        events = [
+            Event('other_left_room', OtherLeftRoomNotification),
+            Event('other_entered_room', OtherEnteredRoomNotification)
+        ]
 
-        models += [OtherLeftRoomNotification, OtherEnteredRoomNotification]
-        code += generate_typescript_interfaces(models)
-
-        for endpoint in endpoints:
-            code += generate_typescript_function(
-                function_name=endpoint.function_name,
-                parameters={
-                    "socket": "Socket",
-                    "params": endpoint.expected_input
-                },
-                return_type=f"Promise<{ts_name(endpoint.output)}>",
-                body=f"""
-return new Promise((resolve, reject) => {{
-    socket.emit("{endpoint.sio_event_name}", params, (response: {ts_name(endpoint.output)}) => {{
-        resolve(response)
-    }});
-}});
-""",
-                valid_refs=models,
-                is_async=True,
-            )
-
-        code = rename_interfaces(code, model_to_facade_name)
-        print(code)
+        sdk_code = generate_sdk(endpoints, events)
         
-        with open('./architext/entrypoints/socketio/generated_types.ts', "w") as f:
-            f.write(code)
+        print(sdk_code)
+        
+        with open('./architext/entrypoints/socketio/generated_sdk.ts', "w") as f:
+            f.write(sdk_code)
         
         import shutil
         shutil.copy(
-            './architext/entrypoints/socketio/generated_types.ts',
-            '/home/oliver/vps/apps/architext/server/test/e2e/types.ts'
+            './architext/entrypoints/socketio/generated_sdk.ts',
+            '/home/oliver/vps/apps/architext/server/test/e2e/architextSDK.ts'
         )  # too lazy to copy it myself
+
+        shutil.copy(
+            './architext/entrypoints/socketio/generated_sdk.ts',
+            '/home/oliver/vps/apps/architext/web/src/architextSDK.ts'
+        )  # too lazy to copy it myself
+        
         print("Done")
     else:
         print("Hello, I am the server, nice to meet you.")

@@ -1,11 +1,13 @@
-import { setupUser, User, setupRoom, Room, emitPromise } from './util';
+import { setupUser, setupRoom } from './util';
 import { 
   getCurrentRoom,
   createConnectedRoom, CreateConnectedRoomParams,
   traverseExit, TraverseExitParams,
   OtherLeftRoomNotification,
-  OtherEnteredRoomNotification
-} from "./types"
+  OtherEnteredRoomNotification,
+  onOtherLeftRoom,
+  onOtherEnteredRoom
+} from "./architextSDK"
 import { Socket, io } from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -81,12 +83,12 @@ describe("Socket.IO End-to-End Tests", () => {
     const spy = jest.fn((x: OtherLeftRoomNotification) => {})
     
     const expectedEventPromise =  new Promise<void>((resolve) => {
-      bob.socket.on("other_left_room", (event: OtherLeftRoomNotification) => {
+      onOtherLeftRoom(bob.socket, (event: OtherLeftRoomNotification) => {
         if(event.user_name == alice.name){
           spy(event);
           resolve();
         }
-      });
+      })
     });
 
     const response = await traverseExit(alice.socket, traverseInput);
@@ -116,7 +118,7 @@ describe("Socket.IO End-to-End Tests", () => {
     const spy = jest.fn((x: OtherLeftRoomNotification) => {})
     
     const expectedEventPromise =  new Promise<void>((resolve) => {
-      bob.socket.on("other_entered_room", (event: OtherEnteredRoomNotification) => {
+      onOtherEnteredRoom(bob.socket, (event: OtherEnteredRoomNotification) => {
         if(event.user_name == alice.name){
           spy(event);
           resolve();

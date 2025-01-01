@@ -1,11 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
 import { setupSocket } from './util';
-import { io, Socket } from "socket.io-client";
+import { Socket } from "socket.io-client";
 import { 
   signup, SignupParams,
   login, LoginParams,
   authenticate, AuthenticateParams,
-} from "./types"
+} from "./architextSDK"
 
 
 describe("Socket.IO End-to-End Tests", () => {

@@ -16,6 +16,7 @@ class SocketIONotificator(Notificator):
         self._sio = sio
 
     def notify_user(self, user_id: str, event: str, data: JSONSerializable):
-        self._sio.emit(event, data, self._user_id_to_socket_id[user_id])
+        if user_id in self._user_id_to_socket_id:
+            self._sio.emit(event, data, self._user_id_to_socket_id[user_id])
 
 

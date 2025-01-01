@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
 import { v4 as uuidv4 } from 'uuid';
-import { LoginParams, LoginResponse, SignupParams, SignupResponse, CreateConnectedRoomParams, CreateConnectedRoomResponse } from "./types";
+import { LoginParams, SignupParams, CreateConnectedRoomParams, signup, login, createConnectedRoom } from "./architextSDK";
 
 
 const SERVER_URL = "http://localhost:5000"; // Replace with your server's URL
@@ -47,14 +47,14 @@ export async function setupUser(name: string): Promise<User>{
     password: password,
   }
 
-  await emitPromise<SignupResponse>(socket, "signup", params)
+  await signup(socket, params)
 
   const loginParams: LoginParams = {
     email: email,
     password: password,
   };
 
-  const loginResponse = await emitPromise<LoginResponse>(socket, "login", loginParams)
+  const loginResponse = await login(socket, loginParams)
 
   return {
     name: username,
@@ -81,8 +81,7 @@ export async function setupRoom(name: string, user: User): Promise<Room>{
     exit_to_old_room_description: 'Exit created automatically'
   }
 
-  const response = await emitPromise<CreateConnectedRoomResponse>(user.socket, "create_connected_room", createParams)
-  
+  const response = await createConnectedRoom(user.socket, createParams)
   return {
     id: response.data?.room_id || '',
     name: room_name,

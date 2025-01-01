@@ -1,5 +1,10 @@
 import { Socket } from 'socket.io-client';
 
+export interface LoginParams {
+    email: any;
+    password: string;
+}
+
 export interface LoginResponse {
     success: boolean;
     data: {
@@ -8,24 +13,11 @@ export interface LoginResponse {
     error: string | null;
 }
 
-export interface LoginParams {
-    email: any;
-    password: string;
-}
-
-export interface AuthenticateResponse {
-    success: boolean;
-    data: {
-        user_id: string;
-    } | null;
-    error: string | null;
-}
-
 export interface AuthenticateParams {
     jwt_token: string;
 }
 
-export interface SignupResponse {
+export interface AuthenticateResponse {
     success: boolean;
     data: {
         user_id: string;
@@ -37,6 +29,14 @@ export interface SignupParams {
     email: any;
     name: string;
     password: string;
+}
+
+export interface SignupResponse {
+    success: boolean;
+    data: {
+        user_id: string;
+    } | null;
+    error: string | null;
 }
 
 export interface GetCurrentRoomResponse {
@@ -59,14 +59,6 @@ export interface GetCurrentRoomResponse {
     error: string | null;
 }
 
-export interface CreateConnectedRoomResponse {
-    success: boolean;
-    data: {
-        room_id: string;
-    } | null;
-    error: string | null;
-}
-
 export interface CreateConnectedRoomParams {
     name: string;
     description: string;
@@ -76,16 +68,24 @@ export interface CreateConnectedRoomParams {
     exit_to_old_room_description: string;
 }
 
-export interface TraverseExitResponse {
+export interface CreateConnectedRoomResponse {
     success: boolean;
     data: {
-        new_room_id: string;
+        room_id: string;
     } | null;
     error: string | null;
 }
 
 export interface TraverseExitParams {
     exit_name: string;
+}
+
+export interface TraverseExitResponse {
+    success: boolean;
+    data: {
+        new_room_id: string;
+    } | null;
+    error: string | null;
 }
 
 export interface OtherLeftRoomNotification {
@@ -159,5 +159,19 @@ export async function traverseExit(
             resolve(response)
         });
     });
+}
+
+export function onOtherLeftRoom(
+    socket: Socket,
+    callback: (event: OtherLeftRoomNotification) => void
+): void {
+    socket.on('other_left_room', callback)
+}
+
+export function onOtherEnteredRoom(
+    socket: Socket,
+    callback: (event: OtherEnteredRoomNotification) => void
+): void {
+    socket.on('other_entered_room', callback)
 }
 

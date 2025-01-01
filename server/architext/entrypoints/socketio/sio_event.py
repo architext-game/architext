@@ -7,15 +7,9 @@ import traceback
 import dataclasses
 from types import new_class
 
-@dataclasses.dataclass
-class Endpoint:
-    function_name: str
-    sio_event_name: str
-    expected_input: Optional[Any]
-    output: Any
+from architext.entrypoints.socketio.sdk_generator import Endpoint
 
-models: List[Type] = []
-model_to_facade_name: Dict[Type, str] = {}
+
 endpoints: List[Endpoint] = []
 
 def snake_to_pascal(snake_str):
@@ -39,13 +33,7 @@ def event(
         Out: Type[ResponseModel[Any]], #EJ CreateUserOutput # The output pydantic model (TODO could be changed to dataclass)
         In: Optional[Type[BaseModel]] = None, #EJ CreateUserInput  # The input pydantic model to validate request JSON
     ):
-    models.append(Out)
-    model_to_facade_name[Out] = snake_to_pascal(on)+'Response'
-    endpoint = Endpoint(function_name=snake_to_camel(on), sio_event_name=on, output=Out, expected_input=None)
-    if In is not None:
-        endpoint.expected_input = In
-        models.append(In)
-        model_to_facade_name[In] = snake_to_pascal(on)+'Params'
+    endpoint = Endpoint(sio_event_name=on, output=Out, expected_input=In)
     endpoints.append(endpoint)
 
     def decorator(func):
