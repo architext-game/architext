@@ -1,9 +1,9 @@
-from architext.adapters.sio_notificator import SocketIONotificator
-from architext.ports.notificator import Notificator
-from architext.adapters.memory_room_repository import MemoryRoomRepository
-from architext.adapters.memory_user_repository import MemoryUserRepository
+from architext.core.adapters.sio_notificator import SocketIONotificator
+from architext.core.ports.notificator import Notificator
+from architext.core.adapters.memory_room_repository import MemoryRoomRepository
+from architext.core.adapters.memory_user_repository import MemoryUserRepository
 from architext.core.messagebus import MessageBus
-from architext.ports.unit_of_work import UnitOfWork
+from architext.core.ports.unit_of_work import UnitOfWork
 
 
 class MemoryUnitOfWork(UnitOfWork):

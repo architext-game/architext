@@ -1,5 +1,5 @@
 from architext.core.domain.entities.exit import Exit
-from architext.ports.unit_of_work import UnitOfWork
+from architext.core.ports.unit_of_work import UnitOfWork
 from architext.core.commands import ExitInRoom, GetCurrentRoom, GetCurrentRoomResult, CurrentRoom, PersonInRoom
 
 

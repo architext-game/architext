@@ -1,5 +1,5 @@
 from unittest.mock import Mock
-from architext.adapters.fake_uow import FakeUnitOfWork
+from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.commands import TraverseExit, TraverseExitResult, CreateInitialData, CreateConnectedRoom, CreateUser
 import pytest # type: ignore
 from architext.core.domain.entities.user import User

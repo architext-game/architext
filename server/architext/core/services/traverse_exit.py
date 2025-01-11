@@ -1,5 +1,5 @@
 from architext.core.commands import TraverseExit, TraverseExitResult
-from architext.ports.unit_of_work import UnitOfWork
+from architext.core.ports.unit_of_work import UnitOfWork
 from architext.core.domain.events import UserChangedRoom
 
 

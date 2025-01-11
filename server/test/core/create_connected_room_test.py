@@ -1,5 +1,5 @@
 import pytest # type: ignore
-from architext.adapters.fake_uow import FakeUnitOfWork
+from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.messagebus import MessageBus
 from architext.core.services.create_connected_room import CreateConnectedRoom, CreateConnectedRoomResult
 from architext.core.services.create_initial_data import CreateInitialData

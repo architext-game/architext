@@ -1,7 +1,7 @@
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.room import DEFAULT_ROOM
 from architext.core.commands import CreateUser, CreateUserResult
-from architext.ports.unit_of_work import UnitOfWork
+from architext.core.ports.unit_of_work import UnitOfWork
 import uuid
 from pydantic import BaseModel, EmailStr, Field
 

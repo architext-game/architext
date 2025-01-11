@@ -15,7 +15,7 @@ import os
 import json
 from dotenv import load_dotenv
 from pydantic import BaseModel
-from architext.adapters.memory_uow import MemoryUnitOfWork
+from architext.core.adapters.memory_uow import MemoryUnitOfWork
 from architext.core.messagebus import MessageBus
 from architext.entrypoints.socketio.jwt_tokens import generate_jwt, decode_jwt
 from architext.core.commands import (
@@ -32,7 +32,7 @@ import argparse
 from architext.core.domain.events import UserChangedRoom
 from bidict import bidict
 from dataclasses import asdict
-from architext.adapters.sio_notificator import SocketIONotificator
+from architext.core.adapters.sio_notificator import SocketIONotificator
 from dataclasses import dataclass
 
 

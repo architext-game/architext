@@ -1,8 +1,8 @@
 from typing import Generator, Protocol, List
-from architext.ports.room_repository import RoomRepository
-from architext.ports.user_repository import UserRepository
+from architext.core.ports.room_repository import RoomRepository
+from architext.core.ports.user_repository import UserRepository
 from architext.core.domain.events import Event
-from architext.ports.notificator import Notificator
+from architext.core.ports.notificator import Notificator
 
 class UnitOfWork(Protocol):
     rooms: RoomRepository

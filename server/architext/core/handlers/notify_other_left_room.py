@@ -1,7 +1,7 @@
 from ast import List
 from dataclasses import dataclass, asdict
 from architext.core.domain.events import UserChangedRoom
-from architext.ports.unit_of_work import UnitOfWork
+from architext.core.ports.unit_of_work import UnitOfWork
 
 
 @dataclass

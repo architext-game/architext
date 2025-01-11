@@ -1,4 +1,4 @@
-from architext.ports.unit_of_work import UnitOfWork
+from architext.core.ports.unit_of_work import UnitOfWork
 from architext.core.domain.entities.room import Room, DEFAULT_ROOM
 from architext.core.commands import CreateInitialData, CreateInitialDataResult
 

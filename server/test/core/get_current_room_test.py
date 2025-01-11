@@ -1,4 +1,4 @@
-from architext.adapters.fake_uow import FakeUnitOfWork
+from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.messagebus import MessageBus
 from architext.core.services.get_current_room import get_current_room
 from architext.core.commands import GetCurrentRoom, GetCurrentRoomResult

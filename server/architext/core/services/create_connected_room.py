@@ -1,6 +1,6 @@
 from architext.core.domain.entities.room import Room
 from architext.core.domain.entities.exit import Exit
-from architext.ports.unit_of_work import UnitOfWork
+from architext.core.ports.unit_of_work import UnitOfWork
 from architext.core.commands import CreateConnectedRoom, CreateConnectedRoomResult
 from pydantic import BaseModel, Field
 from uuid import uuid4

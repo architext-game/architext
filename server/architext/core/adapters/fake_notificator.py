@@ -1,5 +1,5 @@
 from typing import Dict, List
-from architext.ports.notificator import Notificator
+from architext.core.ports.notificator import Notificator
 from dataclasses import dataclass
 
 @dataclass

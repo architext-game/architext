@@ -1,6 +1,6 @@
 from architext.core.messagebus import MessageBus
 import pytest # type: ignore
-from architext.adapters.fake_uow import FakeUnitOfWork
+from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.services.create_initial_data import create_initial_data
 from architext.core.commands import CreateInitialData
 from architext.core.domain.entities.room import DEFAULT_ROOM, Room

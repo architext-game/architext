@@ -1,5 +1,5 @@
 from typing import List, Mapping
-from architext.ports.notificator import Notificator, JSONSerializable
+from architext.core.ports.notificator import Notificator, JSONSerializable
 from dataclasses import dataclass
 from socketio import Server as SocketIOServer
 

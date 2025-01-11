@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional
 from architext.core.domain.entities.room import Room
-from architext.ports.room_repository import RoomRepository
+from architext.core.ports.room_repository import RoomRepository
 from copy import deepcopy
 
 

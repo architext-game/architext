@@ -1,4 +1,4 @@
-from architext.ports.unit_of_work import UnitOfWork
+from architext.core.ports.unit_of_work import UnitOfWork
 from architext.core.commands import Login, LoginResult
 
 def login(uow: UnitOfWork, command: Login, client_user_id: str = "") -> LoginResult:

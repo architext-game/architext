@@ -24,7 +24,7 @@ from architext.core.commands import Command
 from architext.core.handlers import EVENT_HANDLERS
 from architext.core.services import COMMAND_HANDLERS
 import logging
-from architext.ports.unit_of_work import UnitOfWork
+from architext.core.ports.unit_of_work import UnitOfWork
 
 logger = logging.getLogger(__name__)
 

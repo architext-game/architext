@@ -1,5 +1,5 @@
 from dataclasses import dataclass, asdict
-from architext.ports.unit_of_work import UnitOfWork
+from architext.core.ports.unit_of_work import UnitOfWork
 from architext.core.domain.events import UserChangedRoom
 from typing import List
 
