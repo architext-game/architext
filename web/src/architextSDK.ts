@@ -88,6 +88,16 @@ export interface TraverseExitResponse {
     error: string | null;
 }
 
+export interface ChatbotMessageParams {
+    message: string;
+}
+
+export interface ChatbotMessageResponse {
+    success: boolean;
+    data: null;
+    error: string | null;
+}
+
 export interface OtherLeftRoomNotification {
     user_name: string;
 }
@@ -95,6 +105,17 @@ export interface OtherLeftRoomNotification {
 export interface OtherEnteredRoomNotification {
     user_name: string;
 }
+
+export interface Message {
+    text: string;
+    options: {
+        display: 'wrap' | 'box' | 'underline' | 'fit';
+        section: boolean;
+        fillInput: string | null;
+        asksForPassword: boolean;
+    };
+}
+
 export async function login(
     socket: Socket,
     params: LoginParams
@@ -161,6 +182,17 @@ export async function traverseExit(
     });
 }
 
+export async function chatbotMessage(
+    socket: Socket,
+    params: ChatbotMessageParams
+): Promise<ChatbotMessageResponse> {
+    return new Promise((resolve, reject) => {
+        socket.emit("chatbot_message", params, (response: ChatbotMessageResponse) => {
+            resolve(response)
+        });
+    });
+}
+
 export function onOtherLeftRoom(
     socket: Socket,
     callback: (event: OtherLeftRoomNotification) => void
@@ -173,5 +205,12 @@ export function onOtherEnteredRoom(
     callback: (event: OtherEnteredRoomNotification) => void
 ): void {
     socket.on('other_entered_room', callback)
+}
+
+export function onChatbotServerMessage(
+    socket: Socket,
+    callback: (event: Message) => void
+): void {
+    socket.on('chatbot_server_message', callback)
 }
 

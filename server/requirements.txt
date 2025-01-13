@@ -10,3 +10,7 @@ jsonref
 pydantic-to-typescript
 eventlet
 py_writes_ts
+regex
+types-regex
+pydantic[mypy]
+Babel

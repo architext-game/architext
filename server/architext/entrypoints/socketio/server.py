@@ -4,8 +4,12 @@ python3 -m entrypoints.socketio.server
 add --types to generate types
 """
 
+from typing import Dict
 import eventlet
 
+from architext.chatbot.adapters.socketio_sender import SocketIOSender
+from architext.chatbot.adapters.stdout_logger import StdOutLogger
+from architext.chatbot.session import Session
 from architext.core.domain.entities.user import User
 from architext.core.services.create_user import create_user
 eventlet.monkey_patch(socket=True, time=True)
@@ -65,10 +69,12 @@ if __name__ == "__main__":
 
     bus.handle(uow, CreateInitialData())
 
+    user_id_to_session: Dict[str, Session] = {}
+
 
     @sio.event
     def connect(sid, environ, auth):
-        print(f'New connection, client_id {sid}')
+        print(f'New connection, socket id {sid}')
 
 
     @sio.event
@@ -82,6 +88,13 @@ if __name__ == "__main__":
     @event(sio=sio, on='login', In=Login, Out=ResponseModel[LoginResponse])
     def login_event(sid, command: Login) -> LoginResponse:
         out = bus.handle(uow, command)
+        if out.user_id not in user_id_to_session:
+            user_id_to_session[out.user_id] = Session(
+                user_id=out.user_id,
+                logger=StdOutLogger(),
+                sender=SocketIOSender(sio, user_id_to_socket_id=sid_to_user_id.inverse),
+                uow=uow
+            )
         token = generate_jwt(**asdict(out))
         auth(sid, out.user_id)
         return LoginResponse(jwt_token=token)
@@ -121,17 +134,29 @@ if __name__ == "__main__":
     @event(sio=sio, on='traverse_exit', In=TraverseExit, Out=ResponseModel[TraverseExitResult])
     def traverse_exit_event(sid, input: TraverseExit) -> TraverseExitResult:
         client_user_id = sid_to_user_id[sid]
-        return bus.handle(uow, input, client_user_id=client_user_id)  
+        return bus.handle(uow, input, client_user_id=client_user_id)
     
+
+    class ChatbotMessage(BaseModel):
+        message: str
+
+    @event(sio=sio, on='chatbot_message', In=ChatbotMessage, Out=ResponseModel[None])
+    def traverse_exit_event(sid, input: ChatbotMessage) -> None:
+        client_user_id = sid_to_user_id[sid]
+        if client_user_id in user_id_to_session:
+            user_id_to_session[client_user_id].process_message(input.message)
+
 
     if args.types:
         from architext.core.handlers.notify_other_entered_room import OtherEnteredRoomNotification
         from architext.core.handlers.notify_other_left_room import OtherLeftRoomNotification
         from architext.entrypoints.socketio.sdk_generator import generate_sdk, Event
+        from architext.chatbot.ports.sender import Message
 
         events = [
             Event('other_left_room', OtherLeftRoomNotification),
-            Event('other_entered_room', OtherEnteredRoomNotification)
+            Event('other_entered_room', OtherEnteredRoomNotification),
+            Event('chatbot_server_message', Message)
         ]
 
         sdk_code = generate_sdk(endpoints, events)
