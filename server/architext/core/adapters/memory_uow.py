@@ -1,3 +1,4 @@
+from architext.core.adapters.memory_world_repository import MemoryWorldRepository
 from architext.core.adapters.sio_notificator import SocketIONotificator
 from architext.core.ports.notificator import Notificator
 from architext.core.adapters.memory_room_repository import MemoryRoomRepository
@@ -11,6 +12,7 @@ class MemoryUnitOfWork(UnitOfWork):
         self.committed = False
         self.rooms = MemoryRoomRepository()
         self.users = MemoryUserRepository()
+        self.worlds = MemoryWorldRepository()
         self.notifications = notificator
         self.messagebus = MessageBus()
 

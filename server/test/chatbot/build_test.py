@@ -2,6 +2,7 @@ from architext.chatbot.adapters.fake_sender import FakeSender
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
 from architext.core.adapters.fake_uow import FakeUnitOfWork
+from architext.core.domain.entities.world import DEFAULT_WORLD
 from architext.core.messagebus import MessageBus
 from architext.core.commands import CreateInitialData
 import pytest # type: ignore
@@ -13,7 +14,7 @@ from architext.core.domain.entities.room import Room
 def session() -> Session:
     uow = FakeUnitOfWork()
     MessageBus().handle(uow, CreateInitialData())
-    uow.rooms.save_room(Room(id="kitchen", name="The Kitchen", description="A beautiful kitchen.", exits=[]))
+    uow.rooms.save_room(Room(id="kitchen", name="The Kitchen", description="A beautiful kitchen.", exits=[], world_id=DEFAULT_WORLD.id))
     uow.users.save_user(User(name="Oliver", email="asds@asdsa.com", id="0", room_id="kitchen", password_hash=b"adasd"))
     uow.committed = False
 

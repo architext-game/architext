@@ -24,6 +24,7 @@ def test_setup_creates_default_room(uow: FakeUnitOfWork, message_bus: MessageBus
 
 def test_setup_does_not_recreate_the_default_room_if_exists(uow: FakeUnitOfWork, message_bus: MessageBus):
     with uow:
+        message_bus.handle(uow, CreateInitialData())
         default_room = copy.deepcopy(DEFAULT_ROOM)
         default_room.description = "Modified description"
         uow.rooms.save_room(default_room)

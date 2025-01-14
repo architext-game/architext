@@ -7,12 +7,13 @@ from architext.core.commands import CreateConnectedRoom
 
 from architext.core.domain.entities.room import Room
 from architext.core.domain.entities.user import User
+from architext.core.domain.entities.world import DEFAULT_WORLD
 
 @pytest.fixture
 def uow() -> FakeUnitOfWork:
     uow = FakeUnitOfWork()
     MessageBus().handle(uow, CreateInitialData())
-    uow.rooms.save_room(Room(id="kitchen", name="The Kitchen", description="A beautiful kitchen.", exits=[]))
+    uow.rooms.save_room(Room(id="kitchen", name="The Kitchen", description="A beautiful kitchen.", exits=[], world_id=DEFAULT_WORLD.id))
     uow.users.save_user(User(name="Oliver", email="asds@asdsa.com", id="0", room_id="kitchen", password_hash=b"adasd"))
     uow.committed = False
     return uow

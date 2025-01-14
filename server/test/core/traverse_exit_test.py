@@ -1,6 +1,7 @@
 from unittest.mock import Mock
 from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.commands import TraverseExit, TraverseExitResult, CreateInitialData, CreateConnectedRoom, CreateUser
+from architext.core.domain.entities.world import DEFAULT_WORLD
 import pytest # type: ignore
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.room import Room
@@ -18,13 +19,15 @@ def uow() -> FakeUnitOfWork:
         description="A cozy living room",
         exits=[
             Exit(name="To Kitchen", destination_room_id="room2", description="")
-        ]
+        ],
+        world_id=DEFAULT_WORLD.id
     )
     room2 = Room(
         id="room2",
         name="Kitchen",
         description="A modern kitchen",
-        exits=[]
+        exits=[],
+        world_id=DEFAULT_WORLD.id
     )
     user1 = User(
         id="in_room",

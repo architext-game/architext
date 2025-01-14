@@ -3,10 +3,12 @@ from architext.core.ports.room_repository import RoomRepository
 from architext.core.ports.user_repository import UserRepository
 from architext.core.domain.events import Event
 from architext.core.ports.notificator import Notificator
+from architext.core.ports.world_repository import WorldRepository
 
 class UnitOfWork(Protocol):
     rooms: RoomRepository
     users: UserRepository
+    worlds: WorldRepository
     notifications: Notificator
     _events: List[Event] = []
 

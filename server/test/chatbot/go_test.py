@@ -2,6 +2,7 @@ from architext.chatbot.adapters.fake_sender import FakeSender
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
 from architext.core.adapters.fake_uow import FakeUnitOfWork
+from architext.core.domain.entities.world import DEFAULT_WORLD
 from architext.core.messagebus import MessageBus
 import pytest # type: ignore
 from architext.core.domain.entities.user import User
@@ -18,13 +19,15 @@ def session() -> Session:
         description="A cozy living room",
         exits=[
             Exit(name="To Kitchen", destination_room_id="room2", description="")
-        ]
+        ],
+        world_id=DEFAULT_WORLD.id
     )
     room2 = Room(
         id="room2",
         name="Kitchen",
         description="A modern kitchen",
-        exits=[]
+        exits=[],
+        world_id=DEFAULT_WORLD.id
     )
     user1 = User(
         id="in_room",
@@ -57,4 +60,5 @@ def test_go(session: Session):
     assert sent_text == """Kitchen
 A modern kitchen
 
-👤 UserInRoom is here."""
+👤 UserInRoom is here.
+"""
