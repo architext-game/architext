@@ -97,3 +97,12 @@ class CreateInitialData(Command[CreateInitialDataResult]):
     pass
 
 
+@dataclass
+class CreateWorldRoomResult:
+    world_id: str
+
+class CreateWorld(Command[CreateWorldRoomResult]):
+    name: str = Field(min_length=1, max_length=NAME_MAX_LENGTH)
+    description: str = Field(min_length=1, max_length=DESCRIPTION_MAX_LENGTH)
+
+
