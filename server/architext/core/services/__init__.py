@@ -12,6 +12,7 @@ from architext.core.commands import (
     CreateInitialData,
     CreateUser,
     CreateWorld,
+    EnterWorld,
     GetCurrentRoom,
     Login,
     TraverseExit,
@@ -25,6 +26,7 @@ from architext.core.services.create_initial_data import create_initial_data
 from architext.core.services.get_current_room import get_current_room
 from architext.core.services.login import login
 from architext.core.services.traverse_exit import traverse_exit
+from architext.core.services.enter_world import enter_world
 
 from typing import Dict, Type, Callable
 
@@ -36,4 +38,5 @@ COMMAND_HANDLERS: Dict[Type[Command], Callable] = {
     Login: login,
     TraverseExit: traverse_exit,
     CreateWorld: create_world,
+    EnterWorld: enter_world,
 }

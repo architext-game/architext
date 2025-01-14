@@ -106,3 +106,10 @@ class CreateWorld(Command[CreateWorldRoomResult]):
     description: str = Field(min_length=1, max_length=DESCRIPTION_MAX_LENGTH)
 
 
+@dataclass
+class EnterWorldResult:
+    pass
+
+class EnterWorld(Command[CreateWorldRoomResult]):
+    world_id: str
+
