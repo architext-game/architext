@@ -12,6 +12,7 @@ room_not_found     = _("There is not a room with that room number. Try another o
 not_a_number       = _("Please enter a number.")
 wrong_value        = _("Please enter the value of one of the options.")
 has_line_breaks    = _("It can't contain line breaks.")
+too_long           = _("Can't be longer than {limit} characters. Try with a shorter one.")
 
 default_description = _("It's nothing special.")
 

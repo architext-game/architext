@@ -26,13 +26,16 @@ class Command(BaseModel, Generic[T]):
 class CreateConnectedRoomResult:
     room_id: str
 
+DESCRIPTION_MAX_LENGTH = 15000
+NAME_MAX_LENGTH = 200
+
 class CreateConnectedRoom(Command[CreateConnectedRoomResult]):
-    name: str = Field(min_length=1, max_length=30)
-    description: str = Field(max_length=3000)
-    exit_to_new_room_name: str
-    exit_to_new_room_description: str
-    exit_to_old_room_name: str
-    exit_to_old_room_description: str
+    name: str = Field(min_length=1, max_length=NAME_MAX_LENGTH)
+    description: str = Field(min_length=1, max_length=DESCRIPTION_MAX_LENGTH)
+    exit_to_new_room_name: str = Field(min_length=1, max_length=NAME_MAX_LENGTH)
+    exit_to_new_room_description: str = Field(min_length=1, max_length=DESCRIPTION_MAX_LENGTH)
+    exit_to_old_room_name: str = Field(min_length=1, max_length=NAME_MAX_LENGTH)
+    exit_to_old_room_description: str = Field(min_length=1, max_length=DESCRIPTION_MAX_LENGTH)
 
 
 @dataclass
