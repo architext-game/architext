@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import classNames from 'classnames'
 import { Message } from './Message';
 import _ from 'lodash';
-import { onChatbotServerMessage, chatbotMessage, Message as ReceivedMessage } from '@/architextSDK';
+import { onChatbotServerMessage, chatbotMessage, Message as ReceivedMessage, authenticate } from '@/architextSDK';
 import { useStore } from '@/state';
 
 interface Message {
@@ -214,8 +214,15 @@ function App() {
         }
       })
 
-      socket.on('connect', () => {
-        console.log("connected")
+      socket.on('connect', async () => {
+        console.log("connected, authenticating with jwt...")
+        const jwt = localStorage.getItem("jwt")
+        const response = await authenticate(socket, { jwt_token: jwt || '' })
+        console.log("Authentication response: ", response)
+        if(!response.success){
+          addServerMessage({ text: 'Authentication error. Please go back to the login page', options: { asksForPassword: false, display: "wrap", fillInput: null, section: false } })
+          addServerMessage({ text: response.error || 'Unknown error', options: { asksForPassword: false, display: "wrap", fillInput: null, section: false } })
+        }
       });
 
       socket.on('connect_error', () => {

@@ -13,7 +13,6 @@ export default function Home() {
   const [error, setError] = useState("");
 
   const socket = useStore((state) => state.socket)
-  const setJwt = useStore((state) => state.setJWT)
   const router = useRouter()
 
   // Maneja el evento submit del formulario.

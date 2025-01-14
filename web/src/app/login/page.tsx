@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { login } from "@/architextSDK";
 import { useStore } from "@/state";
-import { assert } from "console";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 
@@ -13,7 +12,6 @@ export default function Home() {
   const [error, setError] = useState("");
 
   const socket = useStore((state) => state.socket)
-  const setJwt = useStore((state) => state.setJWT)
   const router = useRouter()
 
   // Maneja el evento submit del formulario.
@@ -25,7 +23,7 @@ export default function Home() {
     const response = await login(socket, { email: email, password: password })
     console.log(response)
     if(response.success) {
-      setJwt(response.data?.jwt_token || "")
+      localStorage.setItem("jwt", response.data?.jwt_token || "");
       router.push('/game')
     } else {
       setError("Error: " + response.error)
