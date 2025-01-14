@@ -1,7 +1,6 @@
 """Defines the Session class, used to handle user interaction.
 """
-from architext.core.messagebus import MessageBus
-from architext.core.ports.unit_of_work import UnitOfWork
+from architext.core import Architext
 from . import verbs as v
 from .verbs import Verb
 from architext.chatbot.ports.sender import AbstractSender
@@ -21,9 +20,8 @@ class Session:
     # List of all verbs supported by the session, ordered by priority: if two verbs can handle the same message, the first will have preference.
     verbs: List[Type[Verb]] = [v.Look, v.Build, v.Go]
 
-    def __init__(self, user_id: str, sender: AbstractSender, logger: Logger, uow: UnitOfWork):
-        self.messagebus = MessageBus()
-        self.uow = uow
+    def __init__(self, user_id: str, sender: AbstractSender, logger: Logger, architext: Architext):
+        self.architext = architext
         self.sender = sender
         self.logger = logger  # logger for recording user interaction
         self.user_id = user_id  # id of the user whose messages this is processing
@@ -50,7 +48,7 @@ class Session:
         if self.current_verb is None:
             for verb in self.verbs:
                 if verb.can_process(message, self):
-                    self.current_verb = verb(self, self.uow, self.messagebus)
+                    self.current_verb = verb(self, self.architext)
                     break
         
         if self.current_verb is not None:

@@ -3,7 +3,7 @@ from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
 from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.domain.entities.world import DEFAULT_WORLD
-from architext.core.messagebus import MessageBus
+from architext.core import Architext
 import pytest # type: ignore
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.room import Room
@@ -19,7 +19,7 @@ def session() -> Session:
     uow.users.save_user(User(id="2", name="Paul", email="paul@example.com", room_id="room1", password_hash=b"asdasd"))
     uow.users.save_user(User(id="3", name="Brian", email="brian@example.com", room_id="room2", password_hash=b"asdasd"))
 
-    return Session(uow=uow, sender=FakeSender(), logger=StdOutLogger(), user_id="0") 
+    return Session(architext=Architext(uow=uow), sender=FakeSender(), logger=StdOutLogger(), user_id="0") 
 
 def test_look_room(session: Session):
     session.process_message("look")

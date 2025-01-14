@@ -3,6 +3,7 @@ from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
 from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.domain.entities.world import DEFAULT_WORLD
+from architext.core import Architext
 from architext.core.messagebus import MessageBus
 from architext.core.commands import CreateInitialData
 import pytest # type: ignore
@@ -18,7 +19,7 @@ def session() -> Session:
     uow.users.save_user(User(name="Oliver", email="asds@asdsa.com", id="0", room_id="kitchen", password_hash=b"adasd"))
     uow.committed = False
 
-    return Session(uow=uow, sender=FakeSender(), logger=StdOutLogger(), user_id="0") 
+    return Session(architext=Architext(uow=uow), sender=FakeSender(), logger=StdOutLogger(), user_id="0") 
 
 def test_build(session: Session):
     session.process_message("build")
@@ -32,7 +33,7 @@ def test_build(session: Session):
     sent_text = '\n'.join([message.text for message in sender._sent])
     print(sent_text)
 
-    uow = session.uow
+    uow = session.architext._uow
     new_room = uow.rooms.list_rooms()[2]
     old_room = uow.rooms.get_room_by_id("kitchen")
     assert new_room is not None

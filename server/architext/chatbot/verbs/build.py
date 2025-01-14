@@ -3,13 +3,10 @@ from gettext import gettext as _
 from typing import Optional, TYPE_CHECKING
 
 from architext.core.commands import CreateConnectedRoom, GetCurrentRoom, NAME_MAX_LENGTH, DESCRIPTION_MAX_LENGTH
-from architext.core.messagebus import MessageBus
-from architext.core.ports.unit_of_work import UnitOfWork
+from architext.core import Architext
 
 from . import verb
-from .. import util
 import architext.chatbot.strings as strings
-from pydantic import BaseModel, Field
 from dataclasses import dataclass
 
 if TYPE_CHECKING:
@@ -33,8 +30,8 @@ class Build(verb.Verb):
     command = _('build')
     permissions = verb.PRIVILEGED
 
-    def __init__(self, session: Session, uow: UnitOfWork, messagebus: MessageBus):
-        super().__init__(session, uow, messagebus)
+    def __init__(self, session: Session, architext: Architext):
+        super().__init__(session, architext)
         self.state = BuildState()
         self.current_process_function = self.process_first_message
 
@@ -46,7 +43,7 @@ class Build(verb.Verb):
             self.current_process_function(message)
 
     def process_first_message(self, message: str):
-        result = self.messagebus.handle(self.uow, GetCurrentRoom(), self.session.user_id)
+        result = self.architext.handle(GetCurrentRoom(), self.session.user_id)
         if result.current_room is None:
             self.session.sender.send(self.session.user_id, _("You need to be in a room to be able to build!"))
             self.finish_interaction()
@@ -120,7 +117,7 @@ class Build(verb.Verb):
             # except entities.TakableItemNameClash:
             #     self.session.sender.send(self.session.user_id, strings.takable_name_clash)
             # else:
-            self.messagebus.handle(self.uow, CreateConnectedRoom(
+            self.architext.handle(CreateConnectedRoom(
                 name=self.state.room_name,
                 description=self.state.room_description,
                 exit_to_new_room_name=self.state.exit_to_new_room_name,

@@ -14,7 +14,7 @@ class Go(Verb):
     def process(self, message: str):
         command_length = len(self.command)
         partial_exit_name = message[command_length:]
-        result = self.messagebus.handle(self.uow, GetCurrentRoom(), self.session.user_id)
+        result = self.architext.handle(GetCurrentRoom(), self.session.user_id)
         
         if result.current_room is None:
             self.session.sender.send(self.session.user_id, _("You are not in a room, can't go anywhere :("))
@@ -26,12 +26,11 @@ class Go(Verb):
 
         if len(possible_meanings) == 1:
             selected_exit_name = possible_meanings[0]
-            traverse_result = self.messagebus.handle(self.uow, TraverseExit(exit_name=selected_exit_name), self.session.user_id)
+            traverse_result = self.architext.handle(TraverseExit(exit_name=selected_exit_name), self.session.user_id)
             show_current_room(
                 user_id=self.session.user_id,
-                messagebus=self.messagebus,
                 sender=self.session.sender,
-                uow=self.uow
+                architext=self.architext
             )
         elif len(possible_meanings) > 1:
             self.session.sender.send(self.session.user_id, _('There is more than one exit with a similar name. Please be more specific.'))

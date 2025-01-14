@@ -2,6 +2,7 @@ from unittest.mock import Mock
 from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.commands import EnterWorld, TraverseExit, TraverseExitResult, CreateInitialData, CreateConnectedRoom, CreateUser
 from architext.core.domain.entities.world import DEFAULT_WORLD
+from architext.core import Architext
 import pytest # type: ignore
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.room import Room
@@ -12,7 +13,7 @@ from architext.core.messagebus import MessageBus
 
 
 @pytest.fixture
-def uow() -> FakeUnitOfWork:
+def architext() -> Architext:
     uow = FakeUnitOfWork()
     rabbithole_world = World(
         id="rabbithole",
@@ -68,22 +69,18 @@ def uow() -> FakeUnitOfWork:
     uow.users.save_user(oliver)
     uow.users.save_user(rabbit)
     uow.users.save_user(explorer)
-    return uow
+    return Architext(uow)
 
-@pytest.fixture
-def message_bus() -> MessageBus:
-    return MessageBus() 
+def test_enter_world_success(architext: Architext):
+    architext.handle(EnterWorld(world_id="outer"), client_user_id="oliver")
 
-def test_enter_world_success(uow: FakeUnitOfWork, message_bus: MessageBus):
-    message_bus.handle(uow, EnterWorld(world_id="outer"), client_user_id="oliver")
-
-    oliver = uow.users.get_user_by_id("oliver")
+    oliver = architext._uow.users.get_user_by_id("oliver")
     assert oliver is not None
     assert oliver.room_id == "outerroom"
-    room = uow.rooms.get_room_by_id(oliver.room_id)
+    room = architext._uow.rooms.get_room_by_id(oliver.room_id)
     assert room is not None
     assert room.world_id == "outer"
-    world = uow.worlds.get_world_by_id(room.world_id)
+    world = architext._uow.worlds.get_world_by_id(room.world_id)
     assert world is not None
     assert world.name == "Outer Wilds"
 

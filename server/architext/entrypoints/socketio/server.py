@@ -10,7 +10,7 @@ import eventlet
 from architext.chatbot.adapters.socketio_sender import SocketIOSender
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
-from architext.core.domain.entities.user import User
+from architext.core import Architext
 from architext.core.services.create_user import create_user
 eventlet.monkey_patch(socket=True, time=True)
 import socketio
@@ -20,7 +20,6 @@ import json
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from architext.core.adapters.memory_uow import MemoryUnitOfWork
-from architext.core.messagebus import MessageBus
 from architext.entrypoints.socketio.jwt_tokens import generate_jwt, decode_jwt
 from architext.core.commands import (
     CreateUser, CreateUserResult,
@@ -65,9 +64,9 @@ if __name__ == "__main__":
 
     uow = MemoryUnitOfWork(notificator=SocketIONotificator(sio, sid_to_user_id.inverse))
     create_user(uow=uow, command=CreateUser(email='oli@sanz.com', name='oliver', password='oliver'))
-    bus = MessageBus()
+    architext = Architext(uow=uow)
 
-    bus.handle(uow, CreateInitialData())
+    architext.handle(CreateInitialData())
 
     user_id_to_session: Dict[str, Session] = {}
 
@@ -87,13 +86,13 @@ if __name__ == "__main__":
 
     @event(sio=sio, on='login', In=Login, Out=ResponseModel[LoginResponse])
     def login_event(sid, command: Login) -> LoginResponse:
-        out = bus.handle(uow, command)
+        out = architext.handle(command)
         if out.user_id not in user_id_to_session:
             user_id_to_session[out.user_id] = Session(
                 user_id=out.user_id,
                 logger=StdOutLogger(),
                 sender=SocketIOSender(sio, user_id_to_socket_id=sid_to_user_id.inverse),
-                uow=uow
+                architext=architext
             )
         token = generate_jwt(**asdict(out))
         auth(sid, out.user_id)
@@ -116,25 +115,25 @@ if __name__ == "__main__":
 
     @event(sio=sio, on='signup', In=CreateUser, Out=ResponseModel[CreateUserResult])
     def signup(sid, command: CreateUser) -> CreateUserResult:
-        return bus.handle(uow, command)
+        return architext.handle(command)
 
 
     @event(sio=sio, on='get_current_room', Out=ResponseModel[GetCurrentRoomResult])
     def get_current_room_event(sid) -> GetCurrentRoomResult:
         client_user_id = sid_to_user_id[sid]
-        return bus.handle(uow, GetCurrentRoom(), client_user_id=client_user_id)  
+        return architext.handle(GetCurrentRoom(), client_user_id=client_user_id)  
         
 
     @event(sio=sio, on='create_connected_room', In=CreateConnectedRoom, Out=ResponseModel[CreateConnectedRoomResult])
     def create_connected_room_event(sid, params: CreateConnectedRoom) -> CreateConnectedRoomResult:  
         client_user_id = sid_to_user_id[sid]
-        return bus.handle(uow, params, client_user_id=client_user_id)  
+        return architext.handle(params, client_user_id=client_user_id)  
 
 
     @event(sio=sio, on='traverse_exit', In=TraverseExit, Out=ResponseModel[TraverseExitResult])
     def traverse_exit_event(sid, input: TraverseExit) -> TraverseExitResult:
         client_user_id = sid_to_user_id[sid]
-        return bus.handle(uow, input, client_user_id=client_user_id)
+        return architext.handle(input, client_user_id=client_user_id)
     
 
     class ChatbotMessage(BaseModel):

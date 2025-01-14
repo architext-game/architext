@@ -1,6 +1,5 @@
 from gettext import gettext as _
-from architext.core.ports.unit_of_work import UnitOfWork
-from architext.core.messagebus import MessageBus
+from architext.core import Architext
 from .. import util
 
 from typing import TYPE_CHECKING
@@ -55,10 +54,9 @@ class Verb():
     def can_process(cls, message: str, session: Session):
         return cls.message_matches_command(message)
 
-    def __init__(self, session: Session, uow: UnitOfWork, messagebus: MessageBus):
+    def __init__(self, session: Session, architext: Architext):
         self.session = session
-        self.uow = uow
-        self.messagebus = messagebus
+        self.architext = architext
         self.finished = False
 
     def execute(self, message: str):

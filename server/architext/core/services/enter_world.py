@@ -25,4 +25,4 @@ def enter_world(uow: UnitOfWork, command: EnterWorld, client_user_id: str) -> En
         uow.publish_events([UserChangedRoom(user_id=user.id, room_entered=initial_room.id, room_left=previous_room_id)])
         uow.commit()
 
-        return EnterWorldResult()
+    return EnterWorldResult()

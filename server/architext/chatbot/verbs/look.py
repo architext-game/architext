@@ -3,8 +3,7 @@ from gettext import gettext as _
 from architext.core.commands import GetCurrentRoom
 
 from architext.chatbot.ports.sender import AbstractSender, MessageOptions
-from architext.core.messagebus import MessageBus
-from architext.core.ports.unit_of_work import UnitOfWork
+from architext.core import Architext
 from .verb import Verb
 from .. import strings
 
@@ -20,10 +19,9 @@ class Look(Verb):
         # else:
         #     self.show_current_room()
         show_current_room(
-            messagebus=self.messagebus,
             sender=self.session.sender,
-            uow=self.uow,
-            user_id=self.session.user_id
+            user_id=self.session.user_id,
+            architext=self.architext
         )
         self.finish_interaction()
 
@@ -38,8 +36,8 @@ class Look(Verb):
     #         self.session.send_to_client(f"👁 {selected_entity.name}\n{selected_entity.description if selected_entity.description else strings.default_description}")
     
 
-def show_current_room(sender: AbstractSender, messagebus: MessageBus, uow: UnitOfWork, user_id: str, show_world_name: bool = False) -> None:
-    result = messagebus.handle(uow, GetCurrentRoom(), user_id)
+def show_current_room(sender: AbstractSender, architext: Architext, user_id: str, show_world_name: bool = False) -> None:
+    result = architext.handle(GetCurrentRoom(), user_id)
 
     if result.current_room is None:
         sender.send(user_id, _("You are not in a room!"))
