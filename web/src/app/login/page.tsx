@@ -24,7 +24,7 @@ export default function Home() {
     console.log(response)
     if(response.success) {
       localStorage.setItem("jwt", response.data?.jwt_token || "");
-      router.push('/game')
+      router.push('/worlds')
     } else {
       setError("Error: " + response.error)
     }

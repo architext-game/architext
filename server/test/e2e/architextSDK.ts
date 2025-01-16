@@ -1,7 +1,8 @@
 import { Socket } from 'socket.io-client';
 
 export interface LoginParams {
-    email: any;
+    email: {
+    };
     password: string;
 }
 
@@ -26,7 +27,8 @@ export interface AuthenticateResponse {
 }
 
 export interface SignupParams {
-    email: any;
+    email: {
+    };
     name: string;
     password: string;
 }
@@ -95,6 +97,46 @@ export interface ChatbotMessageParams {
 export interface ChatbotMessageResponse {
     success: boolean;
     data: null;
+    error: string | null;
+}
+
+export interface GetWorldsParams {
+}
+
+export interface GetWorldsResponse {
+    success: boolean;
+    data: {
+        worlds: {
+            id: string;
+            name: string;
+            description: string;
+            owner: string | null;
+        }[];
+    } | null;
+    error: string | null;
+}
+
+export interface EnterWorldParams {
+    world_id: string;
+}
+
+export interface EnterWorldResponse {
+    success: boolean;
+    data: {
+    } | null;
+    error: string | null;
+}
+
+export interface CreateWorldParams {
+    name: string;
+    description: string;
+}
+
+export interface CreateWorldResponse {
+    success: boolean;
+    data: {
+        world_id: string;
+    } | null;
     error: string | null;
 }
 
@@ -187,6 +229,39 @@ export async function chatbotMessage(
 ): Promise<ChatbotMessageResponse> {
     return new Promise((resolve, reject) => {
         socket.emit("chatbot_message", params, (response: ChatbotMessageResponse) => {
+            resolve(response)
+        });
+    });
+}
+
+export async function getWorlds(
+    socket: Socket,
+    params: GetWorldsParams
+): Promise<GetWorldsResponse> {
+    return new Promise((resolve, reject) => {
+        socket.emit("get_worlds", params, (response: GetWorldsResponse) => {
+            resolve(response)
+        });
+    });
+}
+
+export async function enterWorld(
+    socket: Socket,
+    params: EnterWorldParams
+): Promise<EnterWorldResponse> {
+    return new Promise((resolve, reject) => {
+        socket.emit("enter_world", params, (response: EnterWorldResponse) => {
+            resolve(response)
+        });
+    });
+}
+
+export async function createWorld(
+    socket: Socket,
+    params: CreateWorldParams
+): Promise<CreateWorldResponse> {
+    return new Promise((resolve, reject) => {
+        socket.emit("create_world", params, (response: CreateWorldResponse) => {
             resolve(response)
         });
     });

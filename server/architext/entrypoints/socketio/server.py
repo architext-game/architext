@@ -12,6 +12,7 @@ from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
 from architext.core import Architext
 from architext.core.services.create_user import create_user
+from architext.core.queries import ListWorlds, ListWorldsResult
 eventlet.monkey_patch(socket=True, time=True)
 import socketio
 import atexit
@@ -22,7 +23,7 @@ from pydantic import BaseModel
 from architext.core.adapters.memory_uow import MemoryUnitOfWork
 from architext.entrypoints.socketio.jwt_tokens import generate_jwt, decode_jwt
 from architext.core.commands import (
-    CreateUser, CreateUserResult,
+    CreateUser, CreateUserResult, CreateWorld, CreateWorldRoomResult, EnterWorld, EnterWorldResult,
     GetCurrentRoom, GetCurrentRoomResult,
     CreateConnectedRoom, CreateConnectedRoomResult,
     TraverseExit, TraverseExitResult,
@@ -140,11 +141,25 @@ if __name__ == "__main__":
         message: str
 
     @event(sio=sio, on='chatbot_message', In=ChatbotMessage, Out=ResponseModel[None])
-    def traverse_exit_event(sid, input: ChatbotMessage) -> None:
+    def chatbot_message_event(sid, input: ChatbotMessage) -> None:
         client_user_id = sid_to_user_id[sid]
         if client_user_id in user_id_to_session:
             user_id_to_session[client_user_id].process_message(input.message)
 
+    @event(sio=sio, on='get_worlds', In=ListWorlds, Out=ResponseModel[ListWorldsResult])
+    def get_worlds_event(sid, input: ListWorlds) -> ListWorldsResult:
+        client_user_id = sid_to_user_id[sid]
+        return architext.query(input, client_user_id)
+
+    @event(sio=sio, on='enter_world', In=EnterWorld, Out=ResponseModel[EnterWorldResult])
+    def enter_world_event(sid, input: EnterWorld) -> EnterWorldResult:
+        client_user_id = sid_to_user_id[sid]
+        return architext.handle(input, client_user_id)
+
+    @event(sio=sio, on='create_world', In=CreateWorld, Out=ResponseModel[CreateWorldRoomResult])
+    def create_world_event(sid, input: CreateWorld) -> CreateWorldRoomResult:
+        client_user_id = sid_to_user_id[sid]
+        return architext.handle(input, client_user_id)
 
     if args.types:
         from architext.core.handlers.notify_other_entered_room import OtherEnteredRoomNotification

@@ -1,10 +1,10 @@
 "use client"
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, use } from 'react'
 import classNames from 'classnames'
 import { Message } from './Message';
 import _ from 'lodash';
-import { onChatbotServerMessage, chatbotMessage, Message as ReceivedMessage, authenticate } from '@/architextSDK';
+import { onChatbotServerMessage, chatbotMessage, Message as ReceivedMessage, authenticate, enterWorld } from '@/architextSDK';
 import { useStore } from '@/state';
 
 interface Message {
@@ -87,7 +87,10 @@ function box(text: string, maxWidth: number): string {
   return result;
 }
 
-function App() {
+function App({ params }: { params: Promise<{ world_id: string }> }) {
+  const worldId = use(params).world_id
+  console.log(`world id is ${worldId}`)
+
   const socket = useStore((state) => state.socket)
   const [messages, setMessages] = useState<Message[]>([])
   const [inputValue, setInputValue] = useState('')
@@ -104,6 +107,10 @@ function App() {
   const characterMeasureRef = useRef<HTMLDivElement>(null)
   const textInputContainerRef = useRef<HTMLDivElement>(null)
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
+
+  useEffect(() => {
+    enterWorld(socket, { world_id: worldId })
+  }, [worldId])
 
   const updateCharWidth = () => {
     if(messageListRef.current && characterMeasureRef.current){
