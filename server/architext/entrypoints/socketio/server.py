@@ -12,7 +12,7 @@ from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
 from architext.core import Architext
 from architext.core.services.create_user import create_user
-from architext.core.queries import ListWorlds, ListWorldsResult
+from architext.core.queries.list_worlds import ListWorlds, ListWorldsResult
 eventlet.monkey_patch(socket=True, time=True)
 import socketio
 import atexit

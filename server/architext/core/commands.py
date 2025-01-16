@@ -110,6 +110,6 @@ class CreateWorld(Command[CreateWorldRoomResult]):
 class EnterWorldResult:
     pass
 
-class EnterWorld(Command[CreateWorldRoomResult]):
+class EnterWorld(Command[EnterWorldResult]):
     world_id: str
 

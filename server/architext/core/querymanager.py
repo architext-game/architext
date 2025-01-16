@@ -1,15 +1,15 @@
-from typing import List, Dict, Callable, Type, TypeVar, Union, Any, Mapping
-from architext.core.domain.events import Event
-from architext.core.commands import Command
-from architext.core.queries import Query, QueryHandler
-import logging
+
+from typing import Type, TypeVar, Mapping
+from architext.core.queries.base import Query, QueryHandler
 from architext.core.ports.unit_of_work import UnitOfWork
+from architext.core.queries.list_worlds import ListWorlds, UOWListWorldsQueryHandler
 
-logger = logging.getLogger(__name__)
+T = TypeVar('T')
 
-Message = Union[Event, Command]
-
-T = TypeVar("T")
+def uow_query_handlers_factory(uow: UnitOfWork) -> Mapping[Type[Query], QueryHandler]:
+    return {
+        ListWorlds: UOWListWorldsQueryHandler(uow)
+    }
 
 class QueryManager:
     def __init__(
@@ -18,5 +18,5 @@ class QueryManager:
         ):
         self._query_handlers = query_handlers
 
-    def query(self, uow: UnitOfWork, query: Query[T], client_user_id: str = "") -> T:
+    def query(self, query: Query[T], client_user_id: str = "") -> T:
         return self._query_handlers[type(query)].query(query, client_user_id)
