@@ -13,3 +13,6 @@ class RoomRepository(Protocol):
 
     def list_rooms(self) -> List[Room]:
         pass
+
+    def list_rooms_by_world(self, world_id: str) -> List[Room]:
+        pass

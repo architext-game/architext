@@ -19,3 +19,6 @@ class MemoryRoomRepository(RoomRepository):
 
     def list_rooms(self) -> List[Room]:
         return deepcopy(list(self._rooms.values()))
+    
+    def list_rooms_by_world(self, world_id: str) -> List[Room]:
+        return deepcopy([room for room in self._rooms.values() if room.world_id == world_id])

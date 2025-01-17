@@ -3,12 +3,14 @@ from typing import Type, TypeVar, Mapping
 from architext.core.queries.base import Query, QueryHandler
 from architext.core.ports.unit_of_work import UnitOfWork
 from architext.core.queries.list_worlds import ListWorlds, UOWListWorldsQueryHandler
+from architext.core.queries.world_to_text import WorldToText, UOWWorldToTextQueryHandler
 
 T = TypeVar('T')
 
 def uow_query_handlers_factory(uow: UnitOfWork) -> Mapping[Type[Query], QueryHandler]:
     return {
-        ListWorlds: UOWListWorldsQueryHandler(uow)
+        ListWorlds: UOWListWorldsQueryHandler(uow),
+        WorldToText: UOWWorldToTextQueryHandler(uow),
     }
 
 class QueryManager:
