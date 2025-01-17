@@ -1,0 +1,117 @@
+import base64
+import copy
+import json
+from typing import List
+import uuid
+import zlib
+from architext.core.domain.entities.room import Room, DEFAULT_ROOM
+from architext.core.domain.entities.exit import Exit
+from architext.core.domain.entities.world import World
+from architext.core.ports.unit_of_work import UnitOfWork
+from architext.core.commands import ImportWorld, ImportWorldResult
+from uuid import uuid4
+from pydantic import TypeAdapter, ValidationError
+from typing_extensions import TypedDict
+
+
+def decode_text(encoded_str: str) -> str:
+    compresed_b64bytes = base64.b64decode(encoded_str)
+    b64bytes = zlib.decompress(compresed_b64bytes)
+    json_str = b64bytes.decode()
+    return json_str
+
+class ExitDict(TypedDict):
+    name: str
+    description: str
+    destination_room_id: str
+
+class RoomDict(TypedDict):
+    id: str
+    name: str
+    description: str
+    exits: List[ExitDict]
+
+class WorldDict(TypedDict):
+    original_name: str
+    original_description: str
+    initial_room_id: str
+    rooms: List[RoomDict]
+
+world_dict_type_adapter = TypeAdapter(WorldDict)
+
+def replace_ids(game_data: WorldDict):
+    """
+    Mutates `game_data` so that each unique 'id' becomes a new UUID,
+    and references to that 'id' in 'destination_room_id' or 'initial_room_id' match accordingly.
+    """
+    # old_id -> new_uuid
+    id_map = {}
+
+    def get_new_id(old_id: str) -> str:
+        """Return a UUID string for old_id, reusing existing ones if already mapped."""
+        if old_id not in id_map:
+            id_map[old_id] = str(uuid.uuid4())
+        return id_map[old_id]
+
+    # 1) Replace the initial_room_id
+    if "initial_room_id" in game_data:
+        old_init_id = game_data["initial_room_id"]
+        game_data["initial_room_id"] = get_new_id(old_init_id)
+
+    # 2) Replace each room's id and store it in the id_map
+    for room in game_data["rooms"]:
+        old_id = room["id"]
+        new_id = get_new_id(old_id)
+        room["id"] = new_id
+
+    # 3) Replace each exit's destination_room_id using the same mapping
+    for room in game_data["rooms"]:
+        for exit_ in room.get("exits", []):
+            dest_id = exit_["destination_room_id"]
+            exit_["destination_room_id"] = get_new_id(dest_id)
+
+def import_world(uow: UnitOfWork, command: ImportWorld, client_user_id: str) -> ImportWorldResult:
+    with uow:
+        user = uow.users.get_user_by_id(client_user_id)
+        assert user is not None
+        world_id = str(uuid4())
+
+        if command.format == "encoded":
+            world_text = decode_text(command.text_representation)
+        elif command.format == "plain":
+            world_text = command.text_representation
+
+        # This will fail for invalid input
+        world_dict = world_dict_type_adapter.validate_python(json.loads(world_text))
+
+        replace_ids(world_dict)
+
+        world = World(
+            name=command.name,
+            description=command.description,
+            id=world_id,
+            initial_room_id=world_dict["initial_room_id"],
+            owner_user_id=user.id
+        )
+
+        rooms = [Room(
+            id=room["id"],
+            name=room["name"],
+            description=room["description"],
+            world_id=world_id,
+            exits=[Exit(
+                name=exit["name"],
+                description=exit["description"],
+                destination_room_id=exit["destination_room_id"]
+            ) for exit in room["exits"]]
+        ) for room in world_dict["rooms"]]
+
+        uow.worlds.save_world(world)
+        for room in rooms:
+            uow.rooms.save_room(room)
+
+        uow.commit()
+
+    return ImportWorldResult(
+        world_id=world_id
+    )
