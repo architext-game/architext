@@ -3,11 +3,11 @@ from architext.core.domain.entities.room import Room, DEFAULT_ROOM
 from architext.core.domain.entities.exit import Exit
 from architext.core.domain.entities.world import World
 from architext.core.ports.unit_of_work import UnitOfWork
-from architext.core.commands import CreateWorld, CreateWorldRoomResult
+from architext.core.commands import CreateWorld, CreateWorldResult
 from uuid import uuid4
 
 
-def create_world(uow: UnitOfWork, command: CreateWorld, client_user_id: str) -> CreateWorldRoomResult:
+def create_world(uow: UnitOfWork, command: CreateWorld, client_user_id: str) -> CreateWorldResult:
     with uow:
         user = uow.users.get_user_by_id(client_user_id)
         assert user is not None
@@ -30,6 +30,6 @@ def create_world(uow: UnitOfWork, command: CreateWorld, client_user_id: str) -> 
         
         uow.commit()
 
-    return CreateWorldRoomResult(
+    return CreateWorldResult(
         world_id=world_id
     )

@@ -98,10 +98,10 @@ class CreateInitialData(Command[CreateInitialDataResult]):
 
 
 @dataclass
-class CreateWorldRoomResult:
+class CreateWorldResult:
     world_id: str
 
-class CreateWorld(Command[CreateWorldRoomResult]):
+class CreateWorld(Command[CreateWorldResult]):
     name: str = Field(min_length=1, max_length=NAME_MAX_LENGTH)
     description: str = Field(min_length=1, max_length=DESCRIPTION_MAX_LENGTH)
 
@@ -133,4 +133,3 @@ class CreateTemplate(Command[CreateTemplateResult]):
     name: str = Field(min_length=1, max_length=NAME_MAX_LENGTH)
     description: str = Field(min_length=1, max_length=DESCRIPTION_MAX_LENGTH)
     base_world_id: str
-

@@ -23,7 +23,7 @@ from pydantic import BaseModel
 from architext.core.adapters.memory_uow import MemoryUnitOfWork
 from architext.entrypoints.socketio.jwt_tokens import generate_jwt, decode_jwt
 from architext.core.commands import (
-    CreateUser, CreateUserResult, CreateWorld, CreateWorldRoomResult, EnterWorld, EnterWorldResult,
+    CreateUser, CreateUserResult, CreateWorld, CreateWorldResult, EnterWorld, EnterWorldResult,
     GetCurrentRoom, GetCurrentRoomResult,
     CreateConnectedRoom, CreateConnectedRoomResult,
     TraverseExit, TraverseExitResult,
@@ -156,8 +156,8 @@ if __name__ == "__main__":
         client_user_id = sid_to_user_id[sid]
         return architext.handle(input, client_user_id)
 
-    @event(sio=sio, on='create_world', In=CreateWorld, Out=ResponseModel[CreateWorldRoomResult])
-    def create_world_event(sid, input: CreateWorld) -> CreateWorldRoomResult:
+    @event(sio=sio, on='create_world', In=CreateWorld, Out=ResponseModel[CreateWorldResult])
+    def create_world_event(sid, input: CreateWorld) -> CreateWorldResult:
         client_user_id = sid_to_user_id[sid]
         return architext.handle(input, client_user_id)
 
