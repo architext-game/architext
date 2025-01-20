@@ -1,13 +1,11 @@
 
-from typing import Dict, List, Optional, Protocol, Type, TypeVar, Generic, Mapping
-from pydantic import BaseModel, Field, EmailStr
-from dataclasses import dataclass
-from typing import List, Dict, Callable, Type, TypeVar, Union, Any, Mapping
-from architext.core.domain.events import Event
-from architext.core.commands import Command
-import logging
-from architext.core.ports.unit_of_work import UnitOfWork
-from architext.core.ports.unit_of_work import UnitOfWork
+from typing import Protocol, TypeVar, Generic
+from pydantic import BaseModel
+from typing import TypeVar, TYPE_CHECKING
+if TYPE_CHECKING:
+    from architext.core.ports.unit_of_work import UnitOfWork
+else:
+    UnitOfWork = object()
 
 
 T = TypeVar('T', contravariant=True)

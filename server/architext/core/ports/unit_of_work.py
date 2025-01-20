@@ -4,11 +4,15 @@ from architext.core.ports.user_repository import UserRepository
 from architext.core.domain.events import Event
 from architext.core.ports.notificator import Notificator
 from architext.core.ports.world_repository import WorldRepository
+from architext.core.ports.world_template_repository import WorldTemplateRepository
+from architext.core.querymanager import QueryManager
 
 class UnitOfWork(Protocol):
     rooms: RoomRepository
     users: UserRepository
     worlds: WorldRepository
+    world_templates: WorldTemplateRepository
+    queries: QueryManager
     notifications: Notificator
     _events: List[Event] = []
 

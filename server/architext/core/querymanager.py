@@ -1,9 +1,12 @@
 
-from typing import Type, TypeVar, Mapping
+from typing import Type, TypeVar, Mapping, TYPE_CHECKING
 from architext.core.queries.base import Query, QueryHandler
-from architext.core.ports.unit_of_work import UnitOfWork
 from architext.core.queries.list_worlds import ListWorlds, UOWListWorldsQueryHandler
 from architext.core.queries.world_to_text import WorldToText, UOWWorldToTextQueryHandler
+if TYPE_CHECKING:
+    from architext.core.ports.unit_of_work import UnitOfWork
+else:
+    UnitOfWork = object()
 
 T = TypeVar('T')
 
