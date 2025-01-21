@@ -1,4 +1,5 @@
 from typing import Generator, Protocol, List
+from architext.core.ports.external_event_publisher import ExternalEventPublisher
 from architext.core.ports.room_repository import RoomRepository
 from architext.core.ports.user_repository import UserRepository
 from architext.core.domain.events import Event
@@ -14,6 +15,7 @@ class UnitOfWork(Protocol):
     world_templates: WorldTemplateRepository
     queries: QueryManager
     notifications: Notificator
+    external_events: ExternalEventPublisher
     _events: List[Event] = []
 
     def __exit__(self, *args) -> None:

@@ -133,3 +133,24 @@ class CreateTemplate(Command[CreateTemplateResult]):
     name: str = Field(min_length=1, max_length=NAME_MAX_LENGTH)
     description: str = Field(min_length=1, max_length=DESCRIPTION_MAX_LENGTH)
     base_world_id: str
+
+
+@dataclass
+class RequestWorldImportResult:
+    pass
+
+class RequestWorldImport(Command[RequestWorldImportResult]):
+    name: str = Field(min_length=1, max_length=NAME_MAX_LENGTH)
+    description: str = Field(min_length=1, max_length=DESCRIPTION_MAX_LENGTH)
+    format: Literal["plain", "encoded"]
+    text_representation: str
+
+
+@dataclass
+class RequestWorldCreationFromTemplateResult:
+    pass
+
+class RequestWorldCreationFromTemplate(Command[RequestWorldCreationFromTemplateResult]):
+    name: str = Field(min_length=1, max_length=NAME_MAX_LENGTH)
+    description: str = Field(min_length=1, max_length=DESCRIPTION_MAX_LENGTH)
+    template_id: str

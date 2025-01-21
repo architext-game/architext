@@ -17,6 +17,8 @@ from architext.core.commands import (
     ImportWorld,
     Login,
     TraverseExit,
+    RequestWorldCreationFromTemplate,
+    RequestWorldImport,
     Command
 )
 
@@ -29,6 +31,8 @@ from architext.core.services.import_world import import_world
 from architext.core.services.login import login
 from architext.core.services.traverse_exit import traverse_exit
 from architext.core.services.enter_world import enter_world
+from architext.core.services.request_world_creation_from_template import request_world_creation_from_template
+from architext.core.services.request_world_import import request_world_import
 
 from typing import Dict, Type, Callable
 
@@ -42,4 +46,6 @@ COMMAND_HANDLERS: Dict[Type[Command], Callable] = {
     CreateWorld: create_world,
     EnterWorld: enter_world,
     ImportWorld: import_world,
+    RequestWorldCreationFromTemplate: request_world_creation_from_template,
+    RequestWorldImport: request_world_import,
 }

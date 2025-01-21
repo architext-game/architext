@@ -1,6 +1,9 @@
+from typing import List
+from architext.core.adapters.fake_external_event_publisher import FakeExternalEventPublisher
 from architext.core.adapters.fake_notificator import FakeNotificator
 from architext.core.adapters.memory_world_repository import MemoryWorldRepository
 from architext.core.adapters.memory_world_template_repository import MemoryWorldTemplateRepository
+from architext.core.domain.events import Event
 from architext.core.ports.notificator import Notificator
 from architext.core.adapters.memory_room_repository import MemoryRoomRepository
 from architext.core.adapters.memory_user_repository import MemoryUserRepository
@@ -19,6 +22,12 @@ class FakeUnitOfWork(UnitOfWork):
         self.queries = QueryManager(uow_query_handlers_factory(self))
         self.notifications = FakeNotificator()
         self.messagebus = messagebus
+        self.published_events: List[Event] = []  # to keep track of published events in tests
+        self.external_events = FakeExternalEventPublisher(self)
+
+    def publish_events(self, events: List[Event]) -> None:
+        super().publish_events(events)
+        self.published_events += events
 
     def _commit(self):
         self.committed = True
