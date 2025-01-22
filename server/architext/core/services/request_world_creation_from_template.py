@@ -1,7 +1,7 @@
 from architext.core.domain.events import WorldCreationRequested
 from architext.core.ports.unit_of_work import UnitOfWork
 from architext.core.commands import RequestWorldCreationFromTemplate, RequestWorldCreationFromTemplateResult
-
+import uuid
 
 def request_world_creation_from_template(uow: UnitOfWork, command: RequestWorldCreationFromTemplate, client_user_id: str) -> RequestWorldCreationFromTemplateResult:
     with uow:
@@ -10,7 +10,10 @@ def request_world_creation_from_template(uow: UnitOfWork, command: RequestWorldC
         template = uow.world_templates.get_world_template_by_id(command.template_id)
         assert template is not None
 
+        future_world_id = str(uuid.uuid4())
+
         uow.external_events.publish(WorldCreationRequested(
+            future_world_id=future_world_id,
             user_id=user.id,
             world_name=command.name,
             world_description=command.description,
@@ -20,4 +23,6 @@ def request_world_creation_from_template(uow: UnitOfWork, command: RequestWorldC
 
         uow.commit()
 
-    return RequestWorldCreationFromTemplateResult()
+    return RequestWorldCreationFromTemplateResult(
+        future_world_id=future_world_id
+    )

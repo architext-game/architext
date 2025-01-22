@@ -18,6 +18,7 @@ class UserChangedRoom(Event):
 
 @dataclass
 class WorldCreationRequested(Event):
+    future_world_id: str
     user_id: str
     world_name: str
     world_description: str

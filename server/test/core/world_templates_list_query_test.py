@@ -13,7 +13,6 @@ from architext.core import Architext
 def architext() -> Architext:
     uow = FakeUnitOfWork()
     architext = Architext(uow)
-    architext.handle(CreateInitialData())
     rabbithole_world = WorldTemplate(
         id="rabbithole",
         name="Down The Rabbit Hole",

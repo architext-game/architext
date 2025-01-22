@@ -74,7 +74,7 @@ def import_world(uow: UnitOfWork, event: WorldCreationRequested):
     with uow:
         user = uow.users.get_user_by_id(event.user_id)
         assert user is not None
-        world_id = str(uuid4())
+        world_id = event.future_world_id
 
         if event.format == "encoded":
             world_text = decode_text(event.text_representation)

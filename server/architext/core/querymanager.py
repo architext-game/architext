@@ -3,6 +3,7 @@ from typing import Type, TypeVar, Mapping, TYPE_CHECKING
 from architext.core.queries.base import Query, QueryHandler
 from architext.core.queries.list_world_templates import UOWListWorldTemplatesQueryHandler, ListWorldTemplates
 from architext.core.queries.list_worlds import ListWorlds, UOWListWorldsQueryHandler
+from architext.core.queries.me import Me, UOWMeQueryHandler
 from architext.core.queries.world_to_text import WorldToText, UOWWorldToTextQueryHandler
 if TYPE_CHECKING:
     from architext.core.ports.unit_of_work import UnitOfWork
@@ -15,7 +16,8 @@ def uow_query_handlers_factory(uow: UnitOfWork) -> Mapping[Type[Query], QueryHan
     return {
         ListWorlds: UOWListWorldsQueryHandler(uow),
         WorldToText: UOWWorldToTextQueryHandler(uow),
-        ListWorldTemplates: UOWListWorldTemplatesQueryHandler(uow)
+        ListWorldTemplates: UOWListWorldTemplatesQueryHandler(uow),
+        Me: UOWMeQueryHandler(uow),
     }
 
 class QueryManager:

@@ -97,7 +97,7 @@ socket.on('{event_name}', callback)
 
     return ts_code
 
-def generate_sdk(endpoints: List[Endpoint], events: List[Event]) -> str:
+def generate_sdk(endpoints: List[Endpoint], events: List[Event], extra_models: List[Type]) -> str:
     code = ""
     code += generate_typescript_import("socket.io-client", ["Socket"])
     code += "\n"
@@ -110,7 +110,9 @@ def generate_sdk(endpoints: List[Endpoint], events: List[Event]) -> str:
 
     models += [event.data for event in events]
 
-    code += generate_typescript_interfaces(models)
+    models += extra_models
+
+    code += generate_typescript_interfaces(models) + "\n"
 
     for endpoint in endpoints:
         code += generate_endpoint_function(

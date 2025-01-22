@@ -11,6 +11,9 @@ from architext.chatbot.adapters.socketio_sender import SocketIOSender
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
 from architext.core import Architext
+from architext.core.handlers.notify_world_created_to_owner import WorldCreatedNotification
+from architext.core.queries.list_world_templates import ListWorldTemplates, ListWorldTemplatesResult, WorldTemplateListItem
+from architext.core.queries.me import Me, MeResult
 from architext.core.services.create_user import create_user
 from architext.core.queries.list_worlds import ListWorlds, ListWorldsResult
 eventlet.monkey_patch(socket=True, time=True)
@@ -23,9 +26,9 @@ from pydantic import BaseModel
 from architext.core.adapters.memory_uow import MemoryUnitOfWork
 from architext.entrypoints.socketio.jwt_tokens import generate_jwt, decode_jwt
 from architext.core.commands import (
-    CreateUser, CreateUserResult, CreateWorld, CreateWorldResult, EnterWorld, EnterWorldResult,
+    CreateTemplate, CreateTemplateResult, CreateUser, CreateUserResult, CreateWorld, CreateWorldResult, EnterWorld, EnterWorldResult,
     GetCurrentRoom, GetCurrentRoomResult,
-    CreateConnectedRoom, CreateConnectedRoomResult,
+    CreateConnectedRoom, CreateConnectedRoomResult, ImportWorld, ImportWorldResult, RequestWorldCreationFromTemplate, RequestWorldCreationFromTemplateResult, RequestWorldImport, RequestWorldImportResult,
     TraverseExit, TraverseExitResult,
     Login, LoginResult,
     CreateInitialData, CreateInitialDataResult,
@@ -151,13 +154,45 @@ if __name__ == "__main__":
         client_user_id = sid_to_user_id[sid]
         return architext.query(input, client_user_id)
 
+    @event(sio=sio, on='get_world_templates', In=ListWorldTemplates, Out=ResponseModel[ListWorldTemplatesResult])
+    def get_world_templates_event(sid, input: ListWorldTemplates) -> ListWorldTemplatesResult:
+        client_user_id = sid_to_user_id[sid]
+        return architext.query(input, client_user_id)
+
+    @event(sio=sio, on='get_me', In=Me, Out=ResponseModel[MeResult])
+    def get_me_event(sid, input: Me) -> MeResult:
+        client_user_id = sid_to_user_id[sid]
+        return architext.query(input, client_user_id)
+
     @event(sio=sio, on='enter_world', In=EnterWorld, Out=ResponseModel[EnterWorldResult])
     def enter_world_event(sid, input: EnterWorld) -> EnterWorldResult:
         client_user_id = sid_to_user_id[sid]
         return architext.handle(input, client_user_id)
 
+    # Those two are replaced by their "request" variants
+    # TODO: Remove their services and tests
     @event(sio=sio, on='create_world', In=CreateWorld, Out=ResponseModel[CreateWorldResult])
     def create_world_event(sid, input: CreateWorld) -> CreateWorldResult:
+        client_user_id = sid_to_user_id[sid]
+        return architext.handle(input, client_user_id)
+
+    # @event(sio=sio, on='import_world', In=ImportWorld, Out=ResponseModel[ImportWorldResult])
+    # def import_world_event(sid, input: ImportWorld) -> ImportWorldResult:
+    #     client_user_id = sid_to_user_id[sid]
+    #     return architext.handle(input, client_user_id)
+
+    @event(sio=sio, on='create_template', In=CreateTemplate, Out=ResponseModel[CreateTemplateResult])
+    def create_template_event(sid, input: CreateTemplate) -> CreateTemplateResult:
+        client_user_id = sid_to_user_id[sid]
+        return architext.handle(input, client_user_id)
+
+    @event(sio=sio, on='request_world_import', In=RequestWorldImport, Out=ResponseModel[RequestWorldImportResult])
+    def request_world_import_event(sid, input: RequestWorldImport) -> RequestWorldImportResult:
+        client_user_id = sid_to_user_id[sid]
+        return architext.handle(input, client_user_id)
+
+    @event(sio=sio, on='request_world_creation_from_template', In=RequestWorldCreationFromTemplate, Out=ResponseModel[RequestWorldCreationFromTemplateResult])
+    def request_world_creation_from_template_event(sid, input: RequestWorldCreationFromTemplate) -> RequestWorldCreationFromTemplateResult:
         client_user_id = sid_to_user_id[sid]
         return architext.handle(input, client_user_id)
 
@@ -170,10 +205,15 @@ if __name__ == "__main__":
         events = [
             Event('other_left_room', OtherLeftRoomNotification),
             Event('other_entered_room', OtherEnteredRoomNotification),
-            Event('chatbot_server_message', Message)
+            Event('chatbot_server_message', Message),
+            Event('world_created', WorldCreatedNotification)
         ]
 
-        sdk_code = generate_sdk(endpoints, events)
+        extra_models = [
+            WorldTemplateListItem
+        ]
+
+        sdk_code = generate_sdk(endpoints, events, extra_models)
         
         print(sdk_code)
         

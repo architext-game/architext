@@ -15,6 +15,8 @@ export default function Home() {
   const router = useRouter()
 
   // Maneja el evento submit del formulario.
+  // TODO: El autocompletado de contraseñas no funciona,
+  // no parece llamar al onChange de los inputs.
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Aquí podrías llamar a tu API o servicio de autenticación.

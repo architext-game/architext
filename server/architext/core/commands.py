@@ -137,7 +137,7 @@ class CreateTemplate(Command[CreateTemplateResult]):
 
 @dataclass
 class RequestWorldImportResult:
-    pass
+    future_world_id: str
 
 class RequestWorldImport(Command[RequestWorldImportResult]):
     name: str = Field(min_length=1, max_length=NAME_MAX_LENGTH)
@@ -148,7 +148,7 @@ class RequestWorldImport(Command[RequestWorldImportResult]):
 
 @dataclass
 class RequestWorldCreationFromTemplateResult:
-    pass
+    future_world_id: str
 
 class RequestWorldCreationFromTemplate(Command[RequestWorldCreationFromTemplateResult]):
     name: str = Field(min_length=1, max_length=NAME_MAX_LENGTH)

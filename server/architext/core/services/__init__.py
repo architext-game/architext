@@ -10,6 +10,7 @@
 from architext.core.commands import (
     CreateConnectedRoom,
     CreateInitialData,
+    CreateTemplate,
     CreateUser,
     CreateWorld,
     EnterWorld,
@@ -22,6 +23,7 @@ from architext.core.commands import (
     Command
 )
 
+from architext.core.services.create_template import create_template
 from architext.core.services.create_world import create_world
 from architext.core.services.create_user import create_user
 from architext.core.services.create_connected_room import create_connected_room
@@ -48,4 +50,5 @@ COMMAND_HANDLERS: Dict[Type[Command], Callable] = {
     ImportWorld: import_world,
     RequestWorldCreationFromTemplate: request_world_creation_from_template,
     RequestWorldImport: request_world_import,
+    CreateTemplate: create_template,
 }

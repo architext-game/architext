@@ -116,6 +116,31 @@ export interface GetWorldsResponse {
     error: string | null;
 }
 
+export interface GetWorldTemplatesParams {
+}
+
+export interface GetWorldTemplatesResponse {
+    success: boolean;
+    data: {
+        templates: WorldTemplateListItem[];
+    } | null;
+    error: string | null;
+}
+
+export interface GetMeParams {
+}
+
+export interface GetMeResponse {
+    success: boolean;
+    data: {
+        name: string;
+        email: string;
+        current_world_id: string | null;
+        id: string;
+    } | null;
+    error: string | null;
+}
+
 export interface EnterWorldParams {
     world_id: string;
 }
@@ -140,6 +165,49 @@ export interface CreateWorldResponse {
     error: string | null;
 }
 
+export interface CreateTemplateParams {
+    name: string;
+    description: string;
+    base_world_id: string;
+}
+
+export interface CreateTemplateResponse {
+    success: boolean;
+    data: {
+        template_id: string;
+    } | null;
+    error: string | null;
+}
+
+export interface RequestWorldImportParams {
+    name: string;
+    description: string;
+    format: 'plain' | 'encoded';
+    text_representation: string;
+}
+
+export interface RequestWorldImportResponse {
+    success: boolean;
+    data: {
+        future_world_id: string;
+    } | null;
+    error: string | null;
+}
+
+export interface RequestWorldCreationFromTemplateParams {
+    name: string;
+    description: string;
+    template_id: string;
+}
+
+export interface RequestWorldCreationFromTemplateResponse {
+    success: boolean;
+    data: {
+        future_world_id: string;
+    } | null;
+    error: string | null;
+}
+
 export interface OtherLeftRoomNotification {
     user_name: string;
 }
@@ -157,6 +225,18 @@ export interface Message {
         asksForPassword: boolean;
     };
 }
+
+export interface WorldCreatedNotification {
+    world_id: string;
+}
+
+export interface WorldTemplateListItem {
+    id: string;
+    name: string;
+    description: string;
+    owner: string | null;
+}
+
 export async function login(
     socket: Socket,
     params: LoginParams
@@ -245,6 +325,28 @@ export async function getWorlds(
     });
 }
 
+export async function getWorldTemplates(
+    socket: Socket,
+    params: GetWorldTemplatesParams
+): Promise<GetWorldTemplatesResponse> {
+    return new Promise((resolve, reject) => {
+        socket.emit("get_world_templates", params, (response: GetWorldTemplatesResponse) => {
+            resolve(response)
+        });
+    });
+}
+
+export async function getMe(
+    socket: Socket,
+    params: GetMeParams
+): Promise<GetMeResponse> {
+    return new Promise((resolve, reject) => {
+        socket.emit("get_me", params, (response: GetMeResponse) => {
+            resolve(response)
+        });
+    });
+}
+
 export async function enterWorld(
     socket: Socket,
     params: EnterWorldParams
@@ -262,6 +364,39 @@ export async function createWorld(
 ): Promise<CreateWorldResponse> {
     return new Promise((resolve, reject) => {
         socket.emit("create_world", params, (response: CreateWorldResponse) => {
+            resolve(response)
+        });
+    });
+}
+
+export async function createTemplate(
+    socket: Socket,
+    params: CreateTemplateParams
+): Promise<CreateTemplateResponse> {
+    return new Promise((resolve, reject) => {
+        socket.emit("create_template", params, (response: CreateTemplateResponse) => {
+            resolve(response)
+        });
+    });
+}
+
+export async function requestWorldImport(
+    socket: Socket,
+    params: RequestWorldImportParams
+): Promise<RequestWorldImportResponse> {
+    return new Promise((resolve, reject) => {
+        socket.emit("request_world_import", params, (response: RequestWorldImportResponse) => {
+            resolve(response)
+        });
+    });
+}
+
+export async function requestWorldCreationFromTemplate(
+    socket: Socket,
+    params: RequestWorldCreationFromTemplateParams
+): Promise<RequestWorldCreationFromTemplateResponse> {
+    return new Promise((resolve, reject) => {
+        socket.emit("request_world_creation_from_template", params, (response: RequestWorldCreationFromTemplateResponse) => {
             resolve(response)
         });
     });
@@ -286,5 +421,12 @@ export function onChatbotServerMessage(
     callback: (event: Message) => void
 ): void {
     socket.on('chatbot_server_message', callback)
+}
+
+export function onWorldCreated(
+    socket: Socket,
+    callback: (event: WorldCreatedNotification) => void
+): void {
+    socket.on('world_created', callback)
 }
 

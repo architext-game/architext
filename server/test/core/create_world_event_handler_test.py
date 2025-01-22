@@ -6,6 +6,7 @@ from architext.core.domain.events import WorldCreated, WorldCreationRequested
 import pytest # type: ignore
 from architext.core import Architext
 from architext.core.handlers.import_world import import_world
+import uuid
 
 ENCODED_TEMPLATE = """eJx9kcFOwzAMhl/F9MKl4gG4TRxB4jCkCaFpilp3tZbEVZxOG9Penbi0tIPSS6LE9v/5ty8ZB9qTN3bnjcPsEbLXNmKADdlSshzGeIlSBGoisde0F4z3AnhqLAeEWCO0no4YBO+0jDxFSlWB2e2o1ApWYX1rXG9Jvx+XbCY69LJuTIH68Qv+zi2YhK0sm0h+D+S7Fo5GokcR4OqmpRyMZY8PKoUnij15wLxxly1Kk5qaGeKmNhEMeCoQVKFPSXCjKVOfo8x1e81hMHijPpBX8MSfZ1gvkFdQ/EmZ9/BMsajRz2p0jYtDa5OcQ4EqsFPXAResHHrFzsaE9N9e+kEWbMvvA10Tz7qRBci4+Zt5HUY3A3nJoOMSg4dJ1c+Qtkn3C67G+X8="""
 
@@ -24,12 +25,15 @@ def architext() -> Architext:
 
 
 def test_world_creation_requested_event_handler(architext: Architext):
+    world_id = str(uuid.uuid4())
+
     out = import_world(architext._uow, WorldCreationRequested(
         text_representation=ENCODED_TEMPLATE,
         format='encoded',
         user_id="oliver",
         world_description="Nice world",
-        world_name="new world"
+        world_name="new world",
+        future_world_id=world_id
     ))
     world = architext._uow.worlds.list_worlds()[0]
     assert world.name == "new world"
@@ -38,12 +42,15 @@ def test_world_creation_requested_event_handler(architext: Architext):
 
 
 def test_world_created_event_is_published(architext: Architext):
+    world_id = str(uuid.uuid4())
+
     out = import_world(architext._uow, WorldCreationRequested(
         text_representation=ENCODED_TEMPLATE,
         format='encoded',
         user_id="oliver",
         world_description="Nice world",
-        world_name="new world"
+        world_name="new world",
+        future_world_id=world_id
     ))
 
     uow = cast(FakeUnitOfWork, architext._uow)
@@ -56,5 +63,6 @@ def test_world_created_event_is_published(architext: Architext):
     assert world is not None
     assert world.name == "new world"
     assert world.owner_user_id == "oliver"
+    assert world.id == world_id
     rooms = uow.rooms.list_rooms_by_world(world_id)
     assert len(rooms) == 3

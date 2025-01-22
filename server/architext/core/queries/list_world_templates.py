@@ -3,7 +3,7 @@ from architext.core.queries.base import Query, QueryHandler, UOWQueryHandler
 from typing import Optional, List
 
 @dataclass
-class TemplateListItem:
+class WorldTemplateListItem:
     id: str
     name: str
     description: str
@@ -11,7 +11,7 @@ class TemplateListItem:
 
 @dataclass
 class ListWorldTemplatesResult:
-    templates: List[TemplateListItem]
+    templates: List[WorldTemplateListItem]
 
 class ListWorldTemplates(Query[ListWorldTemplatesResult]):
     pass
@@ -21,7 +21,7 @@ class ListWorldTemplatesQueryHandler(QueryHandler[ListWorldTemplates, ListWorldT
 
 class UOWListWorldTemplatesQueryHandler(UOWQueryHandler, ListWorldTemplatesQueryHandler):
     def query(self, query: ListWorldTemplates, client_user_id: str) -> ListWorldTemplatesResult:
-        return ListWorldTemplatesResult(templates=[TemplateListItem(
+        return ListWorldTemplatesResult(templates=[WorldTemplateListItem(
             id=template.id,
             description=template.description,
             name=template.name,

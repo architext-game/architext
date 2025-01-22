@@ -4,8 +4,10 @@ import { useState, useEffect, useRef, use } from 'react'
 import classNames from 'classnames'
 import { Message } from './Message';
 import _ from 'lodash';
-import { onChatbotServerMessage, chatbotMessage, Message as ReceivedMessage, authenticate, enterWorld } from '@/architextSDK';
+import { onChatbotServerMessage, chatbotMessage, Message as ReceivedMessage, authenticate, enterWorld, onWorldCreated, getMe } from '@/architextSDK';
 import { useStore } from '@/state';
+import { Lexend_Peta } from 'next/font/google';
+import { useRouter } from 'next/navigation';
 
 interface Message {
   text: string,
@@ -87,10 +89,11 @@ function box(text: string, maxWidth: number): string {
   return result;
 }
 
-function App({ params }: { params: Promise<{ world_id: string }> }) {
-  const worldId = use(params).world_id
-  console.log(`world id is ${worldId}`)
-
+function App({ params, searchParams }: { 
+  params: Promise<{ world_id: string }>,
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+  const [worldId, setWorldId] = useState<string>(use(params).world_id)
   const socket = useStore((state) => state.socket)
   const [messages, setMessages] = useState<Message[]>([])
   const [inputValue, setInputValue] = useState('')
@@ -107,10 +110,53 @@ function App({ params }: { params: Promise<{ world_id: string }> }) {
   const characterMeasureRef = useRef<HTMLDivElement>(null)
   const textInputContainerRef = useRef<HTMLDivElement>(null)
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
+  const router = useRouter()
+  const worldIsNew = use(searchParams).future;  // so it may not exist yet
+  console.log("worldIsNew", worldIsNew)
+  console.log(`world id is ${worldId}`)
+  const shouldEnterWorld = useRef(true);
+
+  // TODO: This has not been really tested for cases when the world
+  // does not yet exist.
+  async function eventuallyEnterWorld(eventualWorlId: string){
+    const current_world_id = (await getMe(socket, {})).data?.current_world_id
+    console.log("Current world id is", current_world_id)
+    if(current_world_id == eventualWorlId){
+      return
+    }
+    // Enter a world taking into account that it may not exist yet.
+    const enterWorldResponse = await enterWorld(socket, { world_id: eventualWorlId })
+    console.log(enterWorldResponse)
+    if(!enterWorldResponse.success){
+      if(worldIsNew){
+        console.log("World is new, waiting for creation...")
+        addServerMessage({ text: 'Your world is being created... please wait.', options: { asksForPassword: false, display: "wrap", fillInput: null, section: false } })
+        onWorldCreated(socket, async ({ world_id }) => {
+          console.log("OnWorldCreated event received, world_id is", world_id)
+          if(world_id == eventualWorlId){
+            const response = await enterWorld(socket, { world_id: worldId })
+            if(!response.success){
+              addServerMessage({ text: 'There was an error entering the world.', options: { asksForPassword: false, display: "wrap", fillInput: null, section: false } })
+            } else {
+              addServerMessage({ text: 'Your new world is ready!', options: { asksForPassword: false, display: "wrap", fillInput: null, section: false } })
+            }
+            socket.removeAllListeners('world_created')
+          }
+        })
+      } else {
+        addServerMessage({ text: 'There was an error entering the world.', options: { asksForPassword: false, display: "wrap", fillInput: null, section: false } })
+      }
+    } else {
+      addServerMessage({ text: 'You are in the world you want to be.', options: { asksForPassword: false, display: "wrap", fillInput: null, section: false } })
+    }
+  }
 
   useEffect(() => {
-    enterWorld(socket, { world_id: worldId })
-  }, [worldId])
+    if(shouldEnterWorld.current == true){
+      shouldEnterWorld.current = false
+      eventuallyEnterWorld(worldId)
+    }
+  }, [socket, worldId, worldIsNew])
 
   const updateCharWidth = () => {
     if(messageListRef.current && characterMeasureRef.current){
