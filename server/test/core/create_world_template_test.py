@@ -8,7 +8,7 @@ import pytest # type: ignore
 from architext.core.domain.entities.room import Room
 from architext.core import Architext
 
-from .shared import createTestData
+from test.fixtures import createTestData
 
 
 @pytest.fixture

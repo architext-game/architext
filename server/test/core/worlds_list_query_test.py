@@ -6,49 +6,24 @@ import pytest # type: ignore
 from architext.core.domain.entities.room import Room
 from architext.core import Architext
 
+from test.fixtures import createTestData
+
 
 @pytest.fixture
 def architext() -> Architext:
-    uow = FakeUnitOfWork()
-    architext = Architext(uow)
-    architext.handle(CreateInitialData())
-    rabbithole_world = World(
-        id="rabbithole",
-        name="Down The Rabbit Hole",
-        description="A magical place.",
-        initial_room_id="rabbitholeroom",
-        owner_user_id=None
-    )
-    rabbithole_room = Room(
-        id="rabbitholeroom",
-        name="A really big room",
-        description="It seems you drank something that made you small.",
-        world_id="rabbithole"
-    )
-    outer_world = World(
-        id="outer",
-        name="Outer Wilds",
-        description="Let's explore the universe!",
-        initial_room_id="outerroom",
-        owner_user_id=None
-    )
-    outer_room = Room(
-        id="outerroom",
-        name="Space",
-        description="You are floating in the vastness of the universe, alone.",
-        world_id="outer"
-    )
-    uow.worlds.save_world(rabbithole_world)
-    uow.worlds.save_world(outer_world)
-    uow.rooms.save_room(rabbithole_room)
-    uow.rooms.save_room(outer_room)
-    return Architext(uow)
-
+    return createTestData()
 
 def test_list_worlds(architext: Architext):
-    out = architext.query(ListWorlds())
+    out = architext.query(ListWorlds(), client_user_id="oliver")
     print(out)
     assert len(out.worlds) == 3
+    # A public world I don't own should be on the list
+    assert next((world for world in out.worlds if world.id == "tabern"), None) is not None
+    # A private world I own should be on the list
+    assert next((world for world in out.worlds if world.id == "oliver_place"), None) is not None
+    # A private world I don't own should not be on the list
+    assert next((world for world in out.worlds if world.id == "rabbithole"), None) is None
+    # A public world I own should be on the list
     outer = next((world for world in out.worlds if world.id == "outer"), None)
     assert outer is not None
     assert outer.id == "outer"

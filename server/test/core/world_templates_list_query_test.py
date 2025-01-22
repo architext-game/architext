@@ -7,36 +7,28 @@ from architext.core.queries.list_worlds import ListWorlds
 import pytest # type: ignore
 from architext.core.domain.entities.room import Room
 from architext.core import Architext
+from test.fixtures import createTestData
+import pprint
 
 
 @pytest.fixture
 def architext() -> Architext:
-    uow = FakeUnitOfWork()
-    architext = Architext(uow)
-    rabbithole_world = WorldTemplate(
-        id="rabbithole",
-        name="Down The Rabbit Hole",
-        description="A magical place.",
-        author_id=None,
-        world_encoded_json="asdasd"
-    )
-    outer_world = WorldTemplate(
-        id="outer",
-        name="Outer Wilds",
-        description="Let's explore the universe!",
-        author_id=None,
-        world_encoded_json="asdasd"
-    )
-    uow.world_templates.save_world_template(rabbithole_world)
-    uow.world_templates.save_world_template(outer_world)
-    return Architext(uow)
+    return createTestData()
 
 
 def test_list_world_templates(architext: Architext):
-    out = architext.query(ListWorldTemplates())
-    print(out)
-    assert len(out.templates) == 2
-    outer = next((world for world in out.templates if world.id == "outer"), None)
-    assert outer is not None
-    assert outer.id == "outer"
-    assert outer.description == "Let's explore the universe!"
+    out = architext.query(ListWorldTemplates(), "oliver")
+    pprint.pprint(out.templates)
+    assert len(out.templates) == 3
+
+    # A public template I don't own should be on the list
+    assert next((world for world in out.templates if world.id == "emptytemplate"), None) is not None
+    # A public template I own should be on the list
+    assert next((world for world in out.templates if world.id == "braggingtemplate"), None) is not None
+    # A private template I don't own should not be on the list
+    assert next((world for world in out.templates if world.id == "rabbittemplate"), None) is None
+    # A private template I own should be on the list
+    templateforme = next((world for world in out.templates if world.id == "templateforme"), None)
+    assert templateforme is not None
+    assert templateforme.id == "templateforme"
+    assert templateforme.description == "For the new worlds I create"

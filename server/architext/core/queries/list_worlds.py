@@ -26,4 +26,5 @@ class UOWListWorldsQueryHandler(UOWQueryHandler, ListWorldsQueryHandler):
             description=world.description,
             name=world.name,
             owner=world.owner_user_id
-        ) for world in self._uow.worlds.list_worlds()])
+        ) for world in self._uow.worlds.list_worlds()
+        if world.visibility == "public" or world.owner_user_id == client_user_id])

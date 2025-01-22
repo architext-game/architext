@@ -3,6 +3,7 @@ from architext.core.commands import CreateInitialData, ImportWorld
 from architext.core.domain.entities.exit import Exit
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.world import World
+from architext.core.domain.entities.world_template import WorldTemplate
 from architext.core.queries.world_to_text import WorldToText
 import pytest # type: ignore
 from architext.core.domain.entities.room import Room
@@ -11,7 +12,39 @@ from architext.core import Architext
 def createTestData() -> Architext:
     uow = FakeUnitOfWork()
     architext = Architext(uow)
-    architext.handle(CreateInitialData())
+
+    emptytemplate = WorldTemplate(
+        id="emptytemplate",
+        name="New World",
+        description="An Empty World",
+        author_id=None,
+        world_encoded_json="asdasd",
+        visibility="public"
+    )
+    templateforme = WorldTemplate(
+        id="templateforme",
+        name="A template only for me",
+        description="For the new worlds I create",
+        author_id="oliver",
+        world_encoded_json="asdasd",
+        visibility="private"
+    )
+    braggingtemplate = WorldTemplate(
+        id="braggingtemplate",
+        name="A template everyone should see",
+        description="To brag about",
+        author_id="oliver",
+        world_encoded_json="asdasd",
+        visibility="public"
+    )
+    rabbittemplate = WorldTemplate(
+        id="rabbittemplate",
+        name="Misterious Template",
+        description="This is so misterious",
+        author_id="rabbit",
+        world_encoded_json="asdasd",
+        visibility="private"
+    )
 
     rabbithole_world = World(
         id="rabbithole",
@@ -27,12 +60,28 @@ def createTestData() -> Architext:
         world_id="rabbithole"
     )
 
+    public_tabern = World(
+        id="tabern",
+        name="Public tabern",
+        description="A public tabern",
+        initial_room_id="tabern_table",
+        owner_user_id=None,
+        visibility="public"
+    )
+    a_table_in_the_tabern = Room(
+        id="tabern_table",
+        name="A table in the tabern",
+        description="It is somewhat dirty",
+        world_id="tabern"
+    )
+
     outer_world = World(
         id="outer",
         name="Outer Wilds",
         description="Let's explore the universe!",
         initial_room_id="outerroom",
-        owner_user_id="oliver"
+        owner_user_id="oliver",
+        visibility="public"
     )
     space = Room(
         id="space",
@@ -89,6 +138,21 @@ def createTestData() -> Architext:
         world_id="outer"
     )
 
+    oliver_place = World(
+        id="oliver_place",
+        name="The private oliver's world",
+        description="Only Oliver comes here",
+        initial_room_id="solitude",
+        owner_user_id=None,
+        visibility="public"
+    )
+    solitude = Room(
+        id="solitude",
+        name="Solitude",
+        description="Where only one person fits",
+        world_id="oliver_place"
+    )
+
     oliver = User(
         id="oliver",
         name="Oliver",
@@ -124,14 +188,22 @@ def createTestData() -> Architext:
         room_id="rabbitholeroom",
         password_hash=b"asdasd"
     )
+    uow.world_templates.save_world_template(emptytemplate)
+    uow.world_templates.save_world_template(templateforme)
+    uow.world_templates.save_world_template(braggingtemplate)
+    uow.world_templates.save_world_template(rabbittemplate)
     uow.worlds.save_world(rabbithole_world)
     uow.worlds.save_world(outer_world)
+    uow.worlds.save_world(public_tabern)
+    uow.worlds.save_world(oliver_place)
     uow.rooms.save_room(rabbithole_room)
     uow.rooms.save_room(space)
     uow.rooms.save_room(spaceship)
     uow.rooms.save_room(olivers)
     uow.rooms.save_room(alices)
     uow.rooms.save_room(bobs)
+    uow.rooms.save_room(a_table_in_the_tabern)
+    uow.rooms.save_room(solitude)
     uow.users.save_user(oliver)
     uow.users.save_user(alice)
     uow.users.save_user(bob)

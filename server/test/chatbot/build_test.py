@@ -11,7 +11,7 @@ import pytest # type: ignore
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.room import Room
 
-from ..core.shared import createTestData
+from test.fixtures import createTestData
 
 
 @pytest.fixture

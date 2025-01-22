@@ -11,7 +11,7 @@ from architext.core.domain.entities.room import Room
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.world import DEFAULT_WORLD, World
 
-from .shared import createTestData
+from test.fixtures import createTestData
 
 @pytest.fixture
 def architext() -> Architext:

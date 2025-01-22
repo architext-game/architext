@@ -26,4 +26,5 @@ class UOWListWorldTemplatesQueryHandler(UOWQueryHandler, ListWorldTemplatesQuery
             description=template.description,
             name=template.name,
             owner=template.author_id
-        ) for template in self._uow.world_templates.list_world_templates()])
+        ) for template in self._uow.world_templates.list_world_templates()
+        if template.visibility == "public" or template.author_id == client_user_id])

@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Literal, Optional
 from dataclasses import dataclass, field
 from architext.core.domain.entities.exit import Exit
 
@@ -9,6 +9,7 @@ class World:
     initial_room_id: str
     owner_user_id: Optional[str]  # null if it is a predefined world
     description: str = field(default="")
+    visibility: Literal["public", "private"] = field(default="private")
 
 
 DEFAULT_WORLD = World(
