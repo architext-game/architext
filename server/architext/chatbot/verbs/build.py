@@ -44,6 +44,10 @@ class Build(verb.Verb):
 
     def process_first_message(self, message: str):
         result = self.architext.handle(GetCurrentRoom(), self.session.user_id)
+        if not self.architext.authorization.isUserAuthorizedInCurrentWorld(self.session.user_id):
+            self.session.sender.send(self.session.user_id, _("You can't build in a world you don't own."))
+            self.finish_interaction()
+            return
         if result.current_room is None:
             self.session.sender.send(self.session.user_id, _("You need to be in a room to be able to build!"))
             self.finish_interaction()

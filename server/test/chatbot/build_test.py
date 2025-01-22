@@ -1,3 +1,4 @@
+from typing import Callable
 from architext.chatbot.adapters.fake_sender import FakeSender
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
@@ -10,23 +11,25 @@ import pytest # type: ignore
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.room import Room
 
+from ..core.shared import createTestData
+
 
 @pytest.fixture
-def session() -> Session:
-    uow = FakeUnitOfWork()
-    MessageBus().handle(uow, CreateInitialData())
-    uow.rooms.save_room(Room(id="kitchen", name="The Kitchen", description="A beautiful kitchen.", exits=[], world_id=DEFAULT_WORLD.id))
-    uow.users.save_user(User(name="Oliver", email="asds@asdsa.com", id="0", room_id="kitchen", password_hash=b"adasd"))
-    uow.committed = False
+def session_factory() -> Callable[[str], Session]:
+    def factory(user_id: str):
+        return Session(architext=createTestData(), sender=FakeSender(), logger=StdOutLogger(), user_id=user_id) 
+    return factory
 
-    return Session(architext=Architext(uow=uow), sender=FakeSender(), logger=StdOutLogger(), user_id="0") 
+def test_build(session_factory: Callable[[str], Session]):
+    session = session_factory("oliver")
 
-def test_build(session: Session):
     session.process_message("build")
     session.process_message("Living Room")
     session.process_message("A cozy living room")
     session.process_message("Door to living room")
     session.process_message("Door to kitchen")
+    session.process_message("adadasdas")
+
     assert isinstance(session.sender, FakeSender)
     sender: FakeSender = session.sender
 
@@ -34,11 +37,26 @@ def test_build(session: Session):
     print(sent_text)
 
     uow = session.architext._uow
-    new_room = uow.rooms.list_rooms()[2]
-    old_room = uow.rooms.get_room_by_id("kitchen")
+    new_room = next((room for room in uow.rooms.list_rooms() if room.name == "Living Room"), None)
+    old_room = uow.rooms.get_room_by_id("olivers")
     assert new_room is not None
     assert old_room is not None
     assert new_room.name == "Living Room"
     assert new_room.description == "A cozy living room"
     assert next(exit for exit in new_room.exits if exit.name == "Door to kitchen").destination_room_id == old_room.id
     assert next(exit for exit in old_room.exits if exit.name == "Door to living room").destination_room_id == new_room.id
+    assert "I don't understand that." in sent_text  # check if "adadasdas" was processed as a new command
+
+
+def test_build_by_unauthorized_user(session_factory: Callable[[str], Session]):
+    session = session_factory("alice")
+
+    session.process_message("build")
+    session.process_message("afafdadsdfa")
+    assert isinstance(session.sender, FakeSender)
+    sender: FakeSender = session.sender
+
+    sent_text = '\n'.join([message.text for message in sender._sent])
+    print(sent_text)
+    assert "You can't build in a world you don't own." in sent_text
+    assert "I don't understand that." in sent_text

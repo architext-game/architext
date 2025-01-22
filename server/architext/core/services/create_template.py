@@ -5,9 +5,14 @@ from uuid import uuid4
 
 from architext.core.queries.world_to_text import WorldToText
 
+from ..authorization import isUserAuthorizedInWorld
+
 
 def create_template(uow: UnitOfWork, command: CreateTemplate, client_user_id: str) -> CreateTemplateResult:
     with uow:
+        if not isUserAuthorizedInWorld(uow, client_user_id, command.base_world_id):
+            raise PermissionError("User is not authorized to create a template from that world.")
+        
         user = uow.users.get_user_by_id(client_user_id)
         assert user is not None
         

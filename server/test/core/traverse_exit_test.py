@@ -32,95 +32,89 @@ def architext() -> Architext:
         exits=[],
         world_id=DEFAULT_WORLD.id
     )
-    user1 = User(
-        id="in_room",
-        name="UserInRoom",
-        email="john@example.com",
+    alice = User(
+        id="alice",
+        name="Alice",
+        email="alice@example.com",
         room_id="room1",
         password_hash=b"asdasd"
     )
-    user2 = User(
-        id="not_in_room",
-        name="UserNotInRoom",
-        email="alice@example.com",
+    bob = User(
+        id="bob",
+        name="Bob",
+        email="bob@example.com",
         room_id=None,
+        password_hash=b"asdasd"
+    )
+    charlie = User(
+        id="charlie",
+        name="Charle",
+        email="charlie@example.com",
+        room_id="room1",
+        password_hash=b"asdasd"
+    )
+    dave = User(
+        id="dave",
+        name="Dave",
+        email="dave@example.com",
+        room_id="room2",
         password_hash=b"asdasd"
     )
     uow.rooms.save_room(room1)
     uow.rooms.save_room(room2)
-    uow.users.save_user(user1)
-    uow.users.save_user(user2)
+    uow.users.save_user(alice)
+    uow.users.save_user(bob)
+    uow.users.save_user(charlie)
+    uow.users.save_user(dave)
     return Architext(uow)
 
 
 def test_traverse_exit_success(architext: Architext):
-    out: TraverseExitResult = architext.handle(TraverseExit(exit_name="To Kitchen"), client_user_id="in_room")
+    out: TraverseExitResult = architext.handle(TraverseExit(exit_name="To Kitchen"), client_user_id="alice")
 
     assert out.new_room_id == "room2"
-    user = architext._uow.users.get_user_by_id("in_room")
+    user = architext._uow.users.get_user_by_id("alice")
     assert user is not None
     assert user.room_id == "room2" 
 
 
 def test_traverse_exit_user_not_in_room(architext: Architext):
     with pytest.raises(ValueError, match="User is not in a room."):
-        architext.handle(TraverseExit(exit_name="To Kitchen"), client_user_id="not_in_room")
+        architext.handle(TraverseExit(exit_name="To Kitchen"), client_user_id="bob")
 
 
 def test_traverse_exit_invalid_exit_name(architext: Architext):
     with pytest.raises(ValueError, match="An exit with that name was not found in the room."):
-        architext.handle(TraverseExit(exit_name="Invalid Exit"), client_user_id="in_room")
+        architext.handle(TraverseExit(exit_name="Invalid Exit"), client_user_id="alice")
 
 
 def test_user_changed_room_event_gets_invoked(architext: Architext):
     spy = Mock()
     def handler(uow: FakeUnitOfWork, event: UserChangedRoom):
-        assert event.user_id is "in_room"
+        assert event.user_id is "alice"
         assert event.room_entered is "room2"
         assert event.room_left is "room1"
         assert event.exit_used is "To Kitchen"
         spy()
     handlers = {UserChangedRoom: [handler]}
     architext._messagebus = MessageBus(event_handlers=handlers)
-    architext.handle(TraverseExit(exit_name="To Kitchen"), client_user_id="in_room")
+    architext.handle(TraverseExit(exit_name="To Kitchen"), client_user_id="alice")
     assert spy.called
 
 
 def test_users_get_notified_if_other_enters_or_leaves_room(architext: Architext) -> None:
-    architext.handle(CreateInitialData())
-    user_a = architext.handle(CreateUser(
-        email='test@test.com',
-        name='testerA',
-        password='asdasd'
-    ))
-    user_b = architext.handle(CreateUser(
-        email='test@test.com',
-        name='testerB',
-        password='asdasd'
-    ))
-    room = architext.handle(
-        command=CreateConnectedRoom(
-            name='rrom',
-            description='descripdsdas',
-            exit_to_new_room_name='go',
-            exit_to_new_room_description='hehe',
-            exit_to_old_room_name='return',
-            exit_to_old_room_description='hoho'
-        ),
-        client_user_id=user_a.user_id
-    )
     architext.handle(
         command=TraverseExit(
-            exit_name='go'
+            exit_name='To Kitchen'
         ),
-        client_user_id=user_a.user_id
+        client_user_id="alice"
     )
     notificator = cast(FakeNotificator, architext._uow.notifications)
-    assert user_b.user_id in notificator.notifications
-    userb_notifications = notificator.notifications.get(user_b.user_id, None)
-    assert userb_notifications is not None
-    assert len(userb_notifications) == 1
-    userb_noti = userb_notifications[0]
+    assert "charlie" in notificator.notifications
+    charlie_notifications = notificator.notifications.get("charlie", None)
+    assert charlie_notifications is not None
+    assert len(charlie_notifications) == 1
+    userb_noti = charlie_notifications[0]
     assert userb_noti.event == 'other_left_room'
-    assert userb_noti.data["user_name"] == 'testerA'
+    assert userb_noti.data["user_name"] == 'Alice'
 

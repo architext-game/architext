@@ -1,3 +1,5 @@
+from typing import cast
+from architext.core.facade import Architext
 import pytest # type: ignore
 from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.messagebus import MessageBus
@@ -7,22 +9,15 @@ from architext.core.commands import CreateConnectedRoom
 
 from architext.core.domain.entities.room import Room
 from architext.core.domain.entities.user import User
-from architext.core.domain.entities.world import DEFAULT_WORLD
+from architext.core.domain.entities.world import DEFAULT_WORLD, World
+
+from .shared import createTestData
 
 @pytest.fixture
-def uow() -> FakeUnitOfWork:
-    uow = FakeUnitOfWork()
-    MessageBus().handle(uow, CreateInitialData())
-    uow.rooms.save_room(Room(id="kitchen", name="The Kitchen", description="A beautiful kitchen.", exits=[], world_id=DEFAULT_WORLD.id))
-    uow.users.save_user(User(name="Oliver", email="asds@asdsa.com", id="0", room_id="kitchen", password_hash=b"adasd"))
-    uow.committed = False
-    return uow
+def architext() -> Architext:
+    return createTestData()
 
-@pytest.fixture
-def message_bus() -> MessageBus:
-    return MessageBus() 
-
-def test_create_connected_room_success(uow: FakeUnitOfWork, message_bus: MessageBus):
+def test_create_connected_room_success(architext: Architext):
     command = CreateConnectedRoom(
         name="Living Room",
         description="A cozy living room",
@@ -31,10 +26,11 @@ def test_create_connected_room_success(uow: FakeUnitOfWork, message_bus: Message
         exit_to_old_room_name="Door to kitchen",
         exit_to_old_room_description="A door leading to the kitchen"
     )
-    out: CreateConnectedRoomResult = message_bus.handle(uow, command, client_user_id="0")
+    out: CreateConnectedRoomResult = architext.handle(command, client_user_id="oliver")
 
+    uow = cast(FakeUnitOfWork, architext._uow)
     new_room = uow.rooms.get_room_by_id(out.room_id)
-    old_room = uow.rooms.get_room_by_id("kitchen")
+    old_room = uow.rooms.get_room_by_id("olivers")
     assert uow.committed
     assert new_room is not None
     assert old_room is not None
@@ -42,6 +38,19 @@ def test_create_connected_room_success(uow: FakeUnitOfWork, message_bus: Message
     assert new_room.description == "A cozy living room"
     assert next(exit for exit in new_room.exits if exit.name == "Door to kitchen").description == "A door leading to the kitchen"
     assert next(exit for exit in old_room.exits if exit.name == "Door to living room").description == "A door leading to the living room"
+
+
+def test_unauthorized_user_fails(architext: Architext):
+    command = CreateConnectedRoom(
+        name="Living Room",
+        description="A cozy living room",
+        exit_to_new_room_name="Door to living room",
+        exit_to_new_room_description="A door leading to the living room",
+        exit_to_old_room_name="Door to kitchen",
+        exit_to_old_room_description="A door leading to the kitchen"
+    )
+    with pytest.raises(PermissionError):
+        architext.handle(command, client_user_id="alice")
 
 
 @pytest.mark.skip(reason="to do")
