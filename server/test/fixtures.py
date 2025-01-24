@@ -147,12 +147,27 @@ def createTestData() -> Architext:
         world_id="oliver_place"
     )
 
+    easteregg_world = World(
+        id="easteregg",
+        name="Easter Egg",
+        description="Only the best find this world",
+        initial_room_id="easteregg_room",
+        owner_user_id=None
+    )
+    easteregg_room = Room(
+        id="easteregg_room",
+        name="CONGRATS!",
+        description="You found the easter egg :D",
+        world_id="easteregg"
+    )
+
     oliver = User(
         id="oliver",
         name="Oliver",
         email="oliver@example.com",
         room_id="olivers",
-        password_hash=b"asdasd"
+        password_hash=b"asdasd",
+        visited_world_ids={easteregg_world.id}
     )
     alice = User(
         id="alice",
@@ -191,6 +206,7 @@ def createTestData() -> Architext:
     uow.worlds.save_world(outer_world)
     uow.worlds.save_world(public_tabern)
     uow.worlds.save_world(oliver_place)
+    uow.worlds.save_world(easteregg_world)
     uow.rooms.save_room(rabbithole_room)
     uow.rooms.save_room(space)
     uow.rooms.save_room(spaceship)
@@ -199,6 +215,7 @@ def createTestData() -> Architext:
     uow.rooms.save_room(bobs)
     uow.rooms.save_room(a_table_in_the_tabern)
     uow.rooms.save_room(solitude)
+    uow.rooms.save_room(easteregg_room)
     uow.users.save_user(oliver)
     uow.users.save_user(alice)
     uow.users.save_user(bob)

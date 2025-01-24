@@ -16,15 +16,18 @@ def architext() -> Architext:
 def test_list_worlds(architext: Architext):
     out = architext.query(ListWorlds(), client_user_id="oliver")
     print(out)
-    assert len(out.worlds) == 3
+    assert len(out.worlds) == 4
     # A public world I don't own should be on the list
     assert next((world for world in out.worlds if world.id == "tabern"), None) is not None
     # A private world I own should be on the list
     assert next((world for world in out.worlds if world.id == "oliver_place"), None) is not None
     # A private world I don't own should not be on the list
     assert next((world for world in out.worlds if world.id == "rabbithole"), None) is None
+    # A private world I don't know but I've visited should be on the list
+    assert next((world for world in out.worlds if world.id == "easteregg"), None) is not None
     # A public world I own should be on the list
     outer = next((world for world in out.worlds if world.id == "outer"), None)
+    # A public world I own should be on the list
     assert outer is not None
     assert outer.id == "outer"
     assert outer.description == "Let's explore the universe!"

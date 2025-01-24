@@ -1,5 +1,5 @@
-from typing import List, Optional
-from dataclasses import dataclass
+from typing import List, Optional, Set
+from dataclasses import dataclass, field
 import hashlib
 
 @dataclass
@@ -9,6 +9,7 @@ class User:
     password_hash: bytes
     room_id: Optional[str] = None
     email: Optional[str] = None
+    visited_world_ids: Set[str] = field(default_factory=set)
 
     def _hash_password(self, password: str) -> bytes:
         """Hashes a password using SHA-256."""

@@ -20,6 +20,7 @@ def enter_world(uow: UnitOfWork, command: EnterWorld, client_user_id: str) -> En
 
         previous_room_id = user.room_id
         user.room_id = initial_room.id
+        user.visited_world_ids.add(world.id)
         uow.users.save_user(user)
 
         uow.publish_events([UserChangedRoom(user_id=user.id, room_entered=initial_room.id, room_left=previous_room_id)])
