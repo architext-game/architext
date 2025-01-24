@@ -1,24 +1,18 @@
 from architext.core.adapters.fake_uow import FakeUnitOfWork
-from architext.core.commands import CreateInitialData, ImportWorld
 from architext.core.domain.entities.exit import Exit
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.world import World
 from architext.core.domain.entities.world_template import WorldTemplate
-from architext.core.queries.world_to_text import WorldToText
-import pytest # type: ignore
 from architext.core.domain.entities.room import Room
 from architext.core import Architext
 
 def createTestData() -> Architext:
-    uow = FakeUnitOfWork()
-    architext = Architext(uow)
-
     emptytemplate = WorldTemplate(
         id="emptytemplate",
         name="New World",
         description="An Empty World",
         author_id=None,
-        world_encoded_json="asdasd",
+        world_encoded_json="""eJx9kcFOwzAMhl/F9MKl4gG4TRxB4jCkCaFpilp3tZbEVZxOG9Penbi0tIPSS6LE9v/5ty8ZB9qTN3bnjcPsEbLXNmKADdlSshzGeIlSBGoisde0F4z3AnhqLAeEWCO0no4YBO+0jDxFSlWB2e2o1ApWYX1rXG9Jvx+XbCY69LJuTIH68Qv+zi2YhK0sm0h+D+S7Fo5GokcR4OqmpRyMZY8PKoUnij15wLxxly1Kk5qaGeKmNhEMeCoQVKFPSXCjKVOfo8x1e81hMHijPpBX8MSfZ1gvkFdQ/EmZ9/BMsajRz2p0jYtDa5OcQ4EqsFPXAResHHrFzsaE9N9e+kEWbMvvA10Tz7qRBci4+Zt5HUY3A3nJoOMSg4dJ1c+Qtkn3C67G+X8=""",
         visibility="public"
     )
     templateforme = WorldTemplate(
@@ -26,7 +20,7 @@ def createTestData() -> Architext:
         name="A template only for me",
         description="For the new worlds I create",
         author_id="oliver",
-        world_encoded_json="asdasd",
+        world_encoded_json="""eJx9kcFOwzAMhl/F9MKl4gG4TRxB4jCkCaFpilp3tZbEVZxOG9Penbi0tIPSS6LE9v/5ty8ZB9qTN3bnjcPsEbLXNmKADdlSshzGeIlSBGoisde0F4z3AnhqLAeEWCO0no4YBO+0jDxFSlWB2e2o1ApWYX1rXG9Jvx+XbCY69LJuTIH68Qv+zi2YhK0sm0h+D+S7Fo5GokcR4OqmpRyMZY8PKoUnij15wLxxly1Kk5qaGeKmNhEMeCoQVKFPSXCjKVOfo8x1e81hMHijPpBX8MSfZ1gvkFdQ/EmZ9/BMsajRz2p0jYtDa5OcQ4EqsFPXAResHHrFzsaE9N9e+kEWbMvvA10Tz7qRBci4+Zt5HUY3A3nJoOMSg4dJ1c+Qtkn3C67G+X8=""",
         visibility="private"
     )
     braggingtemplate = WorldTemplate(
@@ -34,7 +28,7 @@ def createTestData() -> Architext:
         name="A template everyone should see",
         description="To brag about",
         author_id="oliver",
-        world_encoded_json="asdasd",
+        world_encoded_json="""eJx9kcFOwzAMhl/F9MKl4gG4TRxB4jCkCaFpilp3tZbEVZxOG9Penbi0tIPSS6LE9v/5ty8ZB9qTN3bnjcPsEbLXNmKADdlSshzGeIlSBGoisde0F4z3AnhqLAeEWCO0no4YBO+0jDxFSlWB2e2o1ApWYX1rXG9Jvx+XbCY69LJuTIH68Qv+zi2YhK0sm0h+D+S7Fo5GokcR4OqmpRyMZY8PKoUnij15wLxxly1Kk5qaGeKmNhEMeCoQVKFPSXCjKVOfo8x1e81hMHijPpBX8MSfZ1gvkFdQ/EmZ9/BMsajRz2p0jYtDa5OcQ4EqsFPXAResHHrFzsaE9N9e+kEWbMvvA10Tz7qRBci4+Zt5HUY3A3nJoOMSg4dJ1c+Qtkn3C67G+X8=""",
         visibility="public"
     )
     rabbittemplate = WorldTemplate(
@@ -42,7 +36,7 @@ def createTestData() -> Architext:
         name="Misterious Template",
         description="This is so misterious",
         author_id="rabbit",
-        world_encoded_json="asdasd",
+        world_encoded_json="""eJx9kcFOwzAMhl/F9MKl4gG4TRxB4jCkCaFpilp3tZbEVZxOG9Penbi0tIPSS6LE9v/5ty8ZB9qTN3bnjcPsEbLXNmKADdlSshzGeIlSBGoisde0F4z3AnhqLAeEWCO0no4YBO+0jDxFSlWB2e2o1ApWYX1rXG9Jvx+XbCY69LJuTIH68Qv+zi2YhK0sm0h+D+S7Fo5GokcR4OqmpRyMZY8PKoUnij15wLxxly1Kk5qaGeKmNhEMeCoQVKFPSXCjKVOfo8x1e81hMHijPpBX8MSfZ1gvkFdQ/EmZ9/BMsajRz2p0jYtDa5OcQ4EqsFPXAResHHrFzsaE9N9e+kEWbMvvA10Tz7qRBci4+Zt5HUY3A3nJoOMSg4dJ1c+Qtkn3C67G+X8=""",
         visibility="private"
     )
 
@@ -188,6 +182,7 @@ def createTestData() -> Architext:
         room_id="rabbitholeroom",
         password_hash=b"asdasd"
     )
+    uow = FakeUnitOfWork()
     uow.world_templates.save_world_template(emptytemplate)
     uow.world_templates.save_world_template(templateforme)
     uow.world_templates.save_world_template(braggingtemplate)

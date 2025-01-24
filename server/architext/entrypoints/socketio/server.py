@@ -12,10 +12,12 @@ from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
 from architext.core import Architext
 from architext.core.handlers.notify_world_created_to_owner import WorldCreatedNotification
+from architext.core.queries.get_template import GetWorldTemplate, GetWorldTemplateResult
 from architext.core.queries.list_world_templates import ListWorldTemplates, ListWorldTemplatesResult, WorldTemplateListItem
 from architext.core.queries.me import Me, MeResult
 from architext.core.services.create_user import create_user
 from architext.core.queries.list_worlds import ListWorlds, ListWorldsResult
+from test.fixtures import createTestData
 eventlet.monkey_patch(socket=True, time=True)
 import socketio
 import atexit
@@ -65,10 +67,12 @@ if __name__ == "__main__":
         sid_to_user_id[socket] = user_id
     
     
-
-    uow = MemoryUnitOfWork(notificator=SocketIONotificator(sio, sid_to_user_id.inverse))
-    create_user(uow=uow, command=CreateUser(email='oli@sanz.com', name='oliver', password='oliver'))
-    architext = Architext(uow=uow)
+    architext = createTestData()
+    architext._uow.notifications = SocketIONotificator(sio, sid_to_user_id.inverse)
+    architext.handle(CreateUser(email='oli@sanz.com', name='oliver', password='oliver'))
+    # uow = MemoryUnitOfWork(notificator=SocketIONotificator(sio, sid_to_user_id.inverse))
+    # create_user(uow=uow, command=CreateUser(email='oli@sanz.com', name='oliver', password='oliver'))
+    # architext = Architext(uow=uow)
 
     architext.handle(CreateInitialData())
 
@@ -156,6 +160,11 @@ if __name__ == "__main__":
 
     @event(sio=sio, on='get_world_templates', In=ListWorldTemplates, Out=ResponseModel[ListWorldTemplatesResult])
     def get_world_templates_event(sid, input: ListWorldTemplates) -> ListWorldTemplatesResult:
+        client_user_id = sid_to_user_id[sid]
+        return architext.query(input, client_user_id)
+
+    @event(sio=sio, on='get_world_template', In=GetWorldTemplate, Out=ResponseModel[GetWorldTemplateResult])
+    def get_world_template_event(sid, input: GetWorldTemplate) -> GetWorldTemplateResult:
         client_user_id = sid_to_user_id[sid]
         return architext.query(input, client_user_id)
 

@@ -1,5 +1,16 @@
-from architext.core.ports.unit_of_work import UnitOfWork
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from architext.core.ports.unit_of_work import UnitOfWork
+else:
+    UnitOfWork = object()
 
+def assertUserIsLoggedIn(uow: UnitOfWork, user_id: str):
+    if not isUserLoggedIn(uow, user_id):
+        raise Exception("You need to be authenticated")
+
+def isUserLoggedIn(uow: UnitOfWork, user_id: str) -> bool:
+    user = uow.users.get_user_by_id(user_id)
+    return user is not None
 
 def isUserAuthorizedInCurrentWorld(uow: UnitOfWork, user_id: str) -> bool:
     user = uow.users.get_user_by_id(user_id)

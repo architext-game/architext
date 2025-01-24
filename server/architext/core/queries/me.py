@@ -28,8 +28,6 @@ class UOWMeQueryHandler(UOWQueryHandler, MeQueryHandler):
             room = self._uow.rooms.get_room_by_id(user.room_id)
             assert room is not None
             world_id = room.world_id
-            print("Me world id is ", world_id)
-        print("And", world_id)
         
         return MeResult(
             name=user.name,

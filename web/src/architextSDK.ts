@@ -127,6 +127,21 @@ export interface GetWorldTemplatesResponse {
     error: string | null;
 }
 
+export interface GetWorldTemplateParams {
+    template_id: string;
+}
+
+export interface GetWorldTemplateResponse {
+    success: boolean;
+    data: {
+        id: string;
+        name: string;
+        description: string;
+        owner: string | null;
+    } | null;
+    error: string | null;
+}
+
 export interface GetMeParams {
 }
 
@@ -331,6 +346,17 @@ export async function getWorldTemplates(
 ): Promise<GetWorldTemplatesResponse> {
     return new Promise((resolve, reject) => {
         socket.emit("get_world_templates", params, (response: GetWorldTemplatesResponse) => {
+            resolve(response)
+        });
+    });
+}
+
+export async function getWorldTemplate(
+    socket: Socket,
+    params: GetWorldTemplateParams
+): Promise<GetWorldTemplateResponse> {
+    return new Promise((resolve, reject) => {
+        socket.emit("get_world_template", params, (response: GetWorldTemplateResponse) => {
             resolve(response)
         });
     });

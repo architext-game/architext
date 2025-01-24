@@ -1,7 +1,7 @@
 "use client"; // Si estás usando app router en Next.js 13+
 
 import { use, useEffect, useState } from "react";
-import { authenticate, login, getWorlds, GetWorldsResponse, createWorld, GetWorldTemplatesResponse, getWorldTemplates, requestWorldCreationFromTemplate, WorldTemplateListItem, getMe, GetMeResponse, createTemplate } from "@/architextSDK";
+import { authenticate, login, getWorlds, GetWorldsResponse, createWorld, GetWorldTemplatesResponse, getWorldTemplates, requestWorldCreationFromTemplate, WorldTemplateListItem, getMe, GetMeResponse, createTemplate, enterWorld, getWorldTemplate } from "@/architextSDK";
 import { useStore } from "@/state";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
@@ -12,6 +12,7 @@ export default function Home() {
   const [getWorldsResponse, setGetWorldsResponse] = useState<GetWorldsResponse>()
   const [getTemplatesResponse, setGetTemplatesResponse] = useState<GetWorldTemplatesResponse>()
   const [newWorldName, setNewWorldName] = useState('')
+  const [worldCode, setWorldCode] = useState('')
   const [error, setError] = useState('')
   const [me, setMe] = useState<GetMeResponse>()
 
@@ -120,6 +121,24 @@ export default function Home() {
     }
   }
 
+  async function handleEnterWorldByCode(e: React.FormEvent<HTMLFormElement>){
+    e.preventDefault();
+    const enterWorldResponse = await enterWorld(socket, { world_id: worldCode })
+    console.log(enterWorldResponse)
+    if(enterWorldResponse.success) {
+      router.push(`/world/${worldCode}`)
+      return
+    }
+    const getTemplateResponse = await getWorldTemplate(socket, { template_id: worldCode })
+    if(getTemplateResponse.success && getTemplateResponse.data){
+      const template = getTemplateResponse.data
+      handleEnterTemplate(template)
+      return
+    }
+    console.log(`Error: Id ${worldCode} not found in worlds nor templates`)
+    setError("World code is not valid")
+  }
+
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
@@ -158,6 +177,29 @@ export default function Home() {
             placeholder="Your world name"
             value={newWorldName}
             onChange={(e) => setNewWorldName(e.target.value)}
+          />
+
+          <button
+            type="submit"
+            className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+          >
+            Enter
+          </button>
+        </form>
+
+        <form onSubmit={handleEnterWorldByCode} className="flex flex-col gap-4 w-full max-w-sm">
+          {
+            error &&
+            <div>{error}</div>
+          }
+          <label htmlFor="worldcode">Enter a world by its code</label>
+          <input
+            id="worldcode"
+            type="text"
+            className="border border-gray-300 px-3 py-2 rounded"
+            placeholder="0000-0000-0000-0000"
+            value={worldCode}
+            onChange={(e) => setWorldCode(e.target.value)}
           />
 
           <button

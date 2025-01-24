@@ -80,6 +80,6 @@ class MessageBus:
             queue.extend(uow.collect_new_events())
             return result
         except Exception:
-            logger.exception('Exception handling command %s', command)
+            logger.exception(f"Exception handling command {type(command)} {command}")
             raise
 
