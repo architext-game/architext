@@ -11,8 +11,6 @@ export default function Home() {
         <Card>
           Hello. This will be Architext's landing page. But it's not ready yet. Come back later :-)
         </Card>
-        <Link href='/login' className='text-blue-500 hover:underline'>Inicia sesión</Link>
-        <Link href='/signup' className='text-blue-500 hover:underline'>Registrate</Link>
       </main>
     </div>
   );

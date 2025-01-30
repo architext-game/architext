@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { authenticate, requestWorldCreationFromTemplate, getMe, GetMeResponse, enterWorld, getWorldTemplate } from "@/architextSDK";
-import { useStore } from "@/state";
+import { useSocket, useStore } from "@/state";
 import { useRouter } from 'next/navigation';
 import { Header } from "@/components/header";
 import { Card } from "@/components/card";
@@ -13,7 +13,7 @@ import { Button } from "@/components/button";
 import { WorldByCodeOverlay } from "./world-by-code-overlay";
 
 export default function Home() {
-  const socket = useStore((state) => state.socket)
+  const { socket, isAuthenticated } = useSocket()
   const router = useRouter()
   const [showCodeOverlay, setShowCodeOverlay] = useState(false)
   const [worldCode, setWorldCode] = useState('')
@@ -29,26 +29,10 @@ export default function Home() {
   }, [socket])
 
   useEffect(() => {
-    if (socket) {
-      socket.on('connect', async () => {
-        console.log("connected, authenticating with jwt...")
-        const jwt = localStorage.getItem("jwt")
-        const response = await authenticate(socket, { jwt_token: jwt || '' })
-        console.log("Authentication response: ", response)
-        if(!response.success){
-          console.log('Authentication error. Please go back to the login page')
-          console.log(response.error || 'Unknown error')
-        }
-      });
-
-      socket.on('connect_error', () => {
-        console.log(`Error connecting to server. Check your connection. Contact oliverlsanz@gmail.com if the issue persists.`)
-      });
-
-      return () => { socket.removeAllListeners() }
+    if(!isAuthenticated){
+      router.push('/login')
     }
-  }, [socket]);
-
+  }, [isAuthenticated]);
 
   async function handleEnterTemplate({ name, description, id }: { name: string, description: string, id: string}){
     const response = await requestWorldCreationFromTemplate(socket, {
