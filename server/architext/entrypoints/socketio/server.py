@@ -28,7 +28,7 @@ from pydantic import BaseModel
 from architext.core.adapters.memory_uow import MemoryUnitOfWork
 from architext.entrypoints.socketio.jwt_tokens import generate_jwt, decode_jwt
 from architext.core.commands import (
-    CreateTemplate, CreateTemplateResult, CreateUser, CreateUserResult, CreateWorld, CreateWorldResult, EnterWorld, EnterWorldResult,
+    CreateTemplate, CreateTemplateResult, CreateUser, CreateUserResult, EnterWorld, EnterWorldResult,
     GetCurrentRoom, GetCurrentRoomResult,
     CreateConnectedRoom, CreateConnectedRoomResult, ImportWorld, ImportWorldResult, RequestWorldCreationFromTemplate, RequestWorldCreationFromTemplateResult, RequestWorldImport, RequestWorldImportResult,
     TraverseExit, TraverseExitResult,
@@ -177,18 +177,6 @@ if __name__ == "__main__":
     def enter_world_event(sid, input: EnterWorld) -> EnterWorldResult:
         client_user_id = sid_to_user_id[sid]
         return architext.handle(input, client_user_id)
-
-    # Those two are replaced by their "request" variants
-    # TODO: Remove their services and tests
-    @event(sio=sio, on='create_world', In=CreateWorld, Out=ResponseModel[CreateWorldResult])
-    def create_world_event(sid, input: CreateWorld) -> CreateWorldResult:
-        client_user_id = sid_to_user_id[sid]
-        return architext.handle(input, client_user_id)
-
-    # @event(sio=sio, on='import_world', In=ImportWorld, Out=ResponseModel[ImportWorldResult])
-    # def import_world_event(sid, input: ImportWorld) -> ImportWorldResult:
-    #     client_user_id = sid_to_user_id[sid]
-    #     return architext.handle(input, client_user_id)
 
     @event(sio=sio, on='create_template', In=CreateTemplate, Out=ResponseModel[CreateTemplateResult])
     def create_template_event(sid, input: CreateTemplate) -> CreateTemplateResult:

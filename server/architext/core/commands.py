@@ -98,15 +98,6 @@ class CreateInitialData(Command[CreateInitialDataResult]):
 
 
 @dataclass
-class CreateWorldResult:
-    world_id: str
-
-class CreateWorld(Command[CreateWorldResult]):
-    name: str = Field(min_length=1, max_length=NAME_MAX_LENGTH)
-    description: str = Field(min_length=1, max_length=DESCRIPTION_MAX_LENGTH)
-
-
-@dataclass
 class EnterWorldResult:
     pass
 

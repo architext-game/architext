@@ -110,7 +110,10 @@ export interface GetWorldsResponse {
             id: string;
             name: string;
             description: string;
-            owner: string | null;
+            owner_name: string | null;
+            connected_players_count: number;
+            base_template_name: string | null;
+            base_template_author: string | null;
         }[];
     } | null;
     error: string | null;
@@ -163,19 +166,6 @@ export interface EnterWorldParams {
 export interface EnterWorldResponse {
     success: boolean;
     data: {
-    } | null;
-    error: string | null;
-}
-
-export interface CreateWorldParams {
-    name: string;
-    description: string;
-}
-
-export interface CreateWorldResponse {
-    success: boolean;
-    data: {
-        world_id: string;
     } | null;
     error: string | null;
 }
@@ -379,17 +369,6 @@ export async function enterWorld(
 ): Promise<EnterWorldResponse> {
     return new Promise((resolve, reject) => {
         socket.emit("enter_world", params, (response: EnterWorldResponse) => {
-            resolve(response)
-        });
-    });
-}
-
-export async function createWorld(
-    socket: Socket,
-    params: CreateWorldParams
-): Promise<CreateWorldResponse> {
-    return new Promise((resolve, reject) => {
-        socket.emit("create_world", params, (response: CreateWorldResponse) => {
             resolve(response)
         });
     });
