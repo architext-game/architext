@@ -73,7 +73,7 @@ def createTestData() -> Architext:
         id="outer",
         name="Outer Wilds",
         description="Let's explore the universe!",
-        initial_room_id="outerroom",
+        initial_room_id="space",
         owner_user_id="oliver",
         visibility="public"
     )

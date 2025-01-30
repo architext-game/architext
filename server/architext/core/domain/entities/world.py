@@ -10,6 +10,7 @@ class World:
     owner_user_id: Optional[str]  # null if it is a predefined world
     description: str = field(default="")
     visibility: Literal["public", "private"] = field(default="private")
+    base_template_id: Optional[str] = field(default=None)
 
 
 DEFAULT_WORLD = World(

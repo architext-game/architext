@@ -1,9 +1,5 @@
-from architext.core.adapters.fake_uow import FakeUnitOfWork
-from architext.core.commands import CreateInitialData
-from architext.core.domain.entities.world import World
 from architext.core.queries.list_worlds import ListWorlds
 import pytest # type: ignore
-from architext.core.domain.entities.room import Room
 from architext.core import Architext
 
 from test.fixtures import createTestData
@@ -31,3 +27,7 @@ def test_list_worlds(architext: Architext):
     assert outer is not None
     assert outer.id == "outer"
     assert outer.description == "Let's explore the universe!"
+    assert outer.owner_name == "Oliver"
+    assert outer.connected_players_count == 2
+    assert outer.base_template_name == None
+    assert outer.base_template_author == None
