@@ -114,6 +114,7 @@ export interface GetWorldsResponse {
             connected_players_count: number;
             base_template_name: string | null;
             base_template_author: string | null;
+            visibility: 'public' | 'private';
         }[];
     } | null;
     error: string | null;
@@ -239,7 +240,8 @@ export interface WorldTemplateListItem {
     id: string;
     name: string;
     description: string;
-    owner: string | null;
+    author_name: string | null;
+    author_id: string | null;
 }
 
 export async function login(
