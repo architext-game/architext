@@ -24,6 +24,7 @@ class WorldCreationRequested(Event):
     world_description: str
     text_representation: str
     format: Literal['plain', 'encoded']
+    base_template_id: Optional[str] = None  # just used to add the reference to the new world
 
 
 @dataclass

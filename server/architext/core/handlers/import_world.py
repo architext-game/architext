@@ -91,7 +91,8 @@ def import_world(uow: UnitOfWork, event: WorldCreationRequested):
             description=event.world_description,
             id=world_id,
             initial_room_id=world_dict["initial_room_id"],
-            owner_user_id=user.id
+            owner_user_id=user.id,
+            base_template_id=event.base_template_id
         )
 
         rooms = [Room(

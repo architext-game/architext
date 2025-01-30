@@ -39,7 +39,7 @@ def architext() -> Architext:
     return Architext(uow)
 
 
-def test_request_world_creation_from_template_success(architext: Architext):
+def test_requests_world_creation(architext: Architext):
     out = architext.handle(RequestWorldCreationFromTemplate(
         name="new world",
         description="nice",
@@ -56,3 +56,19 @@ def test_request_world_creation_from_template_success(architext: Architext):
     template = fake_uow.world_templates.get_world_template_by_id("template01")
     assert template is not None
     assert creation_request_event.text_representation == template.world_encoded_json
+
+
+def test_world_is_created(architext: Architext):
+    out = architext.handle(RequestWorldCreationFromTemplate(
+        name="new world",
+        description="nice",
+        template_id="template01",
+    ), client_user_id="oliver")
+
+    fake_uow = cast(FakeUnitOfWork, architext._uow)
+    world = fake_uow.worlds.get_world_by_id(out.future_world_id)
+    assert world is not None
+    assert world.name == "new world"
+    assert world.description == "nice"
+    assert world.base_template_id == "template01"
+    assert len(fake_uow.rooms.list_rooms()) == 3
