@@ -8,7 +8,6 @@ from architext.core.domain.entities.exit import Exit
 from architext.core.domain.entities.world import World
 from architext.core.domain.events import WorldCreated, WorldCreationRequested
 from architext.core.ports.unit_of_work import UnitOfWork
-from architext.core.commands import ImportWorldResult
 from uuid import uuid4
 from pydantic import TypeAdapter
 from typing_extensions import TypedDict
@@ -118,6 +117,3 @@ def import_world(uow: UnitOfWork, event: WorldCreationRequested):
 
         uow.commit()
 
-    return ImportWorldResult(
-        world_id=world_id
-    )

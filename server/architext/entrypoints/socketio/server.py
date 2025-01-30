@@ -30,7 +30,7 @@ from architext.entrypoints.socketio.jwt_tokens import generate_jwt, decode_jwt
 from architext.core.commands import (
     CreateTemplate, CreateTemplateResult, CreateUser, CreateUserResult, EnterWorld, EnterWorldResult,
     GetCurrentRoom, GetCurrentRoomResult,
-    CreateConnectedRoom, CreateConnectedRoomResult, ImportWorld, ImportWorldResult, RequestWorldCreationFromTemplate, RequestWorldCreationFromTemplateResult, RequestWorldImport, RequestWorldImportResult,
+    CreateConnectedRoom, CreateConnectedRoomResult, RequestWorldCreationFromTemplate, RequestWorldCreationFromTemplateResult, RequestWorldImport, RequestWorldImportResult,
     TraverseExit, TraverseExitResult,
     Login, LoginResult,
     CreateInitialData, CreateInitialDataResult,

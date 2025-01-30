@@ -106,17 +106,6 @@ class EnterWorld(Command[EnterWorldResult]):
 
 
 @dataclass
-class ImportWorldResult:
-    world_id: str
-
-class ImportWorld(Command[ImportWorldResult]):
-    name: str = Field(min_length=1, max_length=NAME_MAX_LENGTH)
-    description: str = Field(min_length=1, max_length=DESCRIPTION_MAX_LENGTH)
-    format: Literal["plain", "encoded"]
-    text_representation: str
-
-
-@dataclass
 class CreateTemplateResult:
     template_id: str
 
