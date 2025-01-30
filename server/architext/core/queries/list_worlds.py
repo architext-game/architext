@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from architext.core.queries.base import Query, QueryHandler, UOWQueryHandler
-from typing import Optional, List
+from typing import Literal, Optional, List
 
 @dataclass
 class WorldListItem:
@@ -11,6 +11,7 @@ class WorldListItem:
     connected_players_count: int
     base_template_name: Optional[str]
     base_template_author: Optional[str]
+    visibility: Literal["public", "private"]
 
 @dataclass
 class ListWorldsResult:
@@ -48,7 +49,8 @@ class UOWListWorldsQueryHandler(UOWQueryHandler, ListWorldsQueryHandler):
                 owner_name=owner.name if owner is not None else "Architext",
                 connected_players_count=len(players_in_world),
                 base_template_name=template.name if template is not None else None,
-                base_template_author=template.author_id if template is not None else None
+                base_template_author=template.author_id if template is not None else None,
+                visibility=world.visibility,
             ))
             
         return ListWorldsResult(worlds=result)
