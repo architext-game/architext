@@ -1,0 +1,57 @@
+import { getWorlds, GetWorldsResponse } from "@/architextSDK";
+import { useStore } from "@/state";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { useEffect, useState } from "react";
+import { WorldsListItem } from "./worlds-list-item";
+
+interface WorldsListProps {
+  router: AppRouterInstance,
+  right: React.ReactNode,
+  expandedItem?: string | null,
+  onToggleExpanded: (key: string) => void,
+}
+
+export function WorldsList({ router, right, expandedItem, onToggleExpanded }: WorldsListProps) {
+  const socket = useStore((state) => state.socket)
+  
+  const [getWorldsResponse, setGetWorldsResponse] = useState<GetWorldsResponse>()
+
+  async function updateWorlds(){
+    setGetWorldsResponse(await getWorlds(socket, {}))
+  }
+
+  async function handleEnterWorld(worldId: string){
+    router.push(`/world/${worldId}`)
+  }
+
+  useEffect(() => {
+    updateWorlds();
+  }, [])
+  
+  return (
+    <div className="flex flex-col">
+      <div className="flex justify-between">
+        <div className="text-xl py-2">Worlds</div>
+        {right}
+      </div>
+      {
+        getWorldsResponse?.data?.worlds.map(world => (
+          <WorldsListItem 
+            author={world.owner_name || "Architext"}
+            connectedPlayers={world.connected_players_count}
+            description={world.description}
+            isPublic={world.visibility === "public"}
+            onEnter={handleEnterWorld}
+            onToggleOpen={onToggleExpanded}
+            expanded={expandedItem === world.id}
+            name={world.name}
+            key={world.id}
+            worldId={world.id}
+            templateAuthorName={world.base_template_author}
+            templateName={world.base_template_name}
+          />
+        ))
+      }
+    </div>
+  );
+}
