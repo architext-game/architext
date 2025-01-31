@@ -5,6 +5,7 @@ from architext.core.queries.get_template import GetWorldTemplate, UOWGetWorldTem
 from architext.core.queries.list_world_templates import UOWListWorldTemplatesQueryHandler, ListWorldTemplates
 from architext.core.queries.list_worlds import ListWorlds, UOWListWorldsQueryHandler
 from architext.core.queries.me import Me, UOWMeQueryHandler
+from architext.core.queries.get_world import GetWorld, UOWGetWorldQueryHandler
 from architext.core.queries.world_to_text import WorldToText, UOWWorldToTextQueryHandler
 if TYPE_CHECKING:
     from architext.core.ports.unit_of_work import UnitOfWork
@@ -20,6 +21,7 @@ def uow_query_handlers_factory(uow: UnitOfWork) -> Mapping[Type[Query], QueryHan
         ListWorldTemplates: UOWListWorldTemplatesQueryHandler(uow),
         Me: UOWMeQueryHandler(uow),
         GetWorldTemplate: UOWGetWorldTemplateQueryHandler(uow),
+        GetWorld: UOWGetWorldQueryHandler(uow),
     }
 
 class QueryManager:

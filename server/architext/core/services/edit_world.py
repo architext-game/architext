@@ -1,0 +1,28 @@
+from architext.core.commands import EditWorld, EditWorldResult
+from architext.core.ports.unit_of_work import UnitOfWork
+
+
+def edit_world(uow: UnitOfWork, command: EditWorld, client_user_id: str) -> EditWorldResult:
+    with uow:
+        user = uow.users.get_user_by_id(user_id=client_user_id)
+
+        if user is None:
+            raise ValueError("User does not exist.")
+    
+        world = uow.worlds.get_world_by_id(command.world_id)
+        
+        if world is None:
+            raise ValueError("World does not exist.")
+
+        if world.owner_user_id != client_user_id:
+            raise ValueError("User cannot edit this world.")
+
+        if command.name is not None:
+            world.name = command.name
+        if command.description is not None:
+            world.description = command.description
+
+        uow.worlds.save_world(world)
+        uow.commit()
+
+    return EditWorldResult()

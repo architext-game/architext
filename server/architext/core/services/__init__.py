@@ -18,9 +18,11 @@ from architext.core.commands import (
     TraverseExit,
     RequestWorldCreationFromTemplate,
     RequestWorldImport,
-    Command
+    Command,
+    EditWorld,
 )
 
+from architext.core.services.edit_world import edit_world
 from architext.core.services.create_template import create_template
 from architext.core.services.create_user import create_user
 from architext.core.services.create_connected_room import create_connected_room
@@ -45,4 +47,5 @@ COMMAND_HANDLERS: Dict[Type[Command], Callable] = {
     RequestWorldCreationFromTemplate: request_world_creation_from_template,
     RequestWorldImport: request_world_import,
     CreateTemplate: create_template,
+    EditWorld: edit_world,
 }

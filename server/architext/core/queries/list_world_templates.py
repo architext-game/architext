@@ -10,6 +10,7 @@ class WorldTemplateListItem:
     description: str
     author_name: Optional[str]
     author_id: Optional[str]
+    you_authorized: bool
 
 @dataclass
 class ListWorldTemplatesResult:
@@ -37,6 +38,7 @@ class UOWListWorldTemplatesQueryHandler(UOWQueryHandler, ListWorldTemplatesQuery
                 description=template.description,
                 name=template.name,
                 author_name=author_name,
-                author_id=template.author_id
+                author_id=template.author_id,
+                you_authorized=template.author_id == client_user_id,
             ))
         return ListWorldTemplatesResult(templates=result)

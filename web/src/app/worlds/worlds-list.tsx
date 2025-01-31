@@ -9,9 +9,18 @@ interface WorldsListProps {
   right: React.ReactNode,
   expandedItem?: string | null,
   onToggleExpanded: (key: string) => void,
+  onOpenCreateTemplate: (key: string) => void,
+  onOpenSettings: (key: string) => void,
 }
 
-export function WorldsList({ router, right, expandedItem, onToggleExpanded }: WorldsListProps) {
+export function WorldsList({ 
+  router,
+  right,
+  expandedItem,
+  onToggleExpanded,
+  onOpenCreateTemplate,
+  onOpenSettings,
+}: WorldsListProps) {
   const socket = useStore((state) => state.socket)
   
   const [getWorldsResponse, setGetWorldsResponse] = useState<GetWorldsResponse>()
@@ -49,6 +58,10 @@ export function WorldsList({ router, right, expandedItem, onToggleExpanded }: Wo
             worldId={world.id}
             templateAuthorName={world.base_template_author}
             templateName={world.base_template_name}
+            showSettings={world.you_authorized}
+            showCreateTemplate={world.you_authorized}
+            onOpenCreateTemplate={onOpenCreateTemplate}
+            onOpenSettings={onOpenSettings}
           />
         ))
       }

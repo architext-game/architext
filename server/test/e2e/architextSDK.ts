@@ -115,6 +115,7 @@ export interface GetWorldsResponse {
             base_template_name: string | null;
             base_template_author: string | null;
             visibility: 'public' | 'private';
+            you_authorized: boolean;
         }[];
     } | null;
     error: string | null;
@@ -131,6 +132,26 @@ export interface GetWorldTemplatesResponse {
     error: string | null;
 }
 
+export interface GetWorldParams {
+    world_id: string;
+}
+
+export interface GetWorldResponse {
+    success: boolean;
+    data: {
+        id: string;
+        name: string;
+        description: string;
+        owner_name: string | null;
+        connected_players_count: number;
+        base_template_name: string | null;
+        base_template_author: string | null;
+        visibility: 'public' | 'private';
+        you_authorized: boolean;
+    } | null;
+    error: string | null;
+}
+
 export interface GetWorldTemplateParams {
     template_id: string;
 }
@@ -142,6 +163,19 @@ export interface GetWorldTemplateResponse {
         name: string;
         description: string;
         owner: string | null;
+    } | null;
+    error: string | null;
+}
+
+export interface EditWorldParams {
+    world_id: string;
+    name: string | null;
+    description: string | null;
+}
+
+export interface EditWorldResponse {
+    success: boolean;
+    data: {
     } | null;
     error: string | null;
 }
@@ -242,6 +276,7 @@ export interface WorldTemplateListItem {
     description: string;
     author_name: string | null;
     author_id: string | null;
+    you_authorized: boolean;
 }
 
 export async function login(
@@ -343,12 +378,34 @@ export async function getWorldTemplates(
     });
 }
 
+export async function getWorld(
+    socket: Socket,
+    params: GetWorldParams
+): Promise<GetWorldResponse> {
+    return new Promise((resolve, reject) => {
+        socket.emit("get_world", params, (response: GetWorldResponse) => {
+            resolve(response)
+        });
+    });
+}
+
 export async function getWorldTemplate(
     socket: Socket,
     params: GetWorldTemplateParams
 ): Promise<GetWorldTemplateResponse> {
     return new Promise((resolve, reject) => {
         socket.emit("get_world_template", params, (response: GetWorldTemplateResponse) => {
+            resolve(response)
+        });
+    });
+}
+
+export async function editWorld(
+    socket: Socket,
+    params: EditWorldParams
+): Promise<EditWorldResponse> {
+    return new Promise((resolve, reject) => {
+        socket.emit("edit_world", params, (response: EditWorldResponse) => {
             resolve(response)
         });
     });

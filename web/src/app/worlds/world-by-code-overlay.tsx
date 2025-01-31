@@ -17,7 +17,7 @@ export function WorldByCodeOverlay({
   setWorldCode,
 }: WorldByCodeOverlayProps) {
   return (
-    <Overlay onClose={onClose}>
+    <Overlay onClose={onClose} showCloseIcon >
       <form onSubmit={onSubmit} className="flex flex-col gap-4 w-full max-w-sm items-stretch">
         {
           error &&

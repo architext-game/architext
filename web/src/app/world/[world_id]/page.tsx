@@ -4,11 +4,14 @@ import { useState, useEffect, useRef, use } from 'react'
 import classNames from 'classnames'
 import { Message } from './Message';
 import _ from 'lodash';
-import { onChatbotServerMessage, chatbotMessage, Message as ReceivedMessage, authenticate, enterWorld, onWorldCreated, getMe } from '@/architextSDK';
+import { onChatbotServerMessage, chatbotMessage, Message as ReceivedMessage, authenticate, enterWorld, onWorldCreated, getMe, getWorld, GetWorldResponse, getWorlds } from '@/architextSDK';
 import { useStore } from '@/state';
 import { useRouter } from 'next/navigation';
 import { HamburgerMenu } from './hamburger';
 import Link from 'next/link';
+import { Overlay } from '@/components/overlay';
+import { EditWorldForm } from './edit_world_form';
+import { CreateTemplateForm } from './create_template_form';
 
 interface Message {
   text: string,
@@ -107,6 +110,9 @@ function App({ params, searchParams }: {
   const [previousLastSection, setPreviousLastSection] = useState<number>(-1)
   const [shouldSelect, setShouldSelect] = useState<boolean>(false)
   const [privateInput, setPrivateInput] = useState<boolean>(false)
+  const [showEditWorldOverlay, setShowEditWorldOverlay] = useState(false)
+  const [showCreateTemplateOverlay, setShowCreateTemplateOverlay] = useState(false)
+  const [world, setWorld] = useState<GetWorldResponse>()
   const bottomRef = useRef<HTMLDivElement>(null)
   const lastSectionRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -115,21 +121,29 @@ function App({ params, searchParams }: {
   const textInputContainerRef = useRef<HTMLDivElement>(null)
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const worldIsNew = use(searchParams).future;  // so it may not exist yet
-  console.log("worldIsNew", worldIsNew)
-  console.log(`world id is ${worldId}`)
   const shouldEnterWorld = useRef(true);
 
   useEffect(() => {
     if(authChecked && !me?.success){
       router.push('/login')
     }
-  }, [me]);
+  }, [me, authChecked]);
+
+  useEffect(() => {
+    if(worldId){
+      getWorld(socket, { world_id: worldId }).then(response => {
+        setWorld(response)
+      })
+    }
+  }, [worldId])
+
+  const privileged = world?.data?.owner_name == me?.data?.name
+
 
   // TODO: This has not been really tested for cases when the world
   // does not yet exist.
   async function eventuallyEnterWorld(eventualWorlId: string){
     const current_world_id = (await getMe(socket, {})).data?.current_world_id
-    console.log("Current world id is", current_world_id)
     if(current_world_id == eventualWorlId){
       return
     }
@@ -346,10 +360,29 @@ function App({ params, searchParams }: {
           <Link href="/worlds" className="py-3 px-6 rounded-lg hover:bg-backgroundHighlight">
             Go to world selection
           </Link>
-          <div className="py-3 px-6 rounded-lg hover:bg-backgroundHighlight cursor-pointer">
-            Edit World Details
-          </div>
+          { privileged && 
+            <>
+            <div onClick={() => setShowEditWorldOverlay(true)} className="py-3 px-6 rounded-lg hover:bg-backgroundHighlight cursor-pointer">
+              Edit World Details
+            </div>
+            <div onClick={() => setShowCreateTemplateOverlay(true)} className="py-3 px-6 rounded-lg hover:bg-backgroundHighlight cursor-pointer">
+              Create Template from this World
+            </div>
+            </>
+          }
         </HamburgerMenu>
+        {
+          showEditWorldOverlay &&
+          <Overlay onClose={() => setShowEditWorldOverlay(false)}>
+            <EditWorldForm id={worldId} onClose={() => setShowEditWorldOverlay(false)} />
+          </Overlay>
+        }
+        {
+          showCreateTemplateOverlay &&
+          <Overlay onClose={() => setShowCreateTemplateOverlay(false)}>
+            <CreateTemplateForm id={worldId} onClose={() => setShowCreateTemplateOverlay(false)} />
+          </Overlay>
+        }
         <div
           className="flex-1 px-3 sm:px-6 whitespace-pre-wrap overflow-auto flex"
           ref={scrollRef}

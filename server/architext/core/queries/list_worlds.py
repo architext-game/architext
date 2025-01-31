@@ -12,6 +12,7 @@ class WorldListItem:
     base_template_name: Optional[str]
     base_template_author: Optional[str]
     visibility: Literal["public", "private"]
+    you_authorized: bool
 
 @dataclass
 class ListWorldsResult:
@@ -51,6 +52,7 @@ class UOWListWorldsQueryHandler(UOWQueryHandler, ListWorldsQueryHandler):
                 base_template_name=template.name if template is not None else None,
                 base_template_author=template.author_id if template is not None else None,
                 visibility=world.visibility,
+                you_authorized=world.owner_user_id == client_user_id,
             ))
             
         return ListWorldsResult(worlds=result)

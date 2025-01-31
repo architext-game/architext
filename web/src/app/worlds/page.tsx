@@ -9,6 +9,9 @@ import { Card } from "@/components/card";
 import { WorldsList } from "./worlds-list";
 import { TemplatesList } from "./templates-list";
 import { WorldByCodeOverlay } from "./world-by-code-overlay";
+import { Overlay } from "@/components/overlay";
+import { EditWorldForm } from "../world/[world_id]/edit_world_form";
+import { CreateTemplateForm } from "../world/[world_id]/create_template_form";
 
 export default function Home() {
   const socket = useStore((state) => state.socket)
@@ -19,6 +22,8 @@ export default function Home() {
   const [worldCode, setWorldCode] = useState('')
   const [worldByIdError, setWorldByIdError] = useState('')
   const [expandedItem, setExpandedItem] = useState<string>()
+  const [showEditWorldOverlay, setShowEditWorldOverlay] = useState(false)
+  const [showCreateTemplateOverlay, setShowCreateTemplateOverlay] = useState(false)
 
   useEffect(() => {
     if(authChecked && !me?.success){
@@ -63,6 +68,14 @@ export default function Home() {
     }
   }
 
+  function handleOpenCreateTemplate(key: string){
+    setShowCreateTemplateOverlay(true)
+  }
+
+  function handleOpenSettings(key: string){
+    setShowEditWorldOverlay(true)
+  }
+
   return (
     <div className="flex flex-col items-center text-text font-mono  text-lg pb-40">
       <Header/>
@@ -89,7 +102,9 @@ export default function Home() {
           <WorldsList 
             router={router} 
             expandedItem={expandedItem} 
-            onToggleExpanded={handleExpandedItem} 
+            onToggleExpanded={handleExpandedItem}
+            onOpenCreateTemplate={handleOpenCreateTemplate}
+            onOpenSettings={handleOpenSettings}
             right={
               <button onClick={() => setShowCodeOverlay(true)} className="transition hover:underline text-sm"> 
                 I have a Code
@@ -104,6 +119,18 @@ export default function Home() {
           </>
         }
       </main>
+      {
+        showEditWorldOverlay && expandedItem &&
+        <Overlay onClose={() => setShowEditWorldOverlay(false)}>
+          <EditWorldForm id={expandedItem} onClose={() => setShowEditWorldOverlay(false)} />
+        </Overlay>
+      }
+      {
+        showCreateTemplateOverlay && expandedItem &&
+        <Overlay onClose={() => setShowCreateTemplateOverlay(false)}>
+          <CreateTemplateForm id={expandedItem} onClose={() => setShowCreateTemplateOverlay(false)} />
+        </Overlay>
+      }
     </div>
   );
 }
