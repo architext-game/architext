@@ -8,6 +8,8 @@ import { onChatbotServerMessage, chatbotMessage, Message as ReceivedMessage, aut
 import { useStore } from '@/state';
 import { Lexend_Peta } from 'next/font/google';
 import { useRouter } from 'next/navigation';
+import { HamburgerMenu } from './hamburger';
+import Link from 'next/link';
 
 interface Message {
   text: string,
@@ -333,6 +335,14 @@ function App({ params, searchParams }: {
   
   return (
     <div className="bg-bg min-h-screen w-full flex flex-col justify-end text-white font-mono break-words text-lg">
+        <HamburgerMenu>
+          <Link href="/worlds" className="py-3 px-6 rounded-lg hover:bg-backgroundHighlight">
+            Go to world selection
+          </Link>
+          <div className="py-3 px-6 rounded-lg hover:bg-backgroundHighlight cursor-pointer">
+            Edit World Details
+          </div>
+        </HamburgerMenu>
         <div
           className="flex-1 px-3 sm:px-6 whitespace-pre-wrap overflow-auto flex"
           ref={scrollRef}
