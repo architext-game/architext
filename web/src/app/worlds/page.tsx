@@ -1,38 +1,30 @@
 "use client"; // Si estás usando app router en Next.js 13+
 
 import { useEffect, useState } from "react";
-import { authenticate, requestWorldCreationFromTemplate, getMe, GetMeResponse, enterWorld, getWorldTemplate } from "@/architextSDK";
-import { useSocket, useStore } from "@/state";
+import { requestWorldCreationFromTemplate, enterWorld, getWorldTemplate } from "@/architextSDK";
+import { useStore } from "@/state";
 import { useRouter } from 'next/navigation';
 import { Header } from "@/components/header";
 import { Card } from "@/components/card";
 import { WorldsList } from "./worlds-list";
 import { TemplatesList } from "./templates-list";
-import { Overlay } from "@/components/overlay";
-import { Button } from "@/components/button";
 import { WorldByCodeOverlay } from "./world-by-code-overlay";
 
 export default function Home() {
-  const { socket, isAuthenticated } = useSocket()
+  const socket = useStore((state) => state.socket)
+  const me = useStore((state) => state.me)
+  const authChecked = useStore((state) => state.authChecked)
   const router = useRouter()
   const [showCodeOverlay, setShowCodeOverlay] = useState(false)
   const [worldCode, setWorldCode] = useState('')
   const [worldByIdError, setWorldByIdError] = useState('')
-  const [me, setMe] = useState<GetMeResponse>()
   const [expandedItem, setExpandedItem] = useState<string>()
 
   useEffect(() => {
-    getMe(socket, {}).then(meResponse => {
-      setMe(meResponse)
-      console.log(meResponse)
-    })
-  }, [socket])
-
-  useEffect(() => {
-    if(!isAuthenticated){
+    if(authChecked && !me?.success){
       router.push('/login')
     }
-  }, [isAuthenticated]);
+  }, [me, authChecked]);
 
   async function handleEnterTemplate({ name, description, id }: { name: string, description: string, id: string}){
     const response = await requestWorldCreationFromTemplate(socket, {

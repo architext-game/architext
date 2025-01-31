@@ -6,7 +6,6 @@ import { Message } from './Message';
 import _ from 'lodash';
 import { onChatbotServerMessage, chatbotMessage, Message as ReceivedMessage, authenticate, enterWorld, onWorldCreated, getMe } from '@/architextSDK';
 import { useStore } from '@/state';
-import { Lexend_Peta } from 'next/font/google';
 import { useRouter } from 'next/navigation';
 import { HamburgerMenu } from './hamburger';
 import Link from 'next/link';
@@ -97,6 +96,9 @@ function App({ params, searchParams }: {
 }) {
   const [worldId, setWorldId] = useState<string>(use(params).world_id)
   const socket = useStore((state) => state.socket)
+  const me = useStore((state) => state.me)
+  const authChecked = useStore((state) => state.authChecked)
+  const router = useRouter()
   const [messages, setMessages] = useState<Message[]>([])
   const [inputValue, setInputValue] = useState('')
   const [scrolledBottom, setScrolledBottom] = useState<boolean>(false)
@@ -112,11 +114,16 @@ function App({ params, searchParams }: {
   const characterMeasureRef = useRef<HTMLDivElement>(null)
   const textInputContainerRef = useRef<HTMLDivElement>(null)
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
-  const router = useRouter()
   const worldIsNew = use(searchParams).future;  // so it may not exist yet
   console.log("worldIsNew", worldIsNew)
   console.log(`world id is ${worldId}`)
   const shouldEnterWorld = useRef(true);
+
+  useEffect(() => {
+    if(authChecked && !me?.success){
+      router.push('/login')
+    }
+  }, [me]);
 
   // TODO: This has not been really tested for cases when the world
   // does not yet exist.

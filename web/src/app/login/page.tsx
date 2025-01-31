@@ -1,7 +1,6 @@
 "use client"; // Si estás usando app router en Next.js 13+
 
 import { useState } from "react";
-import { login } from "@/architextSDK";
 import { useStore } from "@/state";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
@@ -15,8 +14,8 @@ export default function Home() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const socket = useStore((state) => state.socket)
   const router = useRouter()
+  const login = useStore((state) => state.login)
 
   // Maneja el evento submit del formulario.
   // TODO: El autocompletado de contraseñas no funciona,
@@ -26,13 +25,11 @@ export default function Home() {
     // Aquí podrías llamar a tu API o servicio de autenticación.
     console.log("Email:", email);
     console.log("Password:", password);
-    const response = await login(socket, { email: email, password: password })
-    console.log(response)
-    if(response.success) {
-      localStorage.setItem("jwt", response.data?.jwt_token || "");
+    const response = await login(email, password)
+    if(response?.success) {
       router.push('/worlds')
     } else {
-      setError("Error: " + response.error)
+      setError("Error: " + response?.error)
     }
   };
 
