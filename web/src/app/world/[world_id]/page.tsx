@@ -332,7 +332,7 @@ function App({ params, searchParams }: {
   }, [textAreaRef, inputValue]);
   
   return (
-    <div className="bg-bg min-h-screen w-full flex flex-col justify-end text-white font-console break-words text-sm sm:text-base">
+    <div className="bg-bg min-h-screen w-full flex flex-col justify-end text-white font-mono break-words text-lg">
         <div
           className="flex-1 px-3 sm:px-6 whitespace-pre-wrap overflow-auto flex"
           ref={scrollRef}

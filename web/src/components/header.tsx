@@ -17,7 +17,7 @@ export function Header() {
   }, [socket])
 
   return (
-    <div className="flex flex-row font-mono gap-10 justify-start max-w-screen-md w-full py-6 pt-9">
+    <div className="flex flex-row font-mono gap-10 justify-start max-w-screen-md w-full pb-11 pt-9">
       <h1 className="font-mono text-5xl hover:underline">
         <Link href="/">Architext</Link>
       </h1>

@@ -37,10 +37,10 @@ export default function Home() {
   };
 
   return (
-    <div className="text-text font-mono grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
+    <div className="text-text text-lg font-mono flex flex-col items-center min-h-screen pb-20">
       <Header />
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Card className="px-16 py-8">
+      <main className="flex flex-col gap-8 row-start-2 items-stretch max-w-screen-md w-full">
+        <Card className="px-8 py-12 flex flex-col items-center">
           <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-sm">
             {
               error &&
@@ -71,7 +71,7 @@ export default function Home() {
             <Button type="submit">
               Login
             </Button>
-            or
+            <div className="mx-auto">or</div>
             <Link href='/signup'><Button className='w-full'>Create an account</Button></Link>
           </form>
         </Card>

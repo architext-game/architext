@@ -87,7 +87,7 @@ export default function Home() {
           worldCode={worldCode}
         />
       }
-      <main className="flex flex-col gap-8 row-start-2 max-w-screen-md items-stretch py-5">
+      <main className="flex flex-col gap-8 row-start-2 max-w-screen-md items-stretch">
         <Card>
         Welcome to Architext. This is a place where you can create and explore worlds made of words! Enter the Architexture Museum for a five minute tutorial.
         </Card>
