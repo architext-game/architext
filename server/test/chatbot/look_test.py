@@ -1,3 +1,4 @@
+from typing import cast
 from architext.chatbot.adapters.fake_sender import FakeSender
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
@@ -7,32 +8,72 @@ from architext.core import Architext
 import pytest # type: ignore
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.room import Room
+from test.fixtures import createTestData
 
 
 @pytest.fixture
 def session() -> Session:
-    uow = FakeUnitOfWork()
-    uow.rooms.save_room(Room(id="room1", name="Living Room", description="A cozy living room", exits=[], world_id=DEFAULT_WORLD.id))
-    uow.rooms.save_room(Room(id="room2", name="Kitchen", description="A modern kitchen", exits=[], world_id=DEFAULT_WORLD.id))
-    uow.users.save_user(User(id="0", name="John", email="john@example.com", room_id="room1", password_hash=b"asdasd"))
-    uow.users.save_user(User(id="1", name="Alice", email="alice@example.com", room_id=None, password_hash=b"asdasd"))
-    uow.users.save_user(User(id="2", name="Paul", email="paul@example.com", room_id="room1", password_hash=b"asdasd"))
-    uow.users.save_user(User(id="3", name="Brian", email="brian@example.com", room_id="room2", password_hash=b"asdasd"))
+    architext = createTestData()
+    return Session(architext=architext, sender=FakeSender(architext), logger=StdOutLogger(), user_id="oliver") 
 
-    architext = Architext(uow=uow)
-
-    return Session(architext=architext, sender=FakeSender(architext), logger=StdOutLogger(), user_id="0") 
-
-def test_look_room(session: Session):
+def test_look_room_shows_name_and_description(session: Session):
     session.process_message("look")
     assert isinstance(session.sender, FakeSender)
     sender: FakeSender = session.sender
 
     sent_text = '\n'.join([message.text for message in sender._sent])
     print(sent_text)
-    assert 'Living Room' in sent_text
-    assert 'A cozy living room' in sent_text
-    assert 'Players here: John, Paul' in sent_text
-    assert 'Brian' not in sent_text
-    assert 'Alice' not in sent_text
-    assert 'Kitchen' not in sent_text
+    assert "Oliver's Room" in sent_text
+    assert "This is Oliver's Room" in sent_text
+
+
+def test_look_room_shows_exits(session: Session):
+    session.process_message("look")
+    assert isinstance(session.sender, FakeSender)
+    sender: FakeSender = session.sender
+
+    sent_text = '\n'.join([message.text for message in sender._sent])
+    print(sent_text)
+    assert "Exits: To the spaceship, To Alice's Room, To Bob's Room" in sent_text
+
+
+def test_look_room_dont_show_hidden_exits(session: Session):
+    session.process_message("look")
+    assert isinstance(session.sender, FakeSender)
+    sender: FakeSender = session.sender
+
+    sent_text = '\n'.join([message.text for message in sender._sent])
+    print(sent_text)
+    assert "Secret exit" not in sent_text
+
+    # It's easy for this test to give a false positive 
+    # if the secret exit is removed from the fixtures,
+    # so let'd check that it's still there
+    uow = cast(FakeUnitOfWork, session.architext._uow)
+    room = uow.rooms.get_room_by_id("olivers")
+    assert room is not None
+    exit = next((exit for exit in room.exits if exit.name == "Secret exit"), None)
+    assert exit is not None
+
+
+def test_look_room_dont_show_visible_exits(session: Session):
+    session.process_message("look")
+    assert isinstance(session.sender, FakeSender)
+    sender: FakeSender = session.sender
+
+    sent_text = '\n'.join([message.text for message in sender._sent])
+    print(sent_text)
+    assert "Visible door to bathroom" not in sent_text
+
+
+def test_look_room_dont_show_auto_visibility_exits_mentioned_in_room_description(session: Session):
+    session.process_message("look")
+    assert isinstance(session.sender, FakeSender)
+    sender: FakeSender = session.sender
+
+    sent_text = '\n'.join([message.text for message in sender._sent])
+    print(sent_text)
+
+    after_room_description = sent_text.split("⮕ Exits: ", 1)[1]
+
+    assert "Auto door to bathroom" not in after_room_description

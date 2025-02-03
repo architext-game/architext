@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Literal, List, Optional
 from architext.core.authorization import assertUserIsLoggedIn
+from architext.core.domain.entities.exit import Exit
+from architext.core.domain.entities.room import Room
 from architext.core.queries.base import Query, QueryHandler, UOWQueryHandler
 
 @dataclass
@@ -32,6 +34,19 @@ class GetCurrentRoom(Query[GetCurrentRoomResult]):
 class GetCurrentRoomQueryHandler(QueryHandler[GetCurrentRoom, GetCurrentRoomResult]):
     pass
 
+def visibility_filter(exit: Exit, room: Room) -> Literal["visible", "listed"]:
+    if exit.visibility == "auto":
+        if exit.name.lower() in room.description.lower():
+            return "visible"
+        else:
+            return "listed"
+    elif exit.visibility == "visible":
+        return "visible"
+    elif exit.visibility == "listed":
+        return "listed"
+    else:  # exit is hidden, this won't be in the query results
+        return "visible"  
+
 class UOWGetCurrentRoomQueryHandler(UOWQueryHandler, GetCurrentRoomQueryHandler):
     def query(self, query: GetCurrentRoom, client_user_id: str) -> GetCurrentRoomResult:
         uow = self._uow
@@ -50,7 +65,7 @@ class UOWGetCurrentRoomQueryHandler(UOWQueryHandler, GetCurrentRoomQueryHandler)
             exits_in_room = [ExitInRoom(
                 name=exit.name, 
                 description=exit.description,
-                visibility=("listed" if exit.visibility == "auto" else exit.visibility),
+                visibility=visibility_filter(exit, current_room),
             ) for exit in current_room.exits if exit.visibility != "hidden"]
             output = GetCurrentRoomResult(
                 current_room=CurrentRoom(

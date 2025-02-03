@@ -101,12 +101,23 @@ def createTestData() -> Architext:
     olivers = Room(
         id="olivers",
         name="Oliver's Room",
-        description="This is Oliver's Room",
+        description="This is Oliver's Room. The is an Auto door to bathroom.",
         exits=[
             Exit(name="To the spaceship", destination_room_id="spaceship", description="What a nice exit"),
             Exit(name="To Alice's Room", destination_room_id="alices", description="A nice smell comes from there"),
             Exit(name="To Bob's Room", destination_room_id="bobs", description="A nice smell comes from there"),
+            Exit(name="Visible door to bathroom", destination_room_id="oliversbathroom", description="A bad smell comes from there", visibility="visible"),
+            Exit(name="Auto door to bathroom", destination_room_id="oliversbathroom", description="A bad smell comes from there", visibility="auto"),
             Exit(name="Secret exit", destination_room_id="space", description="My secret scape pod", visibility="hidden"),
+        ],
+        world_id="outer"
+    )
+    private_bathroom = Room(
+        id="oliversbathroom",
+        name="The Oliver's room private bathroom",
+        description="How lucky is it that Oliver has a bathroom in his room!",
+        exits=[
+            Exit(name="To Oliver's Room", destination_room_id="olivers", description="A nice smell comes from there"),
         ],
         world_id="outer"
     )
@@ -219,6 +230,7 @@ def createTestData() -> Architext:
     uow.rooms.save_room(space)
     uow.rooms.save_room(spaceship)
     uow.rooms.save_room(olivers)
+    uow.rooms.save_room(private_bathroom)
     uow.rooms.save_room(alices)
     uow.rooms.save_room(bobs)
     uow.rooms.save_room(a_table_in_the_tabern)
