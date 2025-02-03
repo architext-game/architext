@@ -19,7 +19,6 @@ def test_get_current_room_success(architext: Architext):
     result = architext.query(GetCurrentRoom(), client_user_id="oliver")
 
     assert result.current_room is not None
-    assert result.current_room.id == "olivers"
     assert result.current_room.name == "Oliver's Room"
     assert "This is Oliver's Room" in result.current_room.description
 

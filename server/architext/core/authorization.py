@@ -10,6 +10,10 @@ def assertUserIsLoggedIn(uow: UnitOfWork, user_id: str):
     if not isUserLoggedIn(uow, user_id):
         raise Exception("You need to be authenticated")
 
+def assertUserIsAuthorizedInCurrentWorld(uow: UnitOfWork, user_id: str):
+    if getUserAuthorizedInCurrentWorld(uow, user_id) is None:
+        raise PermissionError("You need to be the owner of the world to do that")
+
 def isUserLoggedIn(uow: UnitOfWork, user_id: str) -> bool:
     user = uow.users.get_user_by_id(user_id)
     return user is not None

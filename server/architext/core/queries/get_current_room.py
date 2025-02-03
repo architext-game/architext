@@ -14,11 +14,10 @@ class PersonInRoom:
 class ExitInRoom:
     name: str
     description: str
-    visibility: Literal["unlisted", "listed"]
+    list_in_room_description: bool
 
 @dataclass
 class CurrentRoom:
-    id: str
     name: str
     description: str
     exits: List[ExitInRoom]
@@ -31,21 +30,22 @@ class GetCurrentRoomResult:
 class GetCurrentRoom(Query[GetCurrentRoomResult]):
     pass
 
+
 class GetCurrentRoomQueryHandler(QueryHandler[GetCurrentRoom, GetCurrentRoomResult]):
     pass
 
-def visibility_filter(exit: Exit, room: Room) -> Literal["unlisted", "listed"]:
+def should_be_listed(exit: Exit, room: Room) -> bool:
     if exit.visibility == "auto":
         if exit.name.lower() in room.description.lower():
-            return "unlisted"
+            return False
         else:
-            return "listed"
+            return True
     elif exit.visibility == "unlisted":
-        return "unlisted"
+        return False
     elif exit.visibility == "listed":
-        return "listed"
+        return True
     else:  # exit is hidden, this won't be in the query results
-        return "unlisted"  
+        return False  
 
 class UOWGetCurrentRoomQueryHandler(UOWQueryHandler, GetCurrentRoomQueryHandler):
     def query(self, query: GetCurrentRoom, client_user_id: str) -> GetCurrentRoomResult:
@@ -65,11 +65,10 @@ class UOWGetCurrentRoomQueryHandler(UOWQueryHandler, GetCurrentRoomQueryHandler)
             exits_in_room = [ExitInRoom(
                 name=exit.name, 
                 description=exit.description,
-                visibility=visibility_filter(exit, current_room),
+                list_in_room_description=should_be_listed(exit, current_room),
             ) for exit in current_room.exits if exit.visibility != "hidden"]
             output = GetCurrentRoomResult(
                 current_room=CurrentRoom(
-                id=current_room.id,
                 exits=exits_in_room,
                 description=current_room.description,
                 name=current_room.name,

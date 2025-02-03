@@ -47,7 +47,7 @@ def show_current_room(sender: AbstractSender, architext: Architext, user_id: str
     title = room.name
     description = (room.description if room.description else strings.default_description) + '\n'
 
-    listed_exits = [exit.name for exit in room.exits if exit.visibility != "unlisted"]
+    listed_exits = [exit.name for exit in room.exits if exit.list_in_room_description]
     if len(listed_exits) > 0:
         exits = (', '.join(listed_exits))
         exits = _("⮕ Exits: {exits}.\n").format(exits=exits)
