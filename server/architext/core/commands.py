@@ -16,6 +16,7 @@
 from typing import Dict, List, Literal, Optional, TypeVar, Generic
 from pydantic import BaseModel, Field, EmailStr
 from dataclasses import dataclass
+from architext.core.domain.primitives import Visibility
 
 T = TypeVar('T')
 
@@ -36,6 +37,17 @@ class CreateConnectedRoom(Command[CreateConnectedRoomResult]):
     exit_to_new_room_description: str = Field(min_length=1, max_length=DESCRIPTION_MAX_LENGTH)
     exit_to_old_room_name: str = Field(min_length=1, max_length=NAME_MAX_LENGTH)
     exit_to_old_room_description: str = Field(min_length=1, max_length=DESCRIPTION_MAX_LENGTH)
+
+
+@dataclass
+class CreateExitResult:
+    pass
+
+class CreateExit(Command[CreateExitResult]):
+    name: str = Field(min_length=1, max_length=NAME_MAX_LENGTH)
+    description: str = Field(min_length=1, max_length=DESCRIPTION_MAX_LENGTH)
+    destination_room_id: str = Field(min_length=1, max_length=NAME_MAX_LENGTH)
+    visibility: Visibility = Field(min_length=1, max_length=NAME_MAX_LENGTH)
 
 
 @dataclass

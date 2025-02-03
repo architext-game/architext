@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from architext.core.domain.primitives import Visibility
 
 @dataclass
 class Exit:
@@ -6,3 +7,4 @@ class Exit:
     name: str
     description: str
     destination_room_id: str
+    visibility: Visibility = "auto"

@@ -20,6 +20,7 @@ from architext.core.commands import (
     RequestWorldImport,
     Command,
     EditWorld,
+    CreateExit,
 )
 
 from architext.core.services.edit_world import edit_world
@@ -33,6 +34,7 @@ from architext.core.services.traverse_exit import traverse_exit
 from architext.core.services.enter_world import enter_world
 from architext.core.services.request_world_creation_from_template import request_world_creation_from_template
 from architext.core.services.request_world_import import request_world_import
+from architext.core.services.create_exit import create_exit
 
 from typing import Dict, Type, Callable
 
@@ -48,4 +50,5 @@ COMMAND_HANDLERS: Dict[Type[Command], Callable] = {
     RequestWorldImport: request_world_import,
     CreateTemplate: create_template,
     EditWorld: edit_world,
+    CreateExit: create_exit,
 }

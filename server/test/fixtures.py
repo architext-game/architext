@@ -137,7 +137,7 @@ def createTestData() -> Architext:
         name="The private oliver's world",
         description="Only Oliver comes here",
         initial_room_id="solitude",
-        owner_user_id=None,
+        owner_user_id="oliver",
         visibility="public"
     )
     solitude = Room(
