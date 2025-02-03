@@ -17,7 +17,8 @@ from test.fixtures import createTestData
 @pytest.fixture
 def session_factory() -> Callable[[str], Session]:
     def factory(user_id: str):
-        return Session(architext=createTestData(), sender=FakeSender(), logger=StdOutLogger(), user_id=user_id) 
+        architext = createTestData()
+        return Session(architext=architext, sender=FakeSender(architext), logger=StdOutLogger(), user_id=user_id) 
     return factory
 
 def test_build(session_factory: Callable[[str], Session]):

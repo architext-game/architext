@@ -1,9 +1,8 @@
 from gettext import gettext as _
 
-from architext.core.commands import GetCurrentRoom
-
 from architext.chatbot.ports.sender import AbstractSender, MessageOptions
 from architext.core import Architext
+from architext.core.queries.get_current_room import GetCurrentRoom
 from .verb import Verb
 from .. import strings
 
@@ -37,7 +36,7 @@ class Look(Verb):
     
 
 def show_current_room(sender: AbstractSender, architext: Architext, user_id: str, show_world_name: bool = False) -> None:
-    result = architext.handle(GetCurrentRoom(), user_id)
+    result = architext.query(GetCurrentRoom(), user_id)
 
     if result.current_room is None:
         sender.send(user_id, _("You are not in a room!"))

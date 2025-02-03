@@ -67,32 +67,6 @@ class Login(Command[LoginResult]):
 
 
 @dataclass
-class PersonInRoom:
-    id: str
-    name: str
-
-@dataclass
-class ExitInRoom:
-    name: str
-    description: str
-    visibility: Literal["visible", "listed"]
-
-@dataclass
-class CurrentRoom:
-    id: str
-    name: str
-    description: str
-    exits: List[ExitInRoom]
-    people: List[PersonInRoom]
-
-@dataclass
-class GetCurrentRoomResult:
-    current_room: Optional[CurrentRoom]
-
-class GetCurrentRoom(Command[GetCurrentRoomResult]):
-    pass
-
-@dataclass
 class CreateUserResult:
     user_id: str
 

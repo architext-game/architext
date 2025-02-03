@@ -12,6 +12,7 @@ from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
 from architext.core import Architext
 from architext.core.handlers.notify_world_created_to_owner import WorldCreatedNotification
+from architext.core.queries.get_current_room import GetCurrentRoomResult, GetCurrentRoom
 from architext.core.queries.get_template import GetWorldTemplate, GetWorldTemplateResult
 from architext.core.queries.list_world_templates import ListWorldTemplates, ListWorldTemplatesResult, WorldTemplateListItem
 from architext.core.queries.me import Me, MeResult
@@ -30,7 +31,6 @@ from architext.core.adapters.memory_uow import MemoryUnitOfWork
 from architext.entrypoints.socketio.jwt_tokens import generate_jwt, decode_jwt
 from architext.core.commands import (
     CreateTemplate, CreateTemplateResult, CreateUser, CreateUserResult, EditWorld, EditWorldResult, EnterWorld, EnterWorldResult,
-    GetCurrentRoom, GetCurrentRoomResult,
     CreateConnectedRoom, CreateConnectedRoomResult, RequestWorldCreationFromTemplate, RequestWorldCreationFromTemplateResult, RequestWorldImport, RequestWorldImportResult,
     TraverseExit, TraverseExitResult,
     Login, LoginResult,
@@ -124,14 +124,8 @@ if __name__ == "__main__":
 
     @event(sio=sio, on='signup', In=CreateUser, Out=ResponseModel[CreateUserResult])
     def signup(sid, command: CreateUser) -> CreateUserResult:
-        return architext.handle(command)
+        return architext.handle(command) 
 
-
-    @event(sio=sio, on='get_current_room', Out=ResponseModel[GetCurrentRoomResult])
-    def get_current_room_event(sid) -> GetCurrentRoomResult:
-        client_user_id = sid_to_user_id[sid]
-        return architext.handle(GetCurrentRoom(), client_user_id=client_user_id)  
-        
 
     @event(sio=sio, on='create_connected_room', In=CreateConnectedRoom, Out=ResponseModel[CreateConnectedRoomResult])
     def create_connected_room_event(sid, params: CreateConnectedRoom) -> CreateConnectedRoomResult:  

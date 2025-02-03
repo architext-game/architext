@@ -1,10 +1,41 @@
-from architext.core.domain.entities.exit import Exit
-from architext.core.ports.unit_of_work import UnitOfWork
-from architext.core.commands import ExitInRoom, GetCurrentRoom, GetCurrentRoomResult, CurrentRoom, PersonInRoom
+from dataclasses import dataclass
+from typing import Literal, List, Optional
+from architext.core.authorization import assertUserIsLoggedIn
+from architext.core.queries.base import Query, QueryHandler, UOWQueryHandler
 
+@dataclass
+class PersonInRoom:
+    id: str
+    name: str
 
-def get_current_room(uow: UnitOfWork, command: GetCurrentRoom, client_user_id: str) -> GetCurrentRoomResult:
-    with uow:
+@dataclass
+class ExitInRoom:
+    name: str
+    description: str
+    visibility: Literal["visible", "listed"]
+
+@dataclass
+class CurrentRoom:
+    id: str
+    name: str
+    description: str
+    exits: List[ExitInRoom]
+    people: List[PersonInRoom]
+
+@dataclass
+class GetCurrentRoomResult:
+    current_room: Optional[CurrentRoom]
+
+class GetCurrentRoom(Query[GetCurrentRoomResult]):
+    pass
+
+class GetCurrentRoomQueryHandler(QueryHandler[GetCurrentRoom, GetCurrentRoomResult]):
+    pass
+
+class UOWGetCurrentRoomQueryHandler(UOWQueryHandler, GetCurrentRoomQueryHandler):
+    def query(self, query: GetCurrentRoom, client_user_id: str) -> GetCurrentRoomResult:
+        uow = self._uow
+        assertUserIsLoggedIn(uow, client_user_id)
         user = uow.users.get_user_by_id(client_user_id)
         if user is None:
             raise ValueError("User not found")
@@ -30,6 +61,4 @@ def get_current_room(uow: UnitOfWork, command: GetCurrentRoom, client_user_id: s
                 people=people_in_room
                 )
             )
-        uow.commit()
-
-    return output
+        return output

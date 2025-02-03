@@ -2,8 +2,7 @@ from typing import cast
 from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.domain.entities.world import DEFAULT_WORLD
 from architext.core.messagebus import MessageBus
-from architext.core.services.get_current_room import get_current_room
-from architext.core.commands import GetCurrentRoom, GetCurrentRoomResult
+from architext.core.queries.get_current_room import GetCurrentRoom, GetCurrentRoomResult
 import pytest # type: ignore
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.room import Room
@@ -17,7 +16,7 @@ def architext() -> Architext:
 
 
 def test_get_current_room_success(architext: Architext):
-    result: GetCurrentRoomResult = architext.handle(GetCurrentRoom(), client_user_id="oliver")
+    result = architext.query(GetCurrentRoom(), client_user_id="oliver")
 
     assert result.current_room is not None
     assert result.current_room.id == "olivers"
@@ -26,24 +25,24 @@ def test_get_current_room_success(architext: Architext):
 
 
 def test_get_current_room_user_not_in_room(architext: Architext):
-    result: GetCurrentRoomResult = architext.handle(GetCurrentRoom(), client_user_id="charlie")
+    result = architext.query(GetCurrentRoom(), client_user_id="charlie")
     assert result.current_room is None
 
 
 def test_get_current_room_invalid_user_id(architext: Architext):
-    with pytest.raises(ValueError):
-        result: GetCurrentRoomResult = architext.handle(GetCurrentRoom(), client_user_id="invalid")
+    with pytest.raises(Exception, match="You need to be authenticated"):
+        result = architext.query(GetCurrentRoom(), client_user_id="invalid")
 
 
 def test_get_current_room_lists_people_in_room(architext: Architext):
-    result: GetCurrentRoomResult = architext.handle(GetCurrentRoom(), client_user_id="dave")
+    result = architext.query(GetCurrentRoom(), client_user_id="dave")
     assert result.current_room is not None
     assert len(result.current_room.people) == 2
     assert "Bob" in [person.name for person in result.current_room.people]
 
 
 def test_hidden_exit_does_not_appear(architext: Architext):
-    result: GetCurrentRoomResult = architext.handle(GetCurrentRoom(), client_user_id="oliver")
+    result = architext.query(GetCurrentRoom(), client_user_id="oliver")
     assert result.current_room is not None
     assert next((exit for exit in result.current_room.exits if exit.name == "Secret exit"), None) is None
 

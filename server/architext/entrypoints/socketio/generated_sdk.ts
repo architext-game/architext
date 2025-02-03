@@ -41,26 +41,6 @@ export interface SignupResponse {
     error: string | null;
 }
 
-export interface GetCurrentRoomResponse {
-    success: boolean;
-    data: {
-        current_room: {
-            id: string;
-            name: string;
-            description: string;
-            exits: {
-                name: string;
-                description: string;
-            }[];
-            people: {
-                id: string;
-                name: string;
-            }[];
-        } | null;
-    } | null;
-    error: string | null;
-}
-
 export interface CreateConnectedRoomParams {
     name: string;
     description: string;
@@ -307,17 +287,6 @@ export async function signup(
 ): Promise<SignupResponse> {
     return new Promise((resolve, reject) => {
         socket.emit("signup", params, (response: SignupResponse) => {
-            resolve(response)
-        });
-    });
-}
-
-export async function getCurrentRoom(
-    socket: Socket,
-    params: null
-): Promise<GetCurrentRoomResponse> {
-    return new Promise((resolve, reject) => {
-        socket.emit("get_current_room", params, (response: GetCurrentRoomResponse) => {
             resolve(response)
         });
     });

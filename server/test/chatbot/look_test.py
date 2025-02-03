@@ -19,7 +19,9 @@ def session() -> Session:
     uow.users.save_user(User(id="2", name="Paul", email="paul@example.com", room_id="room1", password_hash=b"asdasd"))
     uow.users.save_user(User(id="3", name="Brian", email="brian@example.com", room_id="room2", password_hash=b"asdasd"))
 
-    return Session(architext=Architext(uow=uow), sender=FakeSender(), logger=StdOutLogger(), user_id="0") 
+    architext = Architext(uow=uow)
+
+    return Session(architext=architext, sender=FakeSender(architext), logger=StdOutLogger(), user_id="0") 
 
 def test_look_room(session: Session):
     session.process_message("look")

@@ -1,10 +1,12 @@
 from gettext import gettext as _
+
+from architext.core.queries.get_current_room import GetCurrentRoom
 from .verb import Verb
 from .look import show_current_room
 from .. import util
 from .. import strings
 
-from architext.core.commands import GetCurrentRoom, TraverseExit
+from architext.core.commands import TraverseExit
 
 class Go(Verb):
     """Allows the user to travel between rooms, using their exits."""
@@ -14,7 +16,7 @@ class Go(Verb):
     def process(self, message: str):
         command_length = len(self.command)
         partial_exit_name = message[command_length:]
-        result = self.architext.handle(GetCurrentRoom(), self.session.user_id)
+        result = self.architext.query(GetCurrentRoom(), self.session.user_id)
         
         if result.current_room is None:
             self.session.sender.send(self.session.user_id, _("You are not in a room, can't go anywhere :("))

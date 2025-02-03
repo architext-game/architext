@@ -47,8 +47,10 @@ def session() -> Session:
     uow.rooms.save_room(room2)
     uow.users.save_user(user1)
     uow.users.save_user(user2)
+    
+    architext = Architext(uow=uow)
 
-    return Session(architext=Architext(uow=uow), sender=FakeSender(), logger=StdOutLogger(), user_id="in_room") 
+    return Session(architext=architext, sender=FakeSender(architext), logger=StdOutLogger(), user_id="in_room") 
 
 def test_go(session: Session):
     session.process_message("go To Kitchen")

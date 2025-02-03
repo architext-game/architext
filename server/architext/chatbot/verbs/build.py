@@ -2,8 +2,9 @@ from gettext import gettext as _
 
 from typing import Optional, TYPE_CHECKING
 
-from architext.core.commands import CreateConnectedRoom, GetCurrentRoom, NAME_MAX_LENGTH, DESCRIPTION_MAX_LENGTH
+from architext.core.commands import CreateConnectedRoom, NAME_MAX_LENGTH, DESCRIPTION_MAX_LENGTH
 from architext.core import Architext
+from architext.core.queries.get_current_room import GetCurrentRoom
 
 from . import verb
 import architext.chatbot.strings as strings
@@ -43,7 +44,7 @@ class Build(verb.Verb):
             self.current_process_function(message)
 
     def process_first_message(self, message: str):
-        result = self.architext.handle(GetCurrentRoom(), self.session.user_id)
+        result = self.architext.query(GetCurrentRoom(), self.session.user_id)
         if not self.architext.authorization.isUserAuthorizedInCurrentWorld(self.session.user_id):
             self.session.sender.send(self.session.user_id, _("You can't build in a world you don't own."))
             self.finish_interaction()

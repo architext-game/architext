@@ -3,9 +3,10 @@ import typing
 import dataclasses
 import textwrap
 
+from architext.core.facade import Architext
 from architext.core.messagebus import MessageBus
 from architext.core.ports.unit_of_work import UnitOfWork
-from architext.core.commands import GetCurrentRoom
+from architext.core.queries.get_current_room import GetCurrentRoom
 from architext.chatbot import strings
 
 @dataclasses.dataclass
@@ -21,16 +22,15 @@ class Message():
     options: MessageOptions
 
 class AbstractSender(abc.ABC):
-    def __init__(self, messagebus: MessageBus, uow: UnitOfWork):
-        self.messagebus = messagebus
-        self.uow = uow
+    def __init__(self, architext: Architext):
+        self.architext = architext
 
     @abc.abstractmethod
     def _send(self, user_id: str, message: Message) -> None:
         pass
 
     def send_to_others_in_room(self, user_id: str, message: str, options: MessageOptions = MessageOptions(section=False)):
-        result = self.messagebus.handle(self.uow, GetCurrentRoom(), user_id)
+        result = self.architext.query(GetCurrentRoom(), user_id)
         if result.current_room is None:
             return
         for person in result.current_room.people:
@@ -38,7 +38,7 @@ class AbstractSender(abc.ABC):
                 self.send(person.id, message, options=options)
 
     def send_to_room(self, user_id: str, message, options: MessageOptions = MessageOptions(section=False)):
-        result = self.messagebus.handle(self.uow, GetCurrentRoom(), user_id)
+        result = self.architext.query(GetCurrentRoom(), user_id)
         if result.current_room is None:
             return
         for person in result.current_room.people:
