@@ -14,7 +14,7 @@ class PersonInRoom:
 class ExitInRoom:
     name: str
     description: str
-    visibility: Literal["visible", "listed"]
+    visibility: Literal["unlisted", "listed"]
 
 @dataclass
 class CurrentRoom:
@@ -34,18 +34,18 @@ class GetCurrentRoom(Query[GetCurrentRoomResult]):
 class GetCurrentRoomQueryHandler(QueryHandler[GetCurrentRoom, GetCurrentRoomResult]):
     pass
 
-def visibility_filter(exit: Exit, room: Room) -> Literal["visible", "listed"]:
+def visibility_filter(exit: Exit, room: Room) -> Literal["unlisted", "listed"]:
     if exit.visibility == "auto":
         if exit.name.lower() in room.description.lower():
-            return "visible"
+            return "unlisted"
         else:
             return "listed"
-    elif exit.visibility == "visible":
-        return "visible"
+    elif exit.visibility == "unlisted":
+        return "unlisted"
     elif exit.visibility == "listed":
         return "listed"
     else:  # exit is hidden, this won't be in the query results
-        return "visible"  
+        return "unlisted"  
 
 class UOWGetCurrentRoomQueryHandler(UOWQueryHandler, GetCurrentRoomQueryHandler):
     def query(self, query: GetCurrentRoom, client_user_id: str) -> GetCurrentRoomResult:

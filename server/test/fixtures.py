@@ -106,7 +106,7 @@ def createTestData() -> Architext:
             Exit(name="To the spaceship", destination_room_id="spaceship", description="What a nice exit"),
             Exit(name="To Alice's Room", destination_room_id="alices", description="A nice smell comes from there"),
             Exit(name="To Bob's Room", destination_room_id="bobs", description="A nice smell comes from there"),
-            Exit(name="Visible door to bathroom", destination_room_id="oliversbathroom", description="A bad smell comes from there", visibility="visible"),
+            Exit(name="Visible door to bathroom", destination_room_id="oliversbathroom", description="A bad smell comes from there", visibility="unlisted"),
             Exit(name="Auto door to bathroom", destination_room_id="oliversbathroom", description="A bad smell comes from there", visibility="auto"),
             Exit(name="Secret exit", destination_room_id="space", description="My secret scape pod", visibility="hidden"),
         ],
