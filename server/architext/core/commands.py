@@ -75,6 +75,7 @@ class PersonInRoom:
 class ExitInRoom:
     name: str
     description: str
+    visibility: Literal["visible", "listed"]
 
 @dataclass
 class CurrentRoom:

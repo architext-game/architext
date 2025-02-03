@@ -106,6 +106,7 @@ def createTestData() -> Architext:
             Exit(name="To the spaceship", destination_room_id="spaceship", description="What a nice exit"),
             Exit(name="To Alice's Room", destination_room_id="alices", description="A nice smell comes from there"),
             Exit(name="To Bob's Room", destination_room_id="bobs", description="A nice smell comes from there"),
+            Exit(name="Secret exit", destination_room_id="space", description="My secret scape pod", visibility="hidden"),
         ],
         world_id="outer"
     )
@@ -184,10 +185,17 @@ def createTestData() -> Architext:
         password_hash=b"asdasd"
     )
     charlie = User(
-        id="bob",
-        name="Bob",
-        email="bob@example.com",
+        id="charlie",
+        name="Charlie",
+        email="charlie@example.com",
         room_id=None,
+        password_hash=b"asdasd"
+    )
+    dave = User(
+        id="dave",
+        name="Dave",
+        email="dave@example.com",
+        room_id="bobs",
         password_hash=b"asdasd"
     )
     rabbit = User(
@@ -220,5 +228,6 @@ def createTestData() -> Architext:
     uow.users.save_user(alice)
     uow.users.save_user(bob)
     uow.users.save_user(charlie)
+    uow.users.save_user(dave)
     uow.users.save_user(rabbit)
     return Architext(uow)

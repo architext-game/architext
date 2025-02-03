@@ -16,7 +16,11 @@ def get_current_room(uow: UnitOfWork, command: GetCurrentRoom, client_user_id: s
                 raise ValueError("User is not in a room")
             users = uow.users.get_users_in_room(user.room_id)
             people_in_room = [PersonInRoom(id=user.id, name=user.name) for user in users]
-            exits_in_room = [ExitInRoom(name=exit.name, description=exit.description) for exit in current_room.exits]
+            exits_in_room = [ExitInRoom(
+                name=exit.name, 
+                description=exit.description,
+                visibility=("listed" if exit.visibility == "auto" else exit.visibility),
+            ) for exit in current_room.exits if exit.visibility != "hidden"]
             output = GetCurrentRoomResult(
                 current_room=CurrentRoom(
                 id=current_room.id,
