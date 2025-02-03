@@ -2,7 +2,7 @@
 from typing import Type, TypeVar, Mapping, TYPE_CHECKING
 from architext.core.queries.base import Query, QueryHandler
 from architext.core.queries.get_current_room import GetCurrentRoom, UOWGetCurrentRoomQueryHandler
-from architext.core.queries.get_current_room_details import GetCurrentRoomDetails, UOWGetCurrentRoomDetailsQueryHandler
+from architext.core.queries.get_room_details import GetRoomDetails, UOWGetRoomDetailsQueryHandler
 from architext.core.queries.get_template import GetWorldTemplate, UOWGetWorldTemplateQueryHandler
 from architext.core.queries.list_world_templates import UOWListWorldTemplatesQueryHandler, ListWorldTemplates
 from architext.core.queries.list_worlds import ListWorlds, UOWListWorldsQueryHandler
@@ -25,7 +25,7 @@ def uow_query_handlers_factory(uow: UnitOfWork) -> Mapping[Type[Query], QueryHan
         GetWorldTemplate: UOWGetWorldTemplateQueryHandler(uow),
         GetWorld: UOWGetWorldQueryHandler(uow),
         GetCurrentRoom: UOWGetCurrentRoomQueryHandler(uow),
-        GetCurrentRoomDetails: UOWGetCurrentRoomDetailsQueryHandler(uow),
+        GetRoomDetails: UOWGetRoomDetailsQueryHandler(uow),
     }
 
 class QueryManager:

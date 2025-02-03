@@ -8,7 +8,7 @@ import architext.chatbot.strings as strings
 from gettext import gettext as _
 
 from architext.core.domain.primitives import Visibility
-from architext.core.queries.get_current_room_details import GetCurrentRoomDetails
+from architext.core.queries.get_room_details import GetRoomDetails
 
 
 class Info(verb.Verb):
@@ -61,7 +61,7 @@ class Info(verb.Verb):
     
     def show_current_room_info(self) -> None:
         try:
-            room = self.architext.query(GetCurrentRoomDetails(), self.session.user_id).current_room
+            room = self.architext.query(GetRoomDetails(), self.session.user_id).room
         except PermissionError:
             self.session.sender.send(self.session.user_id, _("You need to be the owner of the world to do that"))
             return
