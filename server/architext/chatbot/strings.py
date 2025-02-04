@@ -19,11 +19,13 @@ default_description = _("It's nothing special.")
 # item edition and creation
 visibility_list    = _(
     '  (l) "listed"  ─ the item will be automatically listed in the room description.\n'
-    '  (v) "visible" ─ it won\'t be listed in room description.\n'
-    '  (h) "hidden"  ─ it won\'t even be listed by the "items" verb.\n'
-    '  (t) "takable" ─ players will be able to take the item into their inventory. It will be a listed item. Its name will need to be unique in the world.'
+    '  (a) "auto"  ─ it will be listed unless the room description contains its full name.\n'
+    '  (u) "unlisted" ─ it won\'t be listed in room description.\n'
+    '  (h) "hidden"  ─ it won\'t even be listed by the "exits" verb.\n'
+    # '  (t) "takable" ─ players will be able to take the item into their inventory. It will be a listed item. Its name will need to be unique in the world.'
 )
-visible_input_options = [_('visible'), _('v'), _('vi')]
+unlisted_input_options = [_('unlisted'), _('u'), _('ul')]
+auto_input_options = [_('auto'), _('a'), _('au')]
 listed_input_options  = [_('listed'), _('l'), _('li')]
 hidden_input_options  = [_('hidden'), _('h'), _('hi')]
 takable_input_options = [_('takable'), _('t'), _('ta')]

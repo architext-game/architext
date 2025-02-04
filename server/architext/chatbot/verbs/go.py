@@ -24,7 +24,7 @@ class Go(Verb):
             return
         
         available_exit_names = [exit.name for exit in result.current_room.exits]
-        possible_meanings = util.possible_meanings(partial_exit_name, available_exit_names)
+        possible_meanings = util.possible_meanings(partial_exit_name, available_exit_names, substr_match=True)
 
         if len(possible_meanings) == 1:
             selected_exit_name = possible_meanings[0]

@@ -131,3 +131,16 @@ class EditWorld(Command[EditWorldResult]):
     world_id: str
     name: Optional[str] = Field(min_length=1, max_length=NAME_MAX_LENGTH)
     description: Optional[str] = Field(min_length=1, max_length=DESCRIPTION_MAX_LENGTH)
+
+
+@dataclass
+class EditExitResult:
+    pass
+
+class EditExit(Command[EditExitResult]):
+    room_id: str
+    exit_name: str
+    new_name: Optional[str] = Field(None)
+    new_description: Optional[str] = Field(None)
+    new_destination: Optional[str] = Field(None)
+    new_visibility: Optional[Visibility] = Field(None)

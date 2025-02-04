@@ -5,3 +5,4 @@ from .verb import Verb
 from .exits import Exits
 from .info import Info
 from .link import Link
+from .edit_exit import EditExit
