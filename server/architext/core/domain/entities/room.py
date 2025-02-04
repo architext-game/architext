@@ -1,6 +1,7 @@
 from typing import List, Optional
 from dataclasses import dataclass, field
 from architext.core.domain.entities.exit import Exit
+from architext.core.domain.entities.item import Item
 
 @dataclass
 class Room:
@@ -9,6 +10,7 @@ class Room:
     world_id: str
     description: str = field(default="")
     exits: List[Exit] = field(default_factory=list)
+    items: List[Item] = field(default_factory=list)
 
     def get_exit_destination_id(self, exit_name: str) -> Optional[str]:
         return next((ext.destination_room_id for ext in self.exits if ext.name == exit_name), None)

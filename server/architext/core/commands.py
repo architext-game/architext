@@ -51,6 +51,16 @@ class CreateExit(Command[CreateExitResult]):
 
 
 @dataclass
+class CreateItemResult:
+    pass
+
+class CreateItem(Command[CreateItemResult]):
+    name: str = Field(min_length=1, max_length=NAME_MAX_LENGTH)
+    description: str = Field(min_length=1, max_length=DESCRIPTION_MAX_LENGTH)
+    visibility: Visibility = Field(min_length=1, max_length=NAME_MAX_LENGTH)
+
+
+@dataclass
 class TraverseExitResult:
     new_room_id: str
 

@@ -14,7 +14,7 @@ def create_exit(uow: UnitOfWork, command: CreateExit, client_user_id: str = "") 
 
     room = uow.rooms.get_room_by_id(user.room_id)
     if not room:
-        raise ValueError(f"Room with id {command.destination_room_id} does not exist.")
+        raise ValueError(f"Room with id {user.room_id} does not exist.")
 
     desitination_room = uow.rooms.get_room_by_id(command.destination_room_id)
 
