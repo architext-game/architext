@@ -26,7 +26,7 @@ def room_to_dict(room: Room) -> Dict:
         "id": room.id,
         "name": room.name,
         "description": room.description,
-        "exits": [exit_to_dict(exit) for exit in room.exits]
+        "exits": [exit_to_dict(exit) for exit in room.exits.values()]
     }
 
 def exit_to_dict(exit: Exit) -> Dict:

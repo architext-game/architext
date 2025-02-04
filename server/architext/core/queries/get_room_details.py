@@ -62,7 +62,7 @@ class UOWGetRoomDetailsQueryHandler(UOWQueryHandler, GetRoomDetailsQueryHandler)
             people_in_room = [PersonInRoomDetails(id=user.id, name=user.name) for user in users]
 
             exits_in_room = []
-            for exit in room.exits:
+            for exit in room.exits.values():
                 destination = uow.rooms.get_room_by_id(exit.destination_room_id)
                 if destination is None:
                     continue

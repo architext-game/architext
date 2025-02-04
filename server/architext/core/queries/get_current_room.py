@@ -66,7 +66,7 @@ class UOWGetCurrentRoomQueryHandler(UOWQueryHandler, GetCurrentRoomQueryHandler)
                 name=exit.name, 
                 description=exit.description,
                 list_in_room_description=should_be_listed(exit, current_room),
-            ) for exit in current_room.exits if exit.visibility != "hidden"]
+            ) for exit in current_room.exits.values() if exit.visibility != "hidden"]
             output = GetCurrentRoomResult(
                 current_room=CurrentRoom(
                 exits=exits_in_room,

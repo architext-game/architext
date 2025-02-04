@@ -93,58 +93,12 @@ def test_enter_world_that_does_not_exist(uow: FakeUnitOfWork, message_bus: Messa
 
 @pytest.mark.skip(reason="TODO")
 def test_user_changed_room_event_gets_invoked(uow: FakeUnitOfWork):
-    spy = Mock()
-    def handler(uow: FakeUnitOfWork, event: UserChangedRoom):
-        assert event.user_id is "in_room"
-        assert event.room_entered is "room2"
-        assert event.room_left is "room1"
-        assert event.exit_used is "To Kitchen"
-        spy()
-    handlers = {UserChangedRoom: [handler]}
-    message_bus = MessageBus(event_handlers=handlers)
-    message_bus.handle(uow, TraverseExit(exit_name="To Kitchen"), client_user_id="in_room")
-    assert spy.called
-
+    pass
 
 @pytest.mark.skip(reason="TODO")
-def test_users_get_notified_if_other_enters_or_leaves_room() -> None:
-    uow = FakeUnitOfWork()
-    bus = MessageBus()
-    bus.handle(uow, CreateInitialData())
-    user_a = bus.handle(uow, CreateUser(
-        email='test@test.com',
-        name='testerA',
-        password='asdasd'
-    ))
-    user_b = bus.handle(uow, CreateUser(
-        email='test@test.com',
-        name='testerB',
-        password='asdasd'
-    ))
-    room = bus.handle(
-        uow=uow, 
-        command=CreateConnectedRoom(
-            name='rrom',
-            description='descripdsdas',
-            exit_to_new_room_name='go',
-            exit_to_new_room_description='hehe',
-            exit_to_old_room_name='return',
-            exit_to_old_room_description='hoho'
-        ),
-        client_user_id=user_a.user_id
-    )
-    bus.handle(
-        uow=uow,
-        command=TraverseExit(
-            exit_name='go'
-        ),
-        client_user_id=user_a.user_id
-    )
-    assert user_b.user_id in uow.notifications.notifications
-    userb_notifications = uow.notifications.notifications.get(user_b.user_id, None)
-    assert userb_notifications is not None
-    assert len(userb_notifications) == 1
-    userb_noti = userb_notifications[0]
-    assert userb_noti.event == 'other_left_room'
-    assert userb_noti.data["user_name"] == 'testerA'
+def test_users_get_notified_if_user_enters_world_in_its_room() -> None:
+    pass
 
+@pytest.mark.skip(reason="TODO")
+def test_users_get_notified_if_user_leaves_world_from_its_room() -> None:
+    pass

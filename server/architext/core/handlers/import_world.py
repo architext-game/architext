@@ -8,7 +8,6 @@ from architext.core.domain.entities.exit import Exit
 from architext.core.domain.entities.world import World
 from architext.core.domain.events import WorldCreated, WorldCreationRequested
 from architext.core.ports.unit_of_work import UnitOfWork
-from uuid import uuid4
 from pydantic import TypeAdapter
 from typing_extensions import TypedDict
 
@@ -99,11 +98,11 @@ def import_world(uow: UnitOfWork, event: WorldCreationRequested):
             name=room["name"],
             description=room["description"],
             world_id=world_id,
-            exits=[Exit(
+            exits={exit["name"]: Exit(
                 name=exit["name"],
                 description=exit["description"],
                 destination_room_id=exit["destination_room_id"]
-            ) for exit in room["exits"]]
+            ) for exit in room["exits"]}
         ) for room in world_dict["rooms"]]
 
         uow.worlds.save_world(world)

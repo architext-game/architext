@@ -36,8 +36,8 @@ def test_create_connected_room_success(architext: Architext):
     assert old_room is not None
     assert new_room.name == "Living Room"
     assert new_room.description == "A cozy living room"
-    assert next(exit for exit in new_room.exits if exit.name == "Door to kitchen").description == "A door leading to the kitchen"
-    assert next(exit for exit in old_room.exits if exit.name == "Door to living room").description == "A door leading to the living room"
+    assert new_room.exits["Door to kitchen"].description == "A door leading to the kitchen"
+    assert old_room.exits["Door to living room"].description == "A door leading to the living room"
 
 
 def test_unauthorized_user_fails(architext: Architext):

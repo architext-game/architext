@@ -32,7 +32,7 @@ def test_create_exit_success(architext: Architext) -> None:
     room = uow.rooms.get_room_by_id("olivers")
     assert room is not None
     print(room.exits)
-    exit = next((exit for exit in room.exits if exit.name == "A fancy door"), None)
+    exit = room.exits.get("A fancy door")
     assert exit is not None
 
 
@@ -50,7 +50,7 @@ def test_exit_to_another_world_fails(architext: Architext):
     uow = cast(FakeUnitOfWork, architext._uow)
     room = uow.rooms.get_room_by_id("olivers")
     assert room is not None
-    exit = next((exit for exit in room.exits if exit.name == "A fancy door"), None)
+    exit = room.exits.get("A fancy door")
     assert exit is None
 
 
@@ -68,7 +68,7 @@ def test_create_exit_without_privileges_fails(architext: Architext):
     uow = cast(FakeUnitOfWork, architext._uow)
     room = uow.rooms.get_room_by_id("olivers")
     assert room is not None
-    exit = next((exit for exit in room.exits if exit.name == "A fancy door"), None)
+    exit = room.exits.get("A fancy door")
     assert exit is None
 
 
@@ -98,5 +98,5 @@ def test_create_exit_to_invalid_room_fails(architext: Architext):
     uow = cast(FakeUnitOfWork, architext._uow)
     room = uow.rooms.get_room_by_id("olivers")
     assert room is not None
-    exit = next((exit for exit in room.exits if exit.name == "A fancy door"), None)
+    exit = room.exits.get("A fancy door")
     assert exit is None

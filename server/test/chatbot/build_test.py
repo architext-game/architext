@@ -44,8 +44,8 @@ def test_build(session_factory: Callable[[str], Session]):
     assert old_room is not None
     assert new_room.name == "Living Room"
     assert new_room.description == "A cozy living room"
-    assert next(exit for exit in new_room.exits if exit.name == "Door to kitchen").destination_room_id == old_room.id
-    assert next(exit for exit in old_room.exits if exit.name == "Door to living room").destination_room_id == new_room.id
+    assert new_room.exits["Door to kitchen"].destination_room_id == old_room.id
+    assert old_room.exits["Door to living room"].destination_room_id == new_room.id
     assert "I don't understand that." in sent_text  # check if "adadasdas" was processed as a new command
 
 

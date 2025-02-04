@@ -25,7 +25,7 @@ def test_create_item_success(architext: Architext) -> None:
     room = uow.rooms.get_room_by_id("olivers")
     assert room is not None
     print(room.items)
-    box = next((item for item in room.items if item.name == "A box"), None)
+    box = room.items.get("A box")
     assert box is not None
 
 

@@ -33,8 +33,8 @@ def test_link_success(session_factory: Callable[[str], Session]):
     assert olivers is not None
     alices = uow.rooms.get_room_by_id("alices")
     assert alices is not None
-    assert next(exit for exit in olivers.exits if exit.name == "The new exit to alices") is not None
-    assert next(exit for exit in olivers.exits if exit.name == "The new exit to olivers") is not None
+    assert olivers.exits.get("The new exit to alices") is not None
+    assert olivers.exits.get("The new exit to olivers") is not None
 
 
 @pytest.mark.skip(reason="Not implemented yet")

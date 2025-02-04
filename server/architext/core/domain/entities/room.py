@@ -1,4 +1,5 @@
-from typing import List, Optional
+from types import MappingProxyType
+from typing import List, Mapping, Optional
 from dataclasses import dataclass, field
 from architext.core.domain.entities.exit import Exit
 from architext.core.domain.entities.item import Item
@@ -9,22 +10,38 @@ class Room:
     name: str
     world_id: str
     description: str = field(default="")
-    exits: List[Exit] = field(default_factory=list)
-    items: List[Item] = field(default_factory=list)
+    exits: Mapping[str, Exit] = field(default_factory=dict)
+    items: Mapping[str, Item] = field(default_factory=dict)
 
-    def get_exit_destination_id(self, exit_name: str) -> Optional[str]:
-        return next((ext.destination_room_id for ext in self.exits if ext.name == exit_name), None)
+    def __post_init__(self):
+        # Guarantee that exits and items are immutable
+        object.__setattr__(self, "exits", MappingProxyType(dict(self.exits)))
+        object.__setattr__(self, "items", MappingProxyType(dict(self.items)))
+
+    def with_replaced_exit(self, old: Exit, new: Exit) -> 'Room':
+        new_exits = {name: exit for name, exit in self.exits.items() if name != old.name}
+        new_exits[new.name] = new
+        
+        return self.with_changes(exits=new_exits)
+
+    def with_exit(self, exit: Exit) -> 'Room':
+        new_exits = {name: exit for name, exit in self.exits.items()}
+        new_exits[exit.name] = exit
+        
+        return self.with_changes(exits=new_exits)
     
-    def with_replaced_exit(self, old: Exit, new: Exit):
-        exits = [exit for exit in self.exits if exit.name != old.name] + [new]
-        return self.with_changes(exits=exits)
+    def with_item(self, item: Item) -> 'Room':
+        new_items = {name: item for name, item in self.items.items()}
+        new_items[item.name] = item
+
+        return self.with_changes(items=new_items)
     
     def with_changes(
         self, 
         name: Optional[str] = None,
         description: Optional[str] = None,
-        exits: Optional[List[Exit]] = None,
-        items: Optional[List[Item]] = None
+        exits: Optional[Mapping[str, Exit]] = None,
+        items: Optional[Mapping[str, Item]] = None
     ) -> "Room":
         return Room(
             id=self.id,
@@ -40,6 +57,6 @@ DEFAULT_ROOM = Room(
     id="DEFAULT_ROOM",
     name="Initial room",
     description="This is the initial room.",
-    exits=[],
+    exits={},
     world_id="DEFAULT_WORLD"
 )

@@ -71,11 +71,6 @@ if __name__ == "__main__":
     architext = createTestData()
     architext._uow.notifications = SocketIONotificator(sio, sid_to_user_id.inverse)
     architext.handle(CreateUser(email='oli@sanz.com', name='oliver', password='oliver'))
-    # uow = MemoryUnitOfWork(notificator=SocketIONotificator(sio, sid_to_user_id.inverse))
-    # create_user(uow=uow, command=CreateUser(email='oli@sanz.com', name='oliver', password='oliver'))
-    # architext = Architext(uow=uow)
-
-    architext.handle(CreateInitialData())
 
     user_id_to_session: Dict[str, Session] = {}
 

@@ -11,14 +11,11 @@ from architext.core.adapters.fake_notificator import FakeNotificator
 from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.ports.unit_of_work import UnitOfWork
 from architext.core.domain.entities.room import DEFAULT_ROOM
-
+from test.fixtures import createTestData
 
 @pytest.fixture
 def architext() -> Architext:
-    uow = FakeUnitOfWork()
-    MessageBus().handle(uow, CreateInitialData())
-    uow.committed = False
-    return Architext(uow)
+    return createTestData()
 
 
 def test_create_user_success(architext: Architext):
@@ -92,7 +89,7 @@ def test_create_user_list_users(architext: Architext):
     )
 
     users = architext._uow.users.list_users()
-    assert len(users) == 2
+    assert len(users) == 8
     user_names = [user.name for user in users]
     assert "Alice" in user_names
     assert "Bob" in user_names

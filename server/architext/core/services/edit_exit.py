@@ -17,7 +17,7 @@ def edit_exit(uow: UnitOfWork, command: EditExit, client_user_id: str) -> EditEx
         if room is None:
             raise ValueError("Room does not exist")
 
-        exit = next((exit for exit in room.exits if exit.name == command.exit_name), None)
+        exit = room.exits.get(command.exit_name, None)
 
         if exit is None:
             raise ValueError("Exit does not exist")

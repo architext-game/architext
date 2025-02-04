@@ -51,6 +51,6 @@ def test_hidden_exit_does_not_appear(architext: Architext):
     uow = cast(FakeUnitOfWork, architext._uow)
     room = uow.rooms.get_room_by_id("olivers")
     assert room is not None
-    exit = next((exit for exit in room.exits if exit.name == "Secret exit"), None)
+    exit = room.exits.get("Secret exit")
     assert exit is not None
     

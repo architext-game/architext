@@ -9,16 +9,16 @@ class MemoryRoomRepository(RoomRepository):
         self._rooms: Dict[str, Room] = {}
 
     def get_room_by_id(self, room_id: str) -> Optional[Room]:
-        return deepcopy(self._rooms.get(room_id, None))
+        return self._rooms.get(room_id, None)
 
     def save_room(self, room: Room) -> None:
-        self._rooms[room.id] = deepcopy(room)
+        self._rooms[room.id] = room
 
     def delete_room(self, room_id: str) -> None:
         del self._rooms[room_id]
 
     def list_rooms(self) -> List[Room]:
-        return deepcopy(list(self._rooms.values()))
+        return list(self._rooms.values())
     
     def list_rooms_by_world(self, world_id: str) -> List[Room]:
-        return deepcopy([room for room in self._rooms.values() if room.world_id == world_id])
+        return [room for room in self._rooms.values() if room.world_id == world_id]

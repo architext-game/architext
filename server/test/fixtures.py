@@ -82,65 +82,65 @@ def createTestData() -> Architext:
         name="Space",
         description="You are floating in the vastness of the universe, alone.",
         world_id="outer",
-        exits=[
-            Exit(name="To the spaceship", destination_room_id="spaceship", description="What a nice exit")
-        ],
+        exits={
+            "To the spaceship": Exit(name="To the spaceship", destination_room_id="spaceship", description="What a nice exit")
+        }
     )
     spaceship = Room(
         id="spaceship",
         name="A Cozy Spaceship",
         description="A cozy Spaceship",
-        exits=[
-            Exit(name="To Oliver's Room", destination_room_id="olivers", description="A nice smell comes from there"),
-            Exit(name="To Alice's Room", destination_room_id="alices", description="A nice smell comes from there"),
-            Exit(name="To Bob's Room", destination_room_id="bobs", description="A nice smell comes from there"),
-            Exit(name="To Space", destination_room_id="outerroom", description="To the cold cold emptyness"),
-        ],
+        exits={
+            "To Oliver's Room": Exit(name="To Oliver's Room", destination_room_id="olivers", description="A nice smell comes from there"),
+            "To Alice's Room": Exit(name="To Alice's Room", destination_room_id="alices", description="A nice smell comes from there"),
+            "To Bob's Room": Exit(name="To Bob's Room", destination_room_id="bobs", description="A nice smell comes from there"),
+            "To Space": Exit(name="To Space", destination_room_id="outerroom", description="To the cold cold emptyness"),
+        },
         world_id="outer"
     )
     olivers = Room(
         id="olivers",
         name="Oliver's Room",
         description="This is Oliver's Room. The is an Auto door to bathroom.",
-        exits=[
-            Exit(name="To the spaceship", destination_room_id="spaceship", description="What a nice exit"),
-            Exit(name="To Alice's Room", destination_room_id="alices", description="A nice smell comes from there"),
-            Exit(name="To Bob's Room", destination_room_id="bobs", description="A nice smell comes from there"),
-            Exit(name="Visible door to bathroom", destination_room_id="oliversbathroom", description="A bad smell comes from there", visibility="unlisted"),
-            Exit(name="Auto door to bathroom", destination_room_id="oliversbathroom", description="A bad smell comes from there", visibility="auto"),
-            Exit(name="Secret exit", destination_room_id="space", description="My secret scape pod", visibility="hidden"),
-        ],
+        exits={
+            "To the spaceship": Exit(name="To the spaceship", destination_room_id="spaceship", description="What a nice exit"),
+            "To Alice's Room": Exit(name="To Alice's Room", destination_room_id="alices", description="A nice smell comes from there"),
+            "To Bob's Room": Exit(name="To Bob's Room", destination_room_id="bobs", description="A nice smell comes from there"),
+            "Visible door to bathroom": Exit(name="Visible door to bathroom", destination_room_id="oliversbathroom", description="A bad smell comes from there", visibility="unlisted"),
+            "Auto door to bathroom": Exit(name="Auto door to bathroom", destination_room_id="oliversbathroom", description="A bad smell comes from there", visibility="auto"),
+            "Secret exit": Exit(name="Secret exit", destination_room_id="space", description="My secret scape pod", visibility="hidden"),
+        },
         world_id="outer"
     )
     private_bathroom = Room(
         id="oliversbathroom",
         name="The Oliver's room private bathroom",
         description="How lucky is it that Oliver has a bathroom in his room!",
-        exits=[
-            Exit(name="To Oliver's Room", destination_room_id="olivers", description="A nice smell comes from there"),
-        ],
+        exits={
+            "To Oliver's Room": Exit(name="To Oliver's Room", destination_room_id="olivers", description="A nice smell comes from there"),
+        },
         world_id="outer"
     )
     alices = Room(
         id="alices",
         name="Alice's Room",
         description="This is Alice's Room",
-        exits=[
-            Exit(name="To the spaceship", destination_room_id="spaceship", description="What a nice exit"),
-            Exit(name="To Oliver's Room", destination_room_id="olivers", description="A nice smell comes from there"),
-            Exit(name="To Bob's Room", destination_room_id="bobs", description="A nice smell comes from there"),
-        ],
+        exits={
+            "To the spaceship": Exit(name="To the spaceship", destination_room_id="spaceship", description="What a nice exit"),
+            "To Oliver's Room": Exit(name="To Oliver's Room", destination_room_id="olivers", description="A nice smell comes from there"),
+            "To Bob's Room": Exit(name="To Bob's Room", destination_room_id="bobs", description="A nice smell comes from there"),
+        },
         world_id="outer"
     )
     bobs = Room(
         id="bobs",
         name="Bob's Room",
         description="This is Bob's Room",
-        exits=[
-            Exit(name="To the spaceship", destination_room_id="spaceship", description="What a nice exit"),
-            Exit(name="To Oliver's Room", destination_room_id="olivers", description="A nice smell comes from there"),
-            Exit(name="To Alice's Room", destination_room_id="alices", description="A nice smell comes from there"),
-        ],
+        exits={
+            "To the spaceship": Exit(name="To the spaceship", destination_room_id="spaceship", description="What a nice exit"),
+            "To Oliver's Room": Exit(name="To Oliver's Room", destination_room_id="olivers", description="A nice smell comes from there"),
+            "To Alice's Room": Exit(name="To Alice's Room", destination_room_id="alices", description="A nice smell comes from there"),
+        },
         world_id="outer"
     )
 

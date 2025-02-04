@@ -52,7 +52,7 @@ def test_look_room_dont_show_hidden_exits(session: Session):
     uow = cast(FakeUnitOfWork, session.architext._uow)
     room = uow.rooms.get_room_by_id("olivers")
     assert room is not None
-    exit = next((exit for exit in room.exits if exit.name == "Secret exit"), None)
+    exit = room.exits.get("Secret exit")
     assert exit is not None
 
 

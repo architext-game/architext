@@ -32,9 +32,8 @@ def test_edit_exit_name_success(session_factory: Callable[[str], Session]):
     uow = session.architext._uow
     olivers = uow.rooms.get_room_by_id("olivers")
     assert olivers is not None
-    exit = next((exit for exit in olivers.exits if exit.name == "Hatch"), None)
-    assert next((exit for exit in olivers.exits if exit.name == "To the spaceship"), None) is None
-    assert exit is not None
+    assert olivers.exits.get("Hatch") is not None
+    assert olivers.exits.get("To the spaceship") is None
     
 
 def test_edit_exit_description_success(session_factory: Callable[[str], Session]):
@@ -55,7 +54,7 @@ def test_edit_exit_description_success(session_factory: Callable[[str], Session]
     uow = session.architext._uow
     olivers = uow.rooms.get_room_by_id("olivers")
     assert olivers is not None
-    exit = next((exit for exit in olivers.exits if exit.name == "To the spaceship"), None)
+    exit = olivers.exits.get("To the spaceship")
     assert exit is not None
     assert exit.description == "This is a great exit! :D"
 
@@ -78,7 +77,7 @@ def test_edit_exit_visibility_success(session_factory: Callable[[str], Session])
     uow = session.architext._uow
     olivers = uow.rooms.get_room_by_id("olivers")
     assert olivers is not None
-    exit = next((exit for exit in olivers.exits if exit.name == "To the spaceship"), None)
+    exit = olivers.exits.get("To the spaceship")
     assert exit is not None
     assert exit.visibility == "hidden"
 
@@ -101,6 +100,6 @@ def test_edit_exit_destination_success(session_factory: Callable[[str], Session]
     uow = session.architext._uow
     olivers = uow.rooms.get_room_by_id("olivers")
     assert olivers is not None
-    exit = next((exit for exit in olivers.exits if exit.name == "To the spaceship"), None)
+    exit = olivers.exits.get("To the spaceship")
     assert exit is not None
     assert exit.destination_room_id == "alices"
