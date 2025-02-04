@@ -55,14 +55,14 @@ def show_current_room(sender: AbstractSender, architext: Architext, user_id: str
         exits = ""
 
     items = ''
-    # listed_items = [item.name for item in room.items if item.is_listed()]
-    # if len(listed_items) > 0:
-    #     items = _('👁 You see ')+(', '.join(listed_items))
-    #     items = items + '.\n'
-    # else:
-    #     items = ''
 
-    # players_here = [user for user in room.people if user != self.session.user]
+    listed_items = [item.name for item in room.items if item.list_in_room_description]
+    if len(listed_items) > 0:
+        items = _('👁 You see ')+(', '.join(listed_items))
+        items = items + '.\n'
+    else:
+        items = ''
+
     player_names = [user.name for user in room.people]
     if len(player_names) < 1:
         players_description = ""

@@ -1,7 +1,8 @@
 from dataclasses import dataclass
-from typing import Literal, List, Optional
+from typing import Literal, List, Optional, Union
 from architext.core.authorization import assertUserIsLoggedIn
 from architext.core.domain.entities.exit import Exit
+from architext.core.domain.entities.item import Item
 from architext.core.domain.entities.room import Room
 from architext.core.queries.base import Query, QueryHandler, UOWQueryHandler
 
@@ -17,10 +18,17 @@ class ExitInRoom:
     list_in_room_description: bool
 
 @dataclass
+class ItemInRoom:
+    name: str
+    description: str
+    list_in_room_description: bool
+
+@dataclass
 class CurrentRoom:
     name: str
     description: str
     exits: List[ExitInRoom]
+    items: List[ItemInRoom]
     people: List[PersonInRoom]
 
 @dataclass
@@ -34,7 +42,7 @@ class GetCurrentRoom(Query[GetCurrentRoomResult]):
 class GetCurrentRoomQueryHandler(QueryHandler[GetCurrentRoom, GetCurrentRoomResult]):
     pass
 
-def should_be_listed(exit: Exit, room: Room) -> bool:
+def should_be_listed(exit: Union[Item, Exit], room: Room) -> bool:
     if exit.visibility == "auto":
         if exit.name.lower() in room.description.lower():
             return False
@@ -67,12 +75,18 @@ class UOWGetCurrentRoomQueryHandler(UOWQueryHandler, GetCurrentRoomQueryHandler)
                 description=exit.description,
                 list_in_room_description=should_be_listed(exit, current_room),
             ) for exit in current_room.exits.values() if exit.visibility != "hidden"]
+            items_in_room = [ItemInRoom(
+                name=item.name, 
+                description=item.description,
+                list_in_room_description=should_be_listed(item, current_room),
+            ) for item in current_room.items.values() if item.visibility != "hidden"]
             output = GetCurrentRoomResult(
                 current_room=CurrentRoom(
-                exits=exits_in_room,
-                description=current_room.description,
-                name=current_room.name,
-                people=people_in_room
+                    exits=exits_in_room,
+                    items=items_in_room,
+                    description=current_room.description,
+                    name=current_room.name,
+                    people=people_in_room
                 )
             )
         return output

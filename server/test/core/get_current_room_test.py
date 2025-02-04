@@ -40,6 +40,22 @@ def test_get_current_room_lists_people_in_room(architext: Architext):
     assert "Bob" in [person.name for person in result.current_room.people]
 
 
+def test_get_current_room_lists_items_in_room(architext: Architext):
+    result = architext.query(GetCurrentRoom(), client_user_id="oliver")
+    assert result.current_room is not None
+    assert len(result.current_room.items) == 4
+    items = {item.name: item for item in result.current_room.items}
+    assert "A cube" in items
+    assert "A small cube" in items
+    assert "A toroid" in items
+    assert "A sphere" in items
+    assert "A pyramid" not in items  # hidden item
+    assert items["A cube"].list_in_room_description  # not mentioned auto
+    assert not items["A small cube"].list_in_room_description  # mentioned auto
+    assert not items["A toroid"].list_in_room_description  # unlisted
+    assert items["A sphere"].list_in_room_description  # listed
+
+
 def test_hidden_exit_does_not_appear(architext: Architext):
     result = architext.query(GetCurrentRoom(), client_user_id="oliver")
     assert result.current_room is not None

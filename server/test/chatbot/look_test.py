@@ -77,3 +77,20 @@ def test_look_room_dont_show_auto_visibility_exits_mentioned_in_room_description
     after_room_description = sent_text.split("⮕ Exits: ", 1)[1]
 
     assert "Auto door to bathroom" not in after_room_description
+
+
+def test_look_room_shows_items(session: Session):
+    session.process_message("look")
+    assert isinstance(session.sender, FakeSender)
+    sender: FakeSender = session.sender
+
+    sent_text = '\n'.join([message.text for message in sender._sent])
+    print(sent_text)
+
+    after_room_description = sent_text.split("👁 You see", 1)[1]
+
+    assert "A cube" in after_room_description  # not mentioned auto
+    assert "A sphere" in after_room_description  # listed
+    assert "A small cube" not in after_room_description  # mentioned auto
+    assert "A toroid" not in after_room_description  # unlisted
+    assert "A pyramid" not in after_room_description  # hidden

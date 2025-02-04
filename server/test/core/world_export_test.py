@@ -65,7 +65,7 @@ def test_world_to_plain_text(architext: Architext):
         {
             "id": "olivers",
             "name": "Oliver's Room",
-            "description": "This is Oliver's Room. The is an Auto door to bathroom.",
+            "description": "This is Oliver's Room. The is an Auto door to bathroom. Also a small cube.",
             "exits": [
                 {
                     "name": "To the spaceship",
@@ -161,8 +161,6 @@ def test_world_to_plain_text(architext: Architext):
 def test_world_to_encoded_text(architext: Architext):
     out = architext.query(WorldToText(world_id="outer", format="encoded"))
     print(out.text_representation)
-    assert out.text_representation == """eJzlVU1v2zAM/SusL7sE/QG7ZbvssKHAEqwYhqKQbaYmJouGKGfNiv73iU6cybHnAkObHooYSUxR7/HjUXrI2NMdOWNvnakxew/ZVRvQwzXZUrIF/F0vUQpPTSB26vYZwzsBvG8se4RQIbSOtugFL3QbOQoUd3nm+pZK3SGNKVDX1CbR8uMhO1npY1j1hhPS79yCiXQbyyaQuwNyHfXWSHAoArwZhLIAY9nhpULhPYUDa0+z5s67o5eKmgnG68oEMOCoQFCEg0skN+oyyq+Debx5XMAguR69Z17CR/69g9UM8xKKkct0DldWs43d+BqDmUTqwpcarY2gNQpsPNeau8eZhLjDlaxLJuFb2gj3/HRGYcdsHzh/fq6c8zHTv1R3kEnBttx/Yd2Eneptrng6Rvo+VENf00QLT7VvXZFAfAZ+l7COIUWrcbBsA0PJ7CH+5iZUSnt2zb8FkXwjodziqNiTpLkp/3vmjsAD+slGn4l7hYXHkOohZfyyA9k7SGEahIbLp1QzORdpUsf2Rrketa+L0HjamoBzJfjEv8C2xc+dzgiFmHvU9B4FKhPH5rhZ7xCdMP1/8YqHbFqNg8rTC2N+nPoz4tTtFQ+Ac99KL3gEpK3pLEljZmn7tgyd3lBTXvgWuImfPyeEmoM="""
-
-
+    assert out.text_representation == """eJzlVU1v2zAM/SusL7sE/QG7eb3s0KHAEqwYhqKQbaYmJouGKKfNiv73ik6c2bHnAkObHooYSUxR7/HjUXpM2NMdOWNvnakw+QzJVRPQwzXZQpIF/F0vUHJPdSB26naJ4ZMAPtSWPUIoERpHG/SCZ7qNHAWKuzxzdUuF7pDa5KhrapNo+fWYHK10MSw7wxHpT27ARLq1ZRPI3QG5lnpjJDgUAV4PQlmAsezwXKHwgcKetaNZcevd0ktJ9QTjdWkCGHCUIyjC3iWSG3UZ5dfCPN08LWCQXIfeMadwwX+2sJxhTiEfuUzncGU129iN7zGYSaQ2fKnQ2ghaocDac6W5e5xJiFtcSdpkenypjXCvT2cUdsz2hbPX58o4GzP9S3V7meRsi90XVnXYqt7miqdjpO9DNXQ17WnhpfatShKIz8DvHFYxpGg1DtImMBTMHuJvZkLpW4fUCkfpSmW0Nk12+jH4CLr5QUKZxVH9J0kzU/z3GB6AB/STvT8R9xJzj6Gvhz7jty3IzkFyUyPUXLykmslR6Sd1aG+U62EcdBFqTxsTcK4EX/kebJP/3urYUIi5R03vUKA0cZIOm/Va0aHT/2fveO72q7FXef8OmR+n7tg4dnvHA+DUF9UbHgH91rSWXmNmabu2DJ0+UFPe+Ba4iZ9no7ig2Q=="""
     
     

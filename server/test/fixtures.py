@@ -1,5 +1,6 @@
 from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.domain.entities.exit import Exit
+from architext.core.domain.entities.item import Item
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.world import World
 from architext.core.domain.entities.world_template import WorldTemplate
@@ -101,7 +102,7 @@ def createTestData() -> Architext:
     olivers = Room(
         id="olivers",
         name="Oliver's Room",
-        description="This is Oliver's Room. The is an Auto door to bathroom.",
+        description="This is Oliver's Room. The is an Auto door to bathroom. Also a small cube.",
         exits={
             "To the spaceship": Exit(name="To the spaceship", destination_room_id="spaceship", description="What a nice exit"),
             "To Alice's Room": Exit(name="To Alice's Room", destination_room_id="alices", description="A nice smell comes from there"),
@@ -109,6 +110,13 @@ def createTestData() -> Architext:
             "Visible door to bathroom": Exit(name="Visible door to bathroom", destination_room_id="oliversbathroom", description="A bad smell comes from there", visibility="unlisted"),
             "Auto door to bathroom": Exit(name="Auto door to bathroom", destination_room_id="oliversbathroom", description="A bad smell comes from there", visibility="auto"),
             "Secret exit": Exit(name="Secret exit", destination_room_id="space", description="My secret scape pod", visibility="hidden"),
+        },
+        items={
+            "A cube": Item(name="A cube", description="a nice cube", visibility="auto"),
+            "A small cube": Item(name="A small cube", description="a nice small cube", visibility="auto"),
+            "A pyramid": Item(name="A pyramid", description="a nice pyramid", visibility="hidden"),
+            "A sphere": Item(name="A sphere", description="a nice sphere", visibility="listed"),
+            "A toroid": Item(name="A toroid", description="a nice toroid", visibility="unlisted"),
         },
         world_id="outer"
     )

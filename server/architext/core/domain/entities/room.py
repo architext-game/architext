@@ -14,6 +14,14 @@ class Room:
     items: Mapping[str, Item] = field(default_factory=dict)
 
     def __post_init__(self):
+        exits_dict = dict(self.exits)
+        items_dict = dict(self.items)
+
+        # Validar que no haya nombres repetidos entre exits e items
+        duplicate_names = set(exits_dict.keys()) & set(items_dict.keys())
+        if duplicate_names:
+            raise ValueError(f"Duplicated names in room: {duplicate_names}")
+        
         # Guarantee that exits and items are immutable
         object.__setattr__(self, "exits", MappingProxyType(dict(self.exits)))
         object.__setattr__(self, "items", MappingProxyType(dict(self.items)))
@@ -25,12 +33,18 @@ class Room:
         return self.with_changes(exits=new_exits)
 
     def with_exit(self, exit: Exit) -> 'Room':
+        if exit.name in self.items or exit.name in self.exits:
+            raise ValueError(f"Cannot add exit '{exit.name}', name is in use in this room.")
+        
         new_exits = {name: exit for name, exit in self.exits.items()}
         new_exits[exit.name] = exit
         
         return self.with_changes(exits=new_exits)
     
     def with_item(self, item: Item) -> 'Room':
+        if item.name in self.items or item.name in self.exits:
+            raise ValueError(f"Cannot add item '{item.name}', name is in use in this room.")
+        
         new_items = {name: item for name, item in self.items.items()}
         new_items[item.name] = item
 
