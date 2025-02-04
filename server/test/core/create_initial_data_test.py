@@ -23,7 +23,7 @@ def test_setup_creates_default_room(architext: Architext):
 def test_setup_does_not_recreate_the_default_room_if_exists(architext: Architext):
     architext.handle(CreateInitialData())
     default_room = copy.deepcopy(DEFAULT_ROOM)
-    default_room.description = "Modified description"
+    default_room = default_room.with_changes(description="Modified description")
     with architext._uow:
         architext._uow.rooms.save_room(default_room)
         architext._uow.commit()

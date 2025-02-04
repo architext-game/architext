@@ -1,5 +1,6 @@
 from architext.core.authorization import assertUserIsAuthorizedInCurrentWorld
 from architext.core.commands import EditExit, EditExitResult
+from architext.core.domain.entities.exit import Exit
 from architext.core.ports.unit_of_work import UnitOfWork
 
 
@@ -21,12 +22,15 @@ def edit_exit(uow: UnitOfWork, command: EditExit, client_user_id: str) -> EditEx
         if exit is None:
             raise ValueError("Exit does not exist")
         
-        exit.name = command.new_name if command.new_name else exit.name
-        exit.description = command.new_description if command.new_description else exit.description
-        exit.visibility = command.new_visibility if command.new_visibility else exit.visibility
-        exit.destination_room_id = command.new_destination if command.new_destination else exit.destination_room_id
+        new_exit = Exit(
+            name=command.new_name if command.new_name else exit.name,
+            description=command.new_description if command.new_description else exit.description,
+            visibility=command.new_visibility if command.new_visibility else exit.visibility,
+            destination_room_id=command.new_destination if command.new_destination else exit.destination_room_id,
+        )
 
-        uow.rooms.save_room(room)
+        updated_room = room.with_replaced_exit(exit, new_exit)
+        uow.rooms.save_room(updated_room)
 
         uow.commit()
 
