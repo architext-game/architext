@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 else:
     Session = object()
 
-class EditExit(verb.Verb):
+class Edit(verb.Verb):
     """This verb allows users to edit properties of an item or exit that is in their current room"""
 
     command = _('edit ')

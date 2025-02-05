@@ -1,7 +1,7 @@
 from gettext import gettext as _
 
 many_found         = _("There is more than one thing with a similar name. Be more specific.")
-not_found          = _("You can't find that here.")
+not_found          = _("You can't find that here. Try writing \"look\" and read carefully to know what is in your room.")
 cancelled          = _("Action cancelled")
 cancel_prompt      = _('❌ You can send "/" anytime to cancel.')
 is_empty           = _("It can't be empty.")

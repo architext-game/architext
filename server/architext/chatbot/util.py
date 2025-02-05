@@ -32,14 +32,14 @@ def possible_meanings(partial_string: str, list_of_options: typing.List[str], lo
         return []
 
 
-def name_to_entity(name: str, room: RoomDetails) -> typing.List[typing.Union[ExitInRoomDetails, ItemInRoomDetails]]:
+def name_to_entity(name: str, room: RoomDetails, match: typing.Literal['strict', 'loose', 'substring']='substring') -> typing.List[typing.Union[ExitInRoomDetails, ItemInRoomDetails]]:
     matches = []
 
     exit_names = [exit.name for exit in room.exits]
     item_names = [item.name for item in room.items]
     entity_names = exit_names + item_names
 
-    matches += possible_meanings(name, entity_names, substr_match=True)
+    matches += possible_meanings(name, entity_names, loose_match=match=='loose', substr_match=match=='substring')
 
     matching_exits = [exit for exit in room.exits if exit.name in matches]
     matching_items = [item for item in room.items if item.name in matches]

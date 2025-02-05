@@ -40,6 +40,10 @@ class Room:
         new_exits[exit.name] = exit
         
         return self.with_changes(exits=new_exits)
+
+    def without_exit(self, exit_to_delete: Exit) -> 'Room':
+        new_exits = {name: exit for name, exit in self.exits.items() if name != exit_to_delete.name}
+        return self.with_changes(exits=new_exits)
     
     def with_replaced_item(self, old: Item, new: Item) -> 'Room':
         new_items = {name: item for name, item in self.items.items() if name != old.name}
@@ -54,6 +58,10 @@ class Room:
         new_items = {name: item for name, item in self.items.items()}
         new_items[item.name] = item
 
+        return self.with_changes(items=new_items)
+
+    def without_item(self, item_to_delete: Item) -> 'Room':
+        new_items = {name: item for name, item in self.items.items() if name != item_to_delete.name}
         return self.with_changes(items=new_items)
     
     def with_changes(

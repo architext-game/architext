@@ -166,3 +166,21 @@ class EditItem(Command[EditItemResult]):
     new_name: Optional[str] = Field(None)
     new_description: Optional[str] = Field(None)
     new_visibility: Optional[Visibility] = Field(None)
+
+
+@dataclass
+class DeleteExitResult:
+    pass
+
+class DeleteExit(Command[DeleteExitResult]):
+    room_id: str
+    exit_name: str
+
+
+@dataclass
+class DeleteItemResult:
+    pass
+
+class DeleteItem(Command[DeleteItemResult]):
+    room_id: str
+    item_name: str
