@@ -42,3 +42,16 @@ def test_info_shows_all_exits(session: Session):
     assert "Visible door to bathroom" in sent_text
     assert "Auto door to bathroom" in sent_text
     assert "Secret exit" in sent_text
+
+def test_info_shows_all_items(session: Session):
+    session.process_message("info")
+    assert isinstance(session.sender, FakeSender)
+    sender: FakeSender = session.sender
+
+    sent_text = '\n'.join([message.text for message in sender._sent])
+    print(sent_text)
+    assert "A cube" in sent_text
+    assert "A small cube" in sent_text
+    assert "A toroid" in sent_text
+    assert "A sphere" in sent_text
+    assert "A pyramid" in sent_text  # hidden item

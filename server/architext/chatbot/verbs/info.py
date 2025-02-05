@@ -83,10 +83,10 @@ class Info(verb.Verb):
             )
         exit_string = '\n'.join(exit_list)
 
-        # item_list = []
-        # for item in self.session.user.room.items:
-        #     item_list.append(f'   {item.name} ({self.visibility_label(item)})')
-        # item_string = '\n'.join(item_list)
+        item_list = []
+        for item in room.items:
+            item_list.append(f'   {item.name} ({self.visibility_label(item.visibility)})')
+        item_string = '\n'.join(item_list)
         
         players_online = ", ".join([person.name for person in room.people])
         players_offline = "none"
@@ -96,15 +96,15 @@ class Info(verb.Verb):
             'Description: {description}\n'
             'Exits:\n'
             '{exit_string}\n'
-            # 'Items:\n'
-            # '{item_string}\n'
+            'Items:\n'
+            '{item_string}\n'
             'Online players here: {players_online}\n'
             'Offline players here: {players_offline}'
         ).format(
             alias=room.id,
             description=room.description,
             exit_string=exit_string,
-            # item_string=item_string,
+            item_string=item_string,
             players_online=players_online,
             players_offline=players_offline,
         )
