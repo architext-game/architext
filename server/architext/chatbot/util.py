@@ -8,7 +8,7 @@ import unicodedata
 import json, zlib, base64, binascii
 import typing
 
-from architext.core.queries.get_room_details import ExitInRoomDetails, RoomDetails
+from architext.core.queries.get_room_details import ExitInRoomDetails, RoomDetails, ItemInRoomDetails
 
 
 # username to be used by the ghost session (see ghost_session.py)
@@ -32,15 +32,19 @@ def possible_meanings(partial_string: str, list_of_options: typing.List[str], lo
         return []
 
 
-def name_to_entity(name: str, room: RoomDetails) -> typing.List[ExitInRoomDetails]:
+def name_to_entity(name: str, room: RoomDetails) -> typing.List[typing.Union[ExitInRoomDetails, ItemInRoomDetails]]:
     matches = []
 
     exit_names = [exit.name for exit in room.exits]
-    matches += possible_meanings(name, exit_names, substr_match=True)
+    item_names = [item.name for item in room.items]
+    entity_names = exit_names + item_names
+
+    matches += possible_meanings(name, entity_names, substr_match=True)
 
     matching_exits = [exit for exit in room.exits if exit.name in matches]
+    matching_items = [item for item in room.items if item.name in matches]
 
-    return matching_exits
+    return matching_exits + matching_items
 
 
 def setup_logger(logger_name, log_file, console=False, level=logging.INFO):

@@ -23,12 +23,19 @@ class ExitInRoomDetails:
     destination_name: str
 
 @dataclass
+class ItemInRoomDetails:
+    name: str
+    description: str
+    visibility: Visibility
+
+@dataclass
 class RoomDetails:
     id: str
     world_id: str
     name: str
     description: str
     exits: List[ExitInRoomDetails]
+    items: List[ItemInRoomDetails]
     people: List[PersonInRoomDetails]
 
 @dataclass
@@ -74,14 +81,23 @@ class UOWGetRoomDetailsQueryHandler(UOWQueryHandler, GetRoomDetailsQueryHandler)
                     destination_name=destination.name,
                 ))
 
+            items_in_room = []
+            for item in room.items.values():
+                items_in_room.append(ItemInRoomDetails(
+                    name=item.name, 
+                    description=item.description,
+                    visibility=item.visibility,
+                ))
+
             output = GetRoomDetailsResult(
                 room=RoomDetails(
-                id=room.id,
-                world_id=room.world_id,
-                exits=exits_in_room,
-                description=room.description,
-                name=room.name,
-                people=people_in_room
+                    id=room.id,
+                    world_id=room.world_id,
+                    exits=exits_in_room,
+                    items=items_in_room,
+                    description=room.description,
+                    name=room.name,
+                    people=people_in_room
                 )
             )
         return output

@@ -22,6 +22,7 @@ from architext.core.commands import (
     CreateExit,
     EditExit,
     CreateItem,
+    EditItem,
 )
 
 from architext.core.services.edit_world import edit_world
@@ -37,6 +38,7 @@ from architext.core.services.request_world_import import request_world_import
 from architext.core.services.create_exit import create_exit
 from architext.core.services.edit_exit import edit_exit
 from architext.core.services.create_item import create_item
+from architext.core.services.edit_item import edit_item
 
 from typing import Dict, Type, Callable
 
@@ -54,4 +56,5 @@ COMMAND_HANDLERS: Dict[Type[Command], Callable] = {
     CreateExit: create_exit,
     EditExit: edit_exit,
     CreateItem: create_item,
+    EditItem: edit_item,
 }

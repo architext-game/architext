@@ -154,3 +154,15 @@ class EditExit(Command[EditExitResult]):
     new_description: Optional[str] = Field(None)
     new_destination: Optional[str] = Field(None)
     new_visibility: Optional[Visibility] = Field(None)
+
+
+@dataclass
+class EditItemResult:
+    pass
+
+class EditItem(Command[EditItemResult]):
+    room_id: str
+    item_name: str
+    new_name: Optional[str] = Field(None)
+    new_description: Optional[str] = Field(None)
+    new_visibility: Optional[Visibility] = Field(None)

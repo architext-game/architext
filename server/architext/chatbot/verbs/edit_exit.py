@@ -1,7 +1,7 @@
 from architext.chatbot.ports.sender import MessageOptions
-from architext.core.commands import EditExit as EditExitCommand
+from architext.core.commands import EditExit as EditExitCommand, EditItem as EditItemCommand
 from architext.core.facade import Architext
-from architext.core.queries.get_room_details import GetRoomDetails
+from architext.core.queries.get_room_details import ExitInRoomDetails, GetRoomDetails
 from . import verb
 from .. import util
 import textwrap
@@ -52,39 +52,33 @@ class EditExit(verb.Verb):
             self.finish_interaction()
             return
 
-        self.item_to_edit = entities[0]
+        self.entity_to_edit = entities[0]
 
-        # if self.item_to_edit.is_saved():
-        #     title = _('Editing saved item {item_id}').format(item_id=self.item_to_edit.item_id)
+        # if self.entity_to_edit.is_saved():
+        #     title = _('Editing saved item {item_id}').format(item_id=self.entity_to_edit.item_id)
         # else:
-        title = _('Editing item {item_name}').format(item_name=self.item_to_edit.name)
+        if isinstance(self.entity_to_edit, ExitInRoomDetails):
+            title = _('Editing exit {exit_name}').format(exit_name=self.entity_to_edit.name)
 
-        body = _(
-            'Enter the number of the value to edit.\n'
-            '    1 - Name\n'
-            '    2 - Description\n'
-            '    3 - Visibility\n'
-            '    4 - Destination'
-        )
-        self.session.sender.send_formatted(self.session.user_id, title, body, cancel=True)
-        self.current_process_function = self.process_exit_edit_option_number
-
-        # elif isinstance(selected_entity, entities.Exit):
-        #     self.exit_to_edit = selected_entity
-
-        #     title = _('Editing exit {exit_name}').format(exit_name=self.exit_to_edit.name)
-        #     body = _(
-        #         'Enter the number of the value to edit.\n'
-        #         '    1 - Name\n'
-        #         '    2 - Description\n'
-        #         '    3 - Visibility\n'
-        #         '    4 - Destination'
-        #     )
-        #     self.session.send_formatted(title, body, cancel=True)
-        #     self.current_process_function = self.process_exit_edit_option_number
-
-        # else:
-        #     raise ValueError(f"Expected Room or Exit, {type(selected_entity)} found")
+            body = _(
+                'Enter the number of the value to edit.\n'
+                '    1 - Name\n'
+                '    2 - Description\n'
+                '    3 - Visibility\n'
+                '    4 - Destination'
+            )
+            self.session.sender.send_formatted(self.session.user_id, title, body, cancel=True)
+            self.current_process_function = self.process_exit_edit_option_number
+        else:  # editing an Item
+            title = _('Editing item {item_name}').format(item_name=self.entity_to_edit.name)
+            body = _(
+                'Enter the number of the value to edit.\n'
+                '    1 - Name\n'
+                '    2 - Description\n'
+                '    3 - Visibility'
+            )
+            self.session.sender.send_formatted(self.session.user_id, title, body, cancel=True)
+            self.current_process_function = self.process_item_edit_option_number
 
 
     def process_item_edit_option_number(self, message: str):
@@ -94,7 +88,7 @@ class EditExit(verb.Verb):
             self.session.sender.send(self.session.user_id, strings.not_a_number)
             return
         
-        object_to_edit = self.item_to_edit
+        object_to_edit = self.entity_to_edit
 
         if selected_number == 1:
             self.option_number = selected_number
@@ -129,14 +123,18 @@ class EditExit(verb.Verb):
             self.process_item_edit_option_number(message)
     
     def process_reform_value(self, message: str):
-        object_to_edit = self.item_to_edit
+        object_to_edit = self.entity_to_edit
         assert self.current_room is not None
         
         if message:
             if self.option_number == 1:  # edit name
                 command = EditExitCommand(
                     room_id=self.current_room.id,
-                    exit_name=self.item_to_edit.name,
+                    exit_name=self.entity_to_edit.name,
+                    new_name=message
+                ) if isinstance(self.entity_to_edit, ExitInRoomDetails) else EditItemCommand(
+                    room_id=self.current_room.id,
+                    item_name=self.entity_to_edit.name,
                     new_name=message
                 )
                 # try:
@@ -159,57 +157,65 @@ class EditExit(verb.Verb):
             elif self.option_number == 2:  # edit description
                 command = EditExitCommand(
                     room_id=self.current_room.id,
-                    exit_name=self.item_to_edit.name,
+                    exit_name=self.entity_to_edit.name,
+                    new_description=message
+                ) if isinstance(self.entity_to_edit, ExitInRoomDetails) else EditItemCommand(
+                    room_id=self.current_room.id,
+                    item_name=self.entity_to_edit.name,
                     new_description=message
                 )
             elif self.option_number == 3:  # edit visibility
                 if message.lower() in strings.unlisted_input_options:
-                    command = EditExitCommand(
-                        room_id=self.current_room.id,
-                        exit_name=self.item_to_edit.name,
-                        new_visibility="unlisted"
-                    )
+                    new_visibility = "unlisted"
                 if message.lower() in strings.auto_input_options:
-                    command = EditExitCommand(
-                        room_id=self.current_room.id,
-                        exit_name=self.item_to_edit.name,
-                        new_visibility="auto"
-                    )
+                    new_visibility = "auto"
                 elif message.lower() in strings.listed_input_options:
-                    command = EditExitCommand(
-                        room_id=self.current_room.id,
-                        exit_name=self.item_to_edit.name,
-                        new_visibility="listed"
-                    )
+                    new_visibility = "listed"
                 elif message.lower() in strings.hidden_input_options:
-                    command = EditExitCommand(
-                        room_id=self.current_room.id,
-                        exit_name=self.item_to_edit.name,
-                        new_visibility="hidden"
-                    )
+                    new_visibility = "hidden"
+                else:
+                    self.session.sender.send(self.session.user_id, strings.wrong_value)
+                    return
+
+                command = EditExitCommand(
+                    room_id=self.current_room.id,
+                    exit_name=self.entity_to_edit.name,
+                    new_visibility=new_visibility
+                ) if isinstance(self.entity_to_edit, ExitInRoomDetails) else EditItemCommand(
+                    room_id=self.current_room.id,
+                    item_name=self.entity_to_edit.name,
+                    new_visibility=new_visibility
+                )
+                
                 # elif message.lower() in strings.takable_input_options:
-                #     if self.can_change_to_takable(self.item_to_edit):
+                #     if self.can_change_to_takable(self.entity_to_edit):
                 #         self.new_value = 'takable'
                 #     else:
                 #         self.session.sender.send(self.session.user_id, _('There is another entity with that name in this world. Since you are trying to make this item takable, it needs an unique name.\nEdition cancelled.'))
                 #         self.finish_interaction()
                 #         return
-                else:
-                    self.session.sender.send(self.session.user_id, strings.wrong_value)
-                    return
-            elif self.option_number == 4:  # edit exit's destination
+                
+            else:  # self.option_number == 4:  # edit exit's destination
                 destination_room = self.architext.query(GetRoomDetails(room_id=message), self.session.user_id)
                 if destination_room.room:
                     command = EditExitCommand(
                         room_id=self.current_room.id,
-                        exit_name=self.item_to_edit.name,
+                        exit_name=self.entity_to_edit.name,
                         new_destination=destination_room.room.id,
                     )
                 else:
                     self.session.sender.send(self.session.user_id, strings.room_not_found)
                     self.finish_interaction()
                     return
-            self.architext.handle(command, self.session.user_id)
+
+            # TODO; Why mypy, why...?
+            if isinstance(command, EditExitCommand):
+                self.architext.handle(command, self.session.user_id)
+            else:
+                self.architext.handle(command, self.session.user_id)
+            # This is a mypy error
+            # self.architext.handle(command, self.session.user_id)
+
             self.session.sender.send(self.session.user_id, _('Edition completed.'))
             self.finish_interaction()
         else:

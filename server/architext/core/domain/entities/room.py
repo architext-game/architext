@@ -41,6 +41,12 @@ class Room:
         
         return self.with_changes(exits=new_exits)
     
+    def with_replaced_item(self, old: Item, new: Item) -> 'Room':
+        new_items = {name: item for name, item in self.items.items() if name != old.name}
+        new_items[new.name] = new
+        
+        return self.with_changes(items=new_items)
+
     def with_item(self, item: Item) -> 'Room':
         if item.name in self.items or item.name in self.exits:
             raise ValueError(f"Cannot add item '{item.name}', name is in use in this room.")
