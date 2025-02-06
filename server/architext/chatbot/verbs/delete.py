@@ -1,3 +1,4 @@
+from multiprocessing import AuthenticationError
 from architext.core.queries.get_room_details import ExitInRoomDetails, GetRoomDetails
 from architext.core.commands import DeleteItem as DeleteItemCommand, DeleteExit as DeleteExitCommand
 from . import verb
@@ -74,39 +75,6 @@ class Delete(verb.Verb):
 
         self.finish_interaction()
 
-# class DeleteRoom(verb.Verb):
-#     """This verb allows users to delete their current room.
-#     A room where there are other connected players cannot be deleted.
-#     Also, the initial room (with alias 0) cannot be deleted.
-#     Note that rooms may be left disconnected after the use of this command"""
 
-#     command = _('deleteroom')
-#     permissions = verb.PRIVILEGED
-
-#     def process(self, message):
-#         room_to_delete = self.session.user.room
-
-#         if len([user for user in entities.User.objects(room=room_to_delete) if user.client_id != None]) > 1:
-#             self.session.send_to_client(_("You can't delete the room if there are other players here."))
-#         if room_to_delete.alias == "0":
-#             self.session.send_to_client(_('You can\'t delete the starting room. But you can edit it if you don\'t like it :-)'))
-#         else:
-#             # exits connecting to this room are implicitly removed from db and from exit lists in all rooms, due to its definition in entities.py
-
-#             for item in room_to_delete.items:
-#                 item.delete()
-
-#             for exit in room_to_delete.exits:
-#                 exit.delete()
-
-#             room_to_escape_from_oblivion = self.session.user.room.world_state.starting_room
-#             self.session.user.teleport(room_to_escape_from_oblivion)
-#             for user in entities.User.objects(room=room_to_delete):
-#                 user.teleport(room_to_escape_from_oblivion)
-
-#             room_to_delete.delete()
-#             self.session.send_to_client(_("The room and the exits leading to it have been deleted."))
-            
-#         self.finish_interaction()
 
 

@@ -8,3 +8,4 @@ from .link import Link
 from .edit import Edit
 from .items import Items
 from .delete import Delete
+from .raze import Raze
