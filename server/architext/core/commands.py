@@ -150,8 +150,8 @@ class EditExitResult:
 class EditExit(Command[EditExitResult]):
     room_id: str
     exit_name: str
-    new_name: Optional[str] = Field(None)
-    new_description: Optional[str] = Field(None)
+    new_name: Optional[str] = Field(None, min_length=1, max_length=NAME_MAX_LENGTH)
+    new_description: Optional[str] = Field(None, min_length=1, max_length=DESCRIPTION_MAX_LENGTH)
     new_destination: Optional[str] = Field(None)
     new_visibility: Optional[Visibility] = Field(None)
 
@@ -163,9 +163,19 @@ class EditItemResult:
 class EditItem(Command[EditItemResult]):
     room_id: str
     item_name: str
-    new_name: Optional[str] = Field(None)
-    new_description: Optional[str] = Field(None)
+    new_name: Optional[str] = Field(None, min_length=1, max_length=NAME_MAX_LENGTH)
+    new_description: Optional[str] = Field(None, min_length=1, max_length=DESCRIPTION_MAX_LENGTH)
     new_visibility: Optional[Visibility] = Field(None)
+
+
+@dataclass
+class EditRoomResult:
+    pass
+
+class EditRoom(Command[EditRoomResult]):
+    room_id: str
+    new_name: Optional[str] = Field(None, min_length=1, max_length=NAME_MAX_LENGTH)
+    new_description: Optional[str] = Field(None, min_length=1, max_length=DESCRIPTION_MAX_LENGTH)
 
 
 @dataclass

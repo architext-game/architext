@@ -9,3 +9,4 @@ from .edit import Edit
 from .items import Items
 from .delete import Delete
 from .raze import Raze
+from .edit_room import EditRoom

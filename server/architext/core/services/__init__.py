@@ -26,6 +26,7 @@ from architext.core.commands import (
     DeleteItem,
     DeleteExit,
     DeleteRoom,
+    EditRoom,
 )
 
 from architext.core.services.edit_world import edit_world
@@ -45,6 +46,7 @@ from architext.core.services.edit_item import edit_item
 from architext.core.services.delete_item import delete_item
 from architext.core.services.delete_exit import delete_exit
 from architext.core.services.delete_room import delete_room
+from architext.core.services.edit_room import edit_room
 
 from typing import Dict, Type, Callable
 
@@ -66,4 +68,5 @@ COMMAND_HANDLERS: Dict[Type[Command], Callable] = {
     DeleteItem: delete_item,
     DeleteExit: delete_exit,
     DeleteRoom: delete_room,
+    EditRoom: edit_room,
 }
