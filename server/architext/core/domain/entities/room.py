@@ -74,10 +74,10 @@ class Room:
         return Room(
             id=self.id,
             world_id=self.world_id,
-            name=name if name else self.name,
-            description=description if description else self.description,
-            exits=exits if exits else self.exits,
-            items=items if items else self.items,
+            name=name if name is not None else self.name,
+            description=description if description is not None else self.description,
+            exits=exits if exits is not None else self.exits,
+            items=items if items is not None else self.items,
         )
 
 

@@ -184,3 +184,11 @@ class DeleteItemResult:
 class DeleteItem(Command[DeleteItemResult]):
     room_id: str
     item_name: str
+
+
+@dataclass
+class DeleteRoomResult:
+    pass
+
+class DeleteRoom(Command[DeleteRoomResult]):
+    pass

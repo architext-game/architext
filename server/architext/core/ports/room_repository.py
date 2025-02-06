@@ -11,6 +11,9 @@ class RoomRepository(Protocol):
     def delete_room(self, room_id: str) -> None:
         pass
 
+    def delete_all_exits_leading_to_room(self, room_id: str) -> None:
+        pass
+
     def list_rooms(self) -> List[Room]:
         pass
 
