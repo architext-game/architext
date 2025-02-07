@@ -19,7 +19,7 @@ from architext.core.queries.me import Me, MeResult
 from architext.core.queries.get_world import GetWorld, GetWorldResult
 from architext.core.services.create_user import create_user
 from architext.core.queries.list_worlds import ListWorlds, ListWorldsResult
-from test.fixtures import createTestData
+from test.fixtures import createTestArchitext
 eventlet.monkey_patch(socket=True, time=True)
 import socketio
 import atexit
@@ -68,7 +68,7 @@ if __name__ == "__main__":
         sid_to_user_id[socket] = user_id
     
     
-    architext = createTestData()
+    architext = createTestArchitext()
     architext._uow.notifications = SocketIONotificator(sio, sid_to_user_id.inverse)
     architext.handle(CreateUser(email='oli@sanz.com', name='oliver', password='oliver'))
 

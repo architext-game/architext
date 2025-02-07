@@ -7,13 +7,13 @@ from architext.core.queries.list_worlds import ListWorlds
 import pytest # type: ignore
 from architext.core.domain.entities.room import Room
 from architext.core import Architext
-from test.fixtures import createTestData
+from test.fixtures import createTestArchitext
 import pprint
 
 
 @pytest.fixture
 def architext() -> Architext:
-    return createTestData()
+    return createTestArchitext()
 
 
 def test_list_world_templates(architext: Architext):

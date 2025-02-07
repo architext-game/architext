@@ -7,12 +7,12 @@ import pytest # type: ignore
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.room import Room
 from architext.core import Architext
-from test.fixtures import createTestData
+from test.fixtures import createTestArchitext
 
 
 @pytest.fixture
 def architext() -> Architext:
-    return createTestData()
+    return createTestArchitext()
 
 
 def test_get_current_room_success(architext: Architext):

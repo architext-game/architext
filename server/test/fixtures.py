@@ -6,8 +6,11 @@ from architext.core.domain.entities.world import World
 from architext.core.domain.entities.world_template import WorldTemplate
 from architext.core.domain.entities.room import Room
 from architext.core import Architext
+from typing import Dict, Type, List, Callable
 
-def createTestData() -> Architext:
+from architext.core.ports.unit_of_work import UnitOfWork
+
+def createTestUow() -> UnitOfWork:
     emptytemplate = WorldTemplate(
         id="emptytemplate",
         name="New World",
@@ -250,4 +253,9 @@ def createTestData() -> Architext:
     uow.users.save_user(charlie)
     uow.users.save_user(dave)
     uow.users.save_user(rabbit)
-    return Architext(uow)
+    return uow
+
+
+def createTestArchitext(extra_event_handlers: Dict[Type, List[Callable]] = {}) -> Architext:
+    uow = createTestUow()
+    return Architext(uow, extra_event_handlers=extra_event_handlers)

@@ -3,13 +3,13 @@ from architext.chatbot.adapters.fake_sender import FakeSender
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
 import pytest # type: ignore
-from test.fixtures import createTestData
+from test.fixtures import createTestArchitext
 
 
 @pytest.fixture
 def session_factory() -> Callable[[str], Session]:
     def factory(user_id: str):
-        architext = createTestData()
+        architext = createTestArchitext()
         return Session(architext=architext, sender=FakeSender(architext), logger=StdOutLogger(), user_id=user_id) 
     return factory
 

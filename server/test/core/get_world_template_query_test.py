@@ -1,12 +1,12 @@
 from architext.core.queries.get_template import GetWorldTemplate
 import pytest # type: ignore
 from architext.core import Architext
-from test.fixtures import createTestData
+from test.fixtures import createTestArchitext
 
 
 @pytest.fixture
 def architext() -> Architext:
-    return createTestData()
+    return createTestArchitext()
 
 
 def test_can_get_private_world_template_from_other_user(architext: Architext):

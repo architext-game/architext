@@ -7,12 +7,12 @@ from architext.core.queries.world_to_text import WorldToText
 import pytest # type: ignore
 from architext.core.domain.entities.room import Room
 from architext.core import Architext
-from test.fixtures import createTestData
+from test.fixtures import createTestArchitext
 
 
 @pytest.fixture
 def architext() -> Architext:
-    return createTestData()
+    return createTestArchitext()
 
 
 def test_world_to_plain_text(architext: Architext):

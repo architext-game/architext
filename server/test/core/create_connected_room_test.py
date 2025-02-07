@@ -11,11 +11,11 @@ from architext.core.domain.entities.room import Room
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.world import DEFAULT_WORLD, World
 
-from test.fixtures import createTestData
+from test.fixtures import createTestArchitext
 
 @pytest.fixture
 def architext() -> Architext:
-    return createTestData()
+    return createTestArchitext()
 
 def test_create_connected_room_success(architext: Architext):
     command = CreateConnectedRoom(

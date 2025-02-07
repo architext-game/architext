@@ -11,12 +11,12 @@ from architext.core.adapters.fake_notificator import FakeNotificator
 from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.ports.unit_of_work import UnitOfWork
 from architext.core.domain.entities.room import DEFAULT_ROOM
-from test.fixtures import createTestData
+from test.fixtures import createTestArchitext
 
 
 @pytest.fixture
 def architext() -> Architext:
-    return createTestData()
+    return createTestArchitext()
 
 
 def test_create_exit_success(architext: Architext) -> None:

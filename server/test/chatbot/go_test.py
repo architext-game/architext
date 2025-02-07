@@ -9,13 +9,13 @@ import pytest # type: ignore
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.room import Room
 from architext.core.domain.entities.exit import Exit
-from test.fixtures import createTestData
+from test.fixtures import createTestArchitext
 
 
 @pytest.fixture
 def session_factory() -> Callable[[str], Session]:
     def factory(user_id: str):
-        architext = createTestData()
+        architext = createTestArchitext()
         return Session(architext=architext, sender=FakeSender(architext), logger=StdOutLogger(), user_id=user_id) 
     return factory
 

@@ -8,12 +8,12 @@ from architext.core import Architext
 import pytest # type: ignore
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.room import Room
-from test.fixtures import createTestData
+from test.fixtures import createTestArchitext
 
 
 @pytest.fixture
 def session() -> Session:
-    architext = createTestData()
+    architext = createTestArchitext()
     return Session(architext=architext, sender=FakeSender(architext), logger=StdOutLogger(), user_id="oliver") 
 
 def test_info_shows_name_id_and_description(session: Session):

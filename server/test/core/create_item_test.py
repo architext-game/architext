@@ -5,12 +5,12 @@ from architext.core.commands import CreateItem
 from pydantic import ValidationError
 from architext.core import Architext
 from architext.core.adapters.fake_uow import FakeUnitOfWork
-from test.fixtures import createTestData
+from test.fixtures import createTestArchitext
 
 
 @pytest.fixture
 def architext() -> Architext:
-    return createTestData()
+    return createTestArchitext()
 
 
 def test_create_item_success(architext: Architext) -> None:
