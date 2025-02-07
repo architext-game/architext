@@ -10,9 +10,6 @@ import eventlet
 from architext.chatbot.adapters.socketio_sender import SocketIOSender
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
-from architext.core import Architext
-from architext.core.handlers.notify_world_created_to_owner import WorldCreatedNotification
-from architext.core.queries.get_current_room import GetCurrentRoomResult, GetCurrentRoom
 from architext.core.queries.get_template import GetWorldTemplate, GetWorldTemplateResult
 from architext.core.queries.list_world_templates import ListWorldTemplates, ListWorldTemplatesResult, WorldTemplateListItem
 from architext.core.queries.me import Me, MeResult
@@ -42,7 +39,6 @@ import argparse
 from architext.core.domain.events import UserChangedRoom
 from bidict import bidict
 from dataclasses import asdict
-from architext.core.adapters.sio_notificator import SocketIONotificator
 from dataclasses import dataclass
 
 
@@ -69,7 +65,6 @@ if __name__ == "__main__":
     
     
     architext = createTestArchitext()
-    architext._uow.notifications = SocketIONotificator(sio, sid_to_user_id.inverse)
     architext.handle(CreateUser(email='oli@sanz.com', name='oliver', password='oliver'))
 
     user_id_to_session: Dict[str, Session] = {}
@@ -194,16 +189,11 @@ if __name__ == "__main__":
         return architext.handle(input, client_user_id)
 
     if args.types:
-        from architext.core.handlers.notify_other_entered_room import OtherEnteredRoomNotification
-        from architext.core.handlers.notify_other_left_room import OtherLeftRoomNotification
         from architext.entrypoints.socketio.sdk_generator import generate_sdk, Event
         from architext.chatbot.ports.sender import Message
 
         events = [
-            Event('other_left_room', OtherLeftRoomNotification),
-            Event('other_entered_room', OtherEnteredRoomNotification),
             Event('chatbot_server_message', Message),
-            Event('world_created', WorldCreatedNotification)
         ]
 
         extra_models = [

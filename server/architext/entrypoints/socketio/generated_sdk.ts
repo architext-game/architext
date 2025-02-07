@@ -228,14 +228,6 @@ export interface RequestWorldCreationFromTemplateResponse {
     error: string | null;
 }
 
-export interface OtherLeftRoomNotification {
-    user_name: string;
-}
-
-export interface OtherEnteredRoomNotification {
-    user_name: string;
-}
-
 export interface Message {
     text: string;
     options: {
@@ -244,10 +236,6 @@ export interface Message {
         fillInput: string | null;
         asksForPassword: boolean;
     };
-}
-
-export interface WorldCreatedNotification {
-    world_id: string;
 }
 
 export interface WorldTemplateListItem {
@@ -435,31 +423,10 @@ export async function requestWorldCreationFromTemplate(
     });
 }
 
-export function onOtherLeftRoom(
-    socket: Socket,
-    callback: (event: OtherLeftRoomNotification) => void
-): void {
-    socket.on('other_left_room', callback)
-}
-
-export function onOtherEnteredRoom(
-    socket: Socket,
-    callback: (event: OtherEnteredRoomNotification) => void
-): void {
-    socket.on('other_entered_room', callback)
-}
-
 export function onChatbotServerMessage(
     socket: Socket,
     callback: (event: Message) => void
 ): void {
     socket.on('chatbot_server_message', callback)
-}
-
-export function onWorldCreated(
-    socket: Socket,
-    callback: (event: WorldCreatedNotification) => void
-): void {
-    socket.on('world_created', callback)
 }
 

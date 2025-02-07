@@ -1,16 +1,11 @@
 from typing import cast
 import pytest # type: ignore
 from architext.core.adapters.fake_uow import FakeUnitOfWork
-from architext.core.services.create_user import create_user
-from architext.core.commands import CreateUser, CreateUserResult, CreateInitialData
+from architext.core.commands import CreateUser, CreateUserResult
 from pydantic import ValidationError
 from architext.core import Architext
 
-from architext.core.messagebus import MessageBus
-from architext.core.adapters.fake_notificator import FakeNotificator
 from architext.core.adapters.fake_uow import FakeUnitOfWork
-from architext.core.ports.unit_of_work import UnitOfWork
-from architext.core.domain.entities.room import DEFAULT_ROOM
 from test.fixtures import createTestArchitext
 
 @pytest.fixture

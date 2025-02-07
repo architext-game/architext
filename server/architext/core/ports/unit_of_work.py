@@ -3,7 +3,6 @@ from architext.core.ports.external_event_publisher import ExternalEventPublisher
 from architext.core.ports.room_repository import RoomRepository
 from architext.core.ports.user_repository import UserRepository
 from architext.core.domain.events import Event
-from architext.core.ports.notificator import Notificator
 from architext.core.ports.world_repository import WorldRepository
 from architext.core.ports.world_template_repository import WorldTemplateRepository
 from architext.core.querymanager import QueryManager
@@ -14,7 +13,6 @@ class UnitOfWork(Protocol):
     worlds: WorldRepository
     world_templates: WorldTemplateRepository
     queries: QueryManager
-    notifications: Notificator
     external_events: ExternalEventPublisher
     _events: List[Event] = []
 

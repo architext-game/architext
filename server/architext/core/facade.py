@@ -1,6 +1,6 @@
 
 
-from typing import TypeVar
+from typing import Callable, Dict, List, Type, TypeVar
 from architext.core.authorization import AuthorizationManager
 from architext.core.commands import Command
 from architext.core.messagebus import MessageBus
@@ -11,9 +11,9 @@ from architext.core.querymanager import QueryManager, uow_query_handlers_factory
 T = TypeVar("T")
 
 class Architext:
-    def __init__(self, uow: UnitOfWork):
+    def __init__(self, uow: UnitOfWork, extra_event_handlers: Dict[Type, List[Callable]] = {}):
         self._uow = uow
-        self._messagebus = MessageBus()
+        self._messagebus = MessageBus(extra_event_handlers=extra_event_handlers)
         self.authorization = AuthorizationManager(uow)
 
     def handle(self, command: Command[T], client_user_id: str = "") -> T:

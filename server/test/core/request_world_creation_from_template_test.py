@@ -1,17 +1,11 @@
 from typing import cast
-from unittest.mock import Mock
 from architext.core.adapters.fake_external_event_publisher import FakeExternalEventPublisher
-from architext.core.adapters.fake_notificator import FakeNotificator
 from architext.core.adapters.fake_uow import FakeUnitOfWork
-from architext.core.commands import RequestWorldCreationFromTemplate, TraverseExit, TraverseExitResult, CreateInitialData, CreateConnectedRoom, CreateUser
-from architext.core.domain.entities.world import DEFAULT_WORLD
+from architext.core.commands import RequestWorldCreationFromTemplate
 from architext.core.domain.entities.world_template import WorldTemplate
 import pytest # type: ignore
 from architext.core.domain.entities.user import User
-from architext.core.domain.entities.room import Room
-from architext.core.domain.entities.exit import Exit
-from architext.core.domain.events import UserChangedRoom, WorldCreationRequested
-from architext.core.messagebus import MessageBus
+from architext.core.domain.events import WorldCreationRequested
 from architext.core import Architext
 
 

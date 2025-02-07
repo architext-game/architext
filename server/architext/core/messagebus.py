@@ -36,10 +36,13 @@ class MessageBus:
     def __init__(
             self,
             event_handlers: Dict[Type, List[Callable]] = EVENT_HANDLERS,
-            command_handlers: Dict[Type, Callable] = COMMAND_HANDLERS
+            command_handlers: Dict[Type, Callable] = COMMAND_HANDLERS,
+            extra_event_handlers: Dict[Type, List[Callable]] = {}
         ):
-        self._event_handlers = event_handlers
         self._command_handlers = command_handlers
+        self._event_handlers = event_handlers
+        for event, handlers in extra_event_handlers.items():
+            self._event_handlers[event] = self._event_handlers.get(event, []) + handlers
 
     def handle(self, uow: UnitOfWork, command: Command[T], client_user_id: str = "") -> T:
         """
