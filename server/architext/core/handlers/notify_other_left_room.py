@@ -15,12 +15,16 @@ def notify_other_left_room(uow: UnitOfWork, event: UserChangedRoom):
     user_who_moved = uow.users.get_user_by_id(event.user_id)
     assert user_who_moved is not None
     users = uow.users.get_users_in_room(event.room_left_id)
+
     for user in users:
         if user.id == event.user_id:
             continue
         uow.publish_events([ShouldNotifyUserLeftRoom(
             to_user_id=user.id,
             user_name=user_who_moved.name,
-            entered_world=event.room_left_id is None,
-            through_exit_name=event.exit_used_name
+            through_exit_name=event.exit_used_name,
+            movement=(
+                'used_exit' if event.exit_used_name is not None else
+                'left_world'
+            )
         )])

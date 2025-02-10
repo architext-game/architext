@@ -1,4 +1,4 @@
-from architext.chatbot.ports.sender import MessageOptions
+from architext.chatbot.ports.messaging_channel import MessageOptions
 from architext.core.commands import EditExit as EditExitCommand, EditItem as EditItemCommand
 from architext.core.facade import Architext
 from architext.core.queries.get_room_details import ExitInRoomDetails, GetRoomDetails

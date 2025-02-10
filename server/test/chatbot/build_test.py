@@ -1,5 +1,5 @@
 from typing import Callable
-from architext.chatbot.adapters.fake_sender import FakeSender
+from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChannel
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
 from architext.core.adapters.fake_uow import FakeUnitOfWork
@@ -18,7 +18,7 @@ from test.fixtures import createTestArchitext
 def session_factory() -> Callable[[str], Session]:
     def factory(user_id: str):
         architext = createTestArchitext()
-        return Session(architext=architext, sender=FakeSender(architext), logger=StdOutLogger(), user_id=user_id) 
+        return Session(architext=architext, messaging_channel=FakeMessagingChannel(), logger=StdOutLogger(), user_id=user_id) 
     return factory
 
 def test_build(session_factory: Callable[[str], Session]):
@@ -31,8 +31,8 @@ def test_build(session_factory: Callable[[str], Session]):
     session.process_message("Door to kitchen")
     session.process_message("adadasdas")
 
-    assert isinstance(session.sender, FakeSender)
-    sender: FakeSender = session.sender
+    assert isinstance(session.sender.channel, FakeMessagingChannel)
+    sender: FakeMessagingChannel = session.sender.channel
 
     sent_text = '\n'.join([message.text for message in sender._sent])
     print(sent_text)
@@ -54,8 +54,8 @@ def test_build_by_unauthorized_user(session_factory: Callable[[str], Session]):
 
     session.process_message("build")
     session.process_message("afafdadsdfa")
-    assert isinstance(session.sender, FakeSender)
-    sender: FakeSender = session.sender
+    assert isinstance(session.sender.channel, FakeMessagingChannel)
+    sender: FakeMessagingChannel = session.sender.channel
 
     sent_text = '\n'.join([message.text for message in sender._sent])
     print(sent_text)

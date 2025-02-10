@@ -1,6 +1,6 @@
 from csv import Error
 from typing import Callable
-from architext.chatbot.adapters.fake_sender import FakeSender
+from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChannel
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
 import pytest # type: ignore
@@ -11,15 +11,15 @@ from test.fixtures import createTestArchitext
 def session_factory() -> Callable[[str], Session]:
     def factory(user_id: str):
         architext = createTestArchitext()
-        return Session(architext=architext, sender=FakeSender(architext), logger=StdOutLogger(), user_id=user_id) 
+        return Session(architext=architext, messaging_channel=FakeMessagingChannel(), logger=StdOutLogger(), user_id=user_id) 
     return factory
 
 
 def test_edit_room_name_success(session_factory: Callable[[str], Session]):
     try:
         session = session_factory("oliver")
-        assert isinstance(session.sender, FakeSender)
-        sender: FakeSender = session.sender
+        assert isinstance(session.sender.channel, FakeMessagingChannel)
+        sender: FakeMessagingChannel = session.sender.channel
         
         session.process_message("edit")
         assert "Editing room Oliver's Room" in sender.unread
@@ -42,8 +42,8 @@ def test_edit_room_name_success(session_factory: Callable[[str], Session]):
 def test_edit_room_description_success(session_factory: Callable[[str], Session]):
     try:
         session = session_factory("oliver")
-        assert isinstance(session.sender, FakeSender)
-        sender: FakeSender = session.sender
+        assert isinstance(session.sender.channel, FakeMessagingChannel)
+        sender: FakeMessagingChannel = session.sender.channel
         
         session.process_message("edit")
         assert "Editing room" in sender.unread

@@ -1,7 +1,7 @@
 import functools
 import textwrap
 from typing import List
-from architext.chatbot.ports.sender import MessageOptions
+from architext.chatbot.ports.messaging_channel import MessageOptions
 from architext.chatbot.verbs import verb
 from architext.chatbot import util
 import architext.chatbot.strings as strings

@@ -47,6 +47,6 @@ class ShouldNotifyUserEnteredRoom(Event):
 class ShouldNotifyUserLeftRoom(Event):
     to_user_id: str
     through_exit_name: Optional[str]
-    entered_world: bool
+    movement: Literal['used_exit', 'teleported', 'disconnected', 'left_world']
     user_name: str
 

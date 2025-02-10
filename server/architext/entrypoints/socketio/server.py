@@ -7,7 +7,7 @@ add --types to generate types
 from typing import Dict
 import eventlet
 
-from architext.chatbot.adapters.socketio_sender import SocketIOSender
+from architext.chatbot.adapters.socketio_messaging_channel import SocketIOMessagingChannel
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
 from architext.core.queries.get_template import GetWorldTemplate, GetWorldTemplateResult
@@ -90,7 +90,7 @@ if __name__ == "__main__":
             user_id_to_session[out.user_id] = Session(
                 user_id=out.user_id,
                 logger=StdOutLogger(),
-                sender=SocketIOSender(sio, user_id_to_socket_id=sid_to_user_id.inverse),
+                messaging_channel=SocketIOMessagingChannel(sio, user_id_to_socket_id=sid_to_user_id.inverse),
                 architext=architext
             )
         token = generate_jwt(**asdict(out))
@@ -190,7 +190,7 @@ if __name__ == "__main__":
 
     if args.types:
         from architext.entrypoints.socketio.sdk_generator import generate_sdk, Event
-        from architext.chatbot.ports.sender import Message
+        from architext.chatbot.ports.messaging_channel import Message
 
         events = [
             Event('chatbot_server_message', Message),

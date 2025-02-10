@@ -1,5 +1,5 @@
 from typing import cast
-from architext.chatbot.adapters.fake_sender import FakeSender
+from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChannel
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
 from architext.core.adapters.fake_uow import FakeUnitOfWork
@@ -14,12 +14,12 @@ from test.fixtures import createTestArchitext
 @pytest.fixture
 def session() -> Session:
     architext = createTestArchitext()
-    return Session(architext=architext, sender=FakeSender(architext), logger=StdOutLogger(), user_id="oliver") 
+    return Session(architext=architext, messaging_channel=FakeMessagingChannel(), logger=StdOutLogger(), user_id="oliver") 
 
 def test_look_room_shows_name_and_description(session: Session):
     session.process_message("look")
-    assert isinstance(session.sender, FakeSender)
-    sender: FakeSender = session.sender
+    assert isinstance(session.sender.channel, FakeMessagingChannel)
+    sender: FakeMessagingChannel = session.sender.channel
 
     sent_text = '\n'.join([message.text for message in sender._sent])
     print(sent_text)
@@ -29,8 +29,8 @@ def test_look_room_shows_name_and_description(session: Session):
 
 def test_look_room_shows_exits(session: Session):
     session.process_message("look")
-    assert isinstance(session.sender, FakeSender)
-    sender: FakeSender = session.sender
+    assert isinstance(session.sender.channel, FakeMessagingChannel)
+    sender: FakeMessagingChannel = session.sender.channel
 
     sent_text = '\n'.join([message.text for message in sender._sent])
     print(sent_text)
@@ -39,8 +39,8 @@ def test_look_room_shows_exits(session: Session):
 
 def test_look_room_dont_show_hidden_exits(session: Session):
     session.process_message("look")
-    assert isinstance(session.sender, FakeSender)
-    sender: FakeSender = session.sender
+    assert isinstance(session.sender.channel, FakeMessagingChannel)
+    sender: FakeMessagingChannel = session.sender.channel
 
     sent_text = '\n'.join([message.text for message in sender._sent])
     print(sent_text)
@@ -58,8 +58,8 @@ def test_look_room_dont_show_hidden_exits(session: Session):
 
 def test_look_room_dont_show_visible_exits(session: Session):
     session.process_message("look")
-    assert isinstance(session.sender, FakeSender)
-    sender: FakeSender = session.sender
+    assert isinstance(session.sender.channel, FakeMessagingChannel)
+    sender: FakeMessagingChannel = session.sender.channel
 
     sent_text = '\n'.join([message.text for message in sender._sent])
     print(sent_text)
@@ -68,8 +68,8 @@ def test_look_room_dont_show_visible_exits(session: Session):
 
 def test_look_room_dont_show_auto_visibility_exits_mentioned_in_room_description(session: Session):
     session.process_message("look")
-    assert isinstance(session.sender, FakeSender)
-    sender: FakeSender = session.sender
+    assert isinstance(session.sender.channel, FakeMessagingChannel)
+    sender: FakeMessagingChannel = session.sender.channel
 
     sent_text = '\n'.join([message.text for message in sender._sent])
     print(sent_text)
@@ -81,8 +81,8 @@ def test_look_room_dont_show_auto_visibility_exits_mentioned_in_room_description
 
 def test_look_room_shows_items(session: Session):
     session.process_message("look")
-    assert isinstance(session.sender, FakeSender)
-    sender: FakeSender = session.sender
+    assert isinstance(session.sender.channel, FakeMessagingChannel)
+    sender: FakeMessagingChannel = session.sender.channel
 
     sent_text = '\n'.join([message.text for message in sender._sent])
     print(sent_text)

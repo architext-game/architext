@@ -1,9 +1,10 @@
 """Defines the Session class, used to handle user interaction.
 """
+from architext.chatbot.sender import Sender
 from architext.core import Architext
 from . import verbs as v
 from .verbs import Verb
-from architext.chatbot.ports.sender import AbstractSender
+from architext.chatbot.ports.messaging_channel import MessagingChannel
 from architext.chatbot.ports.logger import Logger
 from typing import Type, List, Optional
 from gettext import gettext as _
@@ -20,9 +21,9 @@ class Session:
     # List of all verbs supported by the session, ordered by priority: if two verbs can handle the same message, the first will have preference.
     verbs: List[Type[Verb]] = [v.Look, v.Build, v.Go, v.Exits, v.Info, v.Link, v.Edit, v.Items, v.Delete, v.Raze, v.EditRoom]
 
-    def __init__(self, user_id: str, sender: AbstractSender, logger: Logger, architext: Architext):
+    def __init__(self, user_id: str, messaging_channel: MessagingChannel, logger: Logger, architext: Architext):
         self.architext = architext
-        self.sender = sender
+        self.sender = Sender(architext=architext, channel=messaging_channel)
         self.logger = logger  # logger for recording user interaction
         self.user_id = user_id  # id of the user whose messages this is processing
         self.current_verb: Optional[Verb] = None  # verb that is currently handling interaction. It starts with the log-in process.

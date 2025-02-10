@@ -1,5 +1,5 @@
 from typing import Callable
-from architext.chatbot.adapters.fake_sender import FakeSender
+from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChannel
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
 import pytest # type: ignore
@@ -10,7 +10,7 @@ from test.fixtures import createTestArchitext
 def session_factory() -> Callable[[str], Session]:
     def factory(user_id: str):
         architext = createTestArchitext()
-        return Session(architext=architext, sender=FakeSender(architext), logger=StdOutLogger(), user_id=user_id) 
+        return Session(architext=architext, messaging_channel=FakeMessagingChannel(), logger=StdOutLogger(), user_id=user_id) 
     return factory
 
 
@@ -22,8 +22,8 @@ def test_edit_item_name_success(session_factory: Callable[[str], Session]):
     session.process_message("A Donut")
     session.process_message("asdasd")
 
-    assert isinstance(session.sender, FakeSender)
-    sender: FakeSender = session.sender
+    assert isinstance(session.sender.channel, FakeMessagingChannel)
+    sender: FakeMessagingChannel = session.sender.channel
     sent_text = '\n'.join([message.text for message in sender._sent])
     print(sent_text)
 
@@ -44,8 +44,8 @@ def test_edit_item_description_success(session_factory: Callable[[str], Session]
     session.process_message("It's just like a donut")
     session.process_message("asdasd")
     
-    assert isinstance(session.sender, FakeSender)
-    sender: FakeSender = session.sender
+    assert isinstance(session.sender.channel, FakeMessagingChannel)
+    sender: FakeMessagingChannel = session.sender.channel
     sent_text = '\n'.join([message.text for message in sender._sent])
     print(sent_text)
 
@@ -67,8 +67,8 @@ def test_edit_item_visibility_success(session_factory: Callable[[str], Session])
     session.process_message("Hidden")
     session.process_message("asdasd")
     
-    assert isinstance(session.sender, FakeSender)
-    sender: FakeSender = session.sender
+    assert isinstance(session.sender.channel, FakeMessagingChannel)
+    sender: FakeMessagingChannel = session.sender.channel
     sent_text = '\n'.join([message.text for message in sender._sent])
     print(sent_text)
 

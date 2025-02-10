@@ -1,4 +1,3 @@
-from multiprocessing import AuthenticationError
 from architext.core.queries.get_room_details import ExitInRoomDetails, GetRoomDetails
 from architext.core.commands import DeleteItem as DeleteItemCommand, DeleteExit as DeleteExitCommand
 from . import verb

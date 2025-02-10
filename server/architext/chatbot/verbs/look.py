@@ -1,6 +1,6 @@
 from gettext import gettext as _
 
-from architext.chatbot.ports.sender import AbstractSender, MessageOptions
+from architext.chatbot.sender import Sender, MessageOptions
 from architext.core import Architext
 from architext.core.queries.get_current_room import GetCurrentRoom
 from .verb import Verb
@@ -35,7 +35,7 @@ class Look(Verb):
     #         self.session.send_to_client(f"👁 {selected_entity.name}\n{selected_entity.description if selected_entity.description else strings.default_description}")
     
 
-def show_current_room(sender: AbstractSender, architext: Architext, user_id: str, show_world_name: bool = False) -> None:
+def show_current_room(sender: Sender, architext: Architext, user_id: str, show_world_name: bool = False) -> None:
     result = architext.query(GetCurrentRoom(), user_id)
 
     if result.current_room is None:

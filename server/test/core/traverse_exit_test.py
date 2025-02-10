@@ -99,7 +99,7 @@ def test_should_notify_user_left_room_event_gets_published(uow: UnitOfWork) -> N
     event = spy.call_args[0][0]
     assert isinstance(event, ShouldNotifyUserLeftRoom)
     assert event.to_user_id == "bob"
-    assert event.entered_world is False
+    assert event.movement == 'used_exit'
     assert event.user_name == "Dave"
     assert event.through_exit_name == "To Oliver's Room"
 

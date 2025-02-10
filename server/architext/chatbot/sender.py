@@ -1,33 +1,20 @@
 import abc
-import typing
-import dataclasses
 import textwrap
 
+from architext.chatbot.ports.messaging_channel import MessagingChannel, Message, MessageOptions
 from architext.core.facade import Architext
 from architext.core.messagebus import MessageBus
 from architext.core.ports.unit_of_work import UnitOfWork
 from architext.core.queries.get_current_room import GetCurrentRoom
 from architext.chatbot import strings
 
-@dataclasses.dataclass
-class MessageOptions():
-    display: typing.Literal['wrap', 'box', 'underline', 'fit'] = 'wrap'
-    section: bool = True
-    fillInput: typing.Optional[str] = None
-    asksForPassword: bool = False
-
-@dataclasses.dataclass
-class Message():
-    text: str
-    options: MessageOptions
-
-class AbstractSender(abc.ABC):
-    def __init__(self, architext: Architext):
+class Sender(abc.ABC):
+    def __init__(self, channel: MessagingChannel, architext: Architext):
         self.architext = architext
+        self.channel = channel
 
-    @abc.abstractmethod
     def _send(self, user_id: str, message: Message) -> None:
-        pass
+        self.channel.send(user_id, message)
 
     def send_to_others_in_room(self, user_id: str, message: str, options: MessageOptions = MessageOptions(section=False)):
         result = self.architext.query(GetCurrentRoom(), user_id)

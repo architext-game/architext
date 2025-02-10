@@ -202,3 +202,12 @@ class DeleteRoomResult:
 
 class DeleteRoom(Command[DeleteRoomResult]):
     pass
+
+
+@dataclass
+class SendSocialInteractionResult:
+    pass
+
+class SendSocialInteraction(Command[SendSocialInteractionResult]):
+    content: str = Field(min_length=1, max_length=DESCRIPTION_MAX_LENGTH)
+    type: Literal['talk', 'emote']

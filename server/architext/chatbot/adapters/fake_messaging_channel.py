@@ -1,7 +1,7 @@
 
 import dataclasses
 from typing import List
-from architext.chatbot.ports.sender import AbstractSender, Message
+from architext.chatbot.ports.messaging_channel import MessagingChannel, Message
 from architext.core.facade import Architext
 
 @dataclasses.dataclass
@@ -9,14 +9,12 @@ class SentRecord:
     message: Message
     to_user_id: str
 
-class FakeSender(AbstractSender):
-    def __init__(self, architext: Architext):
-        super().__init__(architext)
+class FakeMessagingChannel(MessagingChannel):
+    def __init__(self) -> None:
         self._record: List[SentRecord] = []
         self._last_read_index: int = 0  # Índice del último mensaje leído
 
-    def _send(self, user_id: str, message: Message) -> None:
-        print(dataclasses.asdict(message))
+    def send(self, user_id: str, message: Message) -> None:
         self._record.append(SentRecord(message, user_id))
 
     @property
