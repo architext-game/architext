@@ -1,0 +1,26 @@
+from dataclasses import dataclass
+from typing import Iterable, Literal, Mapping, Optional, Protocol, Union
+
+@dataclass
+class Notification(Protocol):
+    pass
+
+@dataclass
+class WorldCreatedNotification(Notification):
+    world_id: str
+
+@dataclass
+class UserEnteredRoomNotification(Notification):
+    through_exit_name: Optional[str]
+    entered_world: bool
+    user_name: str
+
+@dataclass
+class UserLeftRoomNotification(Notification):
+    through_exit_name: Optional[str]
+    movement: Literal['used_exit', 'teleported', 'disconnected', 'left_world']
+    user_name: str
+
+class Notifier(Protocol):
+    def notify(self, user_id: str, notification: Notification):
+        pass

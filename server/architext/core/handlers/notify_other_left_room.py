@@ -1,12 +1,8 @@
 from ast import List
 from dataclasses import dataclass, asdict
 from architext.core.domain.events import ShouldNotifyUserLeftRoom, UserChangedRoom
+from architext.core.ports.notifier import UserLeftRoomNotification
 from architext.core.ports.unit_of_work import UnitOfWork
-
-
-@dataclass
-class OtherLeftRoomNotification:
-    user_name: str
 
 
 def notify_other_left_room(uow: UnitOfWork, event: UserChangedRoom):
@@ -19,12 +15,11 @@ def notify_other_left_room(uow: UnitOfWork, event: UserChangedRoom):
     for user in users:
         if user.id == event.user_id:
             continue
-        uow.publish_events([ShouldNotifyUserLeftRoom(
-            to_user_id=user.id,
+        uow.notifier.notify(user.id, UserLeftRoomNotification(
             user_name=user_who_moved.name,
             through_exit_name=event.exit_used_name,
             movement=(
                 'used_exit' if event.exit_used_name is not None else
                 'left_world'
             )
-        )])
+        ))

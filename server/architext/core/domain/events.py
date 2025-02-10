@@ -50,3 +50,9 @@ class ShouldNotifyUserLeftRoom(Event):
     movement: Literal['used_exit', 'teleported', 'disconnected', 'left_world']
     user_name: str
 
+@dataclass
+class ShouldNotifyWorldCreated(Event):
+    to_user_id: str
+    world_id: str
+    world_name: str
+

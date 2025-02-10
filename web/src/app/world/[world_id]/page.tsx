@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, use } from 'react'
 import classNames from 'classnames'
 import { Message } from './Message';
 import _ from 'lodash';
-import { onChatbotServerMessage, chatbotMessage, Message as ReceivedMessage, authenticate, enterWorld, onWorldCreated, getMe, getWorld, GetWorldResponse, getWorlds } from '@/architextSDK';
+import { onChatbotServerMessage, chatbotMessage, Message as ReceivedMessage, authenticate, enterWorld, getMe, getWorld, GetWorldResponse, getWorlds, onWorldCreatedNotification } from '@/architextSDK';
 import { useStore } from '@/state';
 import { useRouter } from 'next/navigation';
 import { HamburgerMenu } from './hamburger';
@@ -154,7 +154,7 @@ function App({ params, searchParams }: {
       if(worldIsNew){
         console.log("World is new, waiting for creation...")
         addServerMessage({ text: 'Your world is being created... please wait.', options: { asksForPassword: false, display: "wrap", fillInput: null, section: false } })
-        onWorldCreated(socket, async ({ world_id }) => {
+        onWorldCreatedNotification(socket, async ({ world_id }) => {
           console.log("OnWorldCreated event received, world_id is", world_id)
           if(world_id == eventualWorlId){
             const response = await enterWorld(socket, { world_id: worldId })

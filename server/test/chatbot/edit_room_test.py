@@ -21,7 +21,7 @@ def test_edit_room_name_success(session_factory: Callable[[str], Session]):
         assert isinstance(session.sender.channel, FakeMessagingChannel)
         sender: FakeMessagingChannel = session.sender.channel
         
-        session.process_message("edit")
+        session.process_message("remodel")
         assert "Editing room Oliver's Room" in sender.unread
         session.process_message("1")
         assert "Enter the new name:" in sender.unread
@@ -45,7 +45,7 @@ def test_edit_room_description_success(session_factory: Callable[[str], Session]
         assert isinstance(session.sender.channel, FakeMessagingChannel)
         sender: FakeMessagingChannel = session.sender.channel
         
-        session.process_message("edit")
+        session.process_message("remodel")
         assert "Editing room" in sender.unread
         session.process_message("2")
         assert "description" in sender.unread

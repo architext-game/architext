@@ -98,7 +98,7 @@ def createTestUow() -> UnitOfWork:
             "To Oliver's Room": Exit(name="To Oliver's Room", destination_room_id="olivers", description="A nice smell comes from there"),
             "To Alice's Room": Exit(name="To Alice's Room", destination_room_id="alices", description="A nice smell comes from there"),
             "To Bob's Room": Exit(name="To Bob's Room", destination_room_id="bobs", description="A nice smell comes from there"),
-            "To Space": Exit(name="To Space", destination_room_id="outerroom", description="To the cold cold emptyness"),
+            "To Space": Exit(name="To Space", destination_room_id="space", description="To the cold cold emptyness"),
         },
         world_id="outer"
     )
@@ -256,6 +256,6 @@ def createTestUow() -> UnitOfWork:
     return uow
 
 
-def createTestArchitext(extra_event_handlers: Dict[Type, List[Callable]] = {}) -> Architext:
+def createTestArchitext() -> Architext:
     uow = createTestUow()
-    return Architext(uow, extra_event_handlers=extra_event_handlers)
+    return Architext(uow,)

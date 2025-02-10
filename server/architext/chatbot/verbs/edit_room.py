@@ -15,7 +15,7 @@ else:
 class EditRoom(verb.Verb):
     """This verb allows users to edit properties of an item or exit that is in their current room"""
 
-    command = _('edit')
+    command = _('remodel')
 
     def __init__(self, session: Session, architext: Architext):
         super().__init__(session, architext)

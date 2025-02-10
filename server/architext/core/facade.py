@@ -11,9 +11,9 @@ from architext.core.querymanager import QueryManager, uow_query_handlers_factory
 T = TypeVar("T")
 
 class Architext:
-    def __init__(self, uow: UnitOfWork, extra_event_handlers: Dict[Type, List[Callable]] = {}):
+    def __init__(self, uow: UnitOfWork):
         self._uow = uow
-        self._messagebus = MessageBus(extra_event_handlers=extra_event_handlers)
+        self._messagebus = MessageBus()
         self.authorization = AuthorizationManager(uow)
 
     def handle(self, command: Command[T], client_user_id: str = "") -> T:

@@ -1,6 +1,9 @@
+from typing import List, cast
 from unittest.mock import Mock
+from architext.core.adapters.fake_notifier import FakeNotifier
 from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.commands import TraverseExit, TraverseExitResult
+from architext.core.ports.notifier import UserEnteredRoomNotification, UserLeftRoomNotification
 from architext.core.ports.unit_of_work import UnitOfWork
 import pytest # type: ignore
 from architext.core.domain.events import ShouldNotifyUserEnteredRoom, ShouldNotifyUserLeftRoom, UserChangedRoom
@@ -12,6 +15,10 @@ from test.fixtures import createTestArchitext, createTestUow
 @pytest.fixture
 def architext() -> Architext:
     return createTestArchitext()
+
+@pytest.fixture
+def notifier(architext: Architext) -> FakeNotifier:
+    return cast(FakeNotifier, architext._uow.notifier)
 
 @pytest.fixture
 def uow() -> UnitOfWork:
@@ -51,16 +58,7 @@ def test_user_changed_room_event_gets_invoked(architext: Architext):
     assert spy.called
 
 
-def test_should_notify_user_entered_room_event_gets_published(uow: UnitOfWork) -> None:
-    spy = Mock()
-
-    def handler(uow: FakeUnitOfWork, event: ShouldNotifyUserEnteredRoom):
-        spy(event)
-
-    architext = Architext(uow=uow, extra_event_handlers={
-        ShouldNotifyUserEnteredRoom: [handler],
-    })
-
+def test_should_notify_user_entered_room(architext: Architext, notifier: FakeNotifier) -> None:
     architext.handle(
         command=TraverseExit(
             exit_name="To Oliver's Room"
@@ -68,25 +66,15 @@ def test_should_notify_user_entered_room_event_gets_published(uow: UnitOfWork) -
         client_user_id="alice"
     )
 
-    assert spy.called  
-    assert spy.call_count == 1
-    event = spy.call_args[0][0]
-    assert isinstance(event, ShouldNotifyUserEnteredRoom)
-    assert event.to_user_id == "oliver"
-    assert event.entered_world is False
-    assert event.user_name == "Alice"
-    assert event.through_exit_name == "To Alice's Room"
+    notifications = notifier.get(notification_type=UserEnteredRoomNotification, user_id="oliver")
+    assert len(notifications) == 1
+    notification = notifications[0]
+    assert notification.entered_world is False
+    assert notification.user_name == "Alice"
+    assert notification.through_exit_name == "To Alice's Room"
 
-def test_should_notify_user_left_room_event_gets_published(uow: UnitOfWork) -> None:
-    spy = Mock()
 
-    def handler(uow: FakeUnitOfWork, event: ShouldNotifyUserLeftRoom):
-        spy(event)
-
-    architext = Architext(uow=uow, extra_event_handlers={
-        ShouldNotifyUserLeftRoom: [handler],
-    })
-
+def test_should_notify_user_left_room(architext: Architext, notifier: FakeNotifier) -> None:
     architext.handle(
         command=TraverseExit(
             exit_name="To Oliver's Room"
@@ -94,12 +82,11 @@ def test_should_notify_user_left_room_event_gets_published(uow: UnitOfWork) -> N
         client_user_id="dave"
     )
 
-    assert spy.called  
-    assert spy.call_count == 1
-    event = spy.call_args[0][0]
-    assert isinstance(event, ShouldNotifyUserLeftRoom)
-    assert event.to_user_id == "bob"
-    assert event.movement == 'used_exit'
-    assert event.user_name == "Dave"
-    assert event.through_exit_name == "To Oliver's Room"
+    notifications = notifier.get(notification_type=UserLeftRoomNotification, user_id="bob")
+
+    assert len(notifications) == 1
+    notification = notifications[0]
+    assert notification.movement == 'used_exit'
+    assert notification.user_name == "Dave"
+    assert notification.through_exit_name == "To Oliver's Room"
 

@@ -1,4 +1,5 @@
 from architext.core.adapters.fake_external_event_publisher import FakeExternalEventPublisher
+from architext.core.adapters.fake_notifier import FakeNotifier
 from architext.core.adapters.memory_world_repository import MemoryWorldRepository
 from architext.core.adapters.memory_world_template_repository import MemoryWorldTemplateRepository
 from architext.core.adapters.memory_room_repository import MemoryRoomRepository
@@ -9,7 +10,7 @@ from architext.core.querymanager import QueryManager, uow_query_handlers_factory
 
 
 class MemoryUnitOfWork(UnitOfWork):
-    def __init__(self):
+    def __init__(self) -> None:
         self.committed = False
         self.rooms = MemoryRoomRepository()
         self.users = MemoryUserRepository()
@@ -18,11 +19,12 @@ class MemoryUnitOfWork(UnitOfWork):
         self.queries = QueryManager(uow_query_handlers_factory(self))
         self.messagebus = MessageBus()
         self.external_events = FakeExternalEventPublisher(self)
+        self.notifier = FakeNotifier()
 
-    def _commit(self):
+    def _commit(self) -> None:
         self.committed = True
 
-    def __enter__(self):
+    def __enter__(self) -> None:
         self.committed = False
 
     def rollback(self):

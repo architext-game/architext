@@ -4,12 +4,16 @@ python3 -m entrypoints.socketio.server
 add --types to generate types
 """
 
-from typing import Dict
+from typing import Dict, Type
 import eventlet
-
+import re
+from architext.chatbot.adapters.chatbot_notifier import ChatbotNotifier
 from architext.chatbot.adapters.socketio_messaging_channel import SocketIOMessagingChannel
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
+from architext.core.adapters.multi_notifier import MultiNotifier, multi_notifier_mapping_factory
+from architext.core.adapters.sio_notifier import SioNotifier
+from architext.core.ports.notifier import Notification, WorldCreatedNotification
 from architext.core.queries.get_template import GetWorldTemplate, GetWorldTemplateResult
 from architext.core.queries.list_world_templates import ListWorldTemplates, ListWorldTemplatesResult, WorldTemplateListItem
 from architext.core.queries.me import Me, MeResult
@@ -63,9 +67,16 @@ if __name__ == "__main__":
             del sid_to_user_id.inverse[user_id]
         sid_to_user_id[socket] = user_id
     
-    
+    channel = SocketIOMessagingChannel(sio, user_id_to_socket_id=sid_to_user_id.inverse)
     architext = createTestArchitext()
+    architext._uow.notifier = MultiNotifier(
+        multi_notifier_mapping_factory(
+            chatbot=ChatbotNotifier(channel),
+            web=SioNotifier(sio=sio, user_id_to_socket_id=sid_to_user_id.inverse)
+        )
+    )
     architext.handle(CreateUser(email='oli@sanz.com', name='oliver', password='oliver'))
+    architext.handle(CreateUser(email='wade@mail.com', name='wade', password='wade'))
 
     user_id_to_session: Dict[str, Session] = {}
 
@@ -192,8 +203,20 @@ if __name__ == "__main__":
         from architext.entrypoints.socketio.sdk_generator import generate_sdk, Event
         from architext.chatbot.ports.messaging_channel import Message
 
+
+        def sio_event_name(notification: Type[Notification]) -> str:
+            """Convert PascalCase or camelCase to snake_case."""
+            name = notification.__name__
+            name = re.sub(r'(.)([A-Z][a-z]+)', r'\1_\2', name)
+            name = re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', name)
+            return name.lower()
+
+        def event_entry(notification: Type[Notification]) -> Event:
+            return Event(sio_event_name(notification), notification)
+        
         events = [
             Event('chatbot_server_message', Message),
+            event_entry(WorldCreatedNotification),
         ]
 
         extra_models = [

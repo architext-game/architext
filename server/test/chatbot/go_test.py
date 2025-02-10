@@ -1,11 +1,13 @@
 from typing import Callable
+from architext.chatbot.adapters.chatbot_notifier import ChatbotNotifier
 from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChannel
 from architext.chatbot.ports.messaging_channel import Message, MessageOptions
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
-from architext.chatbot.handlers_for_core import build_handlers_for_core
 from architext.chatbot.sender import Sender
 from architext.chatbot.session import Session
+from architext.core.adapters.fake_notifier import FakeNotifier
 from architext.core.adapters.fake_uow import FakeUnitOfWork
+from architext.core.adapters.multi_notifier import MultiNotifier, multi_notifier_mapping_factory
 from architext.core.domain.entities.world import DEFAULT_WORLD
 from architext.core import Architext
 import pytest # type: ignore
@@ -25,9 +27,12 @@ def channel() -> FakeMessagingChannel:
 def session_factory(channel: FakeMessagingChannel) -> Callable[[str], Session]:
     def factory(user_id: str):
         uow = createTestUow()
-        handlers = build_handlers_for_core(channel)
-        architext = Architext(uow=uow, extra_event_handlers=handlers)
-        architext = createTestArchitext()
+        uow.notifier = MultiNotifier(multi_notifier_mapping_factory(
+            chatbot=ChatbotNotifier(channel=channel),
+            web=FakeNotifier()
+        ))
+        # uow.notifier = ChatbotNotifier(channel=channel)
+        architext = Architext(uow=uow)
         return Session(architext=architext, messaging_channel=channel, logger=StdOutLogger(), user_id=user_id) 
     return factory
 
@@ -56,4 +61,4 @@ def test_users_in_room_are_told_other_left(channel: FakeMessagingChannel, sessio
     session = session_factory("bob")
     session.process_message("go alice")
     print(channel.all_to("dave"))
-    assert "Bob arrives through To Alice's Room." in channel.all_to("dave")
+    assert "Bob leaves through To Alice's Room." in channel.all_to("dave")

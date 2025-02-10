@@ -58,7 +58,7 @@ def test_world_to_plain_text(architext: Architext):
                 {
                     "name": "To Space",
                     "description": "To the cold cold emptyness",
-                    "destination_room_id": "outerroom"
+                    "destination_room_id": "space"
                 }
             ]
         },
@@ -161,6 +161,5 @@ def test_world_to_plain_text(architext: Architext):
 def test_world_to_encoded_text(architext: Architext):
     out = architext.query(WorldToText(world_id="outer", format="encoded"))
     print(out.text_representation)
-    assert out.text_representation == """eJzlVU1v2zAM/SusL7sE/QG7eb3s0KHAEqwYhqKQbaYmJouGKKfNiv73ik6c2bHnAkObHooYSUxR7/HjUXpM2NMdOWNvnakw+QzJVRPQwzXZQpIF/F0vUHJPdSB26naJ4ZMAPtSWPUIoERpHG/SCZ7qNHAWKuzxzdUuF7pDa5KhrapNo+fWYHK10MSw7wxHpT27ARLq1ZRPI3QG5lnpjJDgUAV4PQlmAsezwXKHwgcKetaNZcevd0ktJ9QTjdWkCGHCUIyjC3iWSG3UZ5dfCPN08LWCQXIfeMadwwX+2sJxhTiEfuUzncGU129iN7zGYSaQ2fKnQ2ghaocDac6W5e5xJiFtcSdpkenypjXCvT2cUdsz2hbPX58o4GzP9S3V7meRsi90XVnXYqt7miqdjpO9DNXQ17WnhpfatShKIz8DvHFYxpGg1DtImMBTMHuJvZkLpW4fUCkfpSmW0Nk12+jH4CLr5QUKZxVH9J0kzU/z3GB6AB/STvT8R9xJzj6Gvhz7jty3IzkFyUyPUXLykmslR6Sd1aG+U62EcdBFqTxsTcK4EX/kebJP/3urYUIi5R03vUKA0cZIOm/Va0aHT/2fveO72q7FXef8OmR+n7tg4dnvHA+DUF9UbHgH91rSWXmNmabu2DJ0+UFPe+Ba4iZ9no7ig2Q=="""
-    
+    assert out.text_representation == """eJzlVU1v2zAM/SusL70E/QG7ubvssKHAEqwYhqKQbaYmJouGKGfNiv73SUqcybHrAkWbHgoHdkBR7/HjUXrI2NIdGaVvjWow+wTZVefQwjXpSrIF/F+vUEpLrSM2we0runMBvG81WwRXI3SGNmgFz8I2MuTI77LMzS1VYYe0qsSwFmziLb8esqOVPoZlbzgi/ckdKE+31qwcmTsgE6k3SpxBEeD1IJQFKM0GLwIU3pPbs/Y0K47ekV5qaicYr2vlQIGhEiEg7F08uQouo/wizOPN4wIGyfXoPXMOn/nvFpYzzDmUI5fpHK50yNZ347sPZhIphi8Nau1BGxRYW25C7hZnEuKIK1lMJuHLtYd7fToVYMdsl1y8PlfBxZjpKdXtZVKyrnYvbFq3DXp7Tg1DJfT1THTwXOtWNQn438DvAlY+HG9VBvLOMVTMFvy3UK620SHXwl620qhQl644/Qh8BM38IKFC46j+k6SFql48ggfgAf1k70/EvcTSokv1kDJ+24LsHKRULULL1YtGJU3q0F4v18M4hEVoLW2Uw7kSfOE/oLvy9zaMDTmfu9f0DgVq5SfpsDlcKWHowv+zdzxz02rsVZ7eH/Pj1B8bx27veACc+pJ6wyMgbU20JI2Zpe3bMnT6QE1541vgxj//ACOYnvk="""
     

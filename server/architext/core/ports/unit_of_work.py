@@ -1,5 +1,6 @@
 from typing import Generator, Protocol, List
 from architext.core.ports.external_event_publisher import ExternalEventPublisher
+from architext.core.ports.notifier import Notifier
 from architext.core.ports.room_repository import RoomRepository
 from architext.core.ports.user_repository import UserRepository
 from architext.core.domain.events import Event
@@ -13,6 +14,7 @@ class UnitOfWork(Protocol):
     worlds: WorldRepository
     world_templates: WorldTemplateRepository
     queries: QueryManager
+    notifier: Notifier
     external_events: ExternalEventPublisher
     _events: List[Event] = []
 

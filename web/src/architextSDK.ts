@@ -238,6 +238,10 @@ export interface Message {
     };
 }
 
+export interface WorldCreatedNotification {
+    world_id: string;
+}
+
 export interface WorldTemplateListItem {
     id: string;
     name: string;
@@ -428,5 +432,12 @@ export function onChatbotServerMessage(
     callback: (event: Message) => void
 ): void {
     socket.on('chatbot_server_message', callback)
+}
+
+export function onWorldCreatedNotification(
+    socket: Socket,
+    callback: (event: WorldCreatedNotification) => void
+): void {
+    socket.on('world_created_notification', callback)
 }
 
