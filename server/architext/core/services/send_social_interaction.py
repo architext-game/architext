@@ -1,4 +1,5 @@
 from architext.core.commands import SendSocialInteraction, SendSocialInteractionResult
+from architext.core.ports.notifier import SocialInteractionNotification
 from architext.core.ports.unit_of_work import UnitOfWork
 from architext.core.domain.events import UserChangedRoom
 
@@ -15,5 +16,14 @@ def send_social_interaction(uow: UnitOfWork, command: SendSocialInteraction, cli
     
         room = uow.rooms.get_room_by_id(user.room_id)
         assert room is not None
+
+        users_in_room = uow.users.get_users_in_room(room.id)
+
+        for other_user in users_in_room:
+            uow.notifier.notify(other_user.id, SocialInteractionNotification(
+                user_name=user.name,
+                content=command.content,
+                kind=command.type,
+            ))
 
         return SendSocialInteractionResult()

@@ -21,6 +21,12 @@ class UserLeftRoomNotification(Notification):
     movement: Literal['used_exit', 'teleported', 'disconnected', 'left_world']
     user_name: str
 
+@dataclass
+class SocialInteractionNotification(Notification):
+    kind: Literal['talk', 'emote']
+    content: str
+    user_name: str
+    
 class Notifier(Protocol):
     def notify(self, user_id: str, notification: Notification):
         pass

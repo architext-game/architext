@@ -4,17 +4,15 @@ from .verb import Verb
 
 from architext.core.commands import SendSocialInteraction
 
-class Say(Verb):
-    """Allows the user to travel between rooms, using their exits."""
-
-    command = _('say ')
+class Emote(Verb):
+    command = _('me ')
 
     def process(self, message: str):
         command_length = len(self.command)
         content = message[command_length:]
         
         self.architext.handle(SendSocialInteraction(
-            type='talk',
+            type='emote',
             content=content,
         ), self.session.user_id)
 

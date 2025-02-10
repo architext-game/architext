@@ -1,5 +1,5 @@
 from architext.chatbot.ports.messaging_channel import Message, MessageOptions, MessagingChannel
-from architext.core.ports.notifier import Notification, Notifier, UserEnteredRoomNotification, UserLeftRoomNotification
+from architext.core.ports.notifier import Notification, Notifier, SocialInteractionNotification, UserEnteredRoomNotification, UserLeftRoomNotification
 from gettext import gettext as _
 
 class ChatbotNotifier(Notifier):
@@ -41,6 +41,22 @@ class ChatbotNotifier(Notifier):
                     exit_name=notification.through_exit_name
                 )
             
+            self.channel.send(
+                user_id=user_id,
+                message=Message(text=text, options=MessageOptions(section=False))
+            )
+
+        elif isinstance(notification, SocialInteractionNotification):
+            if notification.kind == 'talk':
+                text = _('{user} says "{content}"').format(
+                    user=notification.user_name,
+                    content=notification.content
+                )
+            elif notification.kind == 'emote':
+                text = _('{user} {content}').format(
+                    user=notification.user_name,
+                    content=notification.content
+                )
             self.channel.send(
                 user_id=user_id,
                 message=Message(text=text, options=MessageOptions(section=False))
