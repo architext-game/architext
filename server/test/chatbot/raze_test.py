@@ -64,5 +64,5 @@ def test_unauthorized_user_cannot_raze(session_factory: Callable[[str], Session]
     sent_text = '\n'.join([message.text for message in sender._sent])
     print(sent_text)
 
-    assert "You can't raze in a world you don't own." in sent_text
+    assert "You don't have enough privileges to do that here." in sent_text
     assert 'I don\'t understand that' in sent_text

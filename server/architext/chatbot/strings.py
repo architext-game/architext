@@ -13,6 +13,8 @@ not_a_number       = _("Please enter a number.")
 wrong_value        = _("Please enter the value of one of the options.")
 has_line_breaks    = _("It can't contain line breaks.")
 too_long           = _("Can't be longer than {limit} characters. Try with a shorter one.")
+insufficient_privileges = _('You don\'t have enough privileges to do that here.')
+not_in_a_room = _("You need to be in a room to do that!")
 
 default_description = _("It's nothing special.")
 

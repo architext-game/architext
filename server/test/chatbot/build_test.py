@@ -75,5 +75,19 @@ def test_build_by_unauthorized_user(session_factory: Callable[[str], Session]):
 
     sent_text = '\n'.join([message.text for message in sender._sent])
     print(sent_text)
-    assert "You can't build in a world you don't own." in sent_text
+    assert "You don't have enough privileges to do that here." in sent_text
+    assert "I don't understand that." in sent_text
+
+
+def test_build_by_user_that_is_not_in_a_room(session_factory: Callable[[str], Session]):
+    session = session_factory("charlie")
+
+    session.process_message("build")
+    session.process_message("afafdadsdfa")
+    assert isinstance(session.sender.channel, FakeMessagingChannel)
+    sender: FakeMessagingChannel = session.sender.channel
+
+    sent_text = '\n'.join([message.text for message in sender._sent])
+    print(sent_text)
+    assert "You don't have enough privileges to do that here." in sent_text
     assert "I don't understand that." in sent_text

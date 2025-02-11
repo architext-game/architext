@@ -17,7 +17,7 @@ class Raze(verb.Verb):
     Note that rooms may be left disconnected after the use of this command"""
 
     command = _('raze')
-    permissions = verb.PRIVILEGED
+    privileges_requirement = 'owner'
 
     def __init__(self, session: Session, architext: Architext):
         super().__init__(session, architext)

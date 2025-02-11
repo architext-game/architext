@@ -1,20 +1,15 @@
 from gettext import gettext as _
 from architext.core import Architext
+from architext.core.queries.me import Me
 from .. import util
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 if TYPE_CHECKING:
     from architext.chatbot.session import Session
 else:
     Session = object()
 
-
-
-FREE = 'free'
-PRIVILEGED = 'privileged'
-CREATOR = 'creator'
-NOBOT = 'nobot'
 
 class Verb():
     """This is the template for creating new verbs. Every verb should have Verb as parent.
@@ -32,7 +27,7 @@ class Verb():
     """
 
     command = 'verb '
-    permissions = FREE  # possible values: FREE, PRIVILEGED, NOBOT and CREATOR.
+    privileges_requirement: Literal['owner', 'none'] = 'none'
     regex_command = False  # False: can process if message starts with command. True: command is a regex and can process if message matches the regex.
 
     @classmethod
@@ -58,6 +53,10 @@ class Verb():
         self.session = session
         self.architext = architext
         self.finished = False
+        self.setup()
+
+    def setup(self):
+        pass
 
     def execute(self, message: str):
         if self.user_has_enough_privileges():
@@ -67,36 +66,16 @@ class Verb():
             self.finish_interaction()
 
     def user_has_enough_privileges(self) -> bool:
-        return True  # TODO
+        if self.session.user_id is None:
+            return False
 
-        # if self.session.user is None:
-        #     return True
+        if self.privileges_requirement == 'none':
+            return True
 
-        # if self.session.user.room is None:
-        #     return True
-
-        # world = self.session.user.room.world_state.get_world()
+        me = self.architext.query(Me(), self.session.user_id)
         
-        # if self.permissions == FREE:
-        #     return True
+        return me.privileged_in_current_world
 
-        # if self.permissions == NOBOT:
-        #     if isinstance(self.session, session.GhostSession):
-        #         return False
-        #     else:
-        #         return True
-        
-        # if self.permissions == PRIVILEGED:
-        #     if world.all_can_edit or isinstance(self.session, session.GhostSession) or world.is_privileged(self.session.user):
-        #         return True
-        #     else:
-        #         return False
-        
-        # if self.permissions == CREATOR:
-        #     if world.is_creator(self.session.user):
-        #         return True
-        #     else:
-        #         return False
 
     def process(self, message: str):
         raise Exception('Abstract method of interface Verb not implemented')
