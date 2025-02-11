@@ -7,7 +7,7 @@ from architext.core.services.create_connected_room import CreateConnectedRoom, C
 from architext.core.services.create_initial_data import CreateInitialData
 from architext.core.commands import CreateConnectedRoom
 
-from architext.core.domain.entities.room import Room
+from architext.core.domain.entities.room import DuplicatedNameInRoom, Room
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.world import DEFAULT_WORLD, World
 
@@ -53,7 +53,15 @@ def test_unauthorized_user_fails(architext: Architext):
         architext.handle(command, client_user_id="alice")
 
 
-@pytest.mark.skip(reason="to do")
-def test_create_room_duplicate_exit_name_fails(uow: FakeUnitOfWork):
-    assert False
+def test_create_room_duplicate_exit_name_fails(architext: Architext):
+    command = CreateConnectedRoom(
+        name="New Room",
+        description="A cozy living room",
+        exit_to_new_room_name="To tHe sPaCeSHiP",  # treated as duplicate even if case does not match
+        exit_to_new_room_description="A door leading to the living room",
+        exit_to_old_room_name="Door to kitchen",
+        exit_to_old_room_description="A door leading to the kitchen"
+    )
+    with pytest.raises(DuplicatedNameInRoom):
+        architext.handle(command, client_user_id="oliver")
 

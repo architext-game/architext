@@ -5,7 +5,7 @@ from architext.core.commands import CreateExit
 from architext.core import Architext
 
 from architext.core.adapters.fake_uow import FakeUnitOfWork
-from architext.core.domain.entities.room import DEFAULT_ROOM
+from architext.core.domain.entities.room import DEFAULT_ROOM, DuplicatedNameInRoom
 from test.fixtures import createTestArchitext
 
 
@@ -54,7 +54,7 @@ def test_create_exit_without_privileges_fails(architext: Architext):
         name="A fancy door",
         description="I love this door, where may it lead to?",
         visibility="auto",
-        destination_room_id="solitude"
+        destination_room_id="space"
     )
 
     with pytest.raises(PermissionError, match="User is not in a world where she is authorized."):
@@ -72,7 +72,7 @@ def test_create_exit_from_invalid_room_fails(architext: Architext):
         name="A fancy door",
         description="I love this door, where may it lead to?",
         visibility="auto",
-        destination_room_id="solitude"
+        destination_room_id="space"
     )
 
     with pytest.raises(PermissionError):
@@ -95,3 +95,15 @@ def test_create_exit_to_invalid_room_fails(architext: Architext):
     assert room is not None
     exit = room.exits.get("A fancy door")
     assert exit is None
+
+
+def test_create_exit_with_existing_name_fails(architext: Architext):
+    command = CreateExit(
+        name="To tHe sPaCeSHiP",
+        description="I love this door, where may it lead to?",
+        visibility="auto",
+        destination_room_id="space"
+    )
+
+    with pytest.raises(DuplicatedNameInRoom):
+        architext.handle(command, "oliver")

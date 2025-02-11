@@ -1,4 +1,5 @@
 from typing import cast
+from architext.core.domain.entities.room import DuplicatedNameInRoom
 import pytest # type: ignore
 from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.commands import CreateItem
@@ -51,17 +52,16 @@ def test_create_item_from_invalid_room_fails(architext: Architext):
         architext.handle(command, "charlie")
 
 
-@pytest.mark.skip(reason="TODO")
 def test_create_item_with_duplicated_name_fails(architext: Architext):
     command = CreateItem(
-        name="A box",
+        name="To tHe sPaCeSHiP",
         description="It is very boxy",
         visibility="auto",
     )
 
-    architext.handle(command, "oliver")
-
-    with pytest.raises(Exception):
+    with pytest.raises(DuplicatedNameInRoom):
         architext.handle(command, "oliver")
+
+
 
 

@@ -26,6 +26,12 @@ class Room:
         object.__setattr__(self, "exits", MappingProxyType(dict(self.exits)))
         object.__setattr__(self, "items", MappingProxyType(dict(self.items)))
 
+        self._assert_no_duplicated_room_or_exit_names()
+
+    def _assert_no_duplicated_room_or_exit_names(self):
+        if duplicates(list(self.exits.keys()) + list(self.items.keys())):
+            raise DuplicatedNameInRoom()
+
     def with_replaced_exit(self, old: Exit, new: Exit) -> 'Room':
         new_exits = {name: exit for name, exit in self.exits.items() if name != old.name}
         new_exits[new.name] = new
@@ -80,6 +86,11 @@ class Room:
             items=items if items is not None else self.items,
         )
 
+def duplicates(strings: List[str]) -> bool:
+    lowercase_strings = [string.lower() for string in strings]
+    there_are_duplicates = len(lowercase_strings) != len(set(lowercase_strings))
+    return there_are_duplicates
+
 
 DEFAULT_ROOM = Room(
     id="DEFAULT_ROOM",
@@ -88,3 +99,9 @@ DEFAULT_ROOM = Room(
     exits={},
     world_id="DEFAULT_WORLD"
 )
+
+
+class DuplicatedNameInRoom(Exception):
+    def __init__(self, message="Tried to instantiate room with a duplicated item and/or exit name."):
+        super().__init__(message)
+
