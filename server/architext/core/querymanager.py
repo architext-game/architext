@@ -4,6 +4,7 @@ from architext.core.queries.base import Query, QueryHandler
 from architext.core.queries.get_current_room import GetCurrentRoom, UOWGetCurrentRoomQueryHandler
 from architext.core.queries.get_room_details import GetRoomDetails, UOWGetRoomDetailsQueryHandler
 from architext.core.queries.get_template import GetWorldTemplate, UOWGetWorldTemplateQueryHandler
+from architext.core.queries.is_name_valid import IsNameValid, UOWIsNameValidQueryHandler
 from architext.core.queries.list_world_templates import UOWListWorldTemplatesQueryHandler, ListWorldTemplates
 from architext.core.queries.list_worlds import ListWorlds, UOWListWorldsQueryHandler
 from architext.core.queries.me import Me, UOWMeQueryHandler
@@ -26,6 +27,7 @@ def uow_query_handlers_factory(uow: UnitOfWork) -> Mapping[Type[Query], QueryHan
         GetWorld: UOWGetWorldQueryHandler(uow),
         GetCurrentRoom: UOWGetCurrentRoomQueryHandler(uow),
         GetRoomDetails: UOWGetRoomDetailsQueryHandler(uow),
+        IsNameValid: UOWIsNameValidQueryHandler(uow),
     }
 
 class QueryManager:
