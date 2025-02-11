@@ -1,3 +1,4 @@
+from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChannel
 from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.domain.entities.exit import Exit
 from architext.core.domain.entities.item import Item
@@ -6,7 +7,14 @@ from architext.core.domain.entities.world import World
 from architext.core.domain.entities.world_template import WorldTemplate
 from architext.core.domain.entities.room import Room
 from architext.core import Architext
-from typing import Dict, Type, List, Callable
+from typing import Callable
+from architext.chatbot.adapters.chatbot_notifier import ChatbotNotifier
+from architext.chatbot.ports.messaging_channel import Message, MessageOptions
+from architext.chatbot.adapters.stdout_logger import StdOutLogger
+from architext.chatbot.session import Session
+from architext.core.adapters.fake_notifier import FakeNotifier
+from architext.core.adapters.multi_notifier import MultiNotifier, multi_notifier_mapping_factory
+import pytest # type: ignore
 
 from architext.core.ports.unit_of_work import UnitOfWork
 
@@ -259,3 +267,24 @@ def createTestUow() -> UnitOfWork:
 def createTestArchitext() -> Architext:
     uow = createTestUow()
     return Architext(uow,)
+
+
+@pytest.fixture
+def session_factory(channel: FakeMessagingChannel) -> Callable[[str], Session]:
+    def factory(user_id: str):
+        uow = createTestUow()
+        uow.notifier = MultiNotifier(multi_notifier_mapping_factory(
+            chatbot=ChatbotNotifier(channel=channel),
+            web=FakeNotifier()
+        ))
+        architext = Architext(uow=uow)
+        return Session(architext=architext, messaging_channel=channel, logger=StdOutLogger(), user_id=user_id) 
+    return factory
+
+
+@pytest.fixture
+def channel() -> FakeMessagingChannel:
+    print("CREATING CHANNEL")
+    channel = FakeMessagingChannel()
+    channel.send(message=Message(text="asdas", options=MessageOptions()), user_id='patato')
+    return channel

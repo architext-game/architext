@@ -3,9 +3,10 @@ from gettext import gettext as _
 from typing import Optional, TYPE_CHECKING
 
 from architext.core.commands import CreateConnectedRoom
+from architext.core.queries.is_name_valid import IsNameValid
 from architext.core.settings import ROOM_NAME_MAX_LENGTH, ROOM_DESCRIPTION_MAX_LENGTH, EXIT_NAME_MAX_LENGTH
 from architext.core import Architext
-from architext.core.queries.get_current_room import GetCurrentRoom
+from architext.core.queries.get_current_room import CurrentRoom, GetCurrentRoom, GetCurrentRoomResult
 
 from . import verb
 import architext.chatbot.strings as strings
@@ -88,19 +89,17 @@ class Build(verb.Verb):
         if not message:
             message = _("to {room_name}").format(room_name=self.state.room_name)
             message = self.make_exit_name_valid(message, self.current_room)
+
         if len(message) > EXIT_NAME_MAX_LENGTH:
             self.session.sender.send(self.session.user_id, strings.too_long.format(limit=EXIT_NAME_MAX_LENGTH))
+            return
+        
+        is_name_valid_result = self.architext.query(IsNameValid(name=message), self.session.user_id)
+
+        if not is_name_valid_result.is_valid and is_name_valid_result.error == 'duplicated':
+            self.session.sender.send(self.session.user_id, strings.room_name_clash)
         else:
             self.state.exit_to_new_room_name = message
-            # try:
-            #     self.exit_from_here.ensure_i_am_valid()
-            # except entities.WrongNameFormat:
-            #     self.session.sender.send(self.session.user_id, strings.wrong_format)
-            # except entities.RoomNameClash:
-            #     self.session.sender.send(self.session.user_id, srings.room_name_clash)
-            # except entities.TakableItemNameClash:
-            #     self.session.sender.send(self.session.user_id, strings.takable_name_clash)
-            # else:
             self.session.sender.send(self.session.user_id, 
                 _(' ⮕ Name of the exit in "{new_room}" towards "{this_room}"\n   [Default: "to {this_room}"]')
                     .format(new_room = self.state.room_name, this_room = self.current_room.name)
@@ -111,34 +110,29 @@ class Build(verb.Verb):
         if not message:
             message = _("to {room_name}").format(room_name=self.current_room.name)
             message = self.make_exit_name_valid(message, self.state.room_name)
+
         if len(message) > EXIT_NAME_MAX_LENGTH:
             self.session.sender.send(self.session.user_id, strings.too_long.format(limit=EXIT_NAME_MAX_LENGTH))
-        else:
-            self.state.exit_to_old_room_name = message
-            
-            # try:
-            #     self.exit_from_there.ensure_i_am_valid()
-            # except entities.WrongNameFormat:
-            #     self.session.sender.send(self.session.user_id, strings.wrong_format)
-            # except entities.TakableItemNameClash:
-            #     self.session.sender.send(self.session.user_id, strings.takable_name_clash)
-            # else:
-            self.architext.handle(CreateConnectedRoom(
-                name=self.state.room_name,
-                description=self.state.room_description,
-                exit_to_new_room_name=self.state.exit_to_new_room_name,
-                exit_to_new_room_description='Nothing special about it.',
-                exit_to_old_room_name=self.state.exit_to_old_room_name,
-                exit_to_old_room_description='Nothing special about it.'
-            ), self.session.user_id)
+            return
+        
+        self.state.exit_to_old_room_name = message
+        
+        self.architext.handle(CreateConnectedRoom(
+            name=self.state.room_name,
+            description=self.state.room_description,
+            exit_to_new_room_name=self.state.exit_to_new_room_name,
+            exit_to_new_room_description='Nothing special about it.',
+            exit_to_old_room_name=self.state.exit_to_old_room_name,
+            exit_to_old_room_description='Nothing special about it.'
+        ), self.session.user_id)
 
-            self.session.sender.send(self.session.user_id, _("Your new room is ready. Good work!"))
-            # if not self.session.user.master_mode:
-            #     self.session.send_to_others_in_room(
-            #         _("{user_name}'s eyes turn blank for a moment. A new exit appears in this room.")
-            #             .format(user_name=self.session.user.name)
-            #     )
-            self.finish_interaction()
+        self.session.sender.send(self.session.user_id, _("Your new room is ready. Good work!"))
+        # if not self.session.user.master_mode:
+        #     self.session.send_to_others_in_room(
+        #         _("{user_name}'s eyes turn blank for a moment. A new exit appears in this room.")
+        #             .format(user_name=self.session.user.name)
+        #     )
+        self.finish_interaction()
 
     def make_exit_name_valid(self, exit_name: str, room):
         return exit_name
