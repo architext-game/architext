@@ -2,7 +2,8 @@ from gettext import gettext as _
 
 from typing import Optional, TYPE_CHECKING
 
-from architext.core.commands import CreateConnectedRoom, NAME_MAX_LENGTH, DESCRIPTION_MAX_LENGTH
+from architext.core.commands import CreateConnectedRoom
+from architext.core.settings import ROOM_NAME_MAX_LENGTH, ROOM_DESCRIPTION_MAX_LENGTH, EXIT_NAME_MAX_LENGTH
 from architext.core import Architext
 from architext.core.queries.get_current_room import GetCurrentRoom
 
@@ -63,8 +64,8 @@ class Build(verb.Verb):
     def process_room_name(self, message: str):
         if not message:
             self.session.sender.send(self.session.user_id, strings.is_empty)
-        elif len(message) > NAME_MAX_LENGTH:
-            self.session.sender.send(self.session.user_id, strings.too_long.format(limit=NAME_MAX_LENGTH))
+        elif len(message) > ROOM_NAME_MAX_LENGTH:
+            self.session.sender.send(self.session.user_id, strings.too_long.format(limit=ROOM_NAME_MAX_LENGTH))
         else:
             self.state.room_name = message
             self.session.sender.send(self.session.user_id, _(' 👁 Description  [default "{default_description}"]').format(default_description=strings.default_description))
@@ -73,8 +74,8 @@ class Build(verb.Verb):
     def process_room_description(self, message: str):
         if not message:
             message = strings.default_description
-        if len(message) > DESCRIPTION_MAX_LENGTH:
-            self.session.sender.send(self.session.user_id, strings.too_long.format(limit=DESCRIPTION_MAX_LENGTH))
+        if len(message) > ROOM_DESCRIPTION_MAX_LENGTH:
+            self.session.sender.send(self.session.user_id, strings.too_long.format(limit=ROOM_DESCRIPTION_MAX_LENGTH))
         else:
             self.state.room_description = message
             self.session.sender.send(self.session.user_id, 
@@ -87,8 +88,8 @@ class Build(verb.Verb):
         if not message:
             message = _("to {room_name}").format(room_name=self.state.room_name)
             message = self.make_exit_name_valid(message, self.current_room)
-        if len(message) > NAME_MAX_LENGTH:
-            self.session.sender.send(self.session.user_id, strings.too_long.format(limit=NAME_MAX_LENGTH))
+        if len(message) > EXIT_NAME_MAX_LENGTH:
+            self.session.sender.send(self.session.user_id, strings.too_long.format(limit=EXIT_NAME_MAX_LENGTH))
         else:
             self.state.exit_to_new_room_name = message
             # try:
@@ -110,8 +111,8 @@ class Build(verb.Verb):
         if not message:
             message = _("to {room_name}").format(room_name=self.current_room.name)
             message = self.make_exit_name_valid(message, self.state.room_name)
-        if len(message) > NAME_MAX_LENGTH:
-            self.session.sender.send(self.session.user_id, strings.too_long.format(limit=NAME_MAX_LENGTH))
+        if len(message) > EXIT_NAME_MAX_LENGTH:
+            self.session.sender.send(self.session.user_id, strings.too_long.format(limit=EXIT_NAME_MAX_LENGTH))
         else:
             self.state.exit_to_old_room_name = message
             
