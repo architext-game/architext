@@ -9,12 +9,9 @@ def create_exit(uow: UnitOfWork, command: CreateExit, client_user_id: str = "") 
     if not user:
         raise PermissionError("User is not in a world where she is authorized.")
 
-    if user.room_id is None:
-        raise ValueError("User needs to be in a room to create an exit.")
-
-    room = uow.rooms.get_room_by_id(user.room_id)
+    room = uow.rooms.get_room_by_id(command.in_room_id)
     if not room:
-        raise ValueError(f"Room with id {user.room_id} does not exist.")
+        raise ValueError(f"Room with id {command.in_room_id} does not exist.")
 
     desitination_room = uow.rooms.get_room_by_id(command.destination_room_id)
 

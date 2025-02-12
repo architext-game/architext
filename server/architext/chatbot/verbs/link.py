@@ -7,7 +7,9 @@ from architext.core.commands import CreateExit
 from architext.core.domain.entities.room import Room
 from architext.core.facade import Architext
 from architext.core.queries.get_room_details import GetRoomDetails, RoomDetails
+from architext.core.queries.is_name_valid import IsNameValid
 from architext.core.queries.me import Me
+from architext.core.settings import EXIT_NAME_MAX_LENGTH
 
 if TYPE_CHECKING:
     from architext.chatbot.session import Session
@@ -19,6 +21,7 @@ class Link(verb.Verb):
     The other room is specified through its id"""
 
     command = _('link')
+    privileges_requirement = 'owner'
 
     def __init__(self, session: Session, architext: Architext):
         super().__init__(session, architext)
@@ -32,12 +35,7 @@ class Link(verb.Verb):
             self.current_process_function(message)
 
     def process_first_message(self, message: str):
-        try:
-            self.current_room = self.architext.query(GetRoomDetails(), self.session.user_id).room
-        except PermissionError:
-            self.session.sender.send(self.session.user_id, _("You need to be the owner of the world to do that"))
-            self.finish_interaction()
-            return
+        self.current_room = self.architext.query(GetRoomDetails(), self.session.user_id).room
 
         if self.current_room is None:
             self.session.sender.send(self.session.user_id, _("You are not in a room"))
@@ -69,6 +67,10 @@ class Link(verb.Verb):
             self.session.sender.send(self.session.user_id, strings.room_not_found)
             return
 
+        if self.other_room.world_id != self.current_room.world_id:
+            self.session.sender.send(self.session.user_id, strings.room_not_found)
+            return
+
         out_message = _(
             'Linking with "{destination_name}" (number {destination_id}).\n'
             '  ⮕ Enter the name of the exit in {this_room_name} (number {this_room_id}) towards {destination_name} (number {destination_id})\n'
@@ -89,19 +91,17 @@ class Link(verb.Verb):
 
         if not message:
             message = _("to {destination_name}").format(destination_name=self.other_room.name)
-            message = self.make_exit_name_valid(message, self.current_room)
+
+        if len(message) > EXIT_NAME_MAX_LENGTH:
+            self.session.sender.send(self.session.user_id, strings.too_long.format(limit=EXIT_NAME_MAX_LENGTH))
+            return
+
+        if self.architext.query(IsNameValid(name=message, in_room_id=self.current_room.id), self.session.user_id).error == 'duplicated':
+            self.session.sender.send(self.session.user_id, strings.room_name_clash)
+            return
 
         self.exit_from_current_room_name = message
 
-        # try:
-        #     self.exit_from_here.ensure_i_am_valid()
-        # except entities.WrongNameFormat:
-        #     self.session.send_to_client(strings.wrong_format)
-        # except entities.RoomNameClash:
-        #     self.session.send_to_client(strings.room_name_clash)
-        # except entities.TakableItemNameClash:
-        #     self.session.send_to_client(strings.takable_name_clash)
-        
         out_message = _(
             '  ⮕ Enter the name of the exit in {destination_name} (number {destination_id}) towards {this_room_name} (number {this_room_id})\n'
             '[Default: to {this_room_name}]'
@@ -121,21 +121,20 @@ class Link(verb.Verb):
         assert self.other_room is not None
 
         if not message:
-            message = _("to {destination_name}").format(destination_name=self.other_room.name)
-            message = self.make_exit_name_valid(message, self.other_room)
+            message = _("to {destination_name}").format(destination_name=self.current_room.name)
+
+        if len(message) > EXIT_NAME_MAX_LENGTH:
+            self.session.sender.send(self.session.user_id, strings.too_long.format(limit=EXIT_NAME_MAX_LENGTH))
+            return
+
+        if self.architext.query(IsNameValid(name=message, in_room_id=self.other_room.id), self.session.user_id).error == 'duplicated':
+            self.session.sender.send(self.session.user_id, strings.room_name_clash)
+            return
 
         self.exit_from_other_room_name = message
 
-        # try:
-        #     self.exit_from_there.ensure_i_am_valid()
-        # except entities.WrongNameFormat:
-        #     self.session.send_to_client(strings.wrong_format)
-        # except entities.RoomNameClash:
-        #     self.session.send_to_client(strings.room_name_clash)
-        # except entities.TakableItemNameClash:
-        #     self.session.send_to_client(strings.takable_name_clash)
-
         self.architext.handle(CreateExit(
+            in_room_id=self.current_room.id,
             name=self.exit_from_current_room_name,
             description=_("It's nothing special."),
             visibility="auto",
@@ -143,6 +142,7 @@ class Link(verb.Verb):
         ), self.session.user_id)
 
         self.architext.handle(CreateExit(
+            in_room_id=self.other_room.id,
             name=self.exit_from_other_room_name,
             description=_("It's nothing special."),
             visibility="auto",
@@ -151,7 +151,6 @@ class Link(verb.Verb):
 
         self.session.sender.send(self.session.user_id, _("Your new exits are ready!"))
 
-        # if not self.session.user.master_mode:
         user = self.architext.query(Me(), self.session.user_id)
 
         self.session.sender.send_to_others_in_room(
@@ -161,9 +160,3 @@ class Link(verb.Verb):
         )
 
         self.finish_interaction()
-
-    def make_exit_name_valid(self, exit_name: str, room: RoomDetails) -> str:
-        return exit_name
-        # while not entities.Exit.name_is_valid(exit_name, room) or self.exit_from_here.name == exit_name:
-        #     exit_name = _('straight {exit_name}').format(exit_name=exit_name)
-        # return exit_name

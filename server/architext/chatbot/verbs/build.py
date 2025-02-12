@@ -3,6 +3,7 @@ from gettext import gettext as _
 from typing import Literal, Optional, TYPE_CHECKING
 
 from architext.core.commands import CreateConnectedRoom
+from architext.core.queries.get_room_details import GetRoomDetails
 from architext.core.queries.is_name_valid import IsNameValid
 from architext.core.settings import ROOM_NAME_MAX_LENGTH, ROOM_DESCRIPTION_MAX_LENGTH, EXIT_NAME_MAX_LENGTH
 from architext.core import Architext
@@ -35,8 +36,6 @@ class Build(verb.Verb):
 
     def setup(self) -> None:
         self.user_input = BuildUserInput()
-        result = self.architext.query(GetCurrentRoom(), self.session.user_id)
-        self.current_room = result.current_room
         self.state: Literal[
             'start', 
             'expect_room_name', 
@@ -46,8 +45,6 @@ class Build(verb.Verb):
         ] = 'start'
 
     def process(self, message: str):
-        assert self.current_room is not None
-
         if message == '/':
             self.session.sender.send(self.session.user_id, strings.cancelled)
             self.finish_interaction()
@@ -57,8 +54,12 @@ class Build(verb.Verb):
             body = _('Enter the following fields\n ⚑ Room\'s name')
             self.session.sender.send_formatted(self.session.user_id, title, body, cancel=True)
             self.state = 'expect_room_name'
+            result = self.architext.query(GetRoomDetails(), self.session.user_id)
+            self.current_room = result.room
 
         elif self.state == 'expect_room_name':
+            assert self.current_room is not None
+
             if not message:
                 self.session.sender.send(self.session.user_id, strings.is_empty)
             elif len(message) > ROOM_NAME_MAX_LENGTH:
@@ -69,6 +70,8 @@ class Build(verb.Verb):
                 self.state = 'expect_room_description'
 
         elif self.state == 'expect_room_description':
+            assert self.current_room is not None
+
             if not message:
                 message = strings.default_description
             if len(message) > ROOM_DESCRIPTION_MAX_LENGTH:
@@ -82,6 +85,8 @@ class Build(verb.Verb):
                 self.state = 'expect_exit_to_new_room_name'
 
         elif self.state == 'expect_exit_to_new_room_name':
+            assert self.current_room is not None
+
             if not message:
                 message = _("to {room_name}").format(room_name=self.user_input.room_name)
 
@@ -89,7 +94,7 @@ class Build(verb.Verb):
                 self.session.sender.send(self.session.user_id, strings.too_long.format(limit=EXIT_NAME_MAX_LENGTH))
                 return
             
-            is_name_valid_result = self.architext.query(IsNameValid(name=message), self.session.user_id)
+            is_name_valid_result = self.architext.query(IsNameValid(name=message, in_room_id=self.current_room.id), self.session.user_id)
 
             if not is_name_valid_result.is_valid and is_name_valid_result.error == 'duplicated':
                 self.session.sender.send(self.session.user_id, strings.room_name_clash)
@@ -102,6 +107,8 @@ class Build(verb.Verb):
                 self.state = 'expect_exit_to_old_room_name'
 
         elif self.state == 'expect_exit_to_old_room_name':
+            assert self.current_room is not None
+
             if not message:
                 message = _("to {room_name}").format(room_name=self.current_room.name)
 

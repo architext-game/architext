@@ -2,6 +2,7 @@ from architext.chatbot.ports.messaging_channel import MessageOptions
 from architext.core.commands import EditRoom as EditRoomCommand
 from architext.core.facade import Architext
 from architext.core.queries.get_room_details import GetRoomDetails
+from architext.core.settings import ROOM_DESCRIPTION_MAX_LENGTH, ROOM_NAME_MAX_LENGTH
 from . import verb
 import architext.chatbot.strings as strings
 from gettext import gettext as _
@@ -16,6 +17,7 @@ class EditRoom(verb.Verb):
     """This verb allows users to edit properties of an item or exit that is in their current room"""
 
     command = _('remodel')
+    privileges_requirement = 'owner'
 
     def __init__(self, session: Session, architext: Architext):
         super().__init__(session, architext)
@@ -66,6 +68,14 @@ class EditRoom(verb.Verb):
         elif self.state == 'expect_new_name':
             assert self.current_room is not None
 
+            if len(message) == 0:
+                self.session.sender.send(self.session.user_id, strings.is_empty)
+                return
+
+            if len(message) > ROOM_NAME_MAX_LENGTH:
+                self.session.sender.send(self.session.user_id, strings.too_long.format(limit=ROOM_NAME_MAX_LENGTH))
+                return
+
             self.architext.handle(EditRoomCommand(
                 room_id=self.current_room.id,
                 new_name=message,
@@ -75,6 +85,14 @@ class EditRoom(verb.Verb):
 
         elif self.state == 'expect_new_description':
             assert self.current_room is not None
+
+            if len(message) == 0:
+                self.session.sender.send(self.session.user_id, strings.is_empty)
+                return
+
+            if len(message) > ROOM_DESCRIPTION_MAX_LENGTH:
+                self.session.sender.send(self.session.user_id, strings.too_long.format(limit=ROOM_DESCRIPTION_MAX_LENGTH))
+                return
 
             self.architext.handle(EditRoomCommand(
                 room_id=self.current_room.id,

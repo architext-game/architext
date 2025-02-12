@@ -16,6 +16,7 @@ def architext() -> Architext:
 
 def test_create_exit_success(architext: Architext) -> None:
     command = CreateExit(
+        in_room_id="olivers",
         name="A fancy door",
         description="I love this door, where may it lead to?",
         visibility="auto",
@@ -33,6 +34,7 @@ def test_create_exit_success(architext: Architext) -> None:
 
 def test_exit_to_another_world_fails(architext: Architext):
     command = CreateExit(
+        in_room_id="olivers",
         name="A fancy door",
         description="I love this door, where may it lead to?",
         visibility="auto",
@@ -51,6 +53,7 @@ def test_exit_to_another_world_fails(architext: Architext):
 
 def test_create_exit_without_privileges_fails(architext: Architext):
     command = CreateExit(
+        in_room_id="alices",
         name="A fancy door",
         description="I love this door, where may it lead to?",
         visibility="auto",
@@ -69,6 +72,7 @@ def test_create_exit_without_privileges_fails(architext: Architext):
 
 def test_create_exit_from_invalid_room_fails(architext: Architext):
     command = CreateExit(
+        in_room_id="asdasdsad",
         name="A fancy door",
         description="I love this door, where may it lead to?",
         visibility="auto",
@@ -81,6 +85,7 @@ def test_create_exit_from_invalid_room_fails(architext: Architext):
 
 def test_create_exit_to_invalid_room_fails(architext: Architext):
     command = CreateExit(
+        in_room_id="olivers",
         name="A fancy door",
         description="I love this door, where may it lead to?",
         visibility="auto",
@@ -99,6 +104,7 @@ def test_create_exit_to_invalid_room_fails(architext: Architext):
 
 def test_create_exit_with_existing_name_fails(architext: Architext):
     command = CreateExit(
+        in_room_id="olivers",
         name="To tHe sPaCeSHiP",
         description="I love this door, where may it lead to?",
         visibility="auto",

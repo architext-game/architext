@@ -1,17 +1,11 @@
 from typing import Callable
+from architext.chatbot import strings
 from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChannel
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
+from architext.core.settings import ITEM_DESCRIPTION_MAX_LENGTH, ITEM_NAME_MAX_LENGTH
 import pytest # type: ignore
-from test.fixtures import createTestArchitext
-
-
-@pytest.fixture
-def session_factory() -> Callable[[str], Session]:
-    def factory(user_id: str):
-        architext = createTestArchitext()
-        return Session(architext=architext, messaging_channel=FakeMessagingChannel(), logger=StdOutLogger(), user_id=user_id) 
-    return factory
+from test.fixtures import session_factory, channel
 
 
 def test_edit_item_name_success(session_factory: Callable[[str], Session]):
@@ -80,3 +74,45 @@ def test_edit_item_visibility_success(session_factory: Callable[[str], Session])
     item = olivers.items.get("A toroid")
     assert item is not None
     assert item.visibility == "hidden"
+
+
+def test_edit_item_error_messages(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):
+    session = session_factory("oliver")
+
+    session.process_message("edit toroid")
+    # Choose what to edit
+    assert 'Editing item' in channel.unread
+    session.process_message("")
+    assert 'Please enter a number.' in channel.unread
+    session.process_message("adas")
+    assert 'Please enter a number.' in channel.unread
+    session.process_message("4")
+    assert 'Please enter the value of one of the options.' in channel.unread
+
+    # Item name
+    session.process_message("1")
+    assert 'Enter the new name' in channel.unread
+    session.process_message("A"*(ITEM_NAME_MAX_LENGTH+1))
+    assert "Can't be longer than" in channel.unread
+    session.process_message("")
+    assert strings.is_empty in channel.unread
+
+    # Item description
+    session.process_message("/")
+    session.process_message("edit toroid")
+    session.process_message("2")
+    assert 'Enter the new description' in channel.unread
+    session.process_message("")
+    session.process_message("A"*(ITEM_DESCRIPTION_MAX_LENGTH+1))
+    assert "Can't be longer than" in channel.unread
+
+    # Item visibility
+    session.process_message("/")
+    session.process_message("edit toroid")
+    session.process_message("3")
+    assert 'Choose the new visibility' in channel.unread
+    session.process_message("")
+    assert "It can't be empty, try with another one" in channel.unread
+    session.process_message("asdas")
+    assert "Please enter the value of one of the options." in channel.unread
+

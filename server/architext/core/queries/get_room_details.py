@@ -64,7 +64,7 @@ class UOWGetRoomDetailsQueryHandler(UOWQueryHandler, GetRoomDetailsQueryHandler)
         else:
             room = uow.rooms.get_room_by_id(room_id)
             if room is None:
-                raise ValueError("User is not in a room")
+                return GetRoomDetailsResult(room=None)
             users = uow.users.get_users_in_room(room_id)
             people_in_room = [PersonInRoomDetails(id=user.id, name=user.name) for user in users]
 

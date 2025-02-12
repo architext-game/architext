@@ -1,28 +1,19 @@
 from typing import Callable
+from architext.chatbot import strings
 from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChannel
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
 import pytest # type: ignore
-from test.fixtures import createTestArchitext
+from test.fixtures import session_factory, channel
 
 
-@pytest.fixture
-def session_factory() -> Callable[[str], Session]:
-    def factory(user_id: str):
-        architext = createTestArchitext()
-        return Session(architext=architext, messaging_channel=FakeMessagingChannel(), logger=StdOutLogger(), user_id=user_id) 
-    return factory
-
-
-def test_delete_item_success(session_factory: Callable[[str], Session]):
+def test_delete_item_success(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):
     session = session_factory("oliver")
 
     session.process_message("delete A toroid")
     session.process_message("asdasd")
 
-    assert isinstance(session.sender.channel, FakeMessagingChannel)
-    sender: FakeMessagingChannel = session.sender.channel
-    sent_text = '\n'.join([message.text for message in sender._sent])
+    sent_text = channel.all
     print(sent_text)
 
     assert 'Item "A toroid" has been deleted' in sent_text
@@ -34,15 +25,13 @@ def test_delete_item_success(session_factory: Callable[[str], Session]):
     assert olivers.items.get("A toroid") is None
 
 
-def test_delete_exit_success(session_factory: Callable[[str], Session]):
+def test_delete_exit_success(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):
     session = session_factory("oliver")
 
     session.process_message("delete To the spaceship")
     session.process_message("asdasd")
 
-    assert isinstance(session.sender.channel, FakeMessagingChannel)
-    sender: FakeMessagingChannel = session.sender.channel
-    sent_text = '\n'.join([message.text for message in sender._sent])
+    sent_text = channel.all
     print(sent_text)
 
     assert 'Exit "To the spaceship" has been deleted' in sent_text
@@ -54,11 +43,22 @@ def test_delete_exit_success(session_factory: Callable[[str], Session]):
     assert olivers.exits.get("To the spaceship") is None
 
 
-@pytest.mark.skip(reason="TODO")
-def test_unauthorized_user_cannot_delete(session_factory: Callable[[str], Session]):
-    pass
+def test_unauthorized_user_cannot_delete(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):
+    session = session_factory("alice")
+
+    session.process_message("delete To Oliver's Room")
+    assert strings.insufficient_privileges in channel.all_to("alice")
 
 
-@pytest.mark.skip(reason="TODO")
-def test_non_exact_name_for_delete_fails(session_factory: Callable[[str], Session]):
-    pass
+def test_non_exact_name_for_delete_fails(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):
+    session = session_factory("oliver")
+
+    session.process_message("delete To Oliver's Roo")
+    assert "There is not any exit or item called" in channel.all_to("oliver")
+
+
+def test_delete_with_empty_name_fails(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):
+    session = session_factory("oliver")
+
+    session.process_message("delete ")
+    assert "I don't understand that" in channel.all_to("oliver")

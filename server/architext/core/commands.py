@@ -42,6 +42,7 @@ class CreateExitResult:
     pass
 
 class CreateExit(Command[CreateExitResult]):
+    in_room_id: str
     name: str = Field(min_length=1, max_length=EXIT_NAME_MAX_LENGTH)
     description: str = Field(min_length=1, max_length=EXIT_DESCRIPTION_MAX_LENGTH)
     destination_room_id: str = Field(min_length=1, max_length=EXIT_NAME_MAX_LENGTH)
@@ -148,8 +149,8 @@ class EditExitResult:
 class EditExit(Command[EditExitResult]):
     room_id: str
     exit_name: str
-    new_name: Optional[str] = Field(None, min_length=1, max_length=WORLD_NAME_MAX_LENGTH)
-    new_description: Optional[str] = Field(None, min_length=1, max_length=WORLD_DESCRIPTION_MAX_LENGTH)
+    new_name: Optional[str] = Field(None, min_length=1, max_length=EXIT_NAME_MAX_LENGTH)
+    new_description: Optional[str] = Field(None, min_length=1, max_length=EXIT_DESCRIPTION_MAX_LENGTH)
     new_destination: Optional[str] = Field(None)
     new_visibility: Optional[Visibility] = Field(None)
 

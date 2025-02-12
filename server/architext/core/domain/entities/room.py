@@ -40,7 +40,7 @@ class Room:
 
     def with_exit(self, exit: Exit) -> 'Room':
         if exit.name in self.items or exit.name in self.exits:
-            raise ValueError(f"Cannot add exit '{exit.name}', name is in use in this room.")
+            raise DuplicatedNameInRoom(f"Cannot add exit '{exit.name}', name is in use in this room.")
         
         new_exits = {name: exit for name, exit in self.exits.items()}
         new_exits[exit.name] = exit
@@ -59,7 +59,7 @@ class Room:
 
     def with_item(self, item: Item) -> 'Room':
         if item.name in self.items or item.name in self.exits:
-            raise ValueError(f"Cannot add item '{item.name}', name is in use in this room.")
+            raise DuplicatedNameInRoom(f"Cannot add item '{item.name}', name is in use in this room.")
         
         new_items = {name: item for name, item in self.items.items()}
         new_items[item.name] = item

@@ -6,10 +6,8 @@ from architext.chatbot import strings
 from architext.chatbot import util
 
 class Delete(verb.Verb):
-    """With this verb users can delete an exit of their current room. Since (for now) exits are allways two-way, it also
-    deletes the exit from the other room"""
-
     command = _('delete ')
+    privileges_requirement = 'owner'
 
     def process(self, message: str):
         self.current_room = self.architext.query(GetRoomDetails(), self.session.user_id).room
@@ -37,9 +35,6 @@ class Delete(verb.Verb):
 
         self.entity_to_delete = entities[0]
 
-        # if self.entity_to_delete.is_saved():
-        #     title = _('Editing saved item {item_id}').format(item_id=self.entity_to_delete.item_id)
-        # else:
         if isinstance(self.entity_to_delete, ExitInRoomDetails):
             exit = self.entity_to_delete
             destination_room = self.architext.query(GetRoomDetails(), self.session.user_id).room
