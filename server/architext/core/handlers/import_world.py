@@ -3,10 +3,12 @@ import json
 from typing import List
 import uuid
 import zlib
+from architext.core.domain.entities.item import Item
 from architext.core.domain.entities.room import Room
 from architext.core.domain.entities.exit import Exit
 from architext.core.domain.entities.world import World
 from architext.core.domain.events import WorldCreated, WorldCreationRequested
+from architext.core.domain.primitives import Visibility
 from architext.core.ports.unit_of_work import UnitOfWork
 from pydantic import TypeAdapter
 from typing_extensions import TypedDict
@@ -22,18 +24,26 @@ class ExitDict(TypedDict):
     name: str
     description: str
     destination_room_id: str
+    visibility: Visibility
+
+class ItemDict(TypedDict):
+    name: str
+    description: str
+    visibility: Visibility
 
 class RoomDict(TypedDict):
     id: str
     name: str
     description: str
     exits: List[ExitDict]
+    items: List[ItemDict]
 
 class WorldDict(TypedDict):
     original_name: str
     original_description: str
     initial_room_id: str
     rooms: List[RoomDict]
+    
 
 world_dict_type_adapter = TypeAdapter(WorldDict)
 
@@ -102,7 +112,11 @@ def import_world(uow: UnitOfWork, event: WorldCreationRequested):
                 name=exit["name"],
                 description=exit["description"],
                 destination_room_id=exit["destination_room_id"]
-            ) for exit in room["exits"]}
+            ) for exit in room["exits"]},
+            items={item["name"]: Item(
+                name=item["name"],
+                description=item["description"],
+            ) for item in room["items"]}
         ) for room in world_dict["rooms"]]
 
         uow.worlds.save_world(world)

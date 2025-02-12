@@ -31,9 +31,11 @@ def test_world_to_plain_text(architext: Architext):
                 {
                     "name": "To the spaceship",
                     "description": "What a nice exit",
-                    "destination_room_id": "spaceship"
+                    "destination_room_id": "spaceship",
+                    "visibility": "auto"
                 }
-            ]
+            ],
+            "items": []
         },
         {
             "id": "spaceship",
@@ -43,24 +45,29 @@ def test_world_to_plain_text(architext: Architext):
                 {
                     "name": "To Oliver's Room",
                     "description": "A nice smell comes from there",
-                    "destination_room_id": "olivers"
+                    "destination_room_id": "olivers",
+                    "visibility": "auto"
                 },
                 {
                     "name": "To Alice's Room",
                     "description": "A nice smell comes from there",
-                    "destination_room_id": "alices"
+                    "destination_room_id": "alices",
+                    "visibility": "auto"
                 },
                 {
                     "name": "To Bob's Room",
                     "description": "A nice smell comes from there",
-                    "destination_room_id": "bobs"
+                    "destination_room_id": "bobs",
+                    "visibility": "auto"
                 },
                 {
                     "name": "To Space",
                     "description": "To the cold cold emptyness",
-                    "destination_room_id": "space"
+                    "destination_room_id": "space",
+                    "visibility": "auto"
                 }
-            ]
+            ],
+            "items": []
         },
         {
             "id": "olivers",
@@ -70,32 +77,65 @@ def test_world_to_plain_text(architext: Architext):
                 {
                     "name": "To the spaceship",
                     "description": "What a nice exit",
-                    "destination_room_id": "spaceship"
+                    "destination_room_id": "spaceship",
+                    "visibility": "auto"
                 },
                 {
                     "name": "To Alice's Room",
                     "description": "A nice smell comes from there",
-                    "destination_room_id": "alices"
+                    "destination_room_id": "alices",
+                    "visibility": "auto"
                 },
                 {
                     "name": "To Bob's Room",
                     "description": "A nice smell comes from there",
-                    "destination_room_id": "bobs"
+                    "destination_room_id": "bobs",
+                    "visibility": "auto"
                 },
                 {
                     "name": "Visible door to bathroom",
                     "description": "A bad smell comes from there",
-                    "destination_room_id": "oliversbathroom"
+                    "destination_room_id": "oliversbathroom",
+                    "visibility": "unlisted"
                 },
                 {
                     "name": "Auto door to bathroom",
                     "description": "A bad smell comes from there",
-                    "destination_room_id": "oliversbathroom"
+                    "destination_room_id": "oliversbathroom",
+                    "visibility": "auto"
                 },
                 {
                     "name": "Secret exit",
                     "description": "My secret scape pod",
-                    "destination_room_id": "space"
+                    "destination_room_id": "space",
+                    "visibility": "hidden"
+                }
+            ],
+            "items": [
+                {
+                    "name": "A cube",
+                    "description": "a nice cube",
+                    "visibility": "auto"
+                },
+                {
+                    "name": "A small cube",
+                    "description": "a nice small cube",
+                    "visibility": "auto"
+                },
+                {
+                    "name": "A pyramid",
+                    "description": "a nice pyramid",
+                    "visibility": "hidden"
+                },
+                {
+                    "name": "A sphere",
+                    "description": "a nice sphere",
+                    "visibility": "listed"
+                },
+                {
+                    "name": "A toroid",
+                    "description": "a nice toroid",
+                    "visibility": "unlisted"
                 }
             ]
         },
@@ -107,9 +147,11 @@ def test_world_to_plain_text(architext: Architext):
                 {
                     "name": "To Oliver's Room",
                     "description": "A nice smell comes from there",
-                    "destination_room_id": "olivers"
+                    "destination_room_id": "olivers",
+                    "visibility": "auto"
                 }
-            ]
+            ],
+            "items": []
         },
         {
             "id": "alices",
@@ -119,19 +161,23 @@ def test_world_to_plain_text(architext: Architext):
                 {
                     "name": "To the spaceship",
                     "description": "What a nice exit",
-                    "destination_room_id": "spaceship"
+                    "destination_room_id": "spaceship",
+                    "visibility": "auto"
                 },
                 {
                     "name": "To Oliver's Room",
                     "description": "A nice smell comes from there",
-                    "destination_room_id": "olivers"
+                    "destination_room_id": "olivers",
+                    "visibility": "auto"
                 },
                 {
                     "name": "To Bob's Room",
                     "description": "A nice smell comes from there",
-                    "destination_room_id": "bobs"
+                    "destination_room_id": "bobs",
+                    "visibility": "auto"
                 }
-            ]
+            ],
+            "items": []
         },
         {
             "id": "bobs",
@@ -141,19 +187,23 @@ def test_world_to_plain_text(architext: Architext):
                 {
                     "name": "To the spaceship",
                     "description": "What a nice exit",
-                    "destination_room_id": "spaceship"
+                    "destination_room_id": "spaceship",
+                    "visibility": "auto"
                 },
                 {
                     "name": "To Oliver's Room",
                     "description": "A nice smell comes from there",
-                    "destination_room_id": "olivers"
+                    "destination_room_id": "olivers",
+                    "visibility": "auto"
                 },
                 {
                     "name": "To Alice's Room",
                     "description": "A nice smell comes from there",
-                    "destination_room_id": "alices"
+                    "destination_room_id": "alices",
+                    "visibility": "auto"
                 }
-            ]
+            ],
+            "items": []
         }
     ]
 }"""
@@ -161,5 +211,5 @@ def test_world_to_plain_text(architext: Architext):
 def test_world_to_encoded_text(architext: Architext):
     out = architext.query(WorldToText(world_id="outer", format="encoded"))
     print(out.text_representation)
-    assert out.text_representation == """eJzlVU1v2zAM/SusL70E/QG7ubvssKHAEqwYhqKQbaYmJouGKGfNiv73SUqcybHrAkWbHgoHdkBR7/HjUXrI2NIdGaVvjWow+wTZVefQwjXpSrIF/F+vUEpLrSM2we0runMBvG81WwRXI3SGNmgFz8I2MuTI77LMzS1VYYe0qsSwFmziLb8esqOVPoZlbzgi/ckdKE+31qwcmTsgE6k3SpxBEeD1IJQFKM0GLwIU3pPbs/Y0K47ekV5qaicYr2vlQIGhEiEg7F08uQouo/wizOPN4wIGyfXoPXMOn/nvFpYzzDmUI5fpHK50yNZ347sPZhIphi8Nau1BGxRYW25C7hZnEuKIK1lMJuHLtYd7fToVYMdsl1y8PlfBxZjpKdXtZVKyrnYvbFq3DXp7Tg1DJfT1THTwXOtWNQn438DvAlY+HG9VBvLOMVTMFvy3UK620SHXwl620qhQl644/Qh8BM38IKFC46j+k6SFql48ggfgAf1k70/EvcTSokv1kDJ+24LsHKRULULL1YtGJU3q0F4v18M4hEVoLW2Uw7kSfOE/oLvy9zaMDTmfu9f0DgVq5SfpsDlcKWHowv+zdzxz02rsVZ7eH/Pj1B8bx27veACc+pJ6wyMgbU20JI2Zpe3bMnT6QE1541vgxj//ACOYnvk="""
+    assert out.text_representation == """eJztVsFu2zAM/RXWl16CfsBu3i47bCiwBCuKIShkm6mJyaIhyVm9Iv8+yYkc27GddiiKHAoESSBSj4/iI6XniDU9khLyQYkCo08Q3VYWNdyRzEy0gKM9Q5NqKi2x8m7f0F4bwKdSskawOUKlaIva4JXfRoosuV2auXigzO8wpUjR2/yacSu/nqOBJXBYhoVB0HuuQLhwG8nCknoEUk3orTBWoTHAmx6VBQjJCm88FD6RPUQNYVbceDfhTU7lSMS7XFgQoChF8AgHFxdceJeT/ALMlgwlJMnW3iQqy9Fu7c/F4j739W4BvfzDzkAuhi/8t4blDLkY0hOX8TRvpT8QV7Afju8oUpOhKVBKB1qggY3mwh+PxpmcucE1Uxn7FDssYumCvD0J4WFfyuEzJ2/PIOHkpfGnpH3QYsoy239hUdrai/qc5F4tt07R2qY/o49VTgbcp+d3AyvH2K0KBbELCRmzBvebCJvrxiGWhl37mEL4A62SS2nFD2H24//0doknFRylkojsvydFF7hPqlKSjMWsT2xUV+/I6vSolphqtF0Fdnl8r8HsHUwqSoSSs9f3b05ZhmrQwZ0zaTppJPihOYL1XCZxpy+n0fo+5zHLWouCsmnAjsN42gOOZaeGY/xaex9tVE1ORZrnyB3tU+ocmaRd+bQd7aZZOy29EUpNW2FxTsVf+Q/IKv1d+6lK1snXjbw9CuTCDdp2s3/5+Jns/19d3L0/efUcJ2JbkvnRGy6eodvFXSGX8cJ690tkstJhUyA3yyxUue/0UePLeawM6rze/QOfZbhJ"""
     

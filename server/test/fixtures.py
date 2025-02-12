@@ -1,4 +1,5 @@
 from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChannel
+from architext.content.the_monks_riddle import THE_MONKS_RIDDLE_ENCODED
 from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.domain.entities.exit import Exit
 from architext.core.domain.entities.item import Item
@@ -25,6 +26,14 @@ def createTestUow() -> UnitOfWork:
         description="An Empty World",
         author_id=None,
         world_encoded_json="""eJx9kcFOwzAMhl/F9MKl4gG4TRxB4jCkCaFpilp3tZbEVZxOG9Penbi0tIPSS6LE9v/5ty8ZB9qTN3bnjcPsEbLXNmKADdlSshzGeIlSBGoisde0F4z3AnhqLAeEWCO0no4YBO+0jDxFSlWB2e2o1ApWYX1rXG9Jvx+XbCY69LJuTIH68Qv+zi2YhK0sm0h+D+S7Fo5GokcR4OqmpRyMZY8PKoUnij15wLxxly1Kk5qaGeKmNhEMeCoQVKFPSXCjKVOfo8x1e81hMHijPpBX8MSfZ1gvkFdQ/EmZ9/BMsajRz2p0jYtDa5OcQ4EqsFPXAResHHrFzsaE9N9e+kEWbMvvA10Tz7qRBci4+Zt5HUY3A3nJoOMSg4dJ1c+Qtkn3C67G+X8=""",
+        visibility="public"
+    )
+    monkstemplate = WorldTemplate(
+        id="monksriddletemplate",
+        name="The Monk's Riddle",
+        description="A monastery full of mistery.",
+        author_id=None,
+        world_encoded_json=THE_MONKS_RIDDLE_ENCODED,
         visibility="public"
     )
     templateforme = WorldTemplate(
@@ -237,6 +246,7 @@ def createTestUow() -> UnitOfWork:
     )
     uow = FakeUnitOfWork()
     uow.world_templates.save_world_template(emptytemplate)
+    uow.world_templates.save_world_template(monkstemplate)
     uow.world_templates.save_world_template(templateforme)
     uow.world_templates.save_world_template(braggingtemplate)
     uow.world_templates.save_world_template(rabbittemplate)
@@ -284,7 +294,5 @@ def session_factory(channel: FakeMessagingChannel) -> Callable[[str], Session]:
 
 @pytest.fixture
 def channel() -> FakeMessagingChannel:
-    print("CREATING CHANNEL")
     channel = FakeMessagingChannel()
-    channel.send(message=Message(text="asdas", options=MessageOptions()), user_id='patato')
     return channel

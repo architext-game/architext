@@ -3,6 +3,7 @@ from dataclasses import dataclass
 import json
 import zlib
 from architext.core.domain.entities.exit import Exit
+from architext.core.domain.entities.item import Item
 from architext.core.domain.entities.room import Room
 from architext.core.queries.base import Query, QueryHandler, UOWQueryHandler
 from typing import Literal, Dict
@@ -26,14 +27,23 @@ def room_to_dict(room: Room) -> Dict:
         "id": room.id,
         "name": room.name,
         "description": room.description,
-        "exits": [exit_to_dict(exit) for exit in room.exits.values()]
+        "exits": [exit_to_dict(exit) for exit in room.exits.values()],
+        "items": [item_to_dict(item) for item in room.items.values()],
     }
 
 def exit_to_dict(exit: Exit) -> Dict:
     return {
         "name": exit.name,
         "description": exit.description,
-        "destination_room_id": exit.destination_room_id
+        "destination_room_id": exit.destination_room_id,
+        "visibility": exit.visibility,
+    }
+
+def item_to_dict(item: Item) -> Dict:
+    return {
+        "name": item.name,
+        "description": item.description,
+        "visibility": item.visibility,
     }
 
 def encode_dict(dict):

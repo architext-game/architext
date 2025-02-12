@@ -19,7 +19,7 @@ def architext() -> Architext:
 def test_list_world_templates(architext: Architext):
     out = architext.query(ListWorldTemplates(), "oliver")
     pprint.pprint(out.templates)
-    assert len(out.templates) == 3
+    assert len(out.templates) == 4
 
     # A public template I don't own should be on the list
     assert next((world for world in out.templates if world.id == "emptytemplate"), None) is not None
