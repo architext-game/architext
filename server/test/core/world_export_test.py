@@ -123,6 +123,11 @@ def test_world_to_plain_text(architext: Architext):
                     "visibility": "auto"
                 },
                 {
+                    "name": "One pyramid",
+                    "description": "a nice pyramid",
+                    "visibility": "hidden"
+                },
+                {
                     "name": "A pyramid",
                     "description": "a nice pyramid",
                     "visibility": "hidden"
@@ -136,6 +141,11 @@ def test_world_to_plain_text(architext: Architext):
                     "name": "A toroid",
                     "description": "a nice toroid",
                     "visibility": "unlisted"
+                },
+                {
+                    "name": "The hidden",
+                    "description": "a nice pyramid",
+                    "visibility": "hidden"
                 }
             ]
         },
@@ -211,5 +221,5 @@ def test_world_to_plain_text(architext: Architext):
 def test_world_to_encoded_text(architext: Architext):
     out = architext.query(WorldToText(world_id="outer", format="encoded"))
     print(out.text_representation)
-    assert out.text_representation == """eJztVsFu2zAM/RXWl16CfsBu3i47bCiwBCuKIShkm6mJyaIhyVm9Iv8+yYkc27GddiiKHAoESSBSj4/iI6XniDU9khLyQYkCo08Q3VYWNdyRzEy0gKM9Q5NqKi2x8m7f0F4bwKdSskawOUKlaIva4JXfRoosuV2auXigzO8wpUjR2/yacSu/nqOBJXBYhoVB0HuuQLhwG8nCknoEUk3orTBWoTHAmx6VBQjJCm88FD6RPUQNYVbceDfhTU7lSMS7XFgQoChF8AgHFxdceJeT/ALMlgwlJMnW3iQqy9Fu7c/F4j739W4BvfzDzkAuhi/8t4blDLkY0hOX8TRvpT8QV7Afju8oUpOhKVBKB1qggY3mwh+PxpmcucE1Uxn7FDssYumCvD0J4WFfyuEzJ2/PIOHkpfGnpH3QYsoy239hUdrai/qc5F4tt07R2qY/o49VTgbcp+d3AyvH2K0KBbELCRmzBvebCJvrxiGWhl37mEL4A62SS2nFD2H24//0doknFRylkojsvydFF7hPqlKSjMWsT2xUV+/I6vSolphqtF0Fdnl8r8HsHUwqSoSSs9f3b05ZhmrQwZ0zaTppJPihOYL1XCZxpy+n0fo+5zHLWouCsmnAjsN42gOOZaeGY/xaex9tVE1ORZrnyB3tU+ocmaRd+bQd7aZZOy29EUpNW2FxTsVf+Q/IKv1d+6lK1snXjbw9CuTCDdp2s3/5+Jns/19d3L0/efUcJ2JbkvnRGy6eodvFXSGX8cJ690tkstJhUyA3yyxUue/0UePLeawM6rze/QOfZbhJ"""
+    assert out.text_representation == """eJztVsFu2zAM/RXWl12CfsBu3i47bCiwBCuGIShkm6mJyqIhyVm9Iv8+0YkTO3GctAiKHAoESSBSfI/io6iXiC09klH6wagCo88Q3VUeLdyTzlw0gZ09Q5daKj2xEbfv6D85wOdSs0XwOUJlaInW4Y1sI0Oewi7LXDxQJjtcqVIUm6y5sPLnJdqztBym7cIe6G+uQAW4hWblyTwCmQZ6qZw36BzwokdlAkqzwVsJhc/kN6gtzIwb7wbe5VQOIN7nyoMCQymCRNi4BHAlLgf5tWGW5CghTb4Wk6o8R6u5nIvHde7z1QR6+bc7W3IxfOV/NUxHyMWQHrgMp3mn5UBCwX4GvoORmgxdgVqHoAU6WFgu5HgsjuTMTVx3LGNJscMi1gHk8iSUhD2XwxdOLs8g4eRc/GPS3mgxZZ2tv7AofS2iPiW5V8utU7Rt05/QxywnB+HT87uFWWAcVpWBOEBCxmwh/CbK57ZxiLXj0D6uUHKgVXItrfghzD7+L7FrPKjgIJVEZW++KbqB+6Qqo8l5zPrEBnX1jqwOj2qKqUXfVWCXx48a3NrBpapEKDl7ff/mlGVo9jq4cyZNJw2Ab5qjtZ7KJO705fFofZ9TMe9MyLm2qqDseMiOw3DifZaXjufKjiqGMt7a+9EG9Rl0aXmM3M5+jt7lRt2wfnu6A5d9V+FdrO2FLkYoLS2Vx7FG+8Z/QVfpUy0XP/nQYeFWXkeBXIVZsN0sjzMZG/L/5uqeJken4+7S3tZ4fDq0s3Hf7eqm3HU8At99zh2tdLupJTfKrK1y3+mjxtfzntqr83z1H9Sw7ZA="""
     

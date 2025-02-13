@@ -54,4 +54,4 @@ def test_info_shows_all_items(session: Session):
     assert "A small cube" in sent_text
     assert "A toroid" in sent_text
     assert "A sphere" in sent_text
-    assert "A pyramid" in sent_text  # hidden item
+    assert "One pyramid" in sent_text  # hidden item

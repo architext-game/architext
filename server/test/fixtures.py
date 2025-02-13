@@ -134,9 +134,11 @@ def createTestUow() -> UnitOfWork:
         items={
             "A cube": Item(name="A cube", description="a nice cube", visibility="auto"),
             "A small cube": Item(name="A small cube", description="a nice small cube", visibility="auto"),
+            "One pyramid": Item(name="One pyramid", description="a nice pyramid", visibility="hidden"),
             "A pyramid": Item(name="A pyramid", description="a nice pyramid", visibility="hidden"),
             "A sphere": Item(name="A sphere", description="a nice sphere", visibility="listed"),
             "A toroid": Item(name="A toroid", description="a nice toroid", visibility="unlisted"),
+            "The hidden": Item(name="The hidden", description="a nice pyramid", visibility="hidden"),
         },
         world_id="outer"
     )
@@ -201,6 +203,33 @@ def createTestUow() -> UnitOfWork:
         world_id="easteregg"
     )
 
+    hunters_world = World(
+        id="huntersworld",
+        name="Hunters World",
+        description="A nice place to practice targeting things",
+        initial_room_id="honters",
+        owner_user_id=None
+    )
+    hunters_room = Room(
+        id="hunters",
+        name="Shooting Range",
+        description="A nice place to practice targeting things",
+        world_id="huntersworld",
+        items={
+            "a cube": Item(name="a cube", description="a nice cube", visibility="auto"),
+            "Not a cube": Item(name="Not a cube", description="a nice cube", visibility="auto"),
+            "A sphere": Item(name="A sphere", description="a nice cube", visibility="auto"),
+            "Not a sphere": Item(name="Not a sphere", description="a nice cube", visibility="auto"),
+            "This is an awesome item yeah": Item(name="This is an awesome item yeah", description="a nice cube", visibility="auto"),
+            "This is an awesome hidden item": Item(name="This is an awesome hidden item", description="a nice cube", visibility="hidden"),
+        },
+        exits={
+            "Red laquered door": Exit(name="Red laquered door", description="a nice cube", visibility="hidden", destination_room_id="hunters"),
+            "Blue laquered door": Exit(name="Blue laquered door", description="a nice cube", visibility="hidden", destination_room_id="hunters"),
+            "This is an awesome exit": Exit(name="This is an awesome exit", description="Nice exit", visibility="listed", destination_room_id="hunters"),
+        },
+    )
+
     oliver = User(
         id="oliver",
         name="Oliver",
@@ -244,6 +273,13 @@ def createTestUow() -> UnitOfWork:
         room_id="rabbitholeroom",
         password_hash=b"asdasd"
     )
+    hunter = User(
+        id="hunter",
+        name="Hunter",
+        email="hunter@example.com",
+        room_id="hunters",
+        password_hash=b"asdasd"
+    )
     uow = FakeUnitOfWork()
     uow.world_templates.save_world_template(emptytemplate)
     uow.world_templates.save_world_template(monkstemplate)
@@ -255,6 +291,7 @@ def createTestUow() -> UnitOfWork:
     uow.worlds.save_world(public_tabern)
     uow.worlds.save_world(oliver_place)
     uow.worlds.save_world(easteregg_world)
+    uow.worlds.save_world(hunters_world)
     uow.rooms.save_room(rabbithole_room)
     uow.rooms.save_room(space)
     uow.rooms.save_room(spaceship)
@@ -265,12 +302,14 @@ def createTestUow() -> UnitOfWork:
     uow.rooms.save_room(a_table_in_the_tabern)
     uow.rooms.save_room(solitude)
     uow.rooms.save_room(easteregg_room)
+    uow.rooms.save_room(hunters_room)
     uow.users.save_user(oliver)
     uow.users.save_user(alice)
     uow.users.save_user(bob)
     uow.users.save_user(charlie)
     uow.users.save_user(dave)
     uow.users.save_user(rabbit)
+    uow.users.save_user(hunter)
     return uow
 
 

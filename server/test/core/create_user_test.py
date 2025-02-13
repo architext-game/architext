@@ -84,7 +84,7 @@ def test_create_user_list_users(architext: Architext):
     )
 
     users = architext._uow.users.list_users()
-    assert len(users) == 8
+    assert len(users) == 9
     user_names = [user.name for user in users]
     assert "Alice" in user_names
     assert "Bob" in user_names
