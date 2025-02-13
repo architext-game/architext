@@ -3,6 +3,7 @@ from gettext import gettext as _
 from architext.chatbot.sender import Sender, MessageOptions
 from architext.core import Architext
 from architext.core.queries.get_current_room import GetCurrentRoom
+from architext.core.queries.get_thing_in_room import GetThingInRoom
 from .verb import Verb
 from .. import strings
 
@@ -12,27 +13,30 @@ class Look(Verb):
     command = _('look')
 
     def process(self, message: str):
-        # command_length = len(self.command) + 1
-        # if message[command_length:]:
-        #     self.show_item_or_exit(message[command_length:])
-        # else:
-        #     self.show_current_room()
-        show_current_room(
-            sender=self.session.sender,
-            user_id=self.session.user_id,
-            architext=self.architext
-        )
+        command_length = len(self.command) + 1
+        if message[command_length:]:
+            self.show_item_or_exit(message[command_length:])
+        else:
+            show_current_room(
+                sender=self.session.sender,
+                user_id=self.session.user_id,
+                architext=self.architext
+            )
         self.finish_interaction()
 
-    # def show_item_or_exit(self, partial_name):
-    #     selected_entity = util.name_to_entity(self.session, partial_name, substr_match=['room_items', 'room_exits', 'inventory'])
+    def show_item_or_exit(self, partial_name: str):
+        result = self.architext.query(GetThingInRoom(partial_name=partial_name), self.session.user_id)
 
-    #     if selected_entity == 'many':
-    #         self.session.send_to_client(strings.many_found)
-    #     elif selected_entity is None:
-    #         self.session.send_to_client(strings.not_found)
-    #     else:
-    #         self.session.send_to_client(f"👁 {selected_entity.name}\n{selected_entity.description if selected_entity.description else strings.default_description}")
+        if result.status == "multiple_matches":
+            self.session.sender.send(self.session.user_id, strings.many_found)
+        elif result.status == "none_found":
+            self.session.sender.send(self.session.user_id, strings.not_found)
+        elif result.status == "exit_matched":
+            assert result.exit_match is not None
+            self.session.sender.send(self.session.user_id, f"👁 {result.exit_match.name}\n{result.exit_match.description if result.exit_match.description else strings.default_description}")
+        elif result.status == "item_matched":
+            assert result.item_match is not None
+            self.session.sender.send(self.session.user_id, f"👁 {result.item_match.name}\n{result.item_match.description if result.item_match.description else strings.default_description}")
     
 
 def show_current_room(sender: Sender, architext: Architext, user_id: str, show_world_name: bool = False) -> None:
