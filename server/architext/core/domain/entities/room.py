@@ -3,6 +3,7 @@ from typing import List, Mapping, Optional
 from dataclasses import dataclass, field
 from architext.core.domain.entities.exit import Exit
 from architext.core.domain.entities.item import Item
+from architext.core.domain.names import duplicates
 
 @dataclass(frozen=True)
 class Room:
@@ -13,15 +14,7 @@ class Room:
     exits: Mapping[str, Exit] = field(default_factory=dict)
     items: Mapping[str, Item] = field(default_factory=dict)
 
-    def __post_init__(self):
-        exits_dict = dict(self.exits)
-        items_dict = dict(self.items)
-
-        # Validar que no haya nombres repetidos entre exits e items
-        duplicate_names = set(exits_dict.keys()) & set(items_dict.keys())
-        if duplicate_names:
-            raise ValueError(f"Duplicated names in room: {duplicate_names}")
-        
+    def __post_init__(self):        
         # Guarantee that exits and items are immutable
         object.__setattr__(self, "exits", MappingProxyType(dict(self.exits)))
         object.__setattr__(self, "items", MappingProxyType(dict(self.items)))
@@ -39,7 +32,7 @@ class Room:
         return self.with_changes(exits=new_exits)
 
     def with_exit(self, exit: Exit) -> 'Room':
-        if exit.name in self.items or exit.name in self.exits:
+        if duplicates(list(self.exits.keys()) + list(self.items.keys()) + [exit.name]):
             raise DuplicatedNameInRoom(f"Cannot add exit '{exit.name}', name is in use in this room.")
         
         new_exits = {name: exit for name, exit in self.exits.items()}
@@ -58,7 +51,7 @@ class Room:
         return self.with_changes(items=new_items)
 
     def with_item(self, item: Item) -> 'Room':
-        if item.name in self.items or item.name in self.exits:
+        if duplicates(list(self.exits.keys()) + list(self.items.keys()) + [item.name]):
             raise DuplicatedNameInRoom(f"Cannot add item '{item.name}', name is in use in this room.")
         
         new_items = {name: item for name, item in self.items.items()}
@@ -85,12 +78,6 @@ class Room:
             exits=exits if exits is not None else self.exits,
             items=items if items is not None else self.items,
         )
-
-def duplicates(strings: List[str]) -> bool:
-    lowercase_strings = [string.lower() for string in strings]
-    there_are_duplicates = len(lowercase_strings) != len(set(lowercase_strings))
-    return there_are_duplicates
-
 
 DEFAULT_ROOM = Room(
     id="DEFAULT_ROOM",
