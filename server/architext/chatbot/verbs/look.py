@@ -67,7 +67,7 @@ def show_current_room(sender: Sender, architext: Architext, user_id: str, show_w
     else:
         items = ''
 
-    player_names = [user.name for user in room.people]
+    player_names = [user.name for user in room.people if user.id != user_id]
     if len(player_names) < 1:
         players_description = ""
     elif len(player_names) == 1:
