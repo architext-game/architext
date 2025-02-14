@@ -12,3 +12,4 @@ from .raze import Raze
 from .edit_room import EditRoom
 from .say import Say
 from .emote import Emote
+from .craft import Craft

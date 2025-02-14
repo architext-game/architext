@@ -14,7 +14,7 @@ class IsNameValidResult:
 class IsNameValid(Query[IsNameValidResult]):
     """Check if a name is valid for a new exit or item in the current room."""
     name: str
-    in_room_id: str
+    in_room_id: Optional[str] = None
 
 class IsNameValidQueryHandler(QueryHandler[IsNameValid, IsNameValidResult]):
     pass
@@ -28,10 +28,17 @@ class UOWIsNameValidQueryHandler(UOWQueryHandler, IsNameValidQueryHandler):
         if user is None:
             raise Exception(f'User {client_user_id} not found')
         
-        room = self._uow.rooms.get_room_by_id(query.in_room_id)
-        if room is None:
-            raise Exception(f'Room {query.in_room_id} not found')
-
+        if query.in_room_id:
+            room = self._uow.rooms.get_room_by_id(query.in_room_id)
+            if room is None:
+                raise Exception(f'Room {query.in_room_id} not found')
+        else:
+            if user.room_id is None:
+                raise Exception(f'Room is not provided and user is not in a room')
+            room = self._uow.rooms.get_room_by_id(user.room_id)
+            if room is None:
+                raise Exception(f'User\'s room id is invalid: {user.room_id}')
+        
         error: Optional[Literal['duplicated']]
         try:
             room.with_item(Item(

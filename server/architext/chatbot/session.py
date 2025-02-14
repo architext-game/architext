@@ -19,7 +19,7 @@ class Session:
     """
 
     # List of all verbs supported by the session, ordered by priority: if two verbs can handle the same message, the first will have preference.
-    verbs: List[Type[Verb]] = [v.Look, v.Build, v.Go, v.Exits, v.Info, v.Link, v.Edit, v.Items, v.Delete, v.Raze, v.EditRoom, v.Say, v.Emote]
+    verbs: List[Type[Verb]] = [v.Look, v.Build, v.Go, v.Exits, v.Info, v.Link, v.Edit, v.Items, v.Delete, v.Raze, v.EditRoom, v.Say, v.Emote, v.Craft]
 
     def __init__(self, user_id: str, messaging_channel: MessagingChannel, logger: Logger, architext: Architext):
         self.architext = architext
