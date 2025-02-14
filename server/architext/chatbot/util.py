@@ -14,37 +14,12 @@ from architext.core.queries.get_room_details import ExitInRoomDetails, RoomDetai
 # username to be used by the ghost session (see ghost_session.py)
 GHOST_USER_NAME = "-nadie-"
 
-def possible_meanings(partial_string: str, list_of_options: typing.List[str], loose_match=False, substr_match=False) -> typing.List[str]:
-    # first check for exact matches
-    if partial_string in list_of_options:
-        return [string for string in list_of_options if partial_string == string]
+class ThingWithName(typing.Protocol):
+    name: str
 
-    # then check for complete easy text matches
-    elif loose_match and next(filter(lambda s: similar(s, partial_string), list_of_options), None) is not None:
-        return list(filter(lambda s: similar(s, partial_string), list_of_options))
-
-    # then check for easy text containment
-    elif substr_match:
-        return [string for string in list_of_options if contains_similar(partial_string, string)]
-
-    # if nothing found with the given options, return an empty list
-    else:
-        return []
-
-
-def name_to_entity(name: str, room: RoomDetails, match: typing.Literal['strict', 'loose', 'substring']='substring') -> typing.List[typing.Union[ExitInRoomDetails, ItemInRoomDetails]]:
-    matches = []
-
-    exit_names = [exit.name for exit in room.exits]
-    item_names = [item.name for item in room.items]
-    entity_names = exit_names + item_names
-
-    matches += possible_meanings(name, entity_names, loose_match=match=='loose', substr_match=match=='substring')
-
-    matching_exits = [exit for exit in room.exits if exit.name in matches]
-    matching_items = [item for item in room.items if item.name in matches]
-
-    return matching_exits + matching_items
+T = typing.TypeVar("T", bound=ThingWithName)
+def get_by_name(name: str, list: typing.List[T]) -> T:
+    return next((item for item in list if item.name == name))
 
 
 def setup_logger(logger_name, log_file, console=False, level=logging.INFO):
@@ -75,42 +50,6 @@ def setup_logger(logger_name, log_file, console=False, level=logging.INFO):
 
     return logger
 
-def fix_string(string, remove_breaks=False, max_length=None):
-    if remove_breaks:
-        string = string.replace('\n', '')
-    if max_length is not None:
-        string = string[:max_length]
-    return string
-
-def similar(text_one, text_two):
-    text_one = easy_text(text_one)
-    text_two = easy_text(text_two)
-
-    return text_one == text_two
-
-def contains_similar(substring, bigstring):
-    substring = easy_text(substring)
-    bigstring = easy_text(bigstring)
-
-    return substring in bigstring
-
-def easy_text(text):
-    text = text.lower()
-    text = remove_accents(text)
-    return text
-
-def remove_accents(text):
-    """Removes common accent characters."""
-
-    text = re.sub(u"[àáâãäå]", 'a', text)
-    text = re.sub(u"[èéêë]", 'e', text)
-    text = re.sub(u"[ìíîï]", 'i', text)
-    text = re.sub(u"[òóôõö]", 'o', text)
-    text = re.sub(u"[ùúûü]", 'u', text)
-    text = re.sub(u"[ýÿ]", 'y', text)
-    text = re.sub(u"[ñ]", 'n', text)
-
-    return text 
 
 def get_config():
     with io.open('config.yml') as file:
@@ -188,165 +127,6 @@ def match(pattern, string):
 
     return None
  
-
-def world_from_dict(world_dict, world_name, creator, public=False):
-    
-    new_world_state = entities.WorldState(save_on_creation=False)
-    new_world = entities.World(save_on_creation=False, name=world_name, creator=creator, world_state=new_world_state, public=public)
-    
-    items = []
-    custom_verbs = []
-    exits = []
-    other_rooms = []
-    inventories = []
-    saved_items = []
-
-    new_world_state.starting_room, added_items = room_from_dict(world_dict['starting_room'])
-    items += added_items
-
-    for room_dict in world_dict['other_rooms']:
-        room, added_items = room_from_dict(room_dict, world_state=new_world_state)
-        other_rooms.append(room)
-        items += added_items
-    
-    for verb_dict in world_dict['custom_verbs']:
-        custom_verbs.append(custom_verb_from_dict(verb_dict))
-
-    all_rooms = other_rooms + [new_world_state.starting_room]
-    rooms_dict_by_alias = { room.alias: room for room in all_rooms }
-    for exit_dict in world_dict['exits']:
-        new_exit = exit_from_dict(exit_dict, rooms_dict_by_alias)
-        exits.append(new_exit)
-
-    creator_inventory = inventory_from_dict(item_list=world_dict['inventory'], user=creator, world_state=new_world_state)
-    inventories.append(creator_inventory)
-
-    for item_dict in world_dict['saved_items']:
-        new_item = item_from_dict(item_dict, saved_in=new_world_state)
-        saved_items.append(new_item)
-
-    new_world_state._next_room_id = world_dict['next_room_id']
-
-    # todo: save all in the correct order
-    # save all entities that world_state references
-    for verb in new_world_state.starting_room.custom_verbs:
-        verb.save()
-    new_world_state.starting_room.save()
-    for verb in custom_verbs:
-        verb.save()
-    new_world_state.custom_verbs = custom_verbs
-    # now the world state can be saved
-    new_world_state.save()
-    # now we can add the world_state reference to the starting room
-    new_world_state.starting_room.world_state = new_world_state
-    new_world_state.starting_room.save()
-    # and save the saved items
-    for item in saved_items:
-        for verb in item.custom_verbs:
-            verb.save()
-        item.save()
-    # now we can save the rest of the rooms
-    for room in other_rooms:
-        for verb in room.custom_verbs:
-            verb.save()
-        room.save()
-    # now we can save the exits and items
-    for exit in exits:
-        exit.save()
-    for item in items:
-        for verb in item.custom_verbs:
-            verb.save()
-        item.save()
-    # we finally save the inventories
-    for inventory in inventories:
-        for item in inventory.items:
-            for verb in item.custom_verbs:
-                verb.save()
-            item.save()
-        inventory.save()
-    # and the world itself
-    new_world.save()
-    return new_world
-    
-
-
-def room_from_dict(room_dict, world_state=None):
-    custom_verbs = [custom_verb_from_dict(verb_dict) for verb_dict in room_dict['custom_verbs']]
-
-    new_room = entities.Room(
-        save_on_creation=False, 
-        world_state=world_state,
-        name=room_dict['name'],
-        alias=room_dict['alias'],
-        description=room_dict['description'],
-        custom_verbs=custom_verbs
-    )
-
-    items = []
-    for item_dict in room_dict['items']:
-        new_item = item_from_dict(item_dict, room=new_room)
-        items.append(new_item)
-    return new_room, items
-
-def item_from_dict(item_dict, room=None, saved_in=None):
-    custom_verbs = [custom_verb_from_dict(verb_dict) for verb_dict in item_dict['custom_verbs']]
-    
-    new_item = entities.Item(
-        save_on_creation=False,
-        item_id=item_dict['item_id'],
-        name=item_dict['name'],
-        description=item_dict['description'],
-        visible=item_dict['visible'],
-        custom_verbs=custom_verbs,
-        room=room,
-        saved_in=saved_in
-    )
-
-    return new_item
-
-def custom_verb_from_dict(verb_dict):
-    custom_verb = entities.CustomVerb(
-        save_on_creation=False, 
-        names=verb_dict["names"],
-        commands=verb_dict["commands"]
-    )
-    return custom_verb
-
-def exit_from_dict(exit_dict, rooms_dict_by_alias):
-    room_alias = exit_dict["room"]
-    destination_alias = exit_dict["destination"]
-    room = rooms_dict_by_alias[room_alias]
-    destination = rooms_dict_by_alias[destination_alias]
-    
-    new_exit=entities.Exit(
-        save_on_creation=False,
-        name=exit_dict["name"],
-        description=exit_dict["description"],
-        destination=destination,
-        room=room,
-        visible=exit_dict['visible'],
-        is_open=exit_dict['is_open'],
-        key_names=exit_dict['key_names'],
-    )
-
-    return new_exit
-
-def inventory_from_dict(item_list, user, world_state):
-    items = []
-    for item_dict in item_list:
-        new_item = item_from_dict(item_dict)
-        items.append(new_item)
-    
-    new_inventory = entities.Inventory(
-        save_on_creation=False,
-        user=user,
-        world_state=world_state,
-        items=items
-    )
-
-    return new_inventory
-
-
 def remove_control_characters(s):
     return "".join(ch for ch in s if unicodedata.category(ch)[0]!="C")
 

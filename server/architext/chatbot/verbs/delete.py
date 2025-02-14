@@ -1,5 +1,6 @@
 from architext.core.queries.get_room_details import ExitInRoomDetails, GetRoomDetails
 from architext.core.commands import DeleteItem as DeleteItemCommand, DeleteExit as DeleteExitCommand
+from architext.core.queries.get_thing_in_room import GetThingInRoom, ItemInRoom, ExitInRoom
 from . import verb
 from gettext import gettext as _
 from architext.chatbot import strings
@@ -19,25 +20,23 @@ class Delete(verb.Verb):
 
         message = message[len(self.command):]
 
-        entities = util.name_to_entity(message, self.current_room, match='strict')
+        result = self.architext.query(GetThingInRoom(partial_name=message), self.session.user_id)
 
-        if len(entities) > 1: 
+        if result.status == 'multiple_matches': 
             self.session.sender.send(self.session.user_id, strings.many_found)
             self.finish_interaction()
             return
-        elif len(entities) == 0:
+        elif result.status == 'none_found':
             self.session.sender.send(self.session.user_id, _(
-                'There is not any exit or item called "{name}" here.\n'
-                'To delete something you have to enter its exact name.'
+                'There is not any exit or item called "{name}" here.'
             ).format(name=message))
             self.finish_interaction()
             return
-
-        self.entity_to_delete = entities[0]
-
-        if isinstance(self.entity_to_delete, ExitInRoomDetails):
-            exit = self.entity_to_delete
-            destination_room = self.architext.query(GetRoomDetails(), self.session.user_id).room
+        elif result.status == 'exit_matched':
+            exit = result.exit_match
+            assert exit is not None
+            exit_details = util.get_by_name(exit.name, self.current_room.exits)
+            destination_room = self.architext.query(GetRoomDetails(room_id=exit_details.destination_id), self.session.user_id).room
             warning = ''
             if destination_room:
                 warning += 'It\'s destination was "{destination_name}" (id {destination_id})\n'.format(
@@ -55,17 +54,17 @@ class Delete(verb.Verb):
                 'Exit "{exit_name}" has been deleted.\n'
                 '{warning}'
             ).format(exit_name=exit.name, warning=warning))
-            a = "asdas"
             self.architext.handle(DeleteExitCommand(
                 room_id=self.current_room.id,
                 exit_name=exit.name
             ), self.session.user_id)
-        else:  # isinstance(self.entity_to_delete, ItemInRoomDetails):
+        elif result.status == 'item_matched':
+            assert result.item_match is not None
             self.architext.handle(DeleteItemCommand(
                 room_id=self.current_room.id,
-                item_name=self.entity_to_delete.name
+                item_name=result.item_match.name
             ), self.session.user_id)
-            self.session.sender.send(self.session.user_id, _('Item "{item_name}" has been deleted.').format(item_name=self.entity_to_delete.name))
+            self.session.sender.send(self.session.user_id, _('Item "{item_name}" has been deleted.').format(item_name=result.item_match.name))
 
         self.finish_interaction()
 

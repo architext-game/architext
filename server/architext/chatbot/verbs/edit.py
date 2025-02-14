@@ -1,16 +1,14 @@
 from architext.chatbot.ports.messaging_channel import MessageOptions
 from architext.core.commands import Command, EditExit as EditExitCommand, EditItem as EditItemCommand
 from architext.core.facade import Architext
-from architext.core.queries.get_room_details import ExitInRoomDetails, GetRoomDetails, ItemInRoomDetails
+from architext.core.queries.get_room_details import GetRoomDetails, RoomDetails
+from architext.core.queries.get_thing_in_room import GetThingInRoom, ExitInRoom, ItemInRoom
 from architext.core.queries.is_name_valid import IsNameValid
 from architext.core.settings import EXIT_DESCRIPTION_MAX_LENGTH, EXIT_NAME_MAX_LENGTH, ITEM_DESCRIPTION_MAX_LENGTH, ITEM_NAME_MAX_LENGTH
 from . import verb
-from .. import util
-import textwrap
 import architext.chatbot.strings as strings
-import logging
 from gettext import gettext as _
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal, Union
 
 if TYPE_CHECKING:
     from architext.chatbot.session import Session
@@ -26,6 +24,9 @@ class Edit(verb.Verb):
     def __init__(self, session: Session, architext: Architext):
         super().__init__(session, architext)
         self.current_process_function = self.start_editing
+        self.entity_to_edit: Union[ItemInRoom, ExitInRoom]
+        self.current_room: RoomDetails
+        self.editing: Literal['exit', 'item']
 
     def process(self, message):
         if message == '/':
@@ -35,29 +36,31 @@ class Edit(verb.Verb):
             self.current_process_function(message)
 
     def start_editing(self, message: str):
-        self.current_room = self.architext.query(GetRoomDetails(), self.session.user_id).room
+        current_room = self.architext.query(GetRoomDetails(), self.session.user_id).room
 
-        if self.current_room is None:
+        if current_room is None:
             self.session.sender.send(self.session.user_id, strings.room_not_found)
             self.finish_interaction()
             return
 
+        self.current_room = current_room
+
         message = message[len(self.command):]
 
-        entities = util.name_to_entity(message, self.current_room)
+        result = self.architext.query(GetThingInRoom(partial_name=message), self.session.user_id)
 
-        if len(entities) > 1: 
+        if result.status == "multiple_matches": 
             self.session.sender.send(self.session.user_id, strings.many_found)
             self.finish_interaction()
             return
-        elif len(entities) == 0:
+        elif result.status == "none_found":
             self.session.sender.send(self.session.user_id, strings.not_found)
             self.finish_interaction()
             return
-
-        self.entity_to_edit = entities[0]
-
-        if isinstance(self.entity_to_edit, ExitInRoomDetails):
+        elif result.status == "exit_matched":
+            self.editing = 'exit'
+            assert result.exit_match is not None
+            self.entity_to_edit = result.exit_match
             title = _('Editing exit {exit_name}').format(exit_name=self.entity_to_edit.name)
 
             body = _(
@@ -69,7 +72,10 @@ class Edit(verb.Verb):
             )
             self.session.sender.send_formatted(self.session.user_id, title, body, cancel=True)
             self.current_process_function = self.process_exit_edit_option_number
-        else:  # editing an Item
+        elif result.status == "item_matched":
+            self.editing = 'item'
+            assert result.item_match is not None
+            self.entity_to_edit = result.item_match
             title = _('Editing item {item_name}').format(item_name=self.entity_to_edit.name)
             body = _(
                 'Enter the number of the value to edit.\n'
@@ -123,13 +129,11 @@ class Edit(verb.Verb):
             self.process_item_edit_option_number(message)
     
     def process_reform_value(self, message: str):
-        assert self.current_room is not None
-        
         if len(message) == 0:
             self.session.sender.send(self.session.user_id, strings.is_empty)
             return
         
-        editing_exit = isinstance(self.entity_to_edit, ExitInRoomDetails)
+        editing_exit = self.editing == 'exit'
         command: Command
 
         if self.option_number == 1:  # edit name
@@ -210,12 +214,7 @@ class Edit(verb.Verb):
                 self.session.sender.send(self.session.user_id, strings.room_not_found)
                 return
         
-        if isinstance(command, EditExitCommand):
-            self.architext.handle(command, self.session.user_id)
-        else:
-            self.architext.handle(command, self.session.user_id)
-        # This is an error according to mypy:
-        # self.architext.handle(command, self.session.user_id)
+        self.architext.handle(command, self.session.user_id)
 
         self.session.sender.send(self.session.user_id, _('Edition completed.'))
         self.finish_interaction()

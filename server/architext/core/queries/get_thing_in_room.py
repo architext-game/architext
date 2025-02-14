@@ -28,6 +28,7 @@ class GetThingInRoomResult:
 
 class GetThingInRoom(Query[GetThingInRoomResult]):
     partial_name: str
+    restrict_to: Optional[Literal['items', 'exits']] = None
 
 class GetThingInRoomQueryHandler(QueryHandler[GetThingInRoom, GetThingInRoomResult]):
     pass
@@ -46,7 +47,13 @@ class UOWGetThingInRoomQueryHandler(UOWQueryHandler, GetThingInRoomQueryHandler)
         if current_room is None:
             raise ValueError(f"Room with id {user.room_id} not found")
 
-        things = list(current_room.items.values()) + list(current_room.exits.values())
+        things: List[Union[Item, Exit]]
+        if query.restrict_to == 'exits':
+            things = list(current_room.exits.values()) 
+        elif query.restrict_to == 'items':
+            things = list(current_room.items.values())
+        else:
+            things = list(current_room.items.values()) + list(current_room.exits.values())
         match = complete_name_match(query.partial_name, things)
 
         if match:
