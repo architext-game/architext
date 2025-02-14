@@ -4,7 +4,6 @@ from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChann
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
 import pytest # type: ignore
-from test.fixtures import session_factory, channel
 
 
 def test_delete_item_success(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):

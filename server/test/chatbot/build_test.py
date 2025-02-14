@@ -4,8 +4,6 @@ from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChann
 from architext.chatbot.session import Session
 from architext.core.settings import EXIT_NAME_MAX_LENGTH, ROOM_DESCRIPTION_MAX_LENGTH, ROOM_NAME_MAX_LENGTH
 
-from test.fixtures import createTestArchitext, session_factory, channel
-
 
 def test_build_success(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):
     session = session_factory("oliver")

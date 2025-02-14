@@ -2,7 +2,6 @@ from typing import Callable
 from architext.chatbot import strings
 from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChannel
 from architext.chatbot.session import Session
-from test.fixtures import session_factory, channel
 
 # The logic to match names with things is thorougly tested
 # in the tests for the GetThingInRoom query.

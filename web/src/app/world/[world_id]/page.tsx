@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { Overlay } from '@/components/overlay';
 import { EditWorldForm } from './edit_world_form';
 import { CreateTemplateForm } from './create_template_form';
+import useHeartbeat from '../heartbeat';
 
 interface Message {
   text: string,
@@ -123,11 +124,15 @@ function App({ params, searchParams }: {
   const worldIsNew = use(searchParams).future;  // so it may not exist yet
   const shouldEnterWorld = useRef(true);
 
+  useHeartbeat(socket)
+
   useEffect(() => {
     if(authChecked && !me?.success){
       router.push('/login')
     }
   }, [me, authChecked]);
+
+  console.log(socket.id)
 
   useEffect(() => {
     if(worldId){

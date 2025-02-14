@@ -8,6 +8,7 @@ class User:
     name: str
     password_hash: bytes
     room_id: Optional[str] = None
+    active: bool = False
     email: Optional[str] = None
     visited_world_ids: Set[str] = field(default_factory=set)
 
@@ -22,3 +23,17 @@ class User:
     def match_password(self, password: str) -> bool:
         """Checks if the provided password matches the stored hash."""
         return self.password_hash == self._hash_password(password)
+
+    def with_changes(
+        self, 
+        active: Optional[bool] = None,
+    ) -> "User":
+        return User(
+            active=active if active is not None else self.active,
+            id=self.id,
+            name=self.name,
+            email=self.email,
+            room_id=self.room_id,
+            password_hash=self.password_hash,
+            visited_world_ids=self.visited_world_ids,
+        )

@@ -28,6 +28,6 @@ def test_list_worlds(architext: Architext):
     assert outer.id == "outer"
     assert outer.description == "Let's explore the universe!"
     assert outer.owner_name == "Oliver"
-    assert outer.connected_players_count == 4
+    assert outer.connected_players_count == 2
     assert outer.base_template_name == None
     assert outer.base_template_author == None

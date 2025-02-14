@@ -13,6 +13,7 @@ from architext.core.domain.primitives import Visibility
 class PersonInRoomDetails:
     id: str
     name: str
+    active: bool
 
 @dataclass
 class ExitInRoomDetails:
@@ -66,7 +67,11 @@ class UOWGetRoomDetailsQueryHandler(UOWQueryHandler, GetRoomDetailsQueryHandler)
             if room is None:
                 return GetRoomDetailsResult(room=None)
             users = uow.users.get_users_in_room(room_id)
-            people_in_room = [PersonInRoomDetails(id=user.id, name=user.name) for user in users]
+            people_in_room = [PersonInRoomDetails(
+                id=user.id,
+                name=user.name,
+                active=user.active,
+            ) for user in users]
 
             exits_in_room = []
             for exit in room.exits.values():

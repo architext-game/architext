@@ -36,7 +36,7 @@ def test_get_current_room_invalid_user_id(architext: Architext):
 def test_get_current_room_lists_people_in_room(architext: Architext):
     result = architext.query(GetCurrentRoom(), client_user_id="dave")
     assert result.current_room is not None
-    assert len(result.current_room.people) == 2
+    assert len(result.current_room.people) == 2  # two ACTIVE players
     assert "Bob" in [person.name for person in result.current_room.people]
 
 

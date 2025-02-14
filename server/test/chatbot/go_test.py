@@ -2,19 +2,17 @@ from typing import Callable
 from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChannel
 from architext.chatbot.session import Session
 
-from test.fixtures import session_factory, channel
-
 
 def test_go(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):
     session = session_factory("oliver")
-    session.process_message("go alice")
+    session.process_message("go bob")
 
     print(channel.all_to("oliver"))
-    assert """Alice's Room
-This is Alice's Room
+    assert """Bob's Room
+This is Bob's Room
 
-👤 Players here: Oliver, Alice.
-⮕ Exits: To the spaceship, To Oliver's Room, To Bob's Room.
+👤 Players here: Bob, Dave.
+⮕ Exits: To the spaceship, To Oliver's Room, To Alice's Room.
 """ in channel.all_to("oliver")
     
 

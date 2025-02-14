@@ -74,10 +74,13 @@ export interface ChatbotMessageParams {
     message: string;
 }
 
-export interface ChatbotMessageResponse {
+export interface HeartbeatResponse {
     success: boolean;
     data: null;
     error: string | null;
+}
+
+export interface HeartbeatParams {
 }
 
 export interface GetWorldsParams {
@@ -169,6 +172,7 @@ export interface GetMeResponse {
         name: string;
         email: string;
         current_world_id: string | null;
+        privileged_in_current_world: boolean;
         id: string;
     } | null;
     error: string | null;
@@ -309,9 +313,20 @@ export async function traverseExit(
 export async function chatbotMessage(
     socket: Socket,
     params: ChatbotMessageParams
-): Promise<ChatbotMessageResponse> {
+): Promise<HeartbeatResponse> {
     return new Promise((resolve, reject) => {
-        socket.emit("chatbot_message", params, (response: ChatbotMessageResponse) => {
+        socket.emit("chatbot_message", params, (response: HeartbeatResponse) => {
+            resolve(response)
+        });
+    });
+}
+
+export async function heartbeat(
+    socket: Socket,
+    params: HeartbeatParams
+): Promise<HeartbeatResponse> {
+    return new Promise((resolve, reject) => {
+        socket.emit("heartbeat", params, (response: HeartbeatResponse) => {
             resolve(response)
         });
     });

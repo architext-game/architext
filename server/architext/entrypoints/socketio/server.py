@@ -6,6 +6,7 @@ add --types to generate types
 
 from typing import Dict, Type
 import eventlet
+from eventlet.greenthread import GreenThread
 import re
 from architext.chatbot.adapters.chatbot_notifier import ChatbotNotifier
 from architext.chatbot.adapters.socketio_messaging_channel import SocketIOMessagingChannel
@@ -32,7 +33,7 @@ from architext.core.adapters.memory_uow import MemoryUnitOfWork
 from architext.entrypoints.socketio.jwt_tokens import generate_jwt, decode_jwt
 from architext.core.commands import (
     CreateTemplate, CreateTemplateResult, CreateUser, CreateUserResult, EditWorld, EditWorldResult, EnterWorld, EnterWorldResult,
-    CreateConnectedRoom, CreateConnectedRoomResult, RequestWorldCreationFromTemplate, RequestWorldCreationFromTemplateResult, RequestWorldImport, RequestWorldImportResult,
+    CreateConnectedRoom, CreateConnectedRoomResult, MarkUserActive, RequestWorldCreationFromTemplate, RequestWorldCreationFromTemplateResult, RequestWorldImport, RequestWorldImportResult,
     TraverseExit, TraverseExitResult,
     Login, LoginResult,
     CreateInitialData, CreateInitialDataResult,
@@ -140,14 +141,40 @@ if __name__ == "__main__":
         return architext.handle(input, client_user_id=client_user_id)
     
 
+    inactive_timers: Dict[str, GreenThread] = {}
+
+    def register_user_activity(user_id: str):
+        print(f"Registered activity for user {user_id}")
+        architext.handle(MarkUserActive(active=True), user_id)
+
+        if user_id in inactive_timers:
+            inactive_timers[user_id].cancel()
+
+        inactive_timers[user_id] = eventlet.spawn_after(30, mark_user_inactive, user_id)
+
+    def mark_user_inactive(user_id: str):
+        print(f"User {user_id} marked as inactive")
+        architext.handle(MarkUserActive(active=False), user_id)
+
+
     class ChatbotMessage(BaseModel):
         message: str
 
     @event(sio=sio, on='chatbot_message', In=ChatbotMessage, Out=ResponseModel[None])
     def chatbot_message_event(sid, input: ChatbotMessage) -> None:
         client_user_id = sid_to_user_id[sid]
+        register_user_activity(client_user_id)
+        
         if client_user_id in user_id_to_session:
             user_id_to_session[client_user_id].process_message(input.message)
+
+    class Heartbeat(BaseModel):
+        pass
+
+    @event(sio=sio, on='heartbeat', In=Heartbeat, Out=ResponseModel[None])
+    def heartbeat_event(sid, input: Heartbeat) -> None:
+        client_user_id = sid_to_user_id[sid]
+        register_user_activity(client_user_id)
 
     @event(sio=sio, on='get_worlds', In=ListWorlds, Out=ResponseModel[ListWorldsResult])
     def get_worlds_event(sid, input: ListWorlds) -> ListWorldsResult:

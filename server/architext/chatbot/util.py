@@ -19,7 +19,10 @@ class ThingWithName(typing.Protocol):
 
 T = typing.TypeVar("T", bound=ThingWithName)
 def get_by_name(name: str, list: typing.List[T]) -> T:
-    return next((item for item in list if item.name == name))
+    item = next((item for item in list if item.name == name), None)
+    if item is None:
+        raise KeyError(f"Item with name {name} not found in {list}")
+    return item
 
 
 def setup_logger(logger_name, log_file, console=False, level=logging.INFO):

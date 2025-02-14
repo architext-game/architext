@@ -31,7 +31,7 @@ class UOWGetWorldQueryHandler(UOWQueryHandler, GetWorldQueryHandler):
 
         users = self._uow.users.list_users()
         room_ids = [room.id for room in self._uow.rooms.list_rooms_by_world(world.id)]
-        players_in_world = [user for user in users if user.room_id in room_ids]
+        players_in_world = [user for user in users if user.room_id in room_ids and user.active]
 
         template = self._uow.world_templates.get_world_template_by_id(world.base_template_id) if world.base_template_id is not None else None
 

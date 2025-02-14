@@ -5,7 +5,6 @@ from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
 from architext.core.settings import ITEM_DESCRIPTION_MAX_LENGTH, ITEM_NAME_MAX_LENGTH
 import pytest # type: ignore
-from test.fixtures import session_factory, channel
 
 
 def test_craft_item_success(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):

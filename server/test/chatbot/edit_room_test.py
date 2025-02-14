@@ -6,7 +6,6 @@ from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
 from architext.core.settings import ROOM_DESCRIPTION_MAX_LENGTH, ROOM_NAME_MAX_LENGTH
 import pytest # type: ignore
-from test.fixtures import session_factory, channel
 
 
 def test_edit_room_name_success(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):

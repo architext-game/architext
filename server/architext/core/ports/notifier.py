@@ -12,7 +12,7 @@ class WorldCreatedNotification(Notification):
 @dataclass
 class UserEnteredRoomNotification(Notification):
     through_exit_name: Optional[str]
-    entered_world: bool
+    movement: Literal['used_exit', 'teleported', 'reconnected', 'entered_world']
     user_name: str
 
 @dataclass

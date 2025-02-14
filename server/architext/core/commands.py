@@ -210,3 +210,19 @@ class SendSocialInteractionResult:
 class SendSocialInteraction(Command[SendSocialInteractionResult]):
     content: str = Field(min_length=1, max_length=SOCIAL_INTERACTION_MAX_LENGTH)
     type: Literal['talk', 'emote']
+
+
+@dataclass
+class MarkUserActiveResult:
+    pass
+
+class MarkUserActive(Command[MarkUserActiveResult]):
+    active: bool
+
+
+@dataclass
+class StartupSetupResult:
+    pass
+
+class StartupSetup(Command[StartupSetupResult]):
+    pass

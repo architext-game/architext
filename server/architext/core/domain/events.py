@@ -12,6 +12,7 @@ class Event:
 @dataclass
 class UserChangedRoom(Event):
     user_id: str
+    method: Literal["used_exit", "teleported", "changed_world"]
     room_entered_id: Optional[str] = None
     room_left_id: Optional[str] = None
     exit_used_name: Optional[str] = None
@@ -55,4 +56,16 @@ class ShouldNotifyWorldCreated(Event):
     to_user_id: str
     world_id: str
     world_name: str
+
+@dataclass
+class UserBecameActive(Event):
+    user_id: str
+    user_name: str
+    room_id: str
+
+@dataclass
+class UserBecameInactive(Event):
+    user_id: str
+    user_name: str
+    room_id: str
 

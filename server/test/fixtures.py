@@ -250,7 +250,8 @@ def createTestUow() -> UnitOfWork:
         name="Bob",
         email="bob@example.com",
         room_id="bobs",
-        password_hash=b"asdasd"
+        password_hash=b"asdasd",
+        active=True,
     )
     charlie = User(
         id="charlie",
@@ -264,7 +265,16 @@ def createTestUow() -> UnitOfWork:
         name="Dave",
         email="dave@example.com",
         room_id="bobs",
-        password_hash=b"asdasd"
+        password_hash=b"asdasd",
+        active=True,
+    )
+    evan = User(
+        id="evan",
+        name="Evan",
+        email="evan@example.com",
+        room_id="bobs",
+        password_hash=b"asdasd",
+        active=False,
     )
     rabbit = User(
         id="rabbit",
@@ -308,6 +318,7 @@ def createTestUow() -> UnitOfWork:
     uow.users.save_user(bob)
     uow.users.save_user(charlie)
     uow.users.save_user(dave)
+    uow.users.save_user(evan)
     uow.users.save_user(rabbit)
     uow.users.save_user(hunter)
     return uow
@@ -318,20 +329,3 @@ def createTestArchitext() -> Architext:
     return Architext(uow,)
 
 
-@pytest.fixture
-def session_factory(channel: FakeMessagingChannel) -> Callable[[str], Session]:
-    def factory(user_id: str):
-        uow = createTestUow()
-        uow.notifier = MultiNotifier(multi_notifier_mapping_factory(
-            chatbot=ChatbotNotifier(channel=channel),
-            web=FakeNotifier()
-        ))
-        architext = Architext(uow=uow)
-        return Session(architext=architext, messaging_channel=channel, logger=StdOutLogger(), user_id=user_id) 
-    return factory
-
-
-@pytest.fixture
-def channel() -> FakeMessagingChannel:
-    channel = FakeMessagingChannel()
-    return channel

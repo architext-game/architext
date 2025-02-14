@@ -5,7 +5,6 @@ from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
 from architext.core.settings import EXIT_NAME_MAX_LENGTH, EXIT_DESCRIPTION_MAX_LENGTH
 import pytest # type: ignore
-from test.fixtures import session_factory, channel
 
 
 def test_edit_exit_name_success(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):

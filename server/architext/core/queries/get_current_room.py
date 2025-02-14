@@ -69,7 +69,7 @@ class UOWGetCurrentRoomQueryHandler(UOWQueryHandler, GetCurrentRoomQueryHandler)
             if current_room is None:
                 raise ValueError("User is not in a room")
             users = uow.users.get_users_in_room(user.room_id)
-            people_in_room = [PersonInRoom(id=user.id, name=user.name) for user in users]
+            people_in_room = [PersonInRoom(id=user.id, name=user.name) for user in users if user.active]
             exits_in_room = [ExitInRoom(
                 name=exit.name, 
                 description=exit.description,

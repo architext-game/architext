@@ -15,6 +15,7 @@ from architext.core.commands import (
     EnterWorld,
     Login,
     SendSocialInteraction,
+    StartupSetup,
     TraverseExit,
     RequestWorldCreationFromTemplate,
     RequestWorldImport,
@@ -28,8 +29,10 @@ from architext.core.commands import (
     DeleteExit,
     DeleteRoom,
     EditRoom,
+    MarkUserActive,
 )
 
+from architext.core.services.startup_setup import startup_setup
 from architext.core.services.send_social_interaction import send_social_interaction
 from architext.core.services.edit_world import edit_world
 from architext.core.services.create_template import create_template
@@ -49,6 +52,7 @@ from architext.core.services.delete_item import delete_item
 from architext.core.services.delete_exit import delete_exit
 from architext.core.services.delete_room import delete_room
 from architext.core.services.edit_room import edit_room
+from architext.core.services.mark_user_active import mark_user_active
 
 from typing import Dict, Type, Callable
 
@@ -72,4 +76,6 @@ COMMAND_HANDLERS: Dict[Type[Command], Callable] = {
     DeleteRoom: delete_room,
     EditRoom: edit_room,
     SendSocialInteraction: send_social_interaction,
+    MarkUserActive: mark_user_active,
+    StartupSetup: startup_setup,
 }

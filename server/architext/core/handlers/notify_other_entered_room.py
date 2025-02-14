@@ -21,7 +21,7 @@ def notify_other_entered_room(uow: UnitOfWork, event: UserChangedRoom):
             continue
         uow.notifier.notify(user.id, UserEnteredRoomNotification(
             user_name=user_who_moved.name,
-            entered_world=event.room_left_id is None,
+            movement="entered_world" if event.exit_used_name is None else "used_exit",
             through_exit_name=entered_through_exit.name if entered_through_exit else None
         ))
-        
+

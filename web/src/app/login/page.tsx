@@ -23,8 +23,6 @@ export default function Home() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Aquí podrías llamar a tu API o servicio de autenticación.
-    console.log("Email:", email);
-    console.log("Password:", password);
     const response = await login(email, password)
     if(response?.success) {
       router.push('/worlds')

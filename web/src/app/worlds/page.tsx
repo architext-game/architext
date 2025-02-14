@@ -31,6 +31,8 @@ export default function Home() {
     }
   }, [me, authChecked]);
 
+  console.log(socket.id)
+
   async function handleEnterTemplate({ name, description, id }: { name: string, description: string, id: string}){
     const response = await requestWorldCreationFromTemplate(socket, {
       name: name,

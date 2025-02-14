@@ -12,19 +12,6 @@ from architext.core import Architext
 from test.fixtures import createTestArchitext, createTestUow
 
 
-@pytest.fixture
-def architext() -> Architext:
-    return createTestArchitext()
-
-@pytest.fixture
-def notifier(architext: Architext) -> FakeNotifier:
-    return cast(FakeNotifier, architext._uow.notifier)
-
-@pytest.fixture
-def uow() -> UnitOfWork:
-    return createTestUow()
-
-
 def test_traverse_exit_success(architext: Architext):
     out: TraverseExitResult = architext.handle(TraverseExit(exit_name="To Alice's Room"), client_user_id="oliver")
 
@@ -58,7 +45,10 @@ def test_user_changed_room_event_gets_invoked(architext: Architext):
     assert spy.called
 
 
-def test_should_notify_user_entered_room(architext: Architext, notifier: FakeNotifier) -> None:
+def test_should_notify_user_entered_room(architext: Architext) -> None:
+    notifier = FakeNotifier()
+    architext._uow.notifier = notifier
+
     architext.handle(
         command=TraverseExit(
             exit_name="To Oliver's Room"
@@ -69,12 +59,15 @@ def test_should_notify_user_entered_room(architext: Architext, notifier: FakeNot
     notifications = notifier.get(notification_type=UserEnteredRoomNotification, user_id="oliver")
     assert len(notifications) == 1
     notification = notifications[0]
-    assert notification.entered_world is False
+    assert notification.movement == "used_exit"
     assert notification.user_name == "Alice"
     assert notification.through_exit_name == "To Alice's Room"
 
 
-def test_should_notify_user_left_room(architext: Architext, notifier: FakeNotifier) -> None:
+def test_should_notify_user_left_room(architext: Architext) -> None:
+    notifier = FakeNotifier()
+    architext._uow.notifier = notifier
+    
     architext.handle(
         command=TraverseExit(
             exit_name="To Oliver's Room"
