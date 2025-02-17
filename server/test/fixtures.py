@@ -3,7 +3,7 @@ from architext.content.the_monks_riddle import THE_MONKS_RIDDLE_ENCODED
 from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.domain.entities.exit import Exit
 from architext.core.domain.entities.item import Item
-from architext.core.domain.entities.user import User
+from architext.core.domain.entities.user import User, WorldVisitRecord
 from architext.core.domain.entities.world import World
 from architext.core.domain.entities.world_template import WorldTemplate
 from architext.core.domain.entities.room import Room
@@ -234,22 +234,43 @@ def createTestUow() -> UnitOfWork:
         id="oliver",
         name="Oliver",
         email="oliver@example.com",
-        room_id="olivers",
+        world_id="outer",
+        world_visit_record={
+            "outer": WorldVisitRecord(
+                world_id="outer",
+                last_room_id="olivers"
+            ),
+            easteregg_world.id: WorldVisitRecord(
+                world_id=easteregg_world.id,
+                last_room_id="easteregg_room"
+            )
+        },
         password_hash=b"asdasd",
-        visited_world_ids={easteregg_world.id}
     )
     alice = User(
         id="alice",
         name="Alice",
         email="alice@example.com",
-        room_id="alices",
+        world_id="outer",
+        world_visit_record={
+            "outer": WorldVisitRecord(
+                world_id="outer",
+                last_room_id="alices"
+            ),
+        },
         password_hash=b"asdasd"
     )
     bob = User(
         id="bob",
         name="Bob",
         email="bob@example.com",
-        room_id="bobs",
+        world_id="outer",
+        world_visit_record={
+            "outer": WorldVisitRecord(
+                world_id="outer",
+                last_room_id="bobs"
+            ),
+        },
         password_hash=b"asdasd",
         active=True,
     )
@@ -257,14 +278,26 @@ def createTestUow() -> UnitOfWork:
         id="charlie",
         name="Charlie",
         email="charlie@example.com",
-        room_id=None,
+        world_id=None,
+        world_visit_record={
+            "outer": WorldVisitRecord(
+                world_id="outer",
+                last_room_id="charlies"
+            ),
+        },
         password_hash=b"asdasd"
     )
     dave = User(
         id="dave",
         name="Dave",
         email="dave@example.com",
-        room_id="bobs",
+        world_id="outer",
+        world_visit_record={
+            "outer": WorldVisitRecord(
+                world_id="outer",
+                last_room_id="bobs"
+            ),
+        },
         password_hash=b"asdasd",
         active=True,
     )
@@ -272,7 +305,13 @@ def createTestUow() -> UnitOfWork:
         id="evan",
         name="Evan",
         email="evan@example.com",
-        room_id="bobs",
+        world_id="outer",
+        world_visit_record={
+            "outer": WorldVisitRecord(
+                world_id="outer",
+                last_room_id="bobs"
+            ),
+        },
         password_hash=b"asdasd",
         active=False,
     )
@@ -280,14 +319,30 @@ def createTestUow() -> UnitOfWork:
         id="rabbit",
         name="Rabbit",
         email="rabbit@example.com",
-        room_id="rabbitholeroom",
+        world_id="rabbithole",
+        world_visit_record={
+            "rabbithole": WorldVisitRecord(
+                world_id="rabbithole",
+                last_room_id="rabbitholeroom"
+            ),
+            "outer": WorldVisitRecord(
+                world_id="outer",
+                last_room_id="bobs"
+            ),
+        },
         password_hash=b"asdasd"
     )
     hunter = User(
         id="hunter",
         name="Hunter",
         email="hunter@example.com",
-        room_id="hunters",
+        world_id="huntersworld",
+        world_visit_record={
+            "huntersworld": WorldVisitRecord(
+                world_id="huntersworld",
+                last_room_id="hunters"
+            ),
+        },
         password_hash=b"asdasd"
     )
     uow = FakeUnitOfWork()

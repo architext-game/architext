@@ -22,8 +22,15 @@ def traverse_exit(uow: UnitOfWork, command: TraverseExit, client_user_id: str) -
             raise ValueError("An exit with that name was not found in the room.")
 
         destination_id = exit.destination_room_id
+        new_room = uow.rooms.get_room_by_id(destination_id)
+        if new_room is None:
+            raise ValueError("Exit leads to an invalid room.")
     
-        user.room_id = destination_id
+        user = user.with_current_room(room_id=destination_id, world_id=new_room.world_id)
+
+        print("ZZZZZZZZZZZZZZZ")
+        print(user)
+        
         uow.users.save_user(user)
         uow.publish_events([UserChangedRoom(
             user_id=user.id,
@@ -34,4 +41,4 @@ def traverse_exit(uow: UnitOfWork, command: TraverseExit, client_user_id: str) -
         )])
         uow.commit()
 
-        return TraverseExitResult(new_room_id= user.room_id)
+        return TraverseExitResult(new_room_id=new_room.id)
