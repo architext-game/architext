@@ -30,7 +30,7 @@ def delete_room(uow: UnitOfWork, command: DeleteRoom, client_user_id: str) -> De
         displaced_users = uow.users.get_users_in_room(room_id)
 
         for user in displaced_users:
-            user = user.with_current_room(room_id=world.initial_room_id, world_id=world.id)
+            user.set_room(room_id=world.initial_room_id, world_id=world.id)
             uow.users.save_user(user)
 
         uow.rooms.delete_room(room_id)

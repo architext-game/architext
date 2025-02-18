@@ -26,11 +26,8 @@ def traverse_exit(uow: UnitOfWork, command: TraverseExit, client_user_id: str) -
         if new_room is None:
             raise ValueError("Exit leads to an invalid room.")
     
-        user = user.with_current_room(room_id=destination_id, world_id=new_room.world_id)
+        user.set_room(room_id=destination_id, world_id=new_room.world_id)
 
-        print("ZZZZZZZZZZZZZZZ")
-        print(user)
-        
         uow.users.save_user(user)
         uow.publish_events([UserChangedRoom(
             user_id=user.id,

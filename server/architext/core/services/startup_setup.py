@@ -15,7 +15,8 @@ def startup_setup(uow: UnitOfWork, command: StartupSetup, client_user_id: str) -
         users = uow.users.list_users()
         for user in users:
             if user.active:
-                uow.users.save_user(user.with_changes(active=False))
+                user.active=False
+                uow.users.save_user(user)
 
         uow.commit()
 

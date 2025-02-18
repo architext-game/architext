@@ -25,7 +25,7 @@ def enter_world(uow: UnitOfWork, command: EnterWorld, client_user_id: str) -> En
         assert initial_room is not None
 
         previous_room_id = user.room_id
-        user = user.with_current_room(room_id=initial_room.id, world_id=initial_room.world_id)
+        user.set_room(room_id=initial_room.id, world_id=initial_room.world_id)
         uow.users.save_user(user)
 
         uow.publish_events([UserChangedRoom(

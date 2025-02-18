@@ -19,19 +19,19 @@ def mark_user_active(uow: UnitOfWork, command: MarkUserActive, client_user_id: s
                 room_id=user.room_id,
                 user_name=user.name,
             )])
-            updated_user = user.with_changes(active=command.active)
-            uow.users.save_user(updated_user)
+            user.active=command.active
+            uow.users.save_user(user)
         elif user.active == True and command.active == False:
             uow.publish_events([UserBecameInactive(
                 user_id=user.id,
                 room_id=user.room_id,
                 user_name=user.name,
             )])
-            updated_user = user.with_changes(active=command.active)
-            uow.users.save_user(updated_user)
+            user.active=command.active
+            uow.users.save_user(user)
 
-        updated_user = user.with_changes(active=command.active)
-        uow.users.save_user(updated_user)
+        user.active=command.active
+        uow.users.save_user(user)
         uow.commit()
 
     return MarkUserActiveResult()
