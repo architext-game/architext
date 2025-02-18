@@ -9,9 +9,11 @@ pyjwt
 jsonref
 pydantic-to-typescript
 eventlet
-py_writes_ts
+# py_writes_ts  # For now I use a local editable install with pip install -e .
 regex
 types-regex
 pydantic[mypy]
 Babel
 pytest
+sqlalchemy
+sqlalchemy[mypy]

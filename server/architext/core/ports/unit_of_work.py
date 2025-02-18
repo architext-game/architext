@@ -21,6 +21,9 @@ class UnitOfWork(Protocol):
     def __exit__(self, *args) -> None:
         self.rollback()
 
+    def __enter__(self):
+        pass
+
     def publish_events(self, events: List[Event]) -> None:
         self._events += events
 
@@ -30,9 +33,6 @@ class UnitOfWork(Protocol):
 
     def commit(self) -> None:
         self._commit()
-
-    def __enter__(self, *args) -> None:
-        pass
 
     def _commit(self) -> None:
         pass

@@ -19,7 +19,7 @@ import pytest # type: ignore
 
 from architext.core.ports.unit_of_work import UnitOfWork
 
-def createTestUow() -> UnitOfWork:
+def add_test_data(uow: UnitOfWork):
     emptytemplate = WorldTemplate(
         id="emptytemplate",
         name="New World",
@@ -345,37 +345,67 @@ def createTestUow() -> UnitOfWork:
         },
         password_hash="asdasd"
     )
-    uow = FakeUnitOfWork()
-    uow.world_templates.save_world_template(emptytemplate)
-    uow.world_templates.save_world_template(monkstemplate)
-    uow.world_templates.save_world_template(templateforme)
-    uow.world_templates.save_world_template(braggingtemplate)
-    uow.world_templates.save_world_template(rabbittemplate)
-    uow.worlds.save_world(rabbithole_world)
-    uow.worlds.save_world(outer_world)
-    uow.worlds.save_world(public_tabern)
-    uow.worlds.save_world(oliver_place)
-    uow.worlds.save_world(easteregg_world)
-    uow.worlds.save_world(hunters_world)
-    uow.rooms.save_room(rabbithole_room)
-    uow.rooms.save_room(space)
-    uow.rooms.save_room(spaceship)
-    uow.rooms.save_room(olivers)
-    uow.rooms.save_room(private_bathroom)
-    uow.rooms.save_room(alices)
-    uow.rooms.save_room(bobs)
-    uow.rooms.save_room(a_table_in_the_tabern)
-    uow.rooms.save_room(solitude)
-    uow.rooms.save_room(easteregg_room)
-    uow.rooms.save_room(hunters_room)
-    uow.users.save_user(oliver)
-    uow.users.save_user(alice)
-    uow.users.save_user(bob)
-    uow.users.save_user(charlie)
-    uow.users.save_user(dave)
-    uow.users.save_user(evan)
-    uow.users.save_user(rabbit)
-    uow.users.save_user(hunter)
+    with uow:
+        uow.world_templates.save_world_template(emptytemplate)
+        uow.world_templates.save_world_template(monkstemplate)
+        uow.world_templates.save_world_template(templateforme)
+        uow.world_templates.save_world_template(braggingtemplate)
+        uow.world_templates.save_world_template(rabbittemplate)
+        uow.worlds.save_world(rabbithole_world)
+        uow.worlds.save_world(outer_world)
+        uow.worlds.save_world(public_tabern)
+        uow.worlds.save_world(oliver_place)
+        uow.worlds.save_world(easteregg_world)
+        uow.worlds.save_world(hunters_world)
+        uow.rooms.save_room(rabbithole_room)
+        uow.rooms.save_room(space)
+        uow.rooms.save_room(spaceship)
+        uow.rooms.save_room(olivers)
+        uow.rooms.save_room(private_bathroom)
+        uow.rooms.save_room(alices)
+        uow.rooms.save_room(bobs)
+        uow.rooms.save_room(a_table_in_the_tabern)
+        uow.rooms.save_room(solitude)
+        uow.rooms.save_room(easteregg_room)
+        uow.rooms.save_room(hunters_room)
+        uow.users.save_user(oliver)
+        uow.users.save_user(alice)
+        uow.users.save_user(bob)
+        uow.users.save_user(charlie)
+        uow.users.save_user(dave)
+        uow.users.save_user(evan)
+        uow.users.save_user(rabbit)
+        uow.users.save_user(hunter)
+        uow.commit()
+
+from architext.core.adapters.sqlalchemy.uow import SQLAlchemyUnitOfWork
+from architext.core.domain.entities.user import User, WorldVisitRecord
+import pytest
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from architext.core.adapters.sqlalchemy import user_repository
+from architext.core.adapters.sqlalchemy import room_repository
+from architext.core.adapters.sqlalchemy import world_repository
+from architext.core.adapters.sqlalchemy import world_template_repository
+from architext.core.adapters.sqlalchemy.config import metadata
+from sqlalchemy.orm import clear_mappers
+
+def createTestUow() -> UnitOfWork:
+    db = True
+    uow: UnitOfWork
+    if db:
+        engine = create_engine("sqlite:///:memory:", echo=False)
+        session_factory = sessionmaker(engine)
+        clear_mappers()
+        user_repository.map_entities()
+        room_repository.map_entities()
+        world_repository.map_entities()
+        world_template_repository.map_entities()
+        metadata.create_all(engine)
+        uow = SQLAlchemyUnitOfWork(session_factory=session_factory)
+    else:
+        uow = FakeUnitOfWork()
+    add_test_data(uow)
     return uow
 
 
