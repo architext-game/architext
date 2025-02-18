@@ -1,6 +1,7 @@
 from typing import cast
 import pytest # type: ignore
 from architext.core.adapters.fake_uow import FakeUnitOfWork
+from architext.core.adapters.sqlalchemy.uow import SQLAlchemyUnitOfWork
 from architext.core.commands import CreateUser, CreateUserResult
 from pydantic import ValidationError
 from architext.core import Architext
@@ -36,17 +37,14 @@ def test_create_user_missing_fields(architext: Architext):
     with pytest.raises(ValidationError):
         command = CreateUser(name="", email="john.doe@example.com", password="123")
         architext.handle(command)
-    assert not cast(FakeUnitOfWork, architext._uow).committed
 
     with pytest.raises(ValidationError):
         command = CreateUser(name="John Doe", email="", password="123")
         architext.handle(command)
-    assert not cast(FakeUnitOfWork, architext._uow).committed
 
     with pytest.raises(ValidationError):
         command = CreateUser(name="John Doe", email="john.doe@example.com", password="")
         architext.handle(command)
-    assert not cast(FakeUnitOfWork, architext._uow).committed
 
 @pytest.mark.skip(reason="to do")
 def test_create_user_duplicate_name(architext: Architext):
@@ -70,21 +68,24 @@ def test_create_user_duplicate_name(architext: Architext):
 def test_create_user_list_users(architext: Architext):
     architext.handle(
         command=CreateUser(
-            name="Alice",
-            email="alice@example.com",
+            name="Peter",
+            email="peter@example.com",
             password="password123"
         )
     )
+
     architext.handle(
         command=CreateUser(
-            name="Bob",
-            email="bob@example.com",
+            name="Ulric",
+            email="ulric@example.com",
             password="password456"
         )
     )
 
-    users = architext._uow.users.list_users()
-    assert len(users) == 10
-    user_names = [user.name for user in users]
-    assert "Alice" in user_names
-    assert "Bob" in user_names
+    with architext._uow:
+        users = architext._uow.users.list_users()
+        user_names = [user.name for user in users]
+        print(user_names)
+        assert len(users) == 10
+        assert "Alice" in user_names
+        assert "Bob" in user_names

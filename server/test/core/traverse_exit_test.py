@@ -34,10 +34,10 @@ def test_traverse_exit_invalid_exit_name(architext: Architext):
 def test_user_changed_room_event_gets_invoked(architext: Architext):
     spy = Mock()
     def handler(uow: FakeUnitOfWork, event: UserChangedRoom):
-        assert event.user_id is "alice"
-        assert event.room_entered_id is "olivers"
-        assert event.room_left_id is "alices"
-        assert event.exit_used_name is "To Oliver's Room"
+        assert event.user_id == "alice"
+        assert event.room_entered_id == "olivers"
+        assert event.room_left_id == "alices"
+        assert event.exit_used_name == "To Oliver's Room"
         spy()
     handlers = {UserChangedRoom: [handler]}
     architext._messagebus = MessageBus(event_handlers=handlers)

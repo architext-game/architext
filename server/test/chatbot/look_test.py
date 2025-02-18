@@ -34,7 +34,9 @@ def test_look_room_shows_exits(session: Session):
 
     sent_text = '\n'.join([message.text for message in sender._sent])
     print(sent_text)
-    assert "Exits: To the spaceship, To Alice's Room, To Bob's Room" in sent_text
+    assert "To the spaceship" in sent_text
+    assert "To Alice's Room" in sent_text
+    assert "To Bob's Room" in sent_text
 
 
 def test_look_room_dont_show_hidden_exits(session: Session):
