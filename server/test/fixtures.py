@@ -16,6 +16,8 @@ from architext.chatbot.session import Session
 from architext.core.adapters.fake_notifier import FakeNotifier
 from architext.core.adapters.multi_notifier import MultiNotifier, multi_notifier_mapping_factory
 import pytest # type: ignore
+from architext.core.adapters.sqlalchemy.uow import SQLAlchemyUnitOfWork
+from architext.core.adapters.sqlalchemy.session import db_connection
 
 from architext.core.ports.unit_of_work import UnitOfWork
 
@@ -378,39 +380,17 @@ def add_test_data(uow: UnitOfWork):
         uow.users.save_user(hunter)
         uow.commit()
 
-from architext.core.adapters.sqlalchemy.uow import SQLAlchemyUnitOfWork
-from architext.core.domain.entities.user import User, WorldVisitRecord
-import pytest
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from architext.core.adapters.sqlalchemy import user_repository
-from architext.core.adapters.sqlalchemy import room_repository
-from architext.core.adapters.sqlalchemy import world_repository
-from architext.core.adapters.sqlalchemy import world_template_repository
-from architext.core.adapters.sqlalchemy.config import metadata
-from sqlalchemy.orm import clear_mappers
-
-def createTestUow() -> UnitOfWork:
-    db = True
+def createTestUow(db: bool = False) -> UnitOfWork:
     uow: UnitOfWork
     if db:
-        engine = create_engine("sqlite:///:memory:", echo=False)
-        session_factory = sessionmaker(engine)
-        clear_mappers()
-        user_repository.map_entities()
-        room_repository.map_entities()
-        world_repository.map_entities()
-        world_template_repository.map_entities()
-        metadata.create_all(engine)
-        uow = SQLAlchemyUnitOfWork(session_factory=session_factory)
+        uow = SQLAlchemyUnitOfWork(session_factory=db_connection())
     else:
         uow = FakeUnitOfWork()
     add_test_data(uow)
     return uow
 
-
-def createTestArchitext() -> Architext:
-    uow = createTestUow()
+def createTestArchitext(db: bool = False) -> Architext:
+    uow = createTestUow(db)
     return Architext(uow,)
 
 

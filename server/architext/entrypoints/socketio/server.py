@@ -68,7 +68,7 @@ if __name__ == "__main__":
         sid_to_user_id[socket] = user_id
     
     channel = SocketIOMessagingChannel(sio, user_id_to_socket_id=sid_to_user_id.inverse)
-    architext = createTestArchitext()
+    architext = createTestArchitext(db=True)
     architext._uow.notifier = MultiNotifier(
         multi_notifier_mapping_factory(
             chatbot=ChatbotNotifier(channel),
