@@ -14,8 +14,7 @@ users_table = Table(
     Column("id", String, primary_key=True),
     Column("name", String, nullable=False),
     Column("password_hash", String, nullable=False),
-    # Column("world_id", String, ForeignKey("worlds.id"), nullable=True, default=None),
-    Column("world_id", String, nullable=True, default=None),
+    Column("world_id", String, ForeignKey("worlds.id"), nullable=True, default=None),
     Column("active", Boolean, nullable=False, server_default=text("false")),
     Column("email", String, nullable=True, default=None),
 )
@@ -23,8 +22,8 @@ users_table = Table(
 world_visit_records_table = Table(
     "world_visit_records", metadata,
     Column("user_id", String, ForeignKey("users.id"), primary_key=True),
-    Column("world_id", String, primary_key=True),
-    Column("last_room_id", String, nullable=False),
+    Column("world_id", String, ForeignKey("worlds.id"), primary_key=True),
+    Column("last_room_id", String, ForeignKey("rooms.id"), nullable=False),
 )
 
 def map_entities():

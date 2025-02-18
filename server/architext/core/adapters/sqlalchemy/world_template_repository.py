@@ -4,7 +4,7 @@ from architext.core.ports.world_template_repository import WorldTemplateReposito
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from typing import Optional, List
-from sqlalchemy import Column, String, Table
+from sqlalchemy import Column, ForeignKey, String, Table
 from architext.core.adapters.sqlalchemy.config import metadata, mapper_registry
 
 world_templates_table = Table(
@@ -13,10 +13,8 @@ world_templates_table = Table(
     Column("name", String, nullable=False),
     Column("description", String, nullable=False, default=""),
     Column("world_encoded_json", String, nullable=False),
-    Column("author_id", String, nullable=True),
-
+    Column("author_id", String, ForeignKey("users.id"), nullable=True),
     Column("visibility", String, nullable=False, default="private"),
-    Column("base_template_id", String, nullable=True),
 )
 
 def map_entities():

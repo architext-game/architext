@@ -3,7 +3,7 @@ from architext.core.domain.entities.world import World
 from architext.core.ports.world_repository import WorldRepository
 from sqlalchemy.orm import Session
 from typing import Optional, List
-from sqlalchemy import Column, String, Table
+from sqlalchemy import Column, ForeignKey, String, Table
 from architext.core.adapters.sqlalchemy.config import metadata, mapper_registry
 
 
@@ -12,10 +12,10 @@ worlds_table = Table(
     Column("id", String, primary_key=True),
     Column("name", String, nullable=False),
     Column("description", String, nullable=False, default=""),
-    Column("initial_room_id", String, nullable=False),
-    Column("owner_user_id", String, nullable=True),
-    Column("visibility", String, nullable=False),
-    Column("base_template_id", String, nullable=True),
+    Column("initial_room_id", String, ForeignKey("rooms.id"), nullable=False),
+    Column("owner_user_id", String, ForeignKey("users.id"), nullable=True),
+    Column("visibility", String, nullable=False, default="private"),
+    Column("base_template_id", String, ForeignKey("world_templates.id"), nullable=True),
 )
 
 def map_entities():

@@ -15,7 +15,7 @@ rooms_table = Table(
     "rooms", metadata,
     Column("id", String, primary_key=True),
     Column("name", String, nullable=False),
-    Column("world_id", String, nullable=False),
+    Column("world_id", String, ForeignKey("worlds.id"), nullable=False),
     Column("description", String, nullable=False, default=""),
 )
 
