@@ -35,8 +35,7 @@ from architext.core.commands import (
     CreateTemplate, CreateTemplateResult, CreateUser, CreateUserResult, EditWorld, EditWorldResult, EnterWorld, EnterWorldResult,
     CreateConnectedRoom, CreateConnectedRoomResult, MarkUserActive, RequestWorldCreationFromTemplate, RequestWorldCreationFromTemplateResult, RequestWorldImport, RequestWorldImportResult,
     TraverseExit, TraverseExitResult,
-    Login, LoginResult,
-    CreateInitialData, CreateInitialDataResult,
+    Login,
 )
 from architext.entrypoints.socketio.models import ResponseModel
 from architext.entrypoints.socketio.sio_event import event, endpoints

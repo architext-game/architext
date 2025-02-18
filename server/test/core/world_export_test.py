@@ -1,5 +1,4 @@
 from architext.core.adapters.fake_uow import FakeUnitOfWork
-from architext.core.commands import CreateInitialData
 from architext.core.domain.entities.exit import Exit
 from architext.core.domain.entities.user import User
 from architext.core.domain.entities.world import World

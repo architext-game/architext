@@ -86,14 +86,6 @@ class CreateUser(Command[CreateUserResult]):
 
 
 @dataclass
-class CreateInitialDataResult:
-    pass
-
-class CreateInitialData(Command[CreateInitialDataResult]):
-    pass
-
-
-@dataclass
 class EnterWorldResult:
     pass
 
