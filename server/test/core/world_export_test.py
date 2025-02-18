@@ -1,3 +1,4 @@
+import json
 from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.domain.entities.exit import Exit
 from architext.core.domain.entities.user import User
@@ -23,30 +24,10 @@ def test_world_to_plain_text(architext: Architext):
     "initial_room_id": "space",
     "rooms": [
         {
-            "id": "space",
-            "name": "Space",
-            "description": "You are floating in the vastness of the universe, alone.",
-            "exits": [
-                {
-                    "name": "To the spaceship",
-                    "description": "What a nice exit",
-                    "destination_room_id": "spaceship",
-                    "visibility": "auto"
-                }
-            ],
-            "items": []
-        },
-        {
             "id": "spaceship",
             "name": "A Cozy Spaceship",
             "description": "A cozy Spaceship",
             "exits": [
-                {
-                    "name": "To Oliver's Room",
-                    "description": "A nice smell comes from there",
-                    "destination_room_id": "olivers",
-                    "visibility": "auto"
-                },
                 {
                     "name": "To Alice's Room",
                     "description": "A nice smell comes from there",
@@ -57,6 +38,12 @@ def test_world_to_plain_text(architext: Architext):
                     "name": "To Bob's Room",
                     "description": "A nice smell comes from there",
                     "destination_room_id": "bobs",
+                    "visibility": "auto"
+                },
+                {
+                    "name": "To Oliver's Room",
+                    "description": "A nice smell comes from there",
+                    "destination_room_id": "olivers",
                     "visibility": "auto"
                 },
                 {
@@ -67,86 +54,6 @@ def test_world_to_plain_text(architext: Architext):
                 }
             ],
             "items": []
-        },
-        {
-            "id": "olivers",
-            "name": "Oliver's Room",
-            "description": "This is Oliver's Room. The is an Auto door to bathroom. Also a small cube.",
-            "exits": [
-                {
-                    "name": "To the spaceship",
-                    "description": "What a nice exit",
-                    "destination_room_id": "spaceship",
-                    "visibility": "auto"
-                },
-                {
-                    "name": "To Alice's Room",
-                    "description": "A nice smell comes from there",
-                    "destination_room_id": "alices",
-                    "visibility": "auto"
-                },
-                {
-                    "name": "To Bob's Room",
-                    "description": "A nice smell comes from there",
-                    "destination_room_id": "bobs",
-                    "visibility": "auto"
-                },
-                {
-                    "name": "Visible door to bathroom",
-                    "description": "A bad smell comes from there",
-                    "destination_room_id": "oliversbathroom",
-                    "visibility": "unlisted"
-                },
-                {
-                    "name": "Auto door to bathroom",
-                    "description": "A bad smell comes from there",
-                    "destination_room_id": "oliversbathroom",
-                    "visibility": "auto"
-                },
-                {
-                    "name": "Secret exit",
-                    "description": "My secret scape pod",
-                    "destination_room_id": "space",
-                    "visibility": "hidden"
-                }
-            ],
-            "items": [
-                {
-                    "name": "A cube",
-                    "description": "a nice cube",
-                    "visibility": "auto"
-                },
-                {
-                    "name": "A small cube",
-                    "description": "a nice small cube",
-                    "visibility": "auto"
-                },
-                {
-                    "name": "One pyramid",
-                    "description": "a nice pyramid",
-                    "visibility": "hidden"
-                },
-                {
-                    "name": "A pyramid",
-                    "description": "a nice pyramid",
-                    "visibility": "hidden"
-                },
-                {
-                    "name": "A sphere",
-                    "description": "a nice sphere",
-                    "visibility": "listed"
-                },
-                {
-                    "name": "A toroid",
-                    "description": "a nice toroid",
-                    "visibility": "unlisted"
-                },
-                {
-                    "name": "The hidden",
-                    "description": "a nice pyramid",
-                    "visibility": "hidden"
-                }
-            ]
         },
         {
             "id": "oliversbathroom",
@@ -168,9 +75,9 @@ def test_world_to_plain_text(architext: Architext):
             "description": "This is Alice's Room",
             "exits": [
                 {
-                    "name": "To the spaceship",
-                    "description": "What a nice exit",
-                    "destination_room_id": "spaceship",
+                    "name": "To Bob's Room",
+                    "description": "A nice smell comes from there",
+                    "destination_room_id": "bobs",
                     "visibility": "auto"
                 },
                 {
@@ -180,9 +87,9 @@ def test_world_to_plain_text(architext: Architext):
                     "visibility": "auto"
                 },
                 {
-                    "name": "To Bob's Room",
-                    "description": "A nice smell comes from there",
-                    "destination_room_id": "bobs",
+                    "name": "To the spaceship",
+                    "description": "What a nice exit",
+                    "destination_room_id": "spaceship",
                     "visibility": "auto"
                 }
             ],
@@ -194,9 +101,9 @@ def test_world_to_plain_text(architext: Architext):
             "description": "This is Bob's Room",
             "exits": [
                 {
-                    "name": "To the spaceship",
-                    "description": "What a nice exit",
-                    "destination_room_id": "spaceship",
+                    "name": "To Alice's Room",
+                    "description": "A nice smell comes from there",
+                    "destination_room_id": "alices",
                     "visibility": "auto"
                 },
                 {
@@ -206,9 +113,103 @@ def test_world_to_plain_text(architext: Architext):
                     "visibility": "auto"
                 },
                 {
+                    "name": "To the spaceship",
+                    "description": "What a nice exit",
+                    "destination_room_id": "spaceship",
+                    "visibility": "auto"
+                }
+            ],
+            "items": []
+        },
+        {
+            "id": "olivers",
+            "name": "Oliver's Room",
+            "description": "This is Oliver's Room. The is an Auto door to bathroom. Also a small cube.",
+            "exits": [
+                {
+                    "name": "Auto door to bathroom",
+                    "description": "A bad smell comes from there",
+                    "destination_room_id": "oliversbathroom",
+                    "visibility": "auto"
+                },
+                {
+                    "name": "Visible door to bathroom",
+                    "description": "A bad smell comes from there",
+                    "destination_room_id": "oliversbathroom",
+                    "visibility": "unlisted"
+                },
+                {
                     "name": "To Alice's Room",
                     "description": "A nice smell comes from there",
                     "destination_room_id": "alices",
+                    "visibility": "auto"
+                },
+                {
+                    "name": "To Bob's Room",
+                    "description": "A nice smell comes from there",
+                    "destination_room_id": "bobs",
+                    "visibility": "auto"
+                },
+                {
+                    "name": "Secret exit",
+                    "description": "My secret scape pod",
+                    "destination_room_id": "space",
+                    "visibility": "hidden"
+                },
+                {
+                    "name": "To the spaceship",
+                    "description": "What a nice exit",
+                    "destination_room_id": "spaceship",
+                    "visibility": "auto"
+                }
+            ],
+            "items": [
+                {
+                    "name": "A cube",
+                    "description": "a nice cube",
+                    "visibility": "auto"
+                },
+                {
+                    "name": "A pyramid",
+                    "description": "a nice pyramid",
+                    "visibility": "hidden"
+                },
+                {
+                    "name": "One pyramid",
+                    "description": "a nice pyramid",
+                    "visibility": "hidden"
+                },
+                {
+                    "name": "The hidden",
+                    "description": "a nice pyramid",
+                    "visibility": "hidden"
+                },
+                {
+                    "name": "A small cube",
+                    "description": "a nice small cube",
+                    "visibility": "auto"
+                },
+                {
+                    "name": "A sphere",
+                    "description": "a nice sphere",
+                    "visibility": "listed"
+                },
+                {
+                    "name": "A toroid",
+                    "description": "a nice toroid",
+                    "visibility": "unlisted"
+                }
+            ]
+        },
+        {
+            "id": "space",
+            "name": "Space",
+            "description": "You are floating in the vastness of the universe, alone.",
+            "exits": [
+                {
+                    "name": "To the spaceship",
+                    "description": "What a nice exit",
+                    "destination_room_id": "spaceship",
                     "visibility": "auto"
                 }
             ],
@@ -220,5 +221,4 @@ def test_world_to_plain_text(architext: Architext):
 def test_world_to_encoded_text(architext: Architext):
     out = architext.query(WorldToText(world_id="outer", format="encoded"))
     print(out.text_representation)
-    assert out.text_representation == """eJztVsFu2zAM/RXWl12CfsBu3i47bCiwBCuGIShkm6mJyqIhyVm9Iv8+0YkTO3GctAiKHAoESSBSfI/io6iXiC09klH6wagCo88Q3VUeLdyTzlw0gZ09Q5daKj2xEbfv6D85wOdSs0XwOUJlaInW4Y1sI0Oewi7LXDxQJjtcqVIUm6y5sPLnJdqztBym7cIe6G+uQAW4hWblyTwCmQZ6qZw36BzwokdlAkqzwVsJhc/kN6gtzIwb7wbe5VQOIN7nyoMCQymCRNi4BHAlLgf5tWGW5CghTb4Wk6o8R6u5nIvHde7z1QR6+bc7W3IxfOV/NUxHyMWQHrgMp3mn5UBCwX4GvoORmgxdgVqHoAU6WFgu5HgsjuTMTVx3LGNJscMi1gHk8iSUhD2XwxdOLs8g4eRc/GPS3mgxZZ2tv7AofS2iPiW5V8utU7Rt05/QxywnB+HT87uFWWAcVpWBOEBCxmwh/CbK57ZxiLXj0D6uUHKgVXItrfghzD7+L7FrPKjgIJVEZW++KbqB+6Qqo8l5zPrEBnX1jqwOj2qKqUXfVWCXx48a3NrBpapEKDl7ff/mlGVo9jq4cyZNJw2Ab5qjtZ7KJO705fFofZ9TMe9MyLm2qqDseMiOw3DifZaXjufKjiqGMt7a+9EG9Rl0aXmM3M5+jt7lRt2wfnu6A5d9V+FdrO2FLkYoLS2Vx7FG+8Z/QVfpUy0XP/nQYeFWXkeBXIVZsN0sjzMZG/L/5uqeJken4+7S3tZ4fDq0s3Hf7eqm3HU8At99zh2tdLupJTfKrK1y3+mjxtfzntqr83z1H9Sw7ZA="""
-    
+    assert out.text_representation == """eJztV01v2zAM/SusL7sE+QG7ebvssCHAUqwYhqCQbaYmJouGJGf1iv73SYntyKk/2iFAcihgxIBIPT6Rj4z8FLGmB1JC3itRYPQRolVlUcMdycxECzjaMzSpptISK+/2Fe0HA/hYStYINkeoFO1QG7zx20iRJbdLMxf3lPkdphQpeptfM27l11MUWExOpbe2PGL4zH9rWIe2Ew4xpC9c8JFsA94i3TLEklJ0fL+70INAytnBFCilwyzQwFZz4Y+lsfG3LgvePzyS8LD7NO3IUEKSbL1fryxHzwvocfjEyfkZJJy8Nv5K+vqcnwLvcV/LYt2q4CS6M3kRpSyzww8Wpa0VGjMRupPUUOCNl6HFg9Q2ex49womwuW5S0RF0FLo8eSOUmnbCIoTeJ9S/8B+QVfq7BjJA1p1D2AYFcmFAdJuBFOR0QL4ZV+uFKjWasKPMu+ac7qdbf0j3nLoNH/e9MVr1m4lhd+dVJQ5UfB7n2qKFeVOl26y1vCZL01a573S9A/i9zqcjMCz1XHbaavf8luAnplsVCmIXEjJmDe7dTrylq7xhdx5TCJ/VKsHliEoG9w+WKRHZf1cpBJ6r1g9vl3hJUpWSZCxmL2R0DQ110cG9xlSjDVskjP6tBnNwMKkoEUrO3n6PyCnLUF1PBwe9su+kgdhN2NY6l8QYylqLgrJxqMBhPjsrhWdG9POlWT8PYByMonHIvs98Gk0ZyHoIr7P3sYa6O3azRvNUBo/2sWkRDvtO3V3rjNzBf3IFwn3NbSU7paoHf131Yt8JY/1NHHjb+9JbgJCsRgf6Zf/sNs//AAOq7ZA="""

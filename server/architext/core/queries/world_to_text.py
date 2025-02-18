@@ -6,7 +6,7 @@ from architext.core.domain.entities.exit import Exit
 from architext.core.domain.entities.item import Item
 from architext.core.domain.entities.room import Room
 from architext.core.queries.base import Query, QueryHandler, UOWQueryHandler
-from typing import Literal, Dict
+from typing import List, Literal, Dict, Union
 
 @dataclass
 class WorldToTextResult:
@@ -54,6 +54,15 @@ def encode_dict(dict):
     b64string = b64bytes.decode()
     return b64string
 
+def normalize(data: Union[Dict, List]):
+    """Recursively sorts all lists inside a JSON structure to make it order-independent."""
+    if isinstance(data, dict):
+        return {k: normalize(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        # Sort lists using a stable sort by converting dicts into tuples for sorting
+        return [normalize(item) for item in sorted(data, key=lambda x: json.dumps(x, sort_keys=True) if isinstance(x, dict) else str(x))]
+    else:
+        return data
 
 class UOWWorldToTextQueryHandler(UOWQueryHandler, WorldToTextQueryHandler):
     def query(self, query: WorldToText, client_user_id: str) -> WorldToTextResult:
@@ -69,6 +78,8 @@ class UOWWorldToTextQueryHandler(UOWQueryHandler, WorldToTextQueryHandler):
             "initial_room_id": world.initial_room_id,
             "rooms": [room_to_dict(room) for room in rooms]
         }
+
+        world_dict = normalize(world_dict)
 
         if query.format == "plain":
             text_representation = json.dumps(
