@@ -17,12 +17,12 @@ def create_connected_room(uow: UnitOfWork, command: CreateConnectedRoom, client_
         assert old_room is not None
         new_room = Room(name=command.name, description=command.description, id=str(uuid4()), world_id=old_room.world_id)
         uow.rooms.save_room(new_room)
-        old_room = old_room.with_exit(Exit(  # With changes
+        old_room.add_exit(Exit(  # With changes
             name=command.exit_to_new_room_name, 
             description=command.exit_to_new_room_description, 
             destination_room_id=new_room.id, 
         ))
-        new_room = new_room.with_exit(Exit(
+        new_room.add_exit(Exit(
             name=command.exit_to_old_room_name, 
             description=command.exit_to_old_room_description, 
             destination_room_id=old_room.id, 

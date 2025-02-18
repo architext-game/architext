@@ -22,7 +22,7 @@ def create_item(uow: UnitOfWork, command: CreateItem, client_user_id: str = "") 
         visibility=command.visibility,
     )
 
-    room = room.with_item(item)
+    room.add_item(item)
 
     with uow:
         uow.rooms.save_room(room)

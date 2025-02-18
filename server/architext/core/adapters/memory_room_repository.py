@@ -21,11 +21,7 @@ class MemoryRoomRepository(RoomRepository):
         for room in self._rooms.values():
             exits_to_keep = {exit.name: exit for exit in room.exits.values() if exit.destination_room_id != room_id}
             if len(exits_to_keep) != len(room.exits):
-                print("DIFFERENT", room.id)
-                room = room.with_changes(exits=exits_to_keep)
-                import pprint
-                pprint.pprint(room.exits)
-                pprint.pprint(exits_to_keep)
+                room.exits = exits_to_keep
                 self.save_room(room)
 
     def list_rooms(self) -> List[Room]:

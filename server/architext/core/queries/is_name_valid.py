@@ -41,7 +41,7 @@ class UOWIsNameValidQueryHandler(UOWQueryHandler, IsNameValidQueryHandler):
         
         error: Optional[Literal['duplicated']]
         try:
-            room.with_item(Item(
+            room.can_add_item(Item(
                 name=query.name,
                 description="Dummy description",
                 visibility='auto'

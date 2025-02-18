@@ -22,8 +22,8 @@ def delete_exit(uow: UnitOfWork, command: DeleteExit, client_user_id: str) -> De
         if exit is None:
             raise ValueError("Exit does not exist")
         
-        updated_room = room.without_exit(exit)
-        uow.rooms.save_room(updated_room)
+        room.remove_exit(exit)
+        uow.rooms.save_room(room)
 
         uow.commit()
 

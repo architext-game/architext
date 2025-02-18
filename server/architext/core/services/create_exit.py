@@ -28,7 +28,7 @@ def create_exit(uow: UnitOfWork, command: CreateExit, client_user_id: str = "") 
         destination_room_id=command.destination_room_id,
     )
 
-    room = room.with_exit(exit)
+    room.add_exit(exit)
 
     with uow:
         uow.rooms.save_room(room)

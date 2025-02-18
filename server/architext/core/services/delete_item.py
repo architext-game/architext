@@ -21,8 +21,8 @@ def delete_item(uow: UnitOfWork, command: DeleteItem, client_user_id: str) -> De
         if item is None:
             raise ValueError("Item does not exist")
         
-        updated_room = room.without_item(item)
-        uow.rooms.save_room(updated_room)
+        room.remove_item(item)
+        uow.rooms.save_room(room)
 
         uow.commit()
 

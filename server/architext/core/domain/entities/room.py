@@ -1,83 +1,61 @@
 from types import MappingProxyType
-from typing import List, Mapping, Optional
+from typing import List, Dict, Optional
 from dataclasses import dataclass, field
 from architext.core.domain.entities.exit import Exit
 from architext.core.domain.entities.item import Item
 from architext.core.domain.names import duplicates
 
-@dataclass(frozen=True)
+@dataclass
 class Room:
     id: str
     name: str
     world_id: str
     description: str = field(default="")
-    exits: Mapping[str, Exit] = field(default_factory=dict)
-    items: Mapping[str, Item] = field(default_factory=dict)
+    exits: Dict[str, Exit] = field(default_factory=dict)
+    items: Dict[str, Item] = field(default_factory=dict)
 
     def __post_init__(self):        
-        # Guarantee that exits and items are immutable
-        object.__setattr__(self, "exits", MappingProxyType(dict(self.exits)))
-        object.__setattr__(self, "items", MappingProxyType(dict(self.items)))
-
         self._assert_no_duplicated_room_or_exit_names()
 
     def _assert_no_duplicated_room_or_exit_names(self):
         if duplicates(list(self.exits.keys()) + list(self.items.keys())):
             raise DuplicatedNameInRoom()
 
-    def with_replaced_exit(self, old: Exit, new: Exit) -> 'Room':
-        new_exits = {name: exit for name, exit in self.exits.items() if name != old.name}
-        new_exits[new.name] = new
-        
-        return self.with_changes(exits=new_exits)
+    def replace_exit(self, old: Exit, new: Exit) -> None:
+        exit_names = set(self.exits.keys()) - {old.name}
+        if duplicates(list(exit_names) + list(self.items.keys()) + [new.name]):
+            raise DuplicatedNameInRoom(f"Cannot replace with new name '{new.name}', name is in use in this room.")
+        del self.exits[old.name]
+        self.exits[new.name] = new
 
-    def with_exit(self, exit: Exit) -> 'Room':
+    def add_exit(self, exit: Exit) -> None:
         if duplicates(list(self.exits.keys()) + list(self.items.keys()) + [exit.name]):
             raise DuplicatedNameInRoom(f"Cannot add exit '{exit.name}', name is in use in this room.")
         
-        new_exits = {name: exit for name, exit in self.exits.items()}
-        new_exits[exit.name] = exit
-        
-        return self.with_changes(exits=new_exits)
+        self.exits[exit.name] = exit
 
-    def without_exit(self, exit_to_delete: Exit) -> 'Room':
-        new_exits = {name: exit for name, exit in self.exits.items() if name != exit_to_delete.name}
-        return self.with_changes(exits=new_exits)
+    def remove_exit(self, exit_to_delete: Exit) -> None:
+        del self.exits[exit_to_delete.name]
     
-    def with_replaced_item(self, old: Item, new: Item) -> 'Room':
-        new_items = {name: item for name, item in self.items.items() if name != old.name}
-        new_items[new.name] = new
-        
-        return self.with_changes(items=new_items)
+    def replace_item(self, old: Item, new: Item) -> None:
+        item_names = set(self.items.keys()) - {old.name}
+        if duplicates(list(item_names) + list(self.exits.keys()) + [new.name]):
+            raise DuplicatedNameInRoom(f"Cannot replace with new name '{new.name}', name is in use in this room.")
+        del self.items[old.name]
+        self.items[new.name] = new
 
-    def with_item(self, item: Item) -> 'Room':
+    def can_add_item(self, item: Item) -> None:
         if duplicates(list(self.exits.keys()) + list(self.items.keys()) + [item.name]):
             raise DuplicatedNameInRoom(f"Cannot add item '{item.name}', name is in use in this room.")
-        
-        new_items = {name: item for name, item in self.items.items()}
-        new_items[item.name] = item
 
-        return self.with_changes(items=new_items)
+    def add_item(self, item: Item) -> None:
+        if duplicates(list(self.exits.keys()) + list(self.items.keys()) + [item.name]):
+            raise DuplicatedNameInRoom(f"Cannot add item '{item.name}', name is in use in this room.")
+        self.items[item.name] = item
 
-    def without_item(self, item_to_delete: Item) -> 'Room':
-        new_items = {name: item for name, item in self.items.items() if name != item_to_delete.name}
-        return self.with_changes(items=new_items)
-    
-    def with_changes(
-        self, 
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        exits: Optional[Mapping[str, Exit]] = None,
-        items: Optional[Mapping[str, Item]] = None
-    ) -> "Room":
-        return Room(
-            id=self.id,
-            world_id=self.world_id,
-            name=name if name is not None else self.name,
-            description=description if description is not None else self.description,
-            exits=exits if exits is not None else self.exits,
-            items=items if items is not None else self.items,
-        )
+    def remove_item(self, item_to_delete: Item) -> None:
+        del self.items[item_to_delete.name]
+
 
 DEFAULT_ROOM = Room(
     id="DEFAULT_ROOM",

@@ -28,8 +28,8 @@ def edit_item(uow: UnitOfWork, command: EditItem, client_user_id: str) -> EditIt
             visibility=command.new_visibility if command.new_visibility else item.visibility,
         )
 
-        updated_room = room.with_replaced_item(item, new_item)
-        uow.rooms.save_room(updated_room)
+        room.replace_item(item, new_item)
+        uow.rooms.save_room(room)
 
         uow.commit()
 

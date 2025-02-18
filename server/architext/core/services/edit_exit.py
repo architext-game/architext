@@ -29,8 +29,8 @@ def edit_exit(uow: UnitOfWork, command: EditExit, client_user_id: str) -> EditEx
             destination_room_id=command.new_destination if command.new_destination else exit.destination_room_id,
         )
 
-        updated_room = room.with_replaced_exit(exit, new_exit)
-        uow.rooms.save_room(updated_room)
+        room.replace_exit(exit, new_exit)
+        uow.rooms.save_room(room)
 
         uow.commit()
 
