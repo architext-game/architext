@@ -11,7 +11,7 @@ class WorldVisitRecord:
 class User:
     id: str
     name: str
-    password_hash: bytes
+    password_hash: str
     world_id: Optional[str] = None
     active: bool = False
     email: Optional[str] = None
@@ -46,5 +46,5 @@ class User:
 
     def match_password(self, password: str) -> bool:
         """Checks if the provided password matches the stored hash."""
-        return self.password_hash == self._hash_password(password)
+        return self.password_hash == str(self._hash_password(password))
 

@@ -9,7 +9,7 @@ from pydantic import BaseModel, EmailStr, Field
 
 def create_user(uow: UnitOfWork, command: CreateUser, client_user_id: str = "") -> CreateUserResult:
     password_hash = _hash_password(command.password)
-    user = User(id=str(uuid.uuid4()), name=command.name, email=command.email, password_hash=password_hash)
+    user = User(id=str(uuid.uuid4()), name=command.name, email=command.email, password_hash=str(password_hash))
 
     with uow:
         uow.users.save_user(user)
