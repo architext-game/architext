@@ -11,13 +11,23 @@ from architext.core.facade import Architext
 from architext.core.ports.unit_of_work import UnitOfWork
 from test.fixtures import createTestUow
 
+import pytest
+
+def pytest_addoption(parser):
+    """Add a custom command-line option `--db` for pytest."""
+    parser.addoption(
+        "--db", action="store_true", default=False, help="Use a database file instead of in-memory storage"
+    )
+
+
 @pytest.fixture
 def channel() -> FakeMessagingChannel:
     return FakeMessagingChannel()
 
 @pytest.fixture
-def uow(channel: FakeMessagingChannel) -> UnitOfWork:
-    uow = createTestUow()
+def uow(channel: FakeMessagingChannel, request: pytest.FixtureRequest) -> UnitOfWork:
+    use_db = request.config.getoption("--db")
+    uow = createTestUow(db=use_db)
     uow.notifier = MultiNotifier(multi_notifier_mapping_factory(
         chatbot=ChatbotNotifier(channel=channel),
         web=FakeNotifier()
