@@ -175,7 +175,7 @@ function App({ params, searchParams }: {
         addServerMessage({ text: 'There was an error entering the world.', options: { asksForPassword: false, display: "wrap", fillInput: null, section: false } })
       }
     } else {
-      addServerMessage({ text: 'You are in the world you want to be.', options: { asksForPassword: false, display: "wrap", fillInput: null, section: false } })
+      // addServerMessage({ text: 'You are in the world you want to be.', options: { asksForPassword: false, display: "wrap", fillInput: null, section: false } })
     }
   }
 
@@ -361,7 +361,7 @@ function App({ params, searchParams }: {
   
   return (
     <div className="bg-bg min-h-screen w-full flex flex-col justify-end text-white font-mono break-words text-lg">
-        <HamburgerMenu>
+        {/* <HamburgerMenu>
           <Link href="/worlds" className="py-3 px-6 rounded-lg hover:bg-backgroundHighlight">
             Go to world selection
           </Link>
@@ -375,7 +375,7 @@ function App({ params, searchParams }: {
             </div>
             </>
           }
-        </HamburgerMenu>
+        </HamburgerMenu> */}
         {
           showEditWorldOverlay &&
           <Overlay onClose={() => setShowEditWorldOverlay(false)}>
@@ -392,7 +392,7 @@ function App({ params, searchParams }: {
           className="flex-1 px-3 sm:px-6 whitespace-pre-wrap overflow-auto flex"
           ref={scrollRef}
         >
-          <div className="grow shrink-0 basis-auto mx-auto max-w-xl flex flex-col justify-end" ref={messageListRef}>
+          <div className="grow shrink-0 basis-auto mx-auto max-w-lg flex flex-col justify-end" ref={messageListRef}>
             {messages.map((message, index, array) => {
               return (
                 <Message
@@ -433,8 +433,8 @@ function App({ params, searchParams }: {
             autoCapitalize="none"
             value={inputValue}
             onChange={(e) => { setInputValue(e.target.value) }}
-            className="p-2 border rounded w-full bg-bg max-w-xl h-fit max-h-32 sm:max-h-48 md:max-h-96"
-            placeholder="Type a message"
+            className="p-2 border rounded w-full bg-bg max-w-lg h-fit max-h-32 sm:max-h-48 md:max-h-96 focus:outline-none"
+            // placeholder="Type a message"
             onKeyDown={handleKeyDownInput}
             />
             :
@@ -446,8 +446,8 @@ function App({ params, searchParams }: {
             autoCapitalize="none"
             value={inputValue}
             onChange={(e) => { setInputValue(e.target.value) }}
-            className="p-2 border rounded w-full bg-bg max-w-xl h-fit max-h-32 sm:max-h-48 md:max-h-96"
-            placeholder="Type a message"
+            className="p-2 border rounded w-full bg-bg max-w-lg h-fit max-h-32 sm:max-h-48 md:max-h-96 overflow-hidden focus:outline-none"
+            // placeholder="Type a message"
             onKeyDown={handleKeyDown}
             ref={textAreaRef}
           ></textarea>}
