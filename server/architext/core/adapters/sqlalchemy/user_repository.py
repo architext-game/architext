@@ -12,11 +12,11 @@ from architext.core.adapters.sqlalchemy.config import metadata, mapper_registry
 users_table = Table(
     "users", metadata,
     Column("id", String, primary_key=True),
-    Column("name", String, nullable=False),
+    Column("name", String, nullable=False, unique=True),
     Column("password_hash", String, nullable=False),
     Column("world_id", String, ForeignKey("worlds.id"), nullable=True, default=None),
     Column("active", Boolean, nullable=False, server_default=text("false")),
-    Column("email", String, nullable=True, default=None),
+    Column("email", String, nullable=True, default=None, unique=True),
 )
 
 world_visit_records_table = Table(
