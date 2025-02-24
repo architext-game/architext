@@ -50,4 +50,6 @@ class SQLAlchemyUnitOfWork(UnitOfWork):
 
     def rollback(self):
         self.db_session.rollback()
+        self.db_session.close()
+        print("Session closed")
     
