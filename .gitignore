@@ -9,3 +9,4 @@ server/logs/
 logs/
 super-secret.txt
 venv
+server/.env

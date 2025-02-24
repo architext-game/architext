@@ -12,7 +12,6 @@ from architext.core.commands import (
     CreateTemplate,
     CreateUser,
     EnterWorld,
-    Login,
     SendSocialInteraction,
     StartupSetup,
     TraverseExit,
@@ -37,7 +36,6 @@ from architext.core.services.edit_world import edit_world
 from architext.core.services.create_template import create_template
 from architext.core.services.create_user import create_user
 from architext.core.services.create_connected_room import create_connected_room
-from architext.core.services.login import login
 from architext.core.services.traverse_exit import traverse_exit
 from architext.core.services.enter_world import enter_world
 from architext.core.services.request_world_creation_from_template import request_world_creation_from_template
@@ -57,7 +55,6 @@ from typing import Dict, Type, Callable
 COMMAND_HANDLERS: Dict[Type[Command], Callable] = {
     CreateUser: create_user,
     CreateConnectedRoom: create_connected_room,
-    Login: login,
     TraverseExit: traverse_exit,
     EnterWorld: enter_world,
     RequestWorldCreationFromTemplate: request_world_creation_from_template,

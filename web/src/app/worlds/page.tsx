@@ -1,6 +1,6 @@
-"use client"; // Si estás usando app router en Next.js 13+
+"use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { requestWorldCreationFromTemplate, enterWorld, getWorldTemplate, requestWorldImport } from "@/architextSDK";
 import { useStore } from "@/state";
 import { useRouter } from 'next/navigation';
@@ -16,8 +16,6 @@ import { ImportWorldOverlay } from "./import-world-overlay";
 
 export default function Home() {
   const socket = useStore((state) => state.socket)
-  const me = useStore((state) => state.me)
-  const authChecked = useStore((state) => state.authChecked)
   const router = useRouter()
   const [showCodeOverlay, setShowCodeOverlay] = useState(false)
   const [worldCode, setWorldCode] = useState('')
@@ -31,15 +29,7 @@ export default function Home() {
   const [importDescription, setImportDescription] = useState('')
   const [importText, setImportText] = useState('')
   const [importError, setImportError] = useState('')
-
-
-  useEffect(() => {
-    if(authChecked && !me?.success){
-      router.push('/login')
-    }
-  }, [me, authChecked]);
-
-  console.log(socket.id)
+  const authenticated = useStore((state) => state.authenticated)
 
   async function handleEnterTemplate({ name, description, id }: { name: string, description: string, id: string}){
     const response = await requestWorldCreationFromTemplate(socket, {
@@ -138,8 +128,8 @@ export default function Home() {
         <Card>
         Welcome to Architext. This is a place where you can create and explore worlds made of words! Enter the Architexture Museum for a five minute tutorial.
         </Card>
-        {
-          me && 
+
+        { authenticated &&  // should not try to load worlds until socket is authenticated
           <>
           <WorldsList 
             router={router} 
@@ -169,7 +159,7 @@ export default function Home() {
             onToggleExpanded={handleExpandedItem}
           />
           </>
-        }
+      }
       </main>
       {
         showEditWorldOverlay && expandedItem &&

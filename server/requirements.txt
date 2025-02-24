@@ -17,3 +17,4 @@ Babel
 pytest
 sqlalchemy
 sqlalchemy[mypy]
+clerk-backend-api

@@ -1,9 +1,7 @@
-import Link from 'next/link'
 import { Header } from '@/components/header';
 import { Card } from '@/components/card';
 
 export default function Home() {
-
   return (
     <div className="flex flex-col items-center text-text font-mono  text-lg pb-40">
       <Header/>

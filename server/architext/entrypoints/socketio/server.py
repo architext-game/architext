@@ -12,7 +12,6 @@ from architext.chatbot.adapters.chatbot_notifier import ChatbotNotifier
 from architext.chatbot.adapters.socketio_messaging_channel import SocketIOMessagingChannel
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
-from architext.content.tutorial import TUTORIAL
 from architext.core.adapters.multi_notifier import MultiNotifier, multi_notifier_mapping_factory
 from architext.core.adapters.sio_notifier import SioNotifier
 from architext.core.adapters.sqlalchemy.session import db_connection
@@ -22,34 +21,27 @@ from architext.core.ports.notifier import Notification, WorldCreatedNotification
 from architext.core.ports.unit_of_work import UnitOfWork
 from architext.core.queries.get_template import GetWorldTemplate, GetWorldTemplateResult
 from architext.core.queries.list_world_templates import ListWorldTemplates, ListWorldTemplatesResult, WorldTemplateListItem
-from architext.core.queries.me import Me, MeResult
+from architext.core.queries.me import Me, MeResult, UserNotFound
 from architext.core.queries.get_world import GetWorld, GetWorldResult
-from architext.core.services.create_user import create_user
 from architext.core.queries.list_worlds import ListWorlds, ListWorldsResult
-from test.fixtures import add_test_data, createTestArchitext
+from architext.entrypoints.socketio.auth import get_clerk_user_details, user_id_from_clerk_token
+from test.fixtures import add_test_data
 eventlet.monkey_patch(socket=True, time=True)
 import socketio
 import atexit
-import os
-import json
 from dotenv import load_dotenv
 from pydantic import BaseModel
-from architext.core.adapters.memory_uow import MemoryUnitOfWork
-from architext.entrypoints.socketio.jwt_tokens import generate_jwt, decode_jwt
 from architext.core.commands import (
-    CreateTemplate, CreateTemplateResult, CreateUser, CreateUserResult, EditWorld, EditWorldResult, EnterWorld, EnterWorldResult,
-    CreateConnectedRoom, CreateConnectedRoomResult, MarkUserActive, RequestWorldCreationFromTemplate, RequestWorldCreationFromTemplateResult, RequestWorldImport, RequestWorldImportResult,
+    CreateTemplate, CreateTemplateResult, CreateUser, EditWorld, EditWorldResult, EnterWorld, EnterWorldResult,
+    CreateConnectedRoom, CreateConnectedRoomResult, MarkUserActive, RequestWorldCreationFromTemplate,
+    RequestWorldCreationFromTemplateResult, RequestWorldImport, RequestWorldImportResult,
     TraverseExit, TraverseExitResult,
-    Login,
 )
 from architext.entrypoints.socketio.models import ResponseModel
 from architext.entrypoints.socketio.sio_event import event, endpoints
 import argparse
-from architext.core.domain.events import UserChangedRoom
 from bidict import bidict
-from dataclasses import asdict
 from dataclasses import dataclass
-
 
 
 if __name__ == "__main__":
@@ -88,14 +80,14 @@ if __name__ == "__main__":
     if should_insert_initial_data(uow):
         print("STARTUP: Adding initial data")
         add_test_data(uow)
-        oliver = architext.handle(CreateUser(email='oli@sanz.com', name='oliver', password='oliver'))
-        architext.handle(CreateUser(email='wade@mail.com', name='wade', password='wade'))
-        architext.handle(RequestWorldImport(
-            name="Tutorial",
-            description="The tutorial",
-            format="plain",
-            text_representation=TUTORIAL
-        ), oliver.user_id)
+        # oliver = architext.handle(CreateUser(email='oli@sanz.com', name='oliver', password='oliver'))
+        # architext.handle(CreateUser(email='wade@mail.com', name='wade', password='wade'))
+        # architext.handle(RequestWorldImport(
+        #     name="Tutorial",
+        #     description="The tutorial",
+        #     format="plain",
+        #     text_representation=TUTORIAL
+        # ), oliver.user_id)
     else:
         print("STARTUP: NOT adding initial data")
 
@@ -110,24 +102,6 @@ if __name__ == "__main__":
     def disconnect(sid):
         print(f'{sid} disconnected')
 
-    @dataclass
-    class LoginResponse:
-        jwt_token: str
-
-    @event(sio=sio, on='login', In=Login, Out=ResponseModel[LoginResponse])
-    def login_event(sid, command: Login) -> LoginResponse:
-        out = architext.handle(command)
-        if out.user_id not in user_id_to_session:
-            user_id_to_session[out.user_id] = Session(
-                user_id=out.user_id,
-                logger=StdOutLogger(),
-                messaging_channel=SocketIOMessagingChannel(sio, user_id_to_socket_id=sid_to_user_id.inverse),
-                architext=architext
-            )
-        token = generate_jwt(**asdict(out))
-        auth(sid, out.user_id)
-        return LoginResponse(jwt_token=token)
-
 
     class AuthenticateParams(BaseModel):
         jwt_token: str
@@ -138,14 +112,25 @@ if __name__ == "__main__":
 
     @event(sio=sio, on='authenticate', In=AuthenticateParams, Out=ResponseModel[AuthenticateOutput])
     def authenticate(sid, params: AuthenticateParams) -> AuthenticateOutput:
-        decoded = decode_jwt(params.jwt_token)
-        auth(sid, decoded['user_id'])
-        return AuthenticateOutput(user_id=decoded['user_id'])
-    
-
-    @event(sio=sio, on='signup', In=CreateUser, Out=ResponseModel[CreateUserResult])
-    def signup(sid, command: CreateUser) -> CreateUserResult:
-        return architext.handle(command) 
+        user_id = user_id_from_clerk_token(params.jwt_token)
+        try:
+            architext.query(Me(), user_id)
+        except UserNotFound:
+            user = get_clerk_user_details(user_id)
+            architext.handle(CreateUser(
+                id=user.id,
+                email=user.email,
+                name=user.username,
+            ))
+        auth(sid, user_id)
+        if user_id not in user_id_to_session:
+            user_id_to_session[user_id] = Session(
+                user_id=user_id,
+                logger=StdOutLogger(),
+                messaging_channel=SocketIOMessagingChannel(sio, user_id_to_socket_id=sid_to_user_id.inverse),
+                architext=architext
+            )
+        return AuthenticateOutput(user_id=user_id)
 
 
     @event(sio=sio, on='create_connected_room', In=CreateConnectedRoom, Out=ResponseModel[CreateConnectedRoomResult])
@@ -184,8 +169,11 @@ if __name__ == "__main__":
         client_user_id = sid_to_user_id[sid]
         register_user_activity(client_user_id)
         
-        if client_user_id in user_id_to_session:
-            user_id_to_session[client_user_id].process_message(input.message)
+        if client_user_id not in user_id_to_session:
+            # TODO: create a session on the fly
+            raise Exception("Received message from user without session")
+
+        user_id_to_session[client_user_id].process_message(input.message)
 
     class Heartbeat(BaseModel):
         pass

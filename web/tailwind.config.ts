@@ -1,5 +1,13 @@
 import type { Config } from "tailwindcss";
 
+
+export const colors = {
+  background: '#2F0A23',
+  highlightBackground: '#3F1B3A',
+  foreground: '#171717',
+  text: '#FFFFFF',
+}
+
 export default {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",

@@ -17,7 +17,7 @@ from typing import Dict, List, Literal, Optional, TypeVar, Generic
 from pydantic import BaseModel, Field, EmailStr
 from dataclasses import dataclass
 from architext.core.domain.primitives import Visibility
-from architext.core.settings import EMAIL_MAX_LENGTH, PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH, ROOM_DESCRIPTION_MAX_LENGTH, ROOM_NAME_MAX_LENGTH, EXIT_NAME_MAX_LENGTH, EXIT_DESCRIPTION_MAX_LENGTH, ITEM_NAME_MAX_LENGTH, ITEM_DESCRIPTION_MAX_LENGTH, SOCIAL_INTERACTION_MAX_LENGTH, USER_NAME_MAX_LENGTH, WORLD_DESCRIPTION_MAX_LENGTH, WORLD_NAME_MAX_LENGTH
+from architext.core.settings import EMAIL_MAX_LENGTH, ROOM_DESCRIPTION_MAX_LENGTH, ROOM_NAME_MAX_LENGTH, EXIT_NAME_MAX_LENGTH, EXIT_DESCRIPTION_MAX_LENGTH, ITEM_NAME_MAX_LENGTH, ITEM_DESCRIPTION_MAX_LENGTH, SOCIAL_INTERACTION_MAX_LENGTH, USER_ID_MAX_LENGTH, USER_NAME_MAX_LENGTH, WORLD_DESCRIPTION_MAX_LENGTH, WORLD_NAME_MAX_LENGTH
 
 T = TypeVar('T')
 
@@ -66,23 +66,15 @@ class TraverseExitResult:
 class TraverseExit(Command[TraverseExitResult]):
     exit_name: str
 
-@dataclass
-class LoginResult:
-    user_id: str
-
-class Login(Command[LoginResult]):
-    email: EmailStr
-    password: str = Field(min_length=1)
-
 
 @dataclass
 class CreateUserResult:
     user_id: str
 
 class CreateUser(Command[CreateUserResult]):
+    id: str = Field(max_length=USER_ID_MAX_LENGTH)
     email: EmailStr = Field(max_length=EMAIL_MAX_LENGTH)
     name: str = Field(min_length=1, max_length=USER_NAME_MAX_LENGTH)
-    password: str = Field(min_length=PASSWORD_MIN_LENGTH, max_length=PASSWORD_MAX_LENGTH)
 
 
 @dataclass

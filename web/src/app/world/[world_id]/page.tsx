@@ -101,8 +101,6 @@ function App({ params, searchParams }: {
   const [worldId, setWorldId] = useState<string>(use(params).world_id)
   const socket = useStore((state) => state.socket)
   const me = useStore((state) => state.me)
-  const authChecked = useStore((state) => state.authChecked)
-  const router = useRouter()
   const [messages, setMessages] = useState<Message[]>([])
   const [inputValue, setInputValue] = useState('')
   const [scrolledBottom, setScrolledBottom] = useState<boolean>(false)
@@ -127,27 +125,20 @@ function App({ params, searchParams }: {
   useHeartbeat(socket)
 
   useEffect(() => {
-    if(authChecked && !me?.success){
-      router.push('/login')
-    }
-  }, [me, authChecked]);
-
-  console.log(socket.id)
-
-  useEffect(() => {
     if(worldId){
       getWorld(socket, { world_id: worldId }).then(response => {
         setWorld(response)
       })
     }
   }, [worldId])
-
-  const privileged = world?.data?.owner_name == me?.data?.name
+  
+  const privileged = world?.data?.you_authorized
 
 
   // TODO: This has not been really tested for cases when the world
   // does not yet exist.
   async function eventuallyEnterWorld(eventualWorlId: string){
+    console.log("Entering world", eventualWorlId)
     const current_world_id = (await getMe(socket, {})).data?.current_world_id
     if(current_world_id == eventualWorlId){
       return
@@ -295,17 +286,6 @@ function App({ params, searchParams }: {
         }
       })
 
-      socket.on('connect', async () => {
-        console.log("connected, authenticating with jwt...")
-        const jwt = localStorage.getItem("jwt")
-        const response = await authenticate(socket, { jwt_token: jwt || '' })
-        console.log("Authentication response: ", response)
-        if(!response.success){
-          addServerMessage({ text: 'Authentication error. Please go back to the login page', options: { asksForPassword: false, display: "wrap", fillInput: null, section: false } })
-          addServerMessage({ text: response.error || 'Unknown error', options: { asksForPassword: false, display: "wrap", fillInput: null, section: false } })
-        }
-      });
-
       socket.on('connect_error', () => {
         const message: Message = {
           display: 'wrap',
@@ -361,7 +341,7 @@ function App({ params, searchParams }: {
   
   return (
     <div className="bg-bg min-h-screen w-full flex flex-col justify-end text-white font-mono break-words text-lg">
-        {/* <HamburgerMenu>
+        <HamburgerMenu>
           <Link href="/worlds" className="py-3 px-6 rounded-lg hover:bg-backgroundHighlight">
             Go to world selection
           </Link>
@@ -375,7 +355,7 @@ function App({ params, searchParams }: {
             </div>
             </>
           }
-        </HamburgerMenu> */}
+        </HamburgerMenu>
         {
           showEditWorldOverlay &&
           <Overlay onClose={() => setShowEditWorldOverlay(false)}>

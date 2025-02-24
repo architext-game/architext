@@ -247,7 +247,6 @@ def add_test_data(uow: UnitOfWork):
                 last_room_id="easteregg_room"
             )
         },
-        password_hash="asdasd",
     )
     alice = User(
         id="alice",
@@ -260,7 +259,6 @@ def add_test_data(uow: UnitOfWork):
                 last_room_id="alices"
             ),
         },
-        password_hash="asdasd"
     )
     bob = User(
         id="bob",
@@ -273,7 +271,6 @@ def add_test_data(uow: UnitOfWork):
                 last_room_id="bobs"
             ),
         },
-        password_hash="asdasd",
         active=True,
     )
     charlie = User(
@@ -287,7 +284,6 @@ def add_test_data(uow: UnitOfWork):
                 last_room_id="charlies"
             ),
         },
-        password_hash="asdasd"
     )
     dave = User(
         id="dave",
@@ -300,7 +296,6 @@ def add_test_data(uow: UnitOfWork):
                 last_room_id="bobs"
             ),
         },
-        password_hash="asdasd",
         active=True,
     )
     evan = User(
@@ -314,7 +309,6 @@ def add_test_data(uow: UnitOfWork):
                 last_room_id="bobs"
             ),
         },
-        password_hash="asdasd",
         active=False,
     )
     rabbit = User(
@@ -332,7 +326,6 @@ def add_test_data(uow: UnitOfWork):
                 last_room_id="bobs"
             ),
         },
-        password_hash="asdasd"
     )
     hunter = User(
         id="hunter",
@@ -345,7 +338,6 @@ def add_test_data(uow: UnitOfWork):
                 last_room_id="hunters"
             ),
         },
-        password_hash="asdasd"
     )
     with uow:
         uow.world_templates.save_world_template(emptytemplate)

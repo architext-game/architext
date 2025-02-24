@@ -24,7 +24,7 @@ class UOWMeQueryHandler(UOWQueryHandler, MeQueryHandler):
             raise Exception('No user id provided')
         user = self._uow.users.get_user_by_id(client_user_id)
         if user is None:
-            raise Exception(f'User {client_user_id} not found')
+            raise UserNotFound(f'User {client_user_id} not found')
         world_id = None
         if user.room_id:
             room = self._uow.rooms.get_room_by_id(user.room_id)
@@ -39,3 +39,6 @@ class UOWMeQueryHandler(UOWQueryHandler, MeQueryHandler):
             id=user.id,
             privileged_in_current_world=world is not None and world.owner_user_id == user.id,
         )
+
+class UserNotFound(Exception):
+    pass

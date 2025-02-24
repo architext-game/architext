@@ -11,6 +11,8 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.12.0",
+    "@clerk/themes": "^2.2.19",
     "@redux-devtools/extension": "^3.3.0",
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",

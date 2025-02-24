@@ -8,15 +8,10 @@ from pydantic import BaseModel, EmailStr, Field
 
 
 def create_user(uow: UnitOfWork, command: CreateUser, client_user_id: str = "") -> CreateUserResult:
-    password_hash = _hash_password(command.password)
-    user = User(id=str(uuid.uuid4()), name=command.name, email=command.email, password_hash=str(password_hash))
+    user = User(id=command.id, name=command.name, email=command.email)
 
     with uow:
         uow.users.save_user(user)
         uow.commit()
 
     return CreateUserResult(user_id=user.id)
-
-def _hash_password(password: str) -> bytes:
-    import hashlib
-    return hashlib.sha256(password.encode('utf-8')).digest()

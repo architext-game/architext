@@ -1,39 +1,10 @@
 import { Socket } from 'socket.io-client';
 
-export interface LoginParams {
-    email: {
-    };
-    password: string;
-}
-
-export interface LoginResponse {
-    success: boolean;
-    data: {
-        jwt_token: string;
-    } | null;
-    error: string | null;
-}
-
 export interface AuthenticateParams {
     jwt_token: string;
 }
 
 export interface AuthenticateResponse {
-    success: boolean;
-    data: {
-        user_id: string;
-    } | null;
-    error: string | null;
-}
-
-export interface SignupParams {
-    email: {
-    };
-    name: string;
-    password: string;
-}
-
-export interface SignupResponse {
     success: boolean;
     data: {
         user_id: string;
@@ -255,34 +226,12 @@ export interface WorldTemplateListItem {
     you_authorized: boolean;
 }
 
-export async function login(
-    socket: Socket,
-    params: LoginParams
-): Promise<LoginResponse> {
-    return new Promise((resolve, reject) => {
-        socket.emit("login", params, (response: LoginResponse) => {
-            resolve(response)
-        });
-    });
-}
-
 export async function authenticate(
     socket: Socket,
     params: AuthenticateParams
 ): Promise<AuthenticateResponse> {
     return new Promise((resolve, reject) => {
         socket.emit("authenticate", params, (response: AuthenticateResponse) => {
-            resolve(response)
-        });
-    });
-}
-
-export async function signup(
-    socket: Socket,
-    params: SignupParams
-): Promise<SignupResponse> {
-    return new Promise((resolve, reject) => {
-        socket.emit("signup", params, (response: SignupResponse) => {
             resolve(response)
         });
     });

@@ -11,7 +11,6 @@ class WorldVisitRecord:
 class User:
     id: str
     name: str
-    password_hash: str
     world_id: Optional[str] = None
     active: bool = False
     email: Optional[str] = None
@@ -39,11 +38,4 @@ class User:
             world_record.last_room_id=room_id
         self.world_id = world_id
 
-    def _hash_password(self, password: str) -> bytes:
-        """Hashes a password using SHA-256."""
-        return hashlib.sha256(password.encode('utf-8')).digest()
-
-    def match_password(self, password: str) -> bool:
-        """Checks if the provided password matches the stored hash."""
-        return self.password_hash == str(self._hash_password(password))
 
