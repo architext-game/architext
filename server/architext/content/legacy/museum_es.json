@@ -1,0 +1,248 @@
+{
+  "next_room_id": 4,
+  "starting_room": {
+      "name": "El Laboratorio Motriz",
+      "alias": "0",
+      "description": "Despiertas en una habitaci\u00f3n blanca. Una voz rob\u00f3tica dice:\n\nBienvenido, arquitexto. Mi prop\u00f3sito es despertar tus capacidades motrices y sensoriales. Por favor, escucha con atenci\u00f3n.\n\nCuando est\u00e9s listo, escribe \"ir puerta\" para utilizar tus piernas por primera vez.",
+      "custom_verbs": [],
+      "items": []
+  },
+  "other_rooms": [
+      {
+          "name": "El Laboratorio Visual",
+          "alias": "1",
+          "description": "Cruzas la puerta hasta otra sala c\u00fabica. El muro frente a ti est\u00e1 cubierto por una gruesa cortina.\n\nOyes de nuevo la voz rob\u00f3tica:\n\nBuen trabajo. En Architext normalmente act\u00faas escribiendo un verbo seguido de un objeto, tal y como has hecho al escribir \"ir puerta\". \"ir\" es el verbo, y \"puerta\" el objeto.\n\nTambi\u00e9n puedes \"mirar\". Para comprobar si tus ojos virtuales est\u00e1n operativos, mira la cortina.",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "una gruesa cortina",
+                  "description": "Al acercarte para examinar la cortina descubres que hay un pasillo oculto detr\u00e1s de ella. Quiz\u00e1 puedas ir por all\u00ed. \n\nRecuerda, \"ir\" es el verbo y \"pasillo\" es el objeto hacia el que quieres ir.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              }
+          ]
+      },
+      {
+          "name": "La Prueba Final",
+          "alias": "2",
+          "description": "Felicidades! Veamos si puedes salir de esta \u00faltima sala. Te recomiendo que mires todos los objetos que encuentres para buscar pistas. Tambi\u00e9n puedes escribir solo \"mirar\", sin un objeto, para mirar de nuevo la habitaci\u00f3n.\n\nUna vieja alfombra oriental cubre el suelo as\u00e9ptico del laboratorio. Extra\u00f1amente, hay un peque\u00f1o buz\u00f3n a su lado. Est\u00e1 claro que no encajan en este lugar.\n\nVes un poster con pistas que pueden ayudate a escapar. Escribe \"mirar poster\" SOLO si est\u00e1s atascado.",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "un p\u00f3ster",
+                  "description": "Usa el verbo \"mirar <objeto>\" para mirar a cualquier objeto de la sala (el buz\u00f3n, por ejemplo).\n\nLee cuidadosamente la descripci\u00f3n de los objetos que mires. Te dir\u00e1n c\u00f3mo continuar.\n\nSi encuentras un folleto, m\u00edralo tambi\u00e9n!\n\nAtento a la alfombra: tendr\u00e1s que hacer algo con ella (adem\u00e1s de mirarla) para avanzar. (Pista: tienes que usar con la alfombra un nuevo verbo que no has usado antes. Mira la alfombra y encontrar\u00e1s una pista)\n\nSi parece que no puedes abrir algo quiz\u00e1 sea porque necesitas coger una llave primero. (\"abrir\" y \"coger\" tambi\u00e9n son verbos que puedes usar).\n\nSi sigues atascado y necesitas saber qu\u00e9 hacer exactamente, escribe \"mirar soluci\u00f3n\".",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "soluci\u00f3n",
+                  "description": "Para escapar debes escribir, en orden: \n\n\"mirar buz\u00f3n\"       para descubrir que est\u00e1 cerrado.\n\"abrir buz\u00f3n\"       para revelar sus contenidos: un folleto y una llave.\n\"mirar folleto\"     para descubrir c\u00f3mo coger la llave.\n\"coger llave\"       para coger la llave.\n\"mirar alfombra\"    para descubrir que se puede levantar.\n\"levantar alfombra\" para revelar una trampilla oculta bajo ella.\n\"ir trampilla\"      para descubrir que est\u00e1 cerrada.\n\"abrir trampilla\"   para abrirla usando la llave dorada.\n\"ir trampilla\"      para salir de la habitaci\u00f3n!",
+                  "visible": "hidden",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "una vieja alfombra",
+                  "description": "Est\u00e1 gastada y sucia. Las arrugas que tiene te hacen pensar que ha sido levantada muchas, muchas veces.",
+                  "visible": "obvious",
+                  "custom_verbs": [
+                      {
+                          "names": [
+                              "levantar",
+                              "mover",
+                              "quitar",
+                              "arrastrar",
+                              "levanto",
+                              "desplazar",
+                              "retirar"
+                          ],
+                          "commands": [
+                              "textoa .usuario - Al retirar la pesada alfombra descubres una trampilla escondida debajo de ella.",
+                              "editar trampilla",
+                              "3",
+                              "listado",
+                              "eliminarobjeto una vieja alfombra",
+                              "colocar una vieja alfombra#2"
+                          ]
+                      }
+                  ]
+              },
+              {
+                  "item_id": null,
+                  "name": "un peque\u00f1o buz\u00f3n",
+                  "description": "Parece haber algo dentro del buz\u00f3n, pero est\u00e1 cerrado. Quiz\u00e1 deber\u00edas probar con \"abrir buz\u00f3n\"?",
+                  "visible": "obvious",
+                  "custom_verbs": [
+                      {
+                          "names": [
+                              "abrir"
+                          ],
+                          "commands": [
+                              "textoa .usuario - Abres el buz\u00f3n. Dentro encuentras una llave dorada y un folleto.",
+                              "eliminarobjeto un peque\u00f1o buz\u00f3n",
+                              "colocar un peque\u00f1o buz\u00f3n#2",
+                              "colocar un folleto#1",
+                              "colocar una llave dorada#1"
+                          ]
+                      }
+                  ]
+              }
+          ]
+      },
+      {
+          "name": "El Gran Museo de Arquitextura",
+          "alias": "3",
+          "description": "Te encuentras en el lujoso recibidor del museo de Arquitextura.\n\nLos anchos pasillos se extienden hasta donde alcanza la vista, pero all\u00e1 donde miras solo ves puertas cerradas con el cartel \"EN CONSTRUCCI\u00d3N\". Que museo tan extra\u00f1o.\n\nVes un p\u00f3ster que dice \"M\u00cdRAME\".",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "un p\u00f3ster",
+                  "description": "BIENBENIDO, ARQUITEXTO\n\nTe conf\u00edo todo nuestro conocimiento sobre Arquitextura. Escribe \"ayuda\" siempre que quieras para leerlo.\n\nTodo lo que has visto hasta ahora ha sido creado por un arquitexto como t\u00fa. \n\u00bf\u00a1Qu\u00e9 te parece!? Si no me crees, escribe \"construir\" para crear tu primera  sala aqu\u00ed mismo. O \"fabricar\" para crear un objeto! As\u00ed de f\u00e1cil :-)\n\nEste mundo es solo una peque\u00f1a parte del multiverso. Escribe \"salirmundo\" para ir al lobby. Desde all\u00ed puedes viajar a mundos creados por otros jugadores o crear el tuyo.\n\n\u00bfQu\u00e9 puedes hacer ahora? Una buena idea es visitar el mundo \"El Enigma del Monasterio\". Es un juego de escape inmersivo que dura entre 30 y 60 minutos. Es mejor jugarlo de 2 a 4  jugadores, \u00a1invita a tus amigos!\n\nEl Enigma del Monasterio ha sido creado usando solamente las herramientas b\u00e1sicas que encontrar\u00e1s si escribes \"ayuda construir\", explicadas en solo 20 l\u00edneas. Por eso, el Monasterio es un gran ejemplo para aprender qu\u00e9 clase de cosas puedes crear con esas sencillas herramientas, e inspirarte para crear tus propios mundos.\n\n\u00a1Casi se me olvida! \u00danete a nuestro canal de discord para que podamos charlar un rato :-) (Busca el canal en Espa\u00f1ol)\nhttps://discord.gg/CnQD9g3U5g\n\nGracias por jugar. \u00a1Divi\u00e9rtete!\n\nOliver",
+                  "visible": "listed",
+                  "custom_verbs": []
+              }
+          ]
+      }
+  ],
+  "custom_verbs": [],
+  "exits": [
+      {
+          "name": "una puerta blanca",
+          "description": null,
+          "destination": "1",
+          "room": "0",
+          "visible": "listed",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "de vuelta al Laboratorio Motriz",
+          "description": null,
+          "destination": "0",
+          "room": "1",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "un pasillo oculto",
+          "description": null,
+          "destination": "2",
+          "room": "1",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "de vuelta al Laboratorio Visual",
+          "description": null,
+          "destination": "1",
+          "room": "2",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "una trampilla",
+          "description": null,
+          "destination": "3",
+          "room": "2",
+          "visible": "hidden",
+          "is_open": false,
+          "key_names": [
+              "una llave dorada"
+          ]
+      },
+      {
+          "name": "una trampilla en el techo",
+          "description": null,
+          "destination": "2",
+          "room": "3",
+          "visible": "listed",
+          "is_open": true,
+          "key_names": []
+      }
+  ],
+  "inventory": [],
+  "saved_items": [
+      {
+          "item_id": "un peque\u00f1o buz\u00f3n#1",
+          "name": "un peque\u00f1o buz\u00f3n",
+          "description": "Parece haber algo dentro del buz\u00f3n, pero est\u00e1 cerrado. Quiz\u00e1 deber\u00edas probar con \"abrir buz\u00f3n\"?",
+          "visible": "obvious",
+          "custom_verbs": [
+              {
+                  "names": [
+                      "abrir"
+                  ],
+                  "commands": [
+                      "textoa .usuario - Abres el buz\u00f3n. Dentro encuentras una llave dorada y un folleto.",
+                      "eliminarobjeto un peque\u00f1o buz\u00f3n",
+                      "colocar un peque\u00f1o buz\u00f3n#2",
+                      "colocar un folleto#1",
+                      "colocar una llave dorada#1"
+                  ]
+              }
+          ]
+      },
+      {
+          "item_id": "un folleto#1",
+          "name": "un folleto",
+          "description": "El folleto dice:\n\nBienvenido, sujeto. Te pido disculpas personalmente por haberte encerrado en este laboratorio. Necesitamos probar tus funciones antes de que puedas viajar libremente como arquitexto.\n\nEspero que esta llave te sea de utilidad. Intenta usar tus manos para cogerla escribiendo \"coger llave\".\n\nY no olvides echar un vistazo a nuestra ex\u00f3tica alfombra!",
+          "visible": "takable",
+          "custom_verbs": []
+      },
+      {
+          "item_id": "una llave dorada#1",
+          "name": "una llave dorada",
+          "description": "Centellea con brillos dorados. Parece importante.",
+          "visible": "takable",
+          "custom_verbs": []
+      },
+      {
+          "item_id": "un peque\u00f1o buz\u00f3n#2",
+          "name": "un peque\u00f1o buz\u00f3n",
+          "description": "Est\u00e1 abierto.",
+          "visible": "obvious",
+          "custom_verbs": []
+      },
+      {
+          "item_id": "una vieja alfombra#1",
+          "name": "una vieja alfombra",
+          "description": "Est\u00e1 gastada y sucia. Las arrugas que tiene te hacen pensar que ha sido levantada muchas, muchas veces.",
+          "visible": "obvious",
+          "custom_verbs": [
+              {
+                  "names": [
+                      "levantar",
+                      "mover",
+                      "quitar",
+                      "arrastrar",
+                      "levanto",
+                      "desplazar",
+                      "retirar"
+                  ],
+                  "commands": [
+                      "textoa .usuario - Al retirar la pesada alfombra descubres una trampilla escondida debajo de ella.",
+                      "editar trampilla",
+                      "3",
+                      "listado",
+                      "eliminarobjeto una vieja alfombra",
+                      "colocar una vieja alfombra#2"
+                  ]
+              }
+          ]
+      },
+      {
+          "item_id": "una vieja alfombra#2",
+          "name": "una vieja alfombra",
+          "description": "La has dejado arrugada a un lado.",
+          "visible": "obvious",
+          "custom_verbs": []
+      }
+  ]
+}

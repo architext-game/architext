@@ -1,0 +1,2171 @@
+{
+  "next_room_id": 39,
+  "starting_room": {
+      "name": "El Enigma del Monasterio",
+      "alias": "0",
+      "description": "Ves un p\u00f3ster explicando todo lo que necesitas saber para jugar el Enigma del Monasterio.",
+      "custom_verbs": [],
+      "items": [
+          {
+              "item_id": null,
+              "name": "un p\u00f3ster",
+              "description": "El Enigma del Monasterio os coloca a ti y a tus amigos en un monasterio aparentemente abandonado. Tendr\u00e9is que explorar, buscar pistas y resolver puzzles si quer\u00e9is descubrir qu\u00e9 les pas\u00f3 a sus habitantes.\n\nEl juego dura entre 30 y 60 minutos. Es m\u00e1s divertido si colabor\u00e1is entre 2 y 4 jugadores, \u00a1as\u00ed que invita a tus amigos!. Pod\u00e9is comunicaros usando los verbos \"decir\" y \"gritar\" dentro del juego o usando un chat de voz como Discord. (Puedes unirte al servidor oficial de Architext siguiendo este link:  https://discord.com/invite/CnQD9g3U5g )\n\nEn el monasterio solo necesitar\u00e1s usar estos comandos, as\u00ed que atento:\nmirar <objeto> - para investigar un objeto que veas y buscar pistas\n   ir <salida> - para moverte entre las salas del monasterio\n   salidas - para ver una lista de las salidas OBVIAS de la sala\n   objetos - para ver una lista de los objetos OBVIOS de la sala\n\nCuando entres en una habitaci\u00f3n lee primero su descripci\u00f3n y usa el verbo \"mirar\" para investigar los objetos interesantes. Cuando hayas terminado de investigar usa el verbo \"ir\" para viajar a otra habitaci\u00f3n y seguir explorando all\u00ed! Si te atascas puedes usar los verbos \"salidas\" y \"objetos\" para ver con qu\u00e9 cosas de tu sala puedes interactuar.\n\nTen en cuenta que puede haber objetos y salidas ocultos que no aparezcan listados cuando escribas \"salidas\" u \"objetos\". Lee cuidadosamente las descripciones de la sala y sus objetos y ser\u00e1s capaz de encontrarlos!\n\nComo consejo final, te recomiendo abrir un bloc de notas para poder copiar y pegar all\u00ed las pistas que encuentres. As\u00ed no tendr\u00e1s que volver a recorrer el monasterio si necesitas verlas de nuevo.\n\nAhora cruza el portal, y buena suerte!",
+              "visible": "listed",
+              "custom_verbs": []
+          }
+      ]
+  },
+  "other_rooms": [
+      {
+          "name": "El Claustro",
+          "alias": "1",
+          "description": "Te encuentras de pie sobre un tapiz de hierba fresca, en el patio interior del monasterio. El patio contin\u00faa hacia el norte y el este.",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "un tapiz de hierba fresca",
+                  "description": "Si fueras una vaca la comer\u00edas con gusto.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              }
+          ]
+      },
+      {
+          "name": "El Claustro",
+          "alias": "2",
+          "description": "Aqu\u00ed el patio linda con las paredes del monasterio. Est\u00e1n construidas con grandes piedras de siller\u00eda, desgastadas por el paso del tiempo. Frente a ti ves una puerta que lleva a unas escaleras. El patio contin\u00faa hacia el sur y hacia el este.",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "un tapiz de hierba fresca",
+                  "description": "Si fueras una vaca la comer\u00edas con gusto.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "los muros del monasterio",
+                  "description": "",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              }
+          ]
+      },
+      {
+          "name": "El Claustro",
+          "alias": "3",
+          "description": "Te encuentras de pie en la esquina noreste del patio del monasterio. Junto a un pozo crece hierba fresca y algunas plantas medicinales. El patio contin\u00faa hacia el sur y hacia el oeste.",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "un tapiz de hierba fresca",
+                  "description": "Si fueras una vaca la comer\u00edas con gusto.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "algunas plantas medicinales",
+                  "description": "Est\u00e1s seguro de que los monjes sab\u00edan c\u00f3mo utilizarlas.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "un pozo",
+                  "description": "El pozo de piedra est\u00e1 seco. En el fondo est\u00e1 el cubo de madera que sol\u00eda usarse para subir el agua, destrozado por la ca\u00edda y los a\u00f1os. Si quisieras ir abajo ser\u00eda mejor hacerlo por la escalera de mano que tiene a un lado.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              }
+          ]
+      },
+      {
+          "name": "El Claustro",
+          "alias": "4",
+          "description": "En esta zona del patio se encuentra una gran puerta de madera que lleva a las dependencias comunes del monasterio. El patio contin\u00faa hacia el norte y hacia el oeste.",
+          "custom_verbs": [],
+          "items": []
+      },
+      {
+          "name": "Un pasillo entre dormitorios",
+          "alias": "5",
+          "description": "Tras subir las escaleras encuentras un pasillo estrecho. Apenas hay luz y las tablas del suelo crujen bajo tus pies. A tu izquierda hay una puerta de madera con una abertura circular. A la derecha hay otra igual. Puedes volver al claustro bajando las escaleras o seguir avanzando hacia el fondo del pasillo.",
+          "custom_verbs": [],
+          "items": []
+      },
+      {
+          "name": "Un pasillo entre dormitorios",
+          "alias": "6",
+          "description": "Aqu\u00ed acaba el pasillo. Aqu\u00ed hay m\u00e1s puertas de habitaciones, una a la izquierda y otra a la derecha. Puedes volver al principio del pasillo.",
+          "custom_verbs": [],
+          "items": []
+      },
+      {
+          "name": "El dormitorio de un monje",
+          "alias": "7",
+          "description": "El peque\u00f1o dormitorio huele a cerrado. Con la poca luz que entra por la ventana puedes ver un camastro deshecho, un cofre de madera, una mesa y una silla. Sobre la mesa hay un sobre. Una puerta de madera lleva al pasillo.",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "la ventana",
+                  "description": "Una ventana batiente de madera. Una de las hojas est\u00e1 desencajada. Apenas entra luz por ella.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "un camastro deshecho",
+                  "description": "No te gustar\u00eda tener que pasar la noche aqu\u00ed.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "un cofre de madera",
+                  "description": "Seguramente el monje guardase aqu\u00ed sus pocas pertenencias. Est\u00e1 vac\u00edo.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "una mesa",
+                  "description": "La madera de la mesa est\u00e1 agrietada. Tiene un hueco para un tintero. Puedes ver un sobre reposando sobre ella.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "una silla",
+                  "description": "No parece muy c\u00f3moda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "un sobre",
+                  "description": "Es un sobre sin remitente, con un sellado lacado roto. Tiene una carta en su interior.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "una carta",
+                  "description": "La tinta ha perdido parte de su color, pero a\u00fan as\u00ed eres capaz de distinguir parte del contenido de la carta: \"... desaparecieron ... oculto todos estos a\u00f1os ... resputesta a todo ... en el fondo del pozo del monasterio ... el aut\u00e9ntico motivo por el que estamos aqu\u00ed\". La carta no tiene firma.",
+                  "visible": "hidden",
+                  "custom_verbs": []
+              }
+          ]
+      },
+      {
+          "name": "Los aposentos de un monje",
+          "alias": "8",
+          "description": "Entras en una peque\u00f1a habitaci\u00f3n vac\u00eda. Puedes distinguir marcas en el suelo y las paredes, donde antes hab\u00eda muebles, pero ya solo queda un peque\u00f1o crucifijo colgado de la pared. Una puerta de madera lleva de vuelta al pasillo.",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "un peque\u00f1o crucifijo",
+                  "description": "Tiene una inscripci\u00f3n: \"U D T\".",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              }
+          ]
+      },
+      {
+          "name": "Los aposentos de un monje",
+          "alias": "9",
+          "description": "El peque\u00f1o dormitorio huele a cerrado. Con la poca luz que entra por la ventana puedes ver un camastro con el fino colch\u00f3n descolocado, un cofre de madera, una mesa y una silla. Una puerta de madera lleva al pasillo.",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "un cofre de madera",
+                  "description": "Seguramente el monje guardase aqu\u00ed sus pocas pertenencias. Est\u00e1 vac\u00edo.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "una silla",
+                  "description": "No parece muy c\u00f3moda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "un camastro con el fino colch\u00f3n descolocado",
+                  "description": "Parece que hubiesen movido el colch\u00f3n con prisas. Al levantarlo ves un papel escondido debajo.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "un trozo de papel",
+                  "description": "Parece una nota para el monje que dorm\u00eda aqu\u00ed. Puede que nunca la leyese. Dice as\u00ed: \"Dices que estoy loco, que cometo sacrilegio, pero Dios me ha hablado. La respuesta a la segunda prueba, o al menos una pista. S\u00ed que tiene que ver con nuestro mantra \"U D T\", pero no es su significado. No tiene ninguno. Es lo que viene despu\u00e9s. M\u00e1s letras. Las he grabado en la mesa del comedor. Pero falta una. S\u00e9 que la respuesta es la octava... pero s\u00f3lo v\u00ed hasta la s\u00e9ptima. \u00bfTodo esto tiene sentido para ti?\"",
+                  "visible": "hidden",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "una mesa",
+                  "description": "La madera de la mesa est\u00e1 agrietada. Tiene un hueco para un tintero.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              }
+          ]
+      },
+      {
+          "name": "Los aposentos de un monje",
+          "alias": "10",
+          "description": "El peque\u00f1o dormitorio huele a cerrado. Con la poca luz que entra por la ventana puedes ver un camastro, un cofre de madera decorado, una mesa y una silla. Una puerta de madera lleva al pasillo.",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "un camastro deshecho",
+                  "description": "No te gustar\u00eda tener que pasar la noche aqu\u00ed.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "una mesa",
+                  "description": "La madera de la mesa est\u00e1 agrietada. Tiene un hueco para un tintero.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "una silla",
+                  "description": "No parece muy c\u00f3moda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "un cofre de madera decorado",
+                  "description": "Es un cofre con una cruz dibujada. Dentro hay un peque\u00f1o cuaderno.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "un peque\u00f1o cuaderno",
+                  "description": "Este cuaderno parece recoger los pensamientos del monje. Las \u00faltimas frases dicen as\u00ed: \"Al fin lo encontr\u00e9. Est\u00e1 en la estanter\u00eda 28. Estoy esperando a que Dios me hable, pero ya no le oigo. Voy a entrar en el agua, all\u00ed me encontrar\u00e9 con \u00e9l.\"",
+                  "visible": "hidden",
+                  "custom_verbs": []
+              }
+          ]
+      },
+      {
+          "name": "Una Gruta Subterr\u00e1nea",
+          "alias": "12",
+          "description": "Est\u00e1s en el fondo del pozo. Tras cruzar un estrecho pasillo se abre una majestuosa habitaci\u00f3n con las paredes completamente lisas. Desde un agujero en el techo se cuela un solo haz de luz que ilumina la piscina de aguas subterr\u00e1neas que preside la c\u00e1mara. All\u00e1 donde miras encuentras una inscripci\u00f3n, grabada en cada superficie. A trav\u00e9s del pozo puedes ir arriba, de vuelta al claustro.",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "una inscripci\u00f3n",
+                  "description": "La inscripci\u00f3n reza: LAS LETRAS, COMO EL MUNDO, NO ES OBRA DE LOS HOMBRES, SINO DEL SE\u00d1OR. SUM\u00c9RGETE EN EL, BAUT\u00cdZATE EN EL SALMO DE LOS CARACTERES. BIENAVENTURADO SEA QUIEN ENCUENTRE LAS TRES LETRAS MAY\u00daSCULAS, PUES SUYO SER\u00c1 EL CONOCIMIENTO TERRENAL Y DIVINO.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              }
+          ]
+      },
+      {
+          "name": "El Galimat\u00edas",
+          "alias": "13",
+          "description": "Paso a paso bajas los escalones que llevan a la piscina. Al tocar el agua notas como algo en ti se apaga. Una corriente te arrastra, y notas como tu cuerpo sigue bajando escalones. Hasta que el agua llega a la cintura. Hasta que te llega al cuello. Hasta que, en posici\u00f3n fetal, todo tu cuerpo se sumerje en el agua helada, iluminado por la luz que se cuela en el techo de la cueva. Hasta que no respiras, y todo se apaga. Alg\u00fan tiempo despu\u00e9s, l\u00edneas de luz violeta aparecen frente a ti, y te encuentras en pie, desnudo. Las l\u00edneas danzan y se combinan a tu alrededor formando formas reconocibles. Letras may\u00fasculas, todas las del alfabeto. Sientes que todas te llaman, pero solo una de ellas es la correcta. \u00bfHacia qu\u00e9 may\u00fascula del alfabeto debes ir? \u00bfQu\u00e9 te pasar\u00e1 al elegir una incorrecta? Puede que lo mejor sea no arriesgarse sinestar seguro. Quiz\u00e1 a\u00fan est\u00e9s a tiempo de despertarte y salir fuera del agua.",
+          "custom_verbs": [],
+          "items": []
+      },
+      {
+          "name": "El Galimat\u00edas",
+          "alias": "14",
+          "description": "Al entrar en la Q todo cobra sentido, y te sumerges m\u00e1s profundo, m\u00e1s adentro, en el Galimat\u00edas. Lo que antes no entend\u00edas parece sencillo ahora, pero todav\u00eda hay mucho que no conoces. Las letras siguen a tu alrededor. Incitadoras. Amenazantes. \u00bfCu\u00e1l es la siguiente may\u00fascula? Si no lo sabes, quiz\u00e1 sea mejor desistir. Puede que tus pulmones a\u00fan no se hallan llenado de agua.",
+          "custom_verbs": [],
+          "items": []
+      },
+      {
+          "name": "El Galimat\u00edas",
+          "alias": "15",
+          "description": "La O se deshace a tu alrededor (\u00bfo t\u00fa al suyo?) y tu consciencia se eleva. Ya lo sabes todo. Las ciencias no tienen sentido ya, y sientes que podr\u00edas aclarar las dudas el mismo Jehov\u00e1. Notas como te fundes en el Galimat\u00edas, m\u00e1s y m\u00e1s profundo. Pero a\u00fan falta la prueba final. A\u00fan hay algo que se te escapa. Una Verdad m\u00e1s b\u00e1sica. M\u00e1s pura. Algo que parece incognoscible. Las may\u00fasculas danzan a tu alrededor, cada vez m\u00e1s despacio, vertigin\u00f3samente r\u00e1pido. \u00bfCu\u00e1l es la \u00faltima? \u00bfCu\u00e1l es? Si no lo sabes, quiz\u00e1 puedas volver a respirar una vez m\u00e1s...",
+          "custom_verbs": [],
+          "items": []
+      },
+      {
+          "name": "El Galimat\u00edas",
+          "alias": "16",
+          "description": "La S se alarga mientras te acercas. Sus extremos se aproximan, hasta formar un 8. Un infinito en el que te ves sumergido. En el que te integras. Te diluyes... El ritual est\u00e1 completo. Ahora puedes verlos con claridad, a todos los monjes que se perdieron en la nada buscando la omnisciencia. Sus esencias te devuelven la mirada mientras se pierden. Ves los dormitorios, la biblioteca, la capilla, las flores del patio. Ves tu cuerpo, interte, agazapado bajo el agua de la gruta. Pero ya no te importa porque finalmente lo sabes todo. Sabes lo mismo que una de las piedras del pozo, lo mismo que la madera astillada de los pupitres de los monjes. Sabes que aqu\u00ed acaba tu viaje, ese que nunca empez\u00f3. Frente a tu No Yo nace un punto, que gira y crece. Acelera y se agranda, hasta hacerse un agujero. Un portal. Tu No Ser se ve atra\u00eddo hacia \u00e9l, como agua absorbida por un sumidero.",
+          "custom_verbs": [],
+          "items": []
+      },
+      {
+          "name": "El gran corredor del monasterio",
+          "alias": "17",
+          "description": "Un fastuoso corredor se abre ante ti. El suelo est\u00e1 pulido, y unas columas de m\u00e1rmol sustentan el techo abovedado. A un lado encuentras una puerta de madera, al otro un gran arco que lleva a otra estancia. El corredor contin\u00faa al fondo. Tambi\u00e9n puedes volver al claustro.",
+          "custom_verbs": [],
+          "items": []
+      },
+      {
+          "name": "La sala de los copistas",
+          "alias": "18",
+          "description": "Al cruzar la puerta llegas a una sala oscura en la que solo hay bancos y pupitres. Te preguntas c\u00f3mo copiaban los monjes con tan poca luz. Sobre uno de los pupitres hay un libro abierto. Puedes volver al corredor por la puerta de madera.",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "bancos",
+                  "description": "No parecen muy c\u00f3modos.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "pupitres",
+                  "description": "Son pupitres inclinados de copista, con un hueco para el tintero. Son de madera, que ya est\u00e1 agrietada.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "un libro abierto",
+                  "description": "Es un libro grueso y viejo, de tapas robustas. Parece que si lo tocas se deshar\u00e1 entre tus manos. Esta abierto, y en \u00e9l puedes leer lo siguiente: \"Si en agua buscas la iluminaci\u00f3n, la primera prueba requiere atenci\u00f3n: Lo que tiene Eustaquio, lo tiene el gran fil\u00f3sofo Maquiavelo, pero poca gente m\u00e1s. Por ejemplo, sus amigos Godofredo, Eulalia, Luis, Rafael y Mar\u00eda no lo tienen. \u00bfCu\u00e1l es el preciado tesoro de Eustaquio?\".",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              }
+          ]
+      },
+      {
+          "name": "La Gran Capilla",
+          "alias": "19",
+          "description": "Llegas a una capilla iluminada por grandes ventanales. Sillas de madera cuidadosamente talladas se disponen rodeando el altar. Al fondo, una gran cruz dorada viste la siguiente leyenda: \"U D T\". Puedes volver al corredor cruzando el arco de entrada.",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "los grandes ventanales",
+                  "description": "Los grandes ventanales ba\u00f1an la estancia de una c\u00e1lida luz.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "sillas de madera",
+                  "description": "Las sillas est\u00e1n cuidadosamente talladas y bien conservadas. Probablemente es aqu\u00ed donde los monjes se sentaban a cantar y rezar.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "una gran cruz dorada",
+                  "description": "En la cruz puede leerse: \"U D T\".",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              }
+          ]
+      },
+      {
+          "name": "El gran corredor del monasterio",
+          "alias": "20",
+          "description": "Est\u00e1s al fondo del pasillo. Hacia el techo, unas vidrieras coloreadas iluminan la sala con una luz casi m\u00edstica. A un lado hay una puerta modesta, al otro, un umbral fastuoso. Puedes volver al principio del corredor.",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "unas vidrieras coloreadas",
+                  "description": "Las vidrieras muestran una escena de iluminaci\u00f3n, y unas letras en un cristal violeta brillante: \"U D T\".",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              }
+          ]
+      },
+      {
+          "name": "El comedor",
+          "alias": "21",
+          "description": "La humildad de esta sala constrasta con el lujoso pasillo. Una larga mesa de madera basta y agrietada llena la estancia, rodeada de bancos. Una puerta modesta lleva de vuelta al corredor. Al fondo se llega a las cocinas.",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "una larga mesa de madera",
+                  "description": "Est\u00e1 llena de manchas de vino. Al pasar la mano sobre la mesa notas multitud de grietas... y sientes algo extra\u00f1o que no se ve a simple vista, unas letras talladas. Pone \"...C C S S\". \u00bfQu\u00e9 significar\u00e1?",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              }
+          ]
+      },
+      {
+          "name": "Las cocinas",
+          "alias": "22",
+          "description": "Son unas cocinas modestas, con unos fogones de le\u00f1a, un horno y una despensa. Puedes volver al comedor.",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "fogones de le\u00f1a",
+                  "description": "Est\u00e1n carcomidos por el paso del tiempo.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "un horno",
+                  "description": "No hay nada dentro.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "la despensa",
+                  "description": "La despensa est\u00e1 vac\u00eda, no quedan ni ratas.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              }
+          ]
+      },
+      {
+          "name": "La gran biblioteca",
+          "alias": "24",
+          "description": "Tras el umbral fastuoso se encuentra la gran biblioteca del monasterio, cuna de toda la sabidur\u00eda copiada y traducida por sus habitantes durante generaciones. Estanter\u00edas y estanter\u00edas repletas de libros ocupan la estancia. En esta secci\u00f3n est\u00e1n las estanter\u00edas 1 a la 10. Puedes volver por el umbral, o adentrarte hacia el fondo de la biblioteca.",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 1",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 2",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 3",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 4",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 5",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 6",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 7",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 8",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 9",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 10",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "libros",
+                  "description": "Parece que se deshar\u00e1n entre tus manos si los tocas.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              }
+          ]
+      },
+      {
+          "name": "La gran biblioteca",
+          "alias": "25",
+          "description": "La biblioteca contin\u00faa. En esta secci\u00f3n se encuentran las estanter\u00edas 11 a la 20. Puedes volver hacia la entrada de la biblioteca o adentrarte hacia el fondo.",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 11",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 12",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 13",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 14",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 15",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 16",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 17",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 18",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 19",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 20",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              }
+          ]
+      },
+      {
+          "name": "La gran biblioteca",
+          "alias": "26",
+          "description": "La biblioteca contin\u00faa. En esta secci\u00f3n se encuentran las estanter\u00edas 21 a la 30. Puedes volver hacia la entrada de la biblioteca o adentrarte hacia el fondo.",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 21",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 22",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 23",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 24",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 25",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 26",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 27",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 28",
+                  "description": "Tras examinarla detenidamente descubres un libro extra\u00f1amente bien conservado. Cuando tiras de \u00e9l para intentar cogerlo, un mecanismo mueve la estanter\u00eda para desvelar un pasillo secreto.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 29",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 30",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              }
+          ]
+      },
+      {
+          "name": "La gran biblioteca",
+          "alias": "27",
+          "description": "Aqu\u00ed termina la biblioteca. En esta secci\u00f3n se encuentran las estanter\u00edas 31 a la 40. Puedes volver hacia la entrada de la biblioteca.",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 31",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 32",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 33",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 34",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 35",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 36",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 37",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 38",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 39",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "estanter\u00eda 40",
+                  "description": "No hay nada interesante en esa estanter\u00eda.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              }
+          ]
+      },
+      {
+          "name": "Un altar oculto",
+          "alias": "28",
+          "description": "Tras la entrada secreta se haya una estrecha sala c\u00fabica, con una antorcha encendida. En el centro hay una altar sobre el que descansa una tabla de piedra. Puedes volver a la biblioteca.",
+          "custom_verbs": [],
+          "items": [
+              {
+                  "item_id": null,
+                  "name": "una antorcha encendida",
+                  "description": "No parece que vaya a apagarse pronto.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "un altar",
+                  "description": "Hay una tabla de piedra sobre \u00e9l.",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              },
+              {
+                  "item_id": null,
+                  "name": "una tabla de piedra",
+                  "description": "A la luz de la antorcha, puedes leer escrito en la tabla:\n\nPara hayar la sabidur\u00eda absoluta debes dejar de buscar. No hay ninguna pista que te pueda ayudar. Escucha en tu interior, un n\u00famero de dos cifras que te susurrar\u00e1 el Se\u00f1or. A ese n\u00famero, r\u00e9stale las dos c\u00edfras que lo componen. El s\u00edmbolo que corresponde al resultado es tu respuesta para la pregunta final.\n\n  99 -> n    98 -> r    97 -> a    96 -> f    95 -> f    94 -> r    93 -> z  92 -> f    91 -> u    90 -> y    89 -> b    88 -> s    87 -> v    86 -> j  85 -> k    84 -> e    83 -> o    82 -> d    81 -> s    80 -> g    79 -> c  78 -> o    77 -> i    76 -> s    75 -> v    74 -> r    73 -> a    72 -> s  71 -> v    70 -> g    69 -> b    68 -> y    67 -> j    66 -> s    65 -> d  64 -> f    63 -> s    62 -> q    61 -> z    60 -> d    59 -> g    58 -> h  57 -> j    56 -> v    55 -> t    54 -> s    53 -> e    52 -> a    51 -> f  50 -> r    49 -> v    48 -> d    47 -> q    46 -> z    45 -> s    44 -> f  43 -> e    42 -> i    41 -> y    40 -> n    39 -> v    38 -> n    37 -> f  36 -> s    35 -> n    34 -> a    33 -> q    32 -> s    31 -> c    30 -> g  29 -> j    28 -> v    27 -> s    26 -> b    25 -> n    24 -> m    23 -> z  22 -> x    21 -> c    20 -> w    19 -> y    18 -> s    17 -> h    16 -> f  15 -> l    14 -> \u00f1    13 -> j    12 -> b    11 -> c    10 -> r    9 -> s   8  -> w    7  -> h    6  -> i    5  -> u    4  -> t    3  -> s    2 -> b      1 -> c     0  -> s",
+                  "visible": "obvious",
+                  "custom_verbs": []
+              }
+          ]
+      },
+      {
+          "name": "El Final",
+          "alias": "29",
+          "description": "Enhorabuena! Lo conseguiste! Espero que hayas disfrutado :-)\n\nAhora tienes un peque\u00f1o ejemplo de lo que puede construir un arquitexto como t\u00fa.  El Enigma del Monasterio ha sido creado utilizando solo las herramientas que ver\u00e1s si escribes \"ayuda construcci\u00f3n\".\n\nConsidera unirte a nuestro servidor de Discord, donde podemos conocernos y hablar sobre el juego!\nhttps://discord.com/invite/CnQD9g3U5g\n\nGracias por jugar.\n\nOliver",
+          "custom_verbs": [],
+          "items": []
+      },
+      {
+          "name": "El laberinto del error",
+          "alias": "30",
+          "description": "Este lugar est\u00e1 hecho de la angustia de aquellos que se perdieron en el Galimat\u00edas. Si tienes suerte puede que consigas encontrar la salida.",
+          "custom_verbs": [],
+          "items": []
+      },
+      {
+          "name": "El laberinto del error",
+          "alias": "33",
+          "description": "Este lugar est\u00e1 hecho de la angustia de aquellos que se perdieron en el Galimat\u00edas. Si tienes suerte puede que consigas encontrar la salida.",
+          "custom_verbs": [],
+          "items": []
+      },
+      {
+          "name": "El laberinto del error",
+          "alias": "34",
+          "description": "Este lugar est\u00e1 hecho de la angustia de aquellos que se perdieron en el Galimat\u00edas. Si tienes suerte puede que consigas encontrar la salida.",
+          "custom_verbs": [],
+          "items": []
+      },
+      {
+          "name": "Una luz en la oscuridad",
+          "alias": "35",
+          "description": "Sientes la lucidez volviendo a tu mente. Te despiertas con unas intensas ganas de respirar.",
+          "custom_verbs": [],
+          "items": []
+      },
+      {
+          "name": "El laberinto del error",
+          "alias": "36",
+          "description": "Este lugar est\u00e1 hecho de la angustia de aquellos que se perdieron en el Galimat\u00edas. Si tienes suerte puede que consigas encontrar la salida.",
+          "custom_verbs": [],
+          "items": []
+      },
+      {
+          "name": "El laberinto del error",
+          "alias": "37",
+          "description": "Este lugar est\u00e1 hecho de la angustia de aquellos que se perdieron en el Galimat\u00edas. Si tienes suerte puede que consigas encontrar la salida.",
+          "custom_verbs": [],
+          "items": []
+      },
+      {
+          "name": "El laberinto del error",
+          "alias": "38",
+          "description": "Este lugar est\u00e1 hecho de la angustia de aquellos que se perdieron en el Galimat\u00edas. Si tienes suerte puede que consigas encontrar la salida.",
+          "custom_verbs": [],
+          "items": []
+      }
+  ],
+  "custom_verbs": [],
+  "exits": [
+      {
+          "name": "un portal transl\u00facido",
+          "description": null,
+          "destination": "1",
+          "room": "0",
+          "visible": "listed",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "un portal transl\u00facido",
+          "description": null,
+          "destination": "0",
+          "room": "1",
+          "visible": "listed",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "norte",
+          "description": null,
+          "destination": "2",
+          "room": "1",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "este",
+          "description": null,
+          "destination": "4",
+          "room": "1",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "sur",
+          "description": null,
+          "destination": "1",
+          "room": "2",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "este",
+          "description": null,
+          "destination": "3",
+          "room": "2",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "una puerta que lleva a unas escaleras",
+          "description": null,
+          "destination": "5",
+          "room": "2",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "oeste",
+          "description": null,
+          "destination": "2",
+          "room": "3",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "sur",
+          "description": null,
+          "destination": "4",
+          "room": "3",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "abajo por la escalera de mano",
+          "description": null,
+          "destination": "12",
+          "room": "3",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "oeste",
+          "description": null,
+          "destination": "1",
+          "room": "4",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "norte",
+          "description": null,
+          "destination": "3",
+          "room": "4",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "una gran puerta de madera",
+          "description": null,
+          "destination": "17",
+          "room": "4",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "escaleras abajo hacia el claustro",
+          "description": null,
+          "destination": "2",
+          "room": "5",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "hacia el fondo del pasillo",
+          "description": "It has nothing special",
+          "destination": "6",
+          "room": "5",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "una puerta de madera a la derecha",
+          "description": null,
+          "destination": "7",
+          "room": "5",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "una puerta de madera a la izquierda",
+          "description": null,
+          "destination": "8",
+          "room": "5",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "volver al principio del pasillo",
+          "description": null,
+          "destination": "5",
+          "room": "6",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "una puerta de madera a la izquierda",
+          "description": null,
+          "destination": "9",
+          "room": "6",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "una puerta de madera a la derecha",
+          "description": null,
+          "destination": "10",
+          "room": "6",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "volver al pasillo por la puerta de madera",
+          "description": null,
+          "destination": "5",
+          "room": "7",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "volver al pasillo por la puerta de madera",
+          "description": null,
+          "destination": "5",
+          "room": "8",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "volver al pasillo por la puerta de madera",
+          "description": null,
+          "destination": "6",
+          "room": "9",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "volver al pasillo por la puerta de madera",
+          "description": null,
+          "destination": "6",
+          "room": "10",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "arriba por las escaleras de vuelta al claustro",
+          "description": null,
+          "destination": "3",
+          "room": "12",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "una piscina de aguas subterr\u00e1neas",
+          "description": "Sientes el m\u00edstico impulso de ir y entrar en el agua",
+          "destination": "13",
+          "room": "12",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "despertarte y salir fuera del agua",
+          "description": null,
+          "destination": "12",
+          "room": "13",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "Q",
+          "description": null,
+          "destination": "14",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "A",
+          "description": null,
+          "destination": "36",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "B",
+          "description": null,
+          "destination": "36",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "C",
+          "description": null,
+          "destination": "30",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "D",
+          "description": null,
+          "destination": "33",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "E",
+          "description": null,
+          "destination": "36",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "F",
+          "description": null,
+          "destination": "33",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "G",
+          "description": null,
+          "destination": "36",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "H",
+          "description": null,
+          "destination": "38",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "I",
+          "description": null,
+          "destination": "36",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "J",
+          "description": null,
+          "destination": "30",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "K",
+          "description": null,
+          "destination": "34",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "L",
+          "description": null,
+          "destination": "34",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "M",
+          "description": null,
+          "destination": "30",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "N",
+          "description": null,
+          "destination": "37",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "O",
+          "description": null,
+          "destination": "33",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "P",
+          "description": null,
+          "destination": "36",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "R",
+          "description": null,
+          "destination": "30",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "S",
+          "description": null,
+          "destination": "33",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "T",
+          "description": null,
+          "destination": "34",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "U",
+          "description": null,
+          "destination": "38",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "V",
+          "description": null,
+          "destination": "36",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "W",
+          "description": null,
+          "destination": "30",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "X",
+          "description": null,
+          "destination": "33",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "Y",
+          "description": null,
+          "destination": "36",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "Z",
+          "description": null,
+          "destination": "30",
+          "room": "13",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "O",
+          "description": null,
+          "destination": "15",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "despertarte y salir fuera del agua",
+          "description": null,
+          "destination": "12",
+          "room": "14",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "A",
+          "description": null,
+          "destination": "34",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "B",
+          "description": null,
+          "destination": "37",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "C",
+          "description": null,
+          "destination": "34",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "D",
+          "description": null,
+          "destination": "33",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "F",
+          "description": null,
+          "destination": "30",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "G",
+          "description": null,
+          "destination": "38",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "H",
+          "description": null,
+          "destination": "36",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "I",
+          "description": null,
+          "destination": "34",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "J",
+          "description": null,
+          "destination": "34",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "K",
+          "description": null,
+          "destination": "34",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "L",
+          "description": null,
+          "destination": "33",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "M",
+          "description": null,
+          "destination": "33",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "N",
+          "description": null,
+          "destination": "37",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "E",
+          "description": null,
+          "destination": "36",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "P",
+          "description": null,
+          "destination": "37",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "Q",
+          "description": null,
+          "destination": "38",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "R",
+          "description": null,
+          "destination": "37",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "S",
+          "description": null,
+          "destination": "30",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "T",
+          "description": null,
+          "destination": "30",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "U",
+          "description": null,
+          "destination": "38",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "V",
+          "description": null,
+          "destination": "37",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "W",
+          "description": null,
+          "destination": "30",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "X",
+          "description": null,
+          "destination": "37",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "Y",
+          "description": null,
+          "destination": "36",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "Z",
+          "description": null,
+          "destination": "38",
+          "room": "14",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "S",
+          "description": null,
+          "destination": "16",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "despertarte y salir fuera del agua",
+          "description": null,
+          "destination": "12",
+          "room": "15",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "A",
+          "description": null,
+          "destination": "36",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "B",
+          "description": null,
+          "destination": "37",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "C",
+          "description": null,
+          "destination": "38",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "D",
+          "description": null,
+          "destination": "30",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "E",
+          "description": null,
+          "destination": "37",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "F",
+          "description": null,
+          "destination": "38",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "G",
+          "description": null,
+          "destination": "34",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "H",
+          "description": null,
+          "destination": "36",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "I",
+          "description": null,
+          "destination": "34",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "J",
+          "description": null,
+          "destination": "36",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "K",
+          "description": null,
+          "destination": "34",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "L",
+          "description": null,
+          "destination": "37",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "M",
+          "description": null,
+          "destination": "34",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "N",
+          "description": null,
+          "destination": "36",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "O",
+          "description": null,
+          "destination": "34",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "P",
+          "description": null,
+          "destination": "30",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "Q",
+          "description": null,
+          "destination": "36",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "R",
+          "description": null,
+          "destination": "37",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "T",
+          "description": null,
+          "destination": "34",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "U",
+          "description": null,
+          "destination": "37",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "V",
+          "description": null,
+          "destination": "38",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "W",
+          "description": null,
+          "destination": "36",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "X",
+          "description": null,
+          "destination": "37",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "Y",
+          "description": null,
+          "destination": "33",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "Z",
+          "description": null,
+          "destination": "36",
+          "room": "15",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "el portal sumidero",
+          "description": null,
+          "destination": "29",
+          "room": "16",
+          "visible": "listed",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "volver al claustro",
+          "description": null,
+          "destination": "4",
+          "room": "17",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "una puerta de madera",
+          "description": null,
+          "destination": "18",
+          "room": "17",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "un gran arco",
+          "description": null,
+          "destination": "19",
+          "room": "17",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "al fondo del corredor",
+          "description": null,
+          "destination": "20",
+          "room": "17",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "volver al corredor por la puerta de madera",
+          "description": null,
+          "destination": "17",
+          "room": "18",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "a trav\u00e9s del arco de vuelta al corredor",
+          "description": null,
+          "destination": "17",
+          "room": "19",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "volver al principio del corredor",
+          "description": null,
+          "destination": "17",
+          "room": "20",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "una puerta modesta",
+          "description": null,
+          "destination": "21",
+          "room": "20",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "un umbral fastuoso",
+          "description": null,
+          "destination": "24",
+          "room": "20",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "una puerta modesta de vuelta al corredor",
+          "description": null,
+          "destination": "20",
+          "room": "21",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "al fondo, a las cocinas",
+          "description": null,
+          "destination": "22",
+          "room": "21",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "volver al comedor",
+          "description": null,
+          "destination": "21",
+          "room": "22",
+          "visible": "listed",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "volver al corredor por el umbral",
+          "description": null,
+          "destination": "20",
+          "room": "24",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "hacia el fondo de la biblioteca",
+          "description": null,
+          "destination": "25",
+          "room": "24",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "volver hacia la entrada",
+          "description": null,
+          "destination": "24",
+          "room": "25",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "hacia el fondo de la biblioteca",
+          "description": null,
+          "destination": "26",
+          "room": "25",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "volver hacia la entrada",
+          "description": null,
+          "destination": "25",
+          "room": "26",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "hacia el fondo de la biblioteca",
+          "description": null,
+          "destination": "27",
+          "room": "26",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "un pasillo secreto",
+          "description": null,
+          "destination": "28",
+          "room": "26",
+          "visible": "hidden",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "volver hacia la entrada",
+          "description": null,
+          "destination": "26",
+          "room": "27",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "volver a la biblioteca",
+          "description": null,
+          "destination": "26",
+          "room": "28",
+          "visible": "obvious",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "de vuelta al principio",
+          "description": null,
+          "destination": "0",
+          "room": "29",
+          "visible": "listed",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "un camino hacia delante",
+          "description": null,
+          "destination": "33",
+          "room": "30",
+          "visible": "listed",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "un camino hacia atr\u00e1s",
+          "description": null,
+          "destination": "34",
+          "room": "30",
+          "visible": "listed",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "un camino hacia atr\u00e1s",
+          "description": null,
+          "destination": "30",
+          "room": "33",
+          "visible": "listed",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "un camino hacia delante",
+          "description": null,
+          "destination": "33",
+          "room": "33",
+          "visible": "listed",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "un camino hacia delante",
+          "description": null,
+          "destination": "30",
+          "room": "34",
+          "visible": "listed",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "un camino hacia atr\u00e1s",
+          "description": null,
+          "destination": "35",
+          "room": "34",
+          "visible": "listed",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "fuera del agua",
+          "description": null,
+          "destination": "12",
+          "room": "35",
+          "visible": "listed",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "un camino hacia delante",
+          "description": null,
+          "destination": "35",
+          "room": "36",
+          "visible": "listed",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "un camino hacia atr\u00e1s",
+          "description": null,
+          "destination": "37",
+          "room": "36",
+          "visible": "listed",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "un camino hacia delante",
+          "description": null,
+          "destination": "36",
+          "room": "37",
+          "visible": "listed",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "un camino hacia atr\u00e1s",
+          "description": null,
+          "destination": "38",
+          "room": "37",
+          "visible": "listed",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "un camino hacia delante",
+          "description": null,
+          "destination": "37",
+          "room": "38",
+          "visible": "listed",
+          "is_open": true,
+          "key_names": []
+      },
+      {
+          "name": "un camino hacia atr\u00e1s",
+          "description": null,
+          "destination": "38",
+          "room": "38",
+          "visible": "listed",
+          "is_open": true,
+          "key_names": []
+      }
+  ],
+  "inventory": [],
+  "saved_items": [
+      {
+          "item_id": "un tapiz de hierba fresca#1",
+          "name": "un tapiz de hierba fresca",
+          "description": "Si fueras una vaca la comer\u00edas con gusto.",
+          "visible": "obvious",
+          "custom_verbs": []
+      },
+      {
+          "item_id": "un camastro deshecho#1",
+          "name": "un camastro deshecho",
+          "description": "No te gustar\u00eda tener que pasar la noche aqu\u00ed.",
+          "visible": "obvious",
+          "custom_verbs": []
+      },
+      {
+          "item_id": "un cofre de madera#1",
+          "name": "un cofre de madera",
+          "description": "Seguramente el monje guardase aqu\u00ed sus pocas pertenencias. Est\u00e1 vac\u00edo.",
+          "visible": "obvious",
+          "custom_verbs": []
+      },
+      {
+          "item_id": "una silla#1",
+          "name": "una silla",
+          "description": "No parece muy c\u00f3moda.",
+          "visible": "obvious",
+          "custom_verbs": []
+      },
+      {
+          "item_id": "una mesa#1",
+          "name": "una mesa",
+          "description": "La madera de la mesa est\u00e1 agrietada. Tiene un hueco para un tintero.",
+          "visible": "obvious",
+          "custom_verbs": []
+      },
+      {
+          "item_id": "libros#1",
+          "name": "libros",
+          "description": "Parece que se deshar\u00edan en tus manos si los tocas.",
+          "visible": "obvious",
+          "custom_verbs": []
+      }
+  ]
+}
