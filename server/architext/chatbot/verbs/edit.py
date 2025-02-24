@@ -181,6 +181,8 @@ class Edit(verb.Verb):
                     new_description=message
                 )
         elif self.option_number == 3:  # edit visibility
+            print("ZZZZZZZZ", message.lower())
+            print("AAAAAAAA", strings.unlisted_input_options)
             if message.lower() in strings.unlisted_input_options:
                 new_visibility = "unlisted"
             if message.lower() in strings.auto_input_options:

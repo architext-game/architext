@@ -66,8 +66,6 @@ class UOWGetThingInRoomQueryHandler(UOWQueryHandler, GetThingInRoomQueryHandler)
 
         matches = visible_name_match(query.partial_name, things)
 
-        print("PATATA", matches, [t.name for t in things])
-
         if len(matches) > 1:
             return GetThingInRoomResult(
                 status="multiple_matches",

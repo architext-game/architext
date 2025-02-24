@@ -19,7 +19,6 @@ class User:
 
     @property
     def room_id(self) -> Optional[str]:
-        print("ROOM ID CHECK for user", self.name, self.world_id)
         if self.world_id is None:
             return None
         return self.world_visit_record[self.world_id].last_room_id
