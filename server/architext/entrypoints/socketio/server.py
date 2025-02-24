@@ -12,16 +12,21 @@ from architext.chatbot.adapters.chatbot_notifier import ChatbotNotifier
 from architext.chatbot.adapters.socketio_messaging_channel import SocketIOMessagingChannel
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
+from architext.content.tutorial import TUTORIAL
 from architext.core.adapters.multi_notifier import MultiNotifier, multi_notifier_mapping_factory
 from architext.core.adapters.sio_notifier import SioNotifier
+from architext.core.adapters.sqlalchemy.session import db_connection
+from architext.core.adapters.sqlalchemy.uow import SQLAlchemyUnitOfWork
+from architext.core.facade import Architext
 from architext.core.ports.notifier import Notification, WorldCreatedNotification
+from architext.core.ports.unit_of_work import UnitOfWork
 from architext.core.queries.get_template import GetWorldTemplate, GetWorldTemplateResult
 from architext.core.queries.list_world_templates import ListWorldTemplates, ListWorldTemplatesResult, WorldTemplateListItem
 from architext.core.queries.me import Me, MeResult
 from architext.core.queries.get_world import GetWorld, GetWorldResult
 from architext.core.services.create_user import create_user
 from architext.core.queries.list_worlds import ListWorlds, ListWorldsResult
-from test.fixtures import createTestArchitext
+from test.fixtures import add_test_data, createTestArchitext
 eventlet.monkey_patch(socket=True, time=True)
 import socketio
 import atexit
@@ -66,17 +71,33 @@ if __name__ == "__main__":
         if sid_to_user_id.inverse.get(user_id, None) is not None:
             del sid_to_user_id.inverse[user_id]
         sid_to_user_id[socket] = user_id
-    
+
+    # App config
     channel = SocketIOMessagingChannel(sio, user_id_to_socket_id=sid_to_user_id.inverse)
-    architext = createTestArchitext(db=True)
+    uow = SQLAlchemyUnitOfWork(session_factory=db_connection(at='file'))
+    architext = Architext(uow=uow)    
     architext._uow.notifier = MultiNotifier(
         multi_notifier_mapping_factory(
             chatbot=ChatbotNotifier(channel),
             web=SioNotifier(sio=sio, user_id_to_socket_id=sid_to_user_id.inverse)
         )
     )
-    architext.handle(CreateUser(email='oli@sanz.com', name='oliver', password='oliver'))
-    architext.handle(CreateUser(email='wade@mail.com', name='wade', password='wade'))
+    def should_insert_initial_data(uow: UnitOfWork) -> bool:
+        return len(uow.world_templates.list_world_templates()) == 0
+    
+    if should_insert_initial_data(uow):
+        print("STARTUP: Adding initial data")
+        add_test_data(uow)
+        oliver = architext.handle(CreateUser(email='oli@sanz.com', name='oliver', password='oliver'))
+        architext.handle(CreateUser(email='wade@mail.com', name='wade', password='wade'))
+        architext.handle(RequestWorldImport(
+            name="Tutorial",
+            description="The tutorial",
+            format="plain",
+            text_representation=TUTORIAL
+        ), oliver.user_id)
+    else:
+        print("STARTUP: NOT adding initial data")
 
     user_id_to_session: Dict[str, Session] = {}
 
@@ -84,7 +105,6 @@ if __name__ == "__main__":
     @sio.event
     def connect(sid, environ, auth):
         print(f'New connection, socket id {sid}')
-
 
     @sio.event
     def disconnect(sid):
@@ -143,7 +163,7 @@ if __name__ == "__main__":
     inactive_timers: Dict[str, GreenThread] = {}
 
     def register_user_activity(user_id: str):
-        print(f"Registered activity for user {user_id}")
+        # print(f"Registered activity for user {user_id}")
         architext.handle(MarkUserActive(active=True), user_id)
 
         if user_id in inactive_timers:
@@ -152,7 +172,7 @@ if __name__ == "__main__":
         inactive_timers[user_id] = eventlet.spawn_after(30, mark_user_inactive, user_id)
 
     def mark_user_inactive(user_id: str):
-        print(f"User {user_id} marked as inactive")
+        # print(f"User {user_id} marked as inactive")
         architext.handle(MarkUserActive(active=False), user_id)
 
 
