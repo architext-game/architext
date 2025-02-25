@@ -37,29 +37,29 @@ def default_missions():
 
         play_with_friends = Mission(
             id="play_with_friends",
-            name="Create a world",
-            description="Create your first world",
+            name="Play with friends",
+            description="Architext is more fun with friends, invite them to join!",
             requirements=[MissionRequirement(complete_mission_with_id="tutorial")],
         )
 
         create_your_world = Mission(
             id="create_your_world",
-            name="Create a world",
-            description="Create your first world",
+            name="Create your first world",
+            description="There you'll be able to create anything that you can imagine!",
             requirements=[MissionRequirement(complete_mission_with_id="tutorial")],
         )
 
         play_monks_riddle = Mission(
             id="play_monks_riddle",
-            name="Create a world",
-            description="Create your first world",
+            name="Play the Monk's Riddle",
+            description="Can you find out what happened in this abandoned monastery?",
             requirements=[MissionRequirement(complete_mission_with_id="tutorial")],
         )
 
         invite_friends_to_your_world = Mission(
             id="invite_friends_to_your_world",
             name="Invite friends to your world",
-            description="Invite friends to your world",
+            description="Give them the code to your world to show them!",
             requirements=[MissionRequirement(complete_mission_with_id="create_your_world")],
         )
 

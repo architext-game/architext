@@ -71,7 +71,7 @@ export function WorldsListItem({
   }
 
   return (
-    <div onClick={toggleOpen} className={clsx("flex flex-col cursor-pointer px-3 overflow-hidden rounded-md transition hover:bg-backgroundHighlight", expanded && "bg-backgroundHighlight")}>
+    <div id={worldId} onClick={toggleOpen} className={clsx("flex flex-col cursor-pointer px-3 overflow-hidden rounded-md transition hover:bg-backgroundHighlight", expanded && "bg-backgroundHighlight")}>
       <div className="flex justify-between p-3 w-full">
         <div className="flex gap-3">
           <div>{isPublic ? "🌍" : "🔒"}</div>

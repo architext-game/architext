@@ -9,6 +9,10 @@
   --text: #FFFFFF;
 }
 
+:target {
+  background-color: var(--background-highlight);
+}
+
 /* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;

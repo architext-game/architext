@@ -19,6 +19,7 @@ from architext.core.adapters.sqlalchemy.uow import SQLAlchemyUnitOfWork
 from architext.core.facade import Architext
 from architext.core.ports.notifier import Notification, WorldCreatedNotification
 from architext.core.ports.unit_of_work import UnitOfWork
+from architext.core.queries.available_missions import AvailableMissions, AvailableMissionsResult
 from architext.core.queries.get_template import GetWorldTemplate, GetWorldTemplateResult
 from architext.core.queries.list_world_templates import ListWorldTemplates, ListWorldTemplatesResult, WorldTemplateListItem
 from architext.core.queries.me import Me, MeResult, UserNotFound
@@ -32,7 +33,7 @@ import atexit
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from architext.core.commands import (
-    CreateTemplate, CreateTemplateResult, CreateUser, EditWorld, EditWorldResult, EnterWorld, EnterWorldResult,
+    CompleteMission, CompleteMissionResult, CreateTemplate, CreateTemplateResult, CreateUser, EditWorld, EditWorldResult, EnterWorld, EnterWorldResult,
     CreateConnectedRoom, CreateConnectedRoomResult, MarkUserActive, RequestWorldCreationFromTemplate,
     RequestWorldCreationFromTemplateResult, RequestWorldImport, RequestWorldImportResult,
     TraverseExit, TraverseExitResult,
@@ -213,6 +214,11 @@ if __name__ == "__main__":
         client_user_id = sid_to_user_id[sid]
         return architext.query(input, client_user_id)
 
+    @event(sio=sio, on='get_available_missions', In=AvailableMissions, Out=ResponseModel[AvailableMissionsResult])
+    def get_available_missions_event(sid, input: Me) -> MeResult:
+        client_user_id = sid_to_user_id[sid]
+        return architext.query(input, client_user_id)
+
     @event(sio=sio, on='enter_world', In=EnterWorld, Out=ResponseModel[EnterWorldResult])
     def enter_world_event(sid, input: EnterWorld) -> EnterWorldResult:
         client_user_id = sid_to_user_id[sid]
@@ -230,6 +236,11 @@ if __name__ == "__main__":
 
     @event(sio=sio, on='request_world_creation_from_template', In=RequestWorldCreationFromTemplate, Out=ResponseModel[RequestWorldCreationFromTemplateResult])
     def request_world_creation_from_template_event(sid, input: RequestWorldCreationFromTemplate) -> RequestWorldCreationFromTemplateResult:
+        client_user_id = sid_to_user_id[sid]
+        return architext.handle(input, client_user_id)
+
+    @event(sio=sio, on='complete_mission', In=CompleteMission, Out=ResponseModel[CompleteMissionResult])
+    def complete_mission_event(sid, input: CompleteMission) -> CompleteMissionResult:
         client_user_id = sid_to_user_id[sid]
         return architext.handle(input, client_user_id)
 

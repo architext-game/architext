@@ -149,6 +149,21 @@ export interface GetMeResponse {
     error: string | null;
 }
 
+export interface GetAvailableMissionsParams {
+}
+
+export interface GetAvailableMissionsResponse {
+    success: boolean;
+    data: {
+        missions: {
+            id: string;
+            name: string;
+            description: string;
+        }[];
+    } | null;
+    error: string | null;
+}
+
 export interface EnterWorldParams {
     world_id: string;
 }
@@ -199,6 +214,17 @@ export interface RequestWorldCreationFromTemplateResponse {
     success: boolean;
     data: {
         future_world_id: string;
+    } | null;
+    error: string | null;
+}
+
+export interface CompleteMissionParams {
+    mission_id: string;
+}
+
+export interface CompleteMissionResponse {
+    success: boolean;
+    data: {
     } | null;
     error: string | null;
 }
@@ -347,6 +373,17 @@ export async function getMe(
     });
 }
 
+export async function getAvailableMissions(
+    socket: Socket,
+    params: GetAvailableMissionsParams
+): Promise<GetAvailableMissionsResponse> {
+    return new Promise((resolve, reject) => {
+        socket.emit("get_available_missions", params, (response: GetAvailableMissionsResponse) => {
+            resolve(response)
+        });
+    });
+}
+
 export async function enterWorld(
     socket: Socket,
     params: EnterWorldParams
@@ -386,6 +423,17 @@ export async function requestWorldCreationFromTemplate(
 ): Promise<RequestWorldCreationFromTemplateResponse> {
     return new Promise((resolve, reject) => {
         socket.emit("request_world_creation_from_template", params, (response: RequestWorldCreationFromTemplateResponse) => {
+            resolve(response)
+        });
+    });
+}
+
+export async function completeMission(
+    socket: Socket,
+    params: CompleteMissionParams
+): Promise<CompleteMissionResponse> {
+    return new Promise((resolve, reject) => {
+        socket.emit("complete_mission", params, (response: CompleteMissionResponse) => {
             resolve(response)
         });
     });

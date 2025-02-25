@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { requestWorldCreationFromTemplate, enterWorld, getWorldTemplate, requestWorldImport } from "@/architextSDK";
 import { useStore } from "@/state";
 import { useRouter } from 'next/navigation';
@@ -13,6 +13,8 @@ import { Overlay } from "@/components/overlay";
 import { EditWorldForm } from "../world/[world_id]/edit_world_form";
 import { CreateTemplateForm } from "../world/[world_id]/create_template_form";
 import { ImportWorldOverlay } from "./import-world-overlay";
+import { MissionsList } from "./missions_list";
+
 
 export default function Home() {
   const socket = useStore((state) => state.socket)
@@ -131,6 +133,7 @@ export default function Home() {
 
         { authenticated &&  // should not try to load worlds until socket is authenticated
           <>
+          <MissionsList router={router} />
           <WorldsList 
             router={router} 
             expandedItem={expandedItem} 
