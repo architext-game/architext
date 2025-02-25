@@ -9,6 +9,8 @@ from architext.core import Architext
 from architext.core.adapters.fake_uow import FakeUnitOfWork
 from test.fixtures import createTestArchitext
 
+from uuid import uuid4
+
 @pytest.fixture
 def architext() -> Architext:
     return createTestArchitext()
@@ -16,6 +18,7 @@ def architext() -> Architext:
 
 def test_create_user_success(architext: Architext):
     command = CreateUser(
+        id=str(uuid4()),
         name="John Doe",
         email="john.doe@example.com",
         password="securepassword123"
@@ -30,25 +33,25 @@ def test_create_user_success(architext: Architext):
     assert saved_user is not None
     assert saved_user.name == command.name
     assert saved_user.email == command.email
-    assert saved_user.match_password(command.password)
 
 
 def test_create_user_missing_fields(architext: Architext):
     with pytest.raises(ValidationError):
-        command = CreateUser(name="", email="john.doe@example.com", password="123")
+        command = CreateUser(id=str(uuid4()), name="", email="john.doe@example.com")
         architext.handle(command)
 
     with pytest.raises(ValidationError):
-        command = CreateUser(name="John Doe", email="", password="123")
+        command = CreateUser(id=str(uuid4()), name="John Doe", email="")
         architext.handle(command)
 
     with pytest.raises(ValidationError):
-        command = CreateUser(name="John Doe", email="john.doe@example.com", password="")
+        command = CreateUser(id="", name="John Doe", email="john.doe@example.com")
         architext.handle(command)
 
 @pytest.mark.skip(reason="to do")
 def test_create_user_duplicate_name(architext: Architext):
     command = CreateUser(
+        id=str(uuid4()),
         name="John Doe",
         email="john.doe@example.com",
         password="securepassword123"
@@ -57,6 +60,7 @@ def test_create_user_duplicate_name(architext: Architext):
 
     with pytest.raises(KeyError):
         command = CreateUser(
+            id=str(uuid4()),
             name="John Doe",
             email="john.doe2@example.com",
             password="anotherpassword"
@@ -68,6 +72,7 @@ def test_create_user_duplicate_name(architext: Architext):
 def test_create_user_list_users(architext: Architext):
     architext.handle(
         command=CreateUser(
+            id=str(uuid4()),
             name="Peter",
             email="peter@example.com",
             password="password123"
@@ -76,6 +81,7 @@ def test_create_user_list_users(architext: Architext):
 
     architext.handle(
         command=CreateUser(
+            id=str(uuid4()),
             name="Ulric",
             email="ulric@example.com",
             password="password456"

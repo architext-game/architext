@@ -72,7 +72,7 @@ class CreateUserResult:
     user_id: str
 
 class CreateUser(Command[CreateUserResult]):
-    id: str = Field(max_length=USER_ID_MAX_LENGTH)
+    id: str = Field(min_length=1, max_length=USER_ID_MAX_LENGTH)
     email: EmailStr = Field(max_length=EMAIL_MAX_LENGTH)
     name: str = Field(min_length=1, max_length=USER_NAME_MAX_LENGTH)
 
