@@ -1,5 +1,6 @@
 
 from typing import Type, TypeVar, Mapping, TYPE_CHECKING
+from architext.core.queries.available_missions import AvailableMissions, UOWAvailableMissionsQueryHandler
 from architext.core.queries.base import Query, QueryHandler
 from architext.core.queries.get_current_room import GetCurrentRoom, UOWGetCurrentRoomQueryHandler
 from architext.core.queries.get_room_details import GetRoomDetails, UOWGetRoomDetailsQueryHandler
@@ -30,6 +31,7 @@ def uow_query_handlers_factory(uow: UnitOfWork) -> Mapping[Type[Query], QueryHan
         GetRoomDetails: UOWGetRoomDetailsQueryHandler(uow),
         IsNameValid: UOWIsNameValidQueryHandler(uow),
         GetThingInRoom: UOWGetThingInRoomQueryHandler(uow),
+        AvailableMissions: UOWAvailableMissionsQueryHandler(uow),
     }
 
 class QueryManager:

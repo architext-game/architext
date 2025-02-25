@@ -6,6 +6,7 @@ from architext.core.adapters.sqlalchemy import user_repository
 from architext.core.adapters.sqlalchemy import room_repository
 from architext.core.adapters.sqlalchemy import world_repository
 from architext.core.adapters.sqlalchemy import world_template_repository
+from architext.core.adapters.sqlalchemy import mission_repository
 from architext.core.adapters.sqlalchemy.config import metadata
 from sqlalchemy.orm import clear_mappers
 
@@ -23,5 +24,6 @@ def db_connection(at: Literal['memory', 'file', 'url'] = 'memory', url: str = ""
     room_repository.map_entities()
     world_repository.map_entities()
     world_template_repository.map_entities()
+    mission_repository.map_entities()
     metadata.create_all(engine)
     return session_factory

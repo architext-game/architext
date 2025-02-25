@@ -28,6 +28,7 @@ from architext.core.commands import (
     DeleteRoom,
     EditRoom,
     MarkUserActive,
+    CompleteMission,
 )
 
 from architext.core.services.startup_setup import startup_setup
@@ -49,6 +50,7 @@ from architext.core.services.delete_exit import delete_exit
 from architext.core.services.delete_room import delete_room
 from architext.core.services.edit_room import edit_room
 from architext.core.services.mark_user_active import mark_user_active
+from architext.core.services.complete_mission import complete_mission
 
 from typing import Dict, Type, Callable
 
@@ -72,4 +74,5 @@ COMMAND_HANDLERS: Dict[Type[Command], Callable] = {
     SendSocialInteraction: send_social_interaction,
     MarkUserActive: mark_user_active,
     StartupSetup: startup_setup,
+    CompleteMission: complete_mission,
 }

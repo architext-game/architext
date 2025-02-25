@@ -7,6 +7,7 @@ from architext.core.adapters.sqlalchemy.room_repository import SQLAlchemyRoomRep
 from architext.core.adapters.sqlalchemy.user_repository import SQLAlchemyUserRepository
 from architext.core.adapters.sqlalchemy.world_repository import SQLAlchemyWorldRepository
 from architext.core.adapters.sqlalchemy.world_template_repository import SQLAlchemyWorldTemplateRepository
+from architext.core.adapters.sqlalchemy.mission_repository import SQLAlchemyMissionRepository
 from architext.core.domain.events import Event
 from architext.core.adapters.memory_room_repository import MemoryRoomRepository
 from architext.core.adapters.memory_user_repository import MemoryUserRepository
@@ -24,6 +25,7 @@ class SQLAlchemyUnitOfWork(UnitOfWork):
         self.rooms = SQLAlchemyRoomRepository(self.db_session)
         self.worlds = SQLAlchemyWorldRepository(self.db_session)
         self.world_templates = SQLAlchemyWorldTemplateRepository(self.db_session)
+        self.missions = SQLAlchemyMissionRepository(self.db_session)
         self.queries = QueryManager(uow_query_handlers_factory(self))
         self.messagebus = MessageBus()
         self.external_events = FakeExternalEventPublisher(self)
@@ -47,6 +49,7 @@ class SQLAlchemyUnitOfWork(UnitOfWork):
         self.rooms = SQLAlchemyRoomRepository(self.db_session)
         self.worlds = SQLAlchemyWorldRepository(self.db_session)
         self.world_templates = SQLAlchemyWorldTemplateRepository(self.db_session)
+        self.missions = SQLAlchemyMissionRepository(self.db_session)
 
     def rollback(self):
         self.db_session.rollback()

@@ -210,3 +210,11 @@ class StartupSetupResult:
 
 class StartupSetup(Command[StartupSetupResult]):
     pass
+
+
+@dataclass
+class CompleteMissionResult:
+    pass
+
+class CompleteMission(Command[CompleteMissionResult]):
+    mission_id: str

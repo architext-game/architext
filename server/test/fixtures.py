@@ -1,8 +1,10 @@
+import datetime
 from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChannel
 from architext.content.the_monks_riddle import THE_MONKS_RIDDLE_ENCODED
 from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.domain.entities.exit import Exit
 from architext.core.domain.entities.item import Item
+from architext.core.domain.entities.mission import default_missions, MissionLog
 from architext.core.domain.entities.user import User, WorldVisitRecord
 from architext.core.domain.entities.world import World
 from architext.core.domain.entities.world_template import WorldTemplate
@@ -339,7 +341,14 @@ def add_test_data(uow: UnitOfWork):
             ),
         },
     )
+    alice_completed_tutorial_mission = MissionLog(
+        user_id="alice",
+        mission_id="tutorial",
+        completed_at=datetime.datetime.now(),
+    )
     with uow:
+        for mission in default_missions().all:
+            uow.missions.save_mission(mission)
         uow.world_templates.save_world_template(emptytemplate)
         uow.world_templates.save_world_template(monkstemplate)
         uow.world_templates.save_world_template(templateforme)
@@ -370,6 +379,7 @@ def add_test_data(uow: UnitOfWork):
         uow.users.save_user(evan)
         uow.users.save_user(rabbit)
         uow.users.save_user(hunter)
+        uow.missions.save_mission_log(alice_completed_tutorial_mission)
         uow.commit()
 
 def createTestUow(db: bool = False) -> UnitOfWork:
