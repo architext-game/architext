@@ -13,7 +13,7 @@ from architext.core.commands import (
     CreateUser,
     EnterWorld,
     SendSocialInteraction,
-    StartupSetup,
+    Setup,
     TraverseExit,
     RequestWorldCreationFromTemplate,
     RequestWorldImport,
@@ -31,7 +31,7 @@ from architext.core.commands import (
     CompleteMission,
 )
 
-from architext.core.services.startup_setup import startup_setup
+from architext.core.services.setup import setup
 from architext.core.services.send_social_interaction import send_social_interaction
 from architext.core.services.edit_world import edit_world
 from architext.core.services.create_template import create_template
@@ -73,6 +73,6 @@ COMMAND_HANDLERS: Dict[Type[Command], Callable] = {
     EditRoom: edit_room,
     SendSocialInteraction: send_social_interaction,
     MarkUserActive: mark_user_active,
-    StartupSetup: startup_setup,
+    Setup: setup,
     CompleteMission: complete_mission,
 }

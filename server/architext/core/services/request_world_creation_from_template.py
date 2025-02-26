@@ -20,6 +20,7 @@ def request_world_creation_from_template(uow: UnitOfWork, command: RequestWorldC
             text_representation=template.world_encoded_json,
             format='encoded',
             base_template_id=command.template_id,
+            visibility='private',
         ))
 
         uow.commit()

@@ -14,7 +14,8 @@ def notify_world_created(uow: UnitOfWork, event: WorldCreated):
     world = uow.worlds.get_world_by_id(event.world_id)
     assert world is not None
 
-    uow.notifier.notify(event.owner_id, WorldCreatedNotification(
-        world_id=world.id,
-        world_name=world.name,
-    ))
+    if event.owner_id is not None:
+        uow.notifier.notify(event.owner_id, WorldCreatedNotification(
+            world_id=world.id,
+            world_name=world.name,
+        ))

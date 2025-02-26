@@ -20,17 +20,22 @@ class UserChangedRoom(Event):
 @dataclass
 class WorldCreationRequested(Event):
     future_world_id: str
-    user_id: str
     world_name: str
     world_description: str
     text_representation: str
     format: Literal['plain', 'encoded']
+    visibility: Literal['public', 'private']
+    user_id: Optional[str] = None
     base_template_id: Optional[str] = None  # just used to add the reference to the new world
 
 @dataclass
 class WorldCreated(Event):
-    owner_id: str
+    owner_id: Optional[str]
     world_id: str
+
+@dataclass
+class UserCreated(Event):
+    user_id: str
 
 """
 The following events don't have a handler defined by the core.

@@ -5,7 +5,8 @@
  - It also links events with their handlers in the `EVENT_HANDLERS` dict.
 """
 
-from architext.core.domain.events import UserBecameActive, UserBecameInactive, UserChangedRoom, Event, WorldCreated, WorldCreationRequested
+from architext.core.domain.events import UserBecameActive, UserBecameInactive, UserChangedRoom, Event, UserCreated, WorldCreated, WorldCreationRequested
+from architext.core.handlers.create_user_initial_data import create_user_initial_data
 from architext.core.handlers.notify_other_became_inactive import notify_other_became_inactive
 from architext.core.handlers.notify_other_became_active import notify_other_became_active
 from architext.core.handlers.notify_world_created import notify_world_created
@@ -19,6 +20,7 @@ EVENT_HANDLERS: Dict[Type[Event], List[Callable]] = {
     UserChangedRoom: [notify_other_entered_room, notify_other_left_room],
     UserBecameActive: [notify_other_became_active],
     UserBecameInactive: [notify_other_became_inactive],
+    UserCreated: [create_user_initial_data],
 
     # The following events are raised as external events in production
     # They are only here so that all functionality works in testing

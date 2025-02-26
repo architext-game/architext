@@ -35,7 +35,7 @@ from pydantic import BaseModel
 from architext.core.commands import (
     CompleteMission, CompleteMissionResult, CreateTemplate, CreateTemplateResult, CreateUser, EditWorld, EditWorldResult, EnterWorld, EnterWorldResult,
     CreateConnectedRoom, CreateConnectedRoomResult, MarkUserActive, RequestWorldCreationFromTemplate,
-    RequestWorldCreationFromTemplateResult, RequestWorldImport, RequestWorldImportResult,
+    RequestWorldCreationFromTemplateResult, RequestWorldImport, RequestWorldImportResult, Setup,
     TraverseExit, TraverseExitResult,
 )
 from architext.entrypoints.socketio.models import ResponseModel
@@ -75,22 +75,8 @@ if __name__ == "__main__":
             web=SioNotifier(sio=sio, user_id_to_socket_id=sid_to_user_id.inverse)
         )
     )
-    def should_insert_initial_data(uow: UnitOfWork) -> bool:
-        return len(uow.world_templates.list_world_templates()) == 0
-    
-    if should_insert_initial_data(uow):
-        print("STARTUP: Adding initial data")
-        add_test_data(uow)
-        # oliver = architext.handle(CreateUser(email='oli@sanz.com', name='oliver', password='oliver'))
-        # architext.handle(CreateUser(email='wade@mail.com', name='wade', password='wade'))
-        # architext.handle(RequestWorldImport(
-        #     name="Tutorial",
-        #     description="The tutorial",
-        #     format="plain",
-        #     text_representation=TUTORIAL
-        # ), oliver.user_id)
-    else:
-        print("STARTUP: NOT adding initial data")
+
+    architext.handle(Setup(uow=uow, client_user_id=None))
 
     user_id_to_session: Dict[str, Session] = {}
 

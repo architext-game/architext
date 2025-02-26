@@ -205,10 +205,10 @@ class MarkUserActive(Command[MarkUserActiveResult]):
 
 
 @dataclass
-class StartupSetupResult:
+class SetupResult:
     pass
 
-class StartupSetup(Command[StartupSetupResult]):
+class Setup(Command[SetupResult]):
     pass
 
 

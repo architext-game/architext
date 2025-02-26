@@ -80,8 +80,6 @@ def replace_ids(game_data: WorldDict):
 
 def import_world(uow: UnitOfWork, event: WorldCreationRequested):
     with uow:
-        user = uow.users.get_user_by_id(event.user_id)
-        assert user is not None
         world_id = event.future_world_id
 
         if event.format == "encoded":
@@ -99,8 +97,9 @@ def import_world(uow: UnitOfWork, event: WorldCreationRequested):
             description=event.world_description,
             id=world_id,
             initial_room_id=world_dict["initial_room_id"],
-            owner_user_id=user.id,
-            base_template_id=event.base_template_id
+            owner_user_id=event.user_id,
+            base_template_id=event.base_template_id,
+            visibility=event.visibility,
         )
 
         rooms = [Room(
@@ -124,7 +123,7 @@ def import_world(uow: UnitOfWork, event: WorldCreationRequested):
             uow.rooms.save_room(room)
 
         uow.external_events.publish(WorldCreated(
-            owner_id=user.id,
+            owner_id=event.user_id,
             world_id=world.id
         ))
 

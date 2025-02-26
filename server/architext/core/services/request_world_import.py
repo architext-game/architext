@@ -16,7 +16,8 @@ def request_world_import(uow: UnitOfWork, command: RequestWorldImport, client_us
             world_name=command.name,
             world_description=command.description,
             text_representation=command.text_representation,
-            format=command.format
+            format=command.format,
+            visibility='private',
         ))
 
         uow.commit()

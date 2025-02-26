@@ -19,7 +19,8 @@ def test_import_the_monks_riddle(architext: Architext):
         user_id="oliver",
         world_name="The Monk's Riddleasdf",
         world_description="A monastery full of mistery.",
-        future_world_id=world_id
+        future_world_id=world_id,
+        visibility='private',
     ))
     world = get_by_name("The Monk's Riddleasdf", architext._uow.worlds.list_worlds())
     assert world.name == "The Monk's Riddleasdf"
@@ -39,7 +40,8 @@ def test_world_created_event_is_published(architext: Architext):
         user_id="oliver",
         world_name="The Monk's Riddle",
         world_description="A monastery full of mistery.",
-        future_world_id=world_id
+        future_world_id=world_id,
+        visibility='private',
     ))
     uow = cast(FakeUnitOfWork, architext._uow)
     external_events = cast(FakeExternalEventPublisher, architext._uow.external_events)
