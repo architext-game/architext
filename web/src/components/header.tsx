@@ -2,11 +2,16 @@
 
 import { getMe, GetMeResponse } from "@/architextSDK";
 import { useStore } from "@/state";
-import { useAuth, UserButton } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
+import clsx from "clsx";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-export function Header() {
+interface HeaderProps {
+  className?: string
+}
+
+export function Header({ className }: HeaderProps) {
   const auth = useAuth();
   const socket = useStore((state) => state.socket);
   const authenticated = useStore((state) => state.authenticated);
@@ -35,7 +40,7 @@ export function Header() {
   }, []);
 
   return (
-    <div className="flex flex-row font-mono gap-10 justify-start max-w-screen-md w-full pb-11 pt-9 relative">
+    <div className={clsx(className, "flex flex-row font-mono gap-10 justify-start w-full pb-11 pt-9 relative")}>
       <h1 className="font-mono text-5xl hover:underline">
         <Link href="/">Architext</Link>
       </h1>
