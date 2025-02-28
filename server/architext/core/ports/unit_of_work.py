@@ -52,7 +52,6 @@ class UnitOfWork(Protocol):
 
     def __exit__(self, exc_type, exc_value, traceback) -> None:
         if exc_type is None:
-            print("COMMITTING-----------")
             self.commit()
         else:
             self.rollback()

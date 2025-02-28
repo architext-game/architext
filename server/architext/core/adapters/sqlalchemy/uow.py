@@ -41,21 +41,19 @@ class SQLAlchemyUnitOfWork(UnitOfWork):
     def _commit(self):
         self.committed = True
         self.db_session.commit()
-        print("SQL COMMIT")
 
     def __enter__(self) -> Transaction:
         self.committed = False
         self.db_session = self.session_factory()
-        self.users = SQLAlchemyUserRepository(self.db_session)
-        self.rooms = SQLAlchemyRoomRepository(self.db_session)
-        self.worlds = SQLAlchemyWorldRepository(self.db_session)
-        self.world_templates = SQLAlchemyWorldTemplateRepository(self.db_session)
-        self.missions = SQLAlchemyMissionRepository(self.db_session)
+        self._users = SQLAlchemyUserRepository(self.db_session)
+        self._rooms = SQLAlchemyRoomRepository(self.db_session)
+        self._worlds = SQLAlchemyWorldRepository(self.db_session)
+        self._world_templates = SQLAlchemyWorldTemplateRepository(self.db_session)
+        self._missions = SQLAlchemyMissionRepository(self.db_session)
 
         return super().__enter__()
 
     def rollback(self):
         self.db_session.rollback()
         self.db_session.close()
-        print("Session closed")
     
