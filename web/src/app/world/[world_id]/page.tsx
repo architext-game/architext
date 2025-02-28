@@ -186,6 +186,8 @@ function App({ params, searchParams }: {
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const worldIsNew = use(searchParams).future;  // so it may not exist yet
   const shouldEnterWorld = useRef(true);
+  const authenticated = useStore((state) => state.authenticated)
+
 
   useHeartbeat(socket)
 
@@ -220,7 +222,7 @@ function App({ params, searchParams }: {
           if(world_id == eventualWorlId){
             const response = await enterWorld(socket, { world_id: worldId })
             if(!response.success){
-              addServerMessage({ text: 'There was an error entering the world.', options: { asksForPassword: false, display: "wrap", fillInput: null, section: false } })
+              // addServerMessage({ text: 'There was an error entering the world.', options: { asksForPassword: false, display: "wrap", fillInput: null, section: false } })
             } else {
               addServerMessage({ text: 'Your new world is ready!', options: { asksForPassword: false, display: "wrap", fillInput: null, section: false } })
             }
@@ -228,17 +230,22 @@ function App({ params, searchParams }: {
           }
         })
       } else {
-        addServerMessage({ text: 'There was an error entering the world.', options: { asksForPassword: false, display: "wrap", fillInput: null, section: false } })
+        // addServerMessage({ text: 'There was an error entering the world.', options: { asksForPassword: false, display: "wrap", fillInput: null, section: false } })
       }
     } else {
       // addServerMessage({ text: 'You are in the world you want to be.', options: { asksForPassword: false, display: "wrap", fillInput: null, section: false } })
     }
   }
 
+  async function gameSetup(worldId: string){
+    await eventuallyEnterWorld(worldId)
+    chatbotMessage(socket, { message: "look" })
+  }
+
   useEffect(() => {
-    if(shouldEnterWorld.current == true){
+    if(authenticated && shouldEnterWorld.current == true){
       shouldEnterWorld.current = false
-      eventuallyEnterWorld(worldId)
+      gameSetup(worldId)
     }
   }, [socket, worldId, worldIsNew])
 
@@ -437,7 +444,7 @@ function App({ params, searchParams }: {
           className="flex-1 px-3 sm:px-6 whitespace-pre-wrap overflow-auto flex"
           ref={scrollRef}
         >
-          <div className="grow shrink-0 basis-auto mx-auto max-w-lg flex flex-col justify-end" ref={messageListRef}>
+          <div className="grow shrink-0 basis-auto mx-auto max-w-screen-md flex flex-col justify-end" ref={messageListRef}>
             {messages.map((message, index, array) => {
               return (
                 <Message
@@ -478,7 +485,7 @@ function App({ params, searchParams }: {
             autoCapitalize="none"
             value={inputValue}
             onChange={(e) => { setInputValue(e.target.value) }}
-            className="p-2 border rounded w-full bg-bg max-w-lg h-fit max-h-32 sm:max-h-48 md:max-h-96 focus:outline-none"
+            className="p-2 border rounded w-full bg-bg max-w-screen-md h-fit max-h-32 sm:max-h-48 md:max-h-96 focus:outline-none"
             // placeholder="Type a message"
             onKeyDown={handleKeyDownInput}
             />
@@ -491,7 +498,7 @@ function App({ params, searchParams }: {
             autoCapitalize="none"
             value={inputValue}
             onChange={(e) => { setInputValue(e.target.value) }}
-            className="p-2 border rounded w-full bg-bg max-w-lg h-fit max-h-32 sm:max-h-48 md:max-h-96 overflow-hidden focus:outline-none"
+            className="p-2 border rounded w-full bg-bg max-w-screen-md h-fit max-h-32 sm:max-h-48 md:max-h-96 overflow-hidden focus:outline-none"
             // placeholder="Type a message"
             onKeyDown={handleKeyDown}
             ref={textAreaRef}

@@ -9,7 +9,7 @@ NEW_TUTORIAL = """
     {
       "id": "9b8898f0-b9a7-463b-8e3a-3036f0848589",
       "name": "The CONGRATULATIONS! room",
-      "description": "Party blowers sound, confetti flies, and a chocolate cake with cherries and a lit candle awaits you.\n\nCongratulations, — says the voice. You have completed the challenge and finished your training. If you want to go further, enter the Architext's workshop to learn how to create your own worlds, rooms, and objects, and become a true Architext.\n\nIf you’d rather explore the worlds of others, tap the three lines in the top left corner to open the menu and select ‘Go to world selection.’\n\n🎉 Well done! A new adventure is just beginning! 🎉",
+      "description": "Party blowers sound, confetti flies, and a chocolate cake with cherries and a lit candle awaits you.\\n\\nCongratulations, — says the voice. You have completed the challenge and finished your training. If you want to go further, enter the Architext's workshop to learn how to create your own worlds, rooms, and objects, and become a true Architext.\\n\\nIf you’d rather explore the worlds of others, tap the three lines in the top left corner to open the menu and select ‘Go to world selection.’\\n\\n🎉 Well done! A new adventure is just beginning! 🎉",
       "exits": [
         {
           "name": "to the garden",
@@ -35,7 +35,7 @@ NEW_TUTORIAL = """
     {
       "id": "9efe37f0-50ef-48d5-bc52-788ce7e2cdc7",
       "name": "The Garden",
-      "description": "The light makes you squint as you step out of the laboratory into an exuberant garden. The sky is blue, and you feel the warmth of the sun on your skin.\n\nA robotic voice, coming from nowhere, speaks: Well done. In this world, things are not always so obvious. Now, you'll have to find the way forward on your own.\n\nBesides \"go\", you can also use \"look\". Type \"look\" to observe your surroundings, or \"look\" followed by an object to examine it more closely. Look around to discover the way out.\n\nThe voice falls silent, and now you can hear birds chirping. You see a tall bush shaped like a castle, a bed of flowers, and a fountain adorned with animal sculptures.",
+      "description": "The light makes you squint as you step out of the laboratory into an exuberant garden. The sky is blue, and you feel the warmth of the sun on your skin.\\n\\nA robotic voice, coming from nowhere, speaks: Well done. In this world, things are not always so obvious. Now, you'll have to find the way forward on your own.\\n\\nBesides \\"go\\", you can also use \\"look\\". Type \\"look\\" to observe your surroundings, or \\"look\\" followed by an object to examine it more closely. Look around to discover the way out.\\n\\nThe voice falls silent, and now you can hear birds chirping. You see a tall bush shaped like a castle, a bed of flowers, and a fountain adorned with animal sculptures.",
       "exits": [
         {
           "name": "back to lab room 2",
@@ -53,7 +53,7 @@ NEW_TUTORIAL = """
       "items": [
         {
           "name": "a bed of flowers",
-          "description": "It's a bed of hundreds of flowers. There are delicate lilies, vibrant tulips, fragrant roses, and cheerful daisies, along with others you don't recognize.\n\nThere doesn’t seem to be anything unusual, but as you investigate, a small sparrow suddenly appears, flying as if urging you to follow. It stops in front of a patch of scarlet poppies, where a small clearing reveals what looks like wooden ground.\n\nLooking closer—it's a trapdoor! This must be the way out. Maybe you should \"go\" towards it.",
+          "description": "It's a bed of hundreds of flowers. There are delicate lilies, vibrant tulips, fragrant roses, and cheerful daisies, along with others you don't recognize.\\n\\nThere doesn’t seem to be anything unusual, but as you investigate, a small sparrow suddenly appears, flying as if urging you to follow. It stops in front of a patch of scarlet poppies, where a small clearing reveals what looks like wooden ground.\\n\\nLooking closer—it's a trapdoor! This must be the way out. Maybe you should \\"go\\" towards it.",
           "visibility": "auto"
         },
         {
@@ -68,7 +68,7 @@ NEW_TUTORIAL = """
         },
         {
           "name": "a fountain",
-          "description": "You stand before an elegant fountain adorned with animal sculptures—stone lions, perched birds, and fish frozen mid-motion as water flows around them.\n\nYou search carefully, feeling along the carvings for a hidden lever or clue, but after a thorough inspection, you find nothing.\n\nPerhaps you should look elsewhere.",
+          "description": "You stand before an elegant fountain adorned with animal sculptures—stone lions, perched birds, and fish frozen mid-motion as water flows around them.\\n\\nYou search carefully, feeling along the carvings for a hidden lever or clue, but after a thorough inspection, you find nothing.\\n\\nPerhaps you should look elsewhere.",
           "visibility": "auto"
         }
       ]
@@ -76,7 +76,7 @@ NEW_TUTORIAL = """
     {
       "id": "d3a9ea66-c2b4-458d-8ce4-604f1cc08ee5",
       "name": "Lab Room 1",
-      "description": "You awake in a white room with a single door. A robotic voice says:\n\nWelcome, architext. My purpose is to awake your virtual limbs and senses. Please listen carefully. Type \"go door\" to cross the door into the next room. Don't type the quotation marks!",
+      "description": "You awake in a white room with a single door. A robotic voice says:\\n\\nWelcome, architext. My purpose is to awake your virtual limbs and senses. Please listen carefully. Type \\"go door\\" to cross the door into the next room. Don't type the quotation marks!",
       "exits": [
         {
           "name": "a white metal door",
@@ -90,7 +90,7 @@ NEW_TUTORIAL = """
     {
       "id": "142b5d06-6f4e-4901-8d0f-856854e4b792",
       "name": "Lab Room 2",
-      "description": "You cross the doorway into another cubic room. There is a yellow door on the wall in front of you.\n\nThe voice continues: Good job. Here all things are made of text, including your actions. To do something you type one of a few special verbs ─like \"go\"─ followed by what you are aiming your action at.\n\nIf you want to go somewhere, you type \"go\" followed by the name of one of the exits of your room.\n\nTry to use this to go to the next room. Note that you don't need to type the complete name of the exit.\n\nThe voice gives way to silence.",
+      "description": "You cross the doorway into another cubic room. There is a yellow door on the wall in front of you.\\n\\nThe voice continues: Good job. Here all things are made of text, including your actions. To do something you type one of a few special verbs ─like \\"go\\"─ followed by what you are aiming your action at.\\n\\nIf you want to go somewhere, you type \\"go\\" followed by the name of one of the exits of your room.\\n\\nTry to use this to go to the next room. Note that you don't need to type the complete name of the exit.\\n\\nThe voice gives way to silence.",
       "exits": [
         {
           "name": "a yellow wooden door",
@@ -122,12 +122,12 @@ NEW_TUTORIAL = """
       "items": [
         {
           "name": "the Advanced Architexture Manual",
-          "description": "Manual on all the things that normal people can do:\n\n- \"look\" to look at their surroundings.\n- \"look [item/exit]\" to examine something in detail.\n- \"go [exit]\" to use an exit.\n- \"items\" to get a list of all obvious items in the room.\n- \"exits\" to get a list of all obvious exits in the room.\n\nManual on all things that an architext can do:\n\n- \"craft\" to create a new object.\n- \"build\" to add a new room.\n- \"edit [item/exit]\" to modify an object or an exit.\n- \"delete [item/exit]\" to remove something permanently. ⚠ No undo!\n- \"info\" to view details of your current room.\n- \"link\" to connect two rooms with an exit.\n- \"remodel\" to edit your current room.\n- \"raze\" to delete your room and everything inside. 🚨 No turning back!\n\n⚠ You can only use architext commands in a world you own.",
+          "description": "Manual on all the things that normal people can do:\\n\\n- \\"look\\" to look at their surroundings.\\n- \\"look [item/exit]\\" to examine something in detail.\\n- \\"go [exit]\\" to use an exit.\\n- \\"items\\" to get a list of all obvious items in the room.\\n- \\"exits\\" to get a list of all obvious exits in the room.\\n\\nManual on all things that an architext can do:\\n\\n- \\"craft\\" to create a new object.\\n- \\"build\\" to add a new room.\\n- \\"edit [item/exit]\\" to modify an object or an exit.\\n- \\"delete [item/exit]\\" to remove something permanently. ⚠ No undo!\\n- \\"info\\" to view details of your current room.\\n- \\"link\\" to connect two rooms with an exit.\\n- \\"remodel\\" to edit your current room.\\n- \\"raze\\" to delete your room and everything inside. 🚨 No turning back!\\n\\n⚠ You can only use architext commands in a world you own.",
           "visibility": "listed"
         },
         {
           "name": "a huge poster displaying a brief intro on architecture",
-          "description": "The poster reads:\n\n🔨 Architext, welcome to your workshop! 🎉\n\nHere, you are like a god—you can bring your imagination to life. ✨ You can type:\n\n🛠 \"craft\" to create a new object.\n🏗 \"build\" to build a new room.\n\n💡 Try them now, and tell your family and friends that you’re a true Architext! 🏗✨\n\n⚠ You can only use these commands in a world you own. No messing around in other people's worlds! 🚫\n\nLook at the Advanced Architexture Manual for more advanced creation tools.",
+          "description": "The poster reads:\\n\\n🔨 Architext, welcome to your workshop! 🎉\\n\\nHere, you are like a god—you can bring your imagination to life. ✨ You can type:\\n\\n🛠 \\"craft\\" to create a new object.\\n🏗 \\"build\\" to build a new room.\\n\\n💡 Try them now, and tell your family and friends that you’re a true Architext! 🏗✨\\n\\n⚠ You can only use these commands in a world you own. No messing around in other people's worlds! 🚫\\n\\nLook at the Advanced Architexture Manual for more advanced creation tools.",
           "visibility": "auto"
         }
       ]
