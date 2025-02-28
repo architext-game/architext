@@ -23,11 +23,12 @@ def test_create_item_success(architext: Architext) -> None:
     architext.handle(command, "oliver")
 
     uow = cast(FakeUnitOfWork, architext._uow)
-    room = uow.rooms.get_room_by_id("olivers")
-    assert room is not None
-    print(room.items)
-    box = room.items.get("A box")
-    assert box is not None
+    with uow as transaction:
+        room = transaction.rooms.get_room_by_id("olivers")
+        assert room is not None
+        print(room.items)
+        box = room.items.get("A box")
+        assert box is not None
 
 
 def test_create_item_without_privileges_fails(architext: Architext):

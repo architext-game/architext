@@ -13,8 +13,8 @@ MISSIONS=default_missions()
 def test_complete_mission_success(uow: FakeUnitOfWork, architext: Architext) -> None:
     architext.handle(CompleteMission(mission_id=MISSIONS.tutorial.id), 'oliver')
 
-    with uow:
-        mission_log = uow.missions.get_mission_log(mission_id=MISSIONS.tutorial.id, user_id='oliver')
+    with uow as transaction:
+        mission_log = transaction.missions.get_mission_log(mission_id=MISSIONS.tutorial.id, user_id='oliver')
         assert mission_log is not None
         assert mission_log.completed_at is not None
 

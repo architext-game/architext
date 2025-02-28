@@ -27,7 +27,7 @@ def channel() -> FakeMessagingChannel:
 def session_factory(channel: FakeMessagingChannel) -> Callable[[str], Session]:
     def factory(user_id: str):
         uow = createTestUow()
-        uow.notifier = MultiNotifier(multi_notifier_mapping_factory(
+        uow._notifier = MultiNotifier(multi_notifier_mapping_factory(
             chatbot=ChatbotNotifier(channel=channel),
             web=FakeNotifier()
         ))

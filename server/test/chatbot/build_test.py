@@ -19,15 +19,16 @@ def test_build_success(channel: FakeMessagingChannel, session_factory: Callable[
     print(sent_text)
 
     uow = session.architext._uow
-    new_room = next((room for room in uow.rooms.list_rooms() if room.name == "Living Room"), None)
-    old_room = uow.rooms.get_room_by_id("olivers")
-    assert new_room is not None
-    assert old_room is not None
-    assert new_room.name == "Living Room"
-    assert new_room.description == "A cozy living room"
-    assert new_room.exits["Door to kitchen"].destination_room_id == old_room.id
-    assert old_room.exits["Door to living room"].destination_room_id == new_room.id
-    assert "I don't understand that." in sent_text  # check if "adadasdas" was processed as a new command
+    with uow as transaction:
+        new_room = next((room for room in transaction.rooms.list_rooms() if room.name == "Living Room"), None)
+        old_room = transaction.rooms.get_room_by_id("olivers")
+        assert new_room is not None
+        assert old_room is not None
+        assert new_room.name == "Living Room"
+        assert new_room.description == "A cozy living room"
+        assert new_room.exits["Door to kitchen"].destination_room_id == old_room.id
+        assert old_room.exits["Door to living room"].destination_room_id == new_room.id
+        assert "I don't understand that." in sent_text  # check if "adadasdas" was processed as a new command
 
 
 def test_build_error_messages(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):

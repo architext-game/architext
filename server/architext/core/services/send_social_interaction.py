@@ -5,8 +5,8 @@ from architext.core.domain.events import UserChangedRoom
 
 
 def send_social_interaction(uow: UnitOfWork, command: SendSocialInteraction, client_user_id: str) -> SendSocialInteractionResult:
-    with uow:
-        user = uow.users.get_user_by_id(user_id=client_user_id)
+    with uow as transaction:
+        user = transaction.users.get_user_by_id(user_id=client_user_id)
 
         if user is None:
             raise ValueError("User does not exist.")
@@ -14,13 +14,13 @@ def send_social_interaction(uow: UnitOfWork, command: SendSocialInteraction, cli
         if user.room_id is None:
             raise ValueError("User is not in a room.")
     
-        room = uow.rooms.get_room_by_id(user.room_id)
+        room = transaction.rooms.get_room_by_id(user.room_id)
         assert room is not None
 
-        users_in_room = uow.users.get_users_in_room(room.id)
+        users_in_room = transaction.users.get_users_in_room(room.id)
 
         for other_user in users_in_room:
-            uow.notifier.notify(other_user.id, SocialInteractionNotification(
+            transaction.notifier.notify(other_user.id, SocialInteractionNotification(
                 user_name=user.name,
                 content=command.content,
                 kind=command.type,

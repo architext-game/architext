@@ -1,4 +1,5 @@
 from typing import cast
+from architext.core.adapters.sqlalchemy.uow import SQLAlchemyUnitOfWork
 from architext.core.facade import Architext
 import pytest # type: ignore
 from architext.core.adapters.fake_uow import FakeUnitOfWork
@@ -12,9 +13,6 @@ from architext.core.domain.entities.world import DEFAULT_WORLD, World
 
 from test.fixtures import createTestArchitext
 
-@pytest.fixture
-def architext() -> Architext:
-    return createTestArchitext()
 
 def test_create_connected_room_success(architext: Architext):
     command = CreateConnectedRoom(
@@ -28,15 +26,20 @@ def test_create_connected_room_success(architext: Architext):
     out: CreateConnectedRoomResult = architext.handle(command, client_user_id="oliver")
 
     uow = cast(FakeUnitOfWork, architext._uow)
-    new_room = uow.rooms.get_room_by_id(out.room_id)
-    old_room = uow.rooms.get_room_by_id("olivers")
+    with uow as transaction:
+        new_room = transaction.rooms.get_room_by_id(out.room_id)
+        old_room = transaction.rooms.get_room_by_id("olivers")
+        assert new_room is not None
+        assert old_room is not None
+        assert new_room.name == "Living Room"
+        assert new_room.description == "A cozy living room"
+        assert new_room.exits["Door to kitchen"].description == "A door leading to the kitchen"
+        assert old_room.exits["Door to living room"].description == "A door leading to the living room"
     assert uow.committed
-    assert new_room is not None
-    assert old_room is not None
-    assert new_room.name == "Living Room"
-    assert new_room.description == "A cozy living room"
-    assert new_room.exits["Door to kitchen"].description == "A door leading to the kitchen"
-    assert old_room.exits["Door to living room"].description == "A door leading to the living room"
+
+    sqluow = cast(SQLAlchemyUnitOfWork, architext._uow)
+    sqluow.session_factory()
+    
 
 
 def test_unauthorized_user_fails(architext: Architext):

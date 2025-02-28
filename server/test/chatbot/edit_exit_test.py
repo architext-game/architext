@@ -21,10 +21,11 @@ def test_edit_exit_name_success(channel: FakeMessagingChannel, session_factory: 
     assert "Edition completed" in sent_text
     assert "I don't understand that." in sent_text
     uow = session.architext._uow
-    olivers = uow.rooms.get_room_by_id("olivers")
-    assert olivers is not None
-    assert olivers.exits.get("Hatch") is not None
-    assert olivers.exits.get("To the spaceship") is None
+    with uow as transaction:
+        olivers = transaction.rooms.get_room_by_id("olivers")
+        assert olivers is not None
+        assert olivers.exits.get("Hatch") is not None
+        assert olivers.exits.get("To the spaceship") is None
     
 
 def test_edit_exit_description_success(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):
@@ -41,11 +42,12 @@ def test_edit_exit_description_success(channel: FakeMessagingChannel, session_fa
     assert "Edition completed" in sent_text
     assert "I don't understand that." in sent_text
     uow = session.architext._uow
-    olivers = uow.rooms.get_room_by_id("olivers")
-    assert olivers is not None
-    exit = olivers.exits.get("To the spaceship")
-    assert exit is not None
-    assert exit.description == "This is a great exit! :D"
+    with uow as transaction:
+        olivers = transaction.rooms.get_room_by_id("olivers")
+        assert olivers is not None
+        exit = olivers.exits.get("To the spaceship")
+        assert exit is not None
+        assert exit.description == "This is a great exit! :D"
 
 
 def test_edit_exit_visibility_success(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):
@@ -62,11 +64,12 @@ def test_edit_exit_visibility_success(channel: FakeMessagingChannel, session_fac
     assert "Edition completed" in sent_text
     assert "I don't understand that." in sent_text
     uow = session.architext._uow
-    olivers = uow.rooms.get_room_by_id("olivers")
-    assert olivers is not None
-    exit = olivers.exits.get("To the spaceship")
-    assert exit is not None
-    assert exit.visibility == "hidden"
+    with uow as transaction:
+        olivers = transaction.rooms.get_room_by_id("olivers")
+        assert olivers is not None
+        exit = olivers.exits.get("To the spaceship")
+        assert exit is not None
+        assert exit.visibility == "hidden"
 
 
 def test_edit_exit_destination_success(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):
@@ -83,11 +86,12 @@ def test_edit_exit_destination_success(channel: FakeMessagingChannel, session_fa
     assert "Edition completed" in sent_text
     assert "I don't understand that." in sent_text
     uow = session.architext._uow
-    olivers = uow.rooms.get_room_by_id("olivers")
-    assert olivers is not None
-    exit = olivers.exits.get("To the spaceship")
-    assert exit is not None
-    assert exit.destination_room_id == "alices"
+    with uow as transaction:
+        olivers = transaction.rooms.get_room_by_id("olivers")
+        assert olivers is not None
+        exit = olivers.exits.get("To the spaceship")
+        assert exit is not None
+        assert exit.destination_room_id == "alices"
 
 
 def test_edit_by_unauthorized_user_fails(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):

@@ -23,10 +23,11 @@ def test_edit_item_name_success(session_factory: Callable[[str], Session]):
     assert "Edition completed" in sent_text
     assert "I don't understand that." in sent_text
     uow = session.architext._uow
-    olivers = uow.rooms.get_room_by_id("olivers")
-    assert olivers is not None
-    assert olivers.items.get("A Donut") is not None
-    assert olivers.items.get("A Toroid") is None
+    with uow as transaction:
+        olivers = transaction.rooms.get_room_by_id("olivers")
+        assert olivers is not None
+        assert olivers.items.get("A Donut") is not None
+        assert olivers.items.get("A Toroid") is None
     
 
 def test_edit_item_description_success(session_factory: Callable[[str], Session]):
@@ -45,11 +46,12 @@ def test_edit_item_description_success(session_factory: Callable[[str], Session]
     assert "Edition completed" in sent_text
     assert "I don't understand that." in sent_text
     uow = session.architext._uow
-    olivers = uow.rooms.get_room_by_id("olivers")
-    assert olivers is not None
-    item = olivers.items.get("A toroid")
-    assert item is not None
-    assert item.description == "It's just like a donut"
+    with uow as transaction:
+        olivers = transaction.rooms.get_room_by_id("olivers")
+        assert olivers is not None
+        item = olivers.items.get("A toroid")
+        assert item is not None
+        assert item.description == "It's just like a donut"
 
 
 def test_edit_item_visibility_success(session_factory: Callable[[str], Session]):
@@ -68,11 +70,12 @@ def test_edit_item_visibility_success(session_factory: Callable[[str], Session])
     assert "Edition completed" in sent_text
     assert "I don't understand that." in sent_text
     uow = session.architext._uow
-    olivers = uow.rooms.get_room_by_id("olivers")
-    assert olivers is not None
-    item = olivers.items.get("A toroid")
-    assert item is not None
-    assert item.visibility == "hidden"
+    with uow as transaction:
+        olivers = transaction.rooms.get_room_by_id("olivers")
+        assert olivers is not None
+        item = olivers.items.get("A toroid")
+        assert item is not None
+        assert item.visibility == "hidden"
 
 
 def test_edit_item_error_messages(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):

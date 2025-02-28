@@ -12,7 +12,7 @@ from architext.core.domain.events import Event
 from architext.core.adapters.memory_room_repository import MemoryRoomRepository
 from architext.core.adapters.memory_user_repository import MemoryUserRepository
 from architext.core.messagebus import MessageBus
-from architext.core.ports.unit_of_work import UnitOfWork
+from architext.core.ports.unit_of_work import Transaction, UnitOfWork
 from architext.core.querymanager import QueryManager, uow_query_handlers_factory
 from sqlalchemy.orm import Session, sessionmaker
 
@@ -21,15 +21,15 @@ class SQLAlchemyUnitOfWork(UnitOfWork):
     def __init__(self, session_factory: sessionmaker) -> None:
         self.session_factory = session_factory
         self.db_session: Session = self.session_factory()
-        self.users = SQLAlchemyUserRepository(self.db_session)
-        self.rooms = SQLAlchemyRoomRepository(self.db_session)
-        self.worlds = SQLAlchemyWorldRepository(self.db_session)
-        self.world_templates = SQLAlchemyWorldTemplateRepository(self.db_session)
-        self.missions = SQLAlchemyMissionRepository(self.db_session)
+        self._users = SQLAlchemyUserRepository(self.db_session)
+        self._rooms = SQLAlchemyRoomRepository(self.db_session)
+        self._worlds = SQLAlchemyWorldRepository(self.db_session)
+        self._world_templates = SQLAlchemyWorldTemplateRepository(self.db_session)
+        self._missions = SQLAlchemyMissionRepository(self.db_session)
         self.queries = QueryManager(uow_query_handlers_factory(self))
         self.messagebus = MessageBus()
-        self.external_events = FakeExternalEventPublisher(self)
-        self.notifier = FakeNotifier()
+        self._external_events = FakeExternalEventPublisher(self)
+        self._notifier = FakeNotifier()
         self.published_events: List[Event] = []  # to keep track of published events in tests
         self.committed = False
 
@@ -42,7 +42,7 @@ class SQLAlchemyUnitOfWork(UnitOfWork):
         self.committed = True
         self.db_session.commit()
 
-    def __enter__(self) -> None:
+    def __enter__(self) -> Transaction:
         self.committed = False
         self.db_session = self.session_factory()
         self.users = SQLAlchemyUserRepository(self.db_session)
@@ -50,6 +50,8 @@ class SQLAlchemyUnitOfWork(UnitOfWork):
         self.worlds = SQLAlchemyWorldRepository(self.db_session)
         self.world_templates = SQLAlchemyWorldTemplateRepository(self.db_session)
         self.missions = SQLAlchemyMissionRepository(self.db_session)
+
+        return super().__enter__()
 
     def rollback(self):
         self.db_session.rollback()

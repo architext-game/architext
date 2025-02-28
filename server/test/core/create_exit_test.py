@@ -25,11 +25,12 @@ def test_create_exit_success(architext: Architext) -> None:
     architext.handle(command, "oliver")
 
     uow = cast(FakeUnitOfWork, architext._uow)
-    room = uow.rooms.get_room_by_id("olivers")
-    assert room is not None
-    print(room.exits)
-    exit = room.exits.get("A fancy door")
-    assert exit is not None
+    with uow as transaction:
+        room = transaction.rooms.get_room_by_id("olivers")
+        assert room is not None
+        print(room.exits)
+        exit = room.exits.get("A fancy door")
+        assert exit is not None
 
 
 def test_exit_to_another_world_fails(architext: Architext):
@@ -45,10 +46,11 @@ def test_exit_to_another_world_fails(architext: Architext):
         architext.handle(command, "oliver")
 
     uow = cast(FakeUnitOfWork, architext._uow)
-    room = uow.rooms.get_room_by_id("olivers")
-    assert room is not None
-    exit = room.exits.get("A fancy door")
-    assert exit is None
+    with uow as transaction:
+        room = transaction.rooms.get_room_by_id("olivers")
+        assert room is not None
+        exit = room.exits.get("A fancy door")
+        assert exit is None
 
 
 def test_create_exit_without_privileges_fails(architext: Architext):
@@ -64,10 +66,11 @@ def test_create_exit_without_privileges_fails(architext: Architext):
         architext.handle(command, "alice")
 
     uow = cast(FakeUnitOfWork, architext._uow)
-    room = uow.rooms.get_room_by_id("olivers")
-    assert room is not None
-    exit = room.exits.get("A fancy door")
-    assert exit is None
+    with uow as transaction:
+        room = transaction.rooms.get_room_by_id("olivers")
+        assert room is not None
+        exit = room.exits.get("A fancy door")
+        assert exit is None
 
 
 def test_create_exit_from_invalid_room_fails(architext: Architext):
@@ -96,10 +99,11 @@ def test_create_exit_to_invalid_room_fails(architext: Architext):
         architext.handle(command, "oliver")
 
     uow = cast(FakeUnitOfWork, architext._uow)
-    room = uow.rooms.get_room_by_id("olivers")
-    assert room is not None
-    exit = room.exits.get("A fancy door")
-    assert exit is None
+    with uow as transaction:
+        room = transaction.rooms.get_room_by_id("olivers")
+        assert room is not None
+        exit = room.exits.get("A fancy door")
+        assert exit is None
 
 
 def test_create_exit_with_existing_name_fails(architext: Architext):

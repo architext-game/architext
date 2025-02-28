@@ -5,14 +5,14 @@ from architext.core.ports.unit_of_work import UnitOfWork
 
 
 def edit_item(uow: UnitOfWork, command: EditItem, client_user_id: str) -> EditItemResult:
-    with uow:
-        assertUserIsAuthorizedInCurrentWorld(uow, client_user_id)
-        user = uow.users.get_user_by_id(user_id=client_user_id)
+    with uow as transaction:
+        assertUserIsAuthorizedInCurrentWorld(transaction, client_user_id)
+        user = transaction.users.get_user_by_id(user_id=client_user_id)
 
         if user is None:
             raise ValueError("User does not exist.")
     
-        room = uow.rooms.get_room_by_id(command.room_id)
+        room = transaction.rooms.get_room_by_id(command.room_id)
 
         if room is None:
             raise ValueError("Room does not exist")
@@ -29,8 +29,8 @@ def edit_item(uow: UnitOfWork, command: EditItem, client_user_id: str) -> EditIt
         )
 
         room.replace_item(item, new_item)
-        uow.rooms.save_room(room)
+        transaction.rooms.save_room(room)
 
-        uow.commit()
+        transaction.commit()
 
     return EditItemResult()

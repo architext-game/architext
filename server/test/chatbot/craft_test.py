@@ -20,13 +20,14 @@ def test_craft_item_success(channel: FakeMessagingChannel, session_factory: Call
     assert "Your new item is ready" in channel.unread
 
     uow = session.architext._uow
-    olivers = uow.rooms.get_room_by_id("olivers")
-    assert olivers is not None
-    item = olivers.items.get("A brand new item")
-    assert item is not None
-    assert item.name == "A brand new item"
-    assert item.description == "This is the perfect item for everyone"
-    assert item.visibility == 'listed'
+    with uow as transaction:
+        olivers = transaction.rooms.get_room_by_id("olivers")
+        assert olivers is not None
+        item = olivers.items.get("A brand new item")
+        assert item is not None
+        assert item.name == "A brand new item"
+        assert item.description == "This is the perfect item for everyone"
+        assert item.visibility == 'listed'
 
 def test_craft_hidden_item_success(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):
     session = session_factory("oliver")
@@ -37,11 +38,12 @@ def test_craft_hidden_item_success(channel: FakeMessagingChannel, session_factor
     session.process_message("h")
 
     uow = session.architext._uow
-    olivers = uow.rooms.get_room_by_id("olivers")
-    assert olivers is not None
-    item = olivers.items.get("A brand new item")
-    assert item is not None
-    assert item.visibility == 'hidden'
+    with uow as transaction:
+        olivers = transaction.rooms.get_room_by_id("olivers")
+        assert olivers is not None
+        item = olivers.items.get("A brand new item")
+        assert item is not None
+        assert item.visibility == 'hidden'
     
 
 def test_craft_error_messages(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):

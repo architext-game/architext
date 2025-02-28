@@ -8,29 +8,31 @@ from architext.core.messagebus import MessageBus
 def test_enter_world_for_the_first_time_puts_user_in_starting_room(architext: Architext):
     architext.handle(EnterWorld(world_id="outer"), client_user_id="hunter")
 
-    hunter = architext._uow.users.get_user_by_id("hunter")
-    assert hunter is not None
-    assert hunter.room_id == "space"
-    room = architext._uow.rooms.get_room_by_id(hunter.room_id)
-    assert room is not None
-    assert room.world_id == "outer"
-    world = architext._uow.worlds.get_world_by_id(room.world_id)
-    assert world is not None
-    assert world.name == "Outer Wilds"
+    with architext._uow as transaction:
+        hunter = transaction.users.get_user_by_id("hunter")
+        assert hunter is not None
+        assert hunter.room_id == "space"
+        room = transaction.rooms.get_room_by_id(hunter.room_id)
+        assert room is not None
+        assert room.world_id == "outer"
+        world = transaction.worlds.get_world_by_id(room.world_id)
+        assert world is not None
+        assert world.name == "Outer Wilds"
 
 
 def test_enter_world_again_puts_user_in_last_visited_room(architext: Architext):
     architext.handle(EnterWorld(world_id="outer"), client_user_id="rabbit")
 
-    rabbit = architext._uow.users.get_user_by_id("rabbit")
-    assert rabbit is not None
-    assert rabbit.room_id == "bobs"
-    room = architext._uow.rooms.get_room_by_id(rabbit.room_id)
-    assert room is not None
-    assert room.world_id == "outer"
-    world = architext._uow.worlds.get_world_by_id(room.world_id)
-    assert world is not None
-    assert world.name == "Outer Wilds"
+    with architext._uow as transaction:
+        rabbit = transaction.users.get_user_by_id("rabbit")
+        assert rabbit is not None
+        assert rabbit.room_id == "bobs"
+        room = transaction.rooms.get_room_by_id(rabbit.room_id)
+        assert room is not None
+        assert room.world_id == "outer"
+        world = transaction.worlds.get_world_by_id(room.world_id)
+        assert world is not None
+        assert world.name == "Outer Wilds"
 
 
 def test_enter_world_that_does_not_exist(architext: Architext):

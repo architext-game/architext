@@ -17,13 +17,14 @@ def test_create_template_success(architext: Architext):
         description="I just made this template",
         base_world_id="outer"
     ), client_user_id="oliver")
-    template = architext._uow.world_templates.get_world_template_by_id(create_template_result.template_id)
-    assert template is not None
-    original_text = architext.query(WorldToText(world_id="outer", format="encoded"), client_user_id="oliver").text_representation
-    assert template.world_encoded_json == original_text
-    assert template.author_id == "oliver"
-    assert template.name == "My new template"
-    assert template.description == "I just made this template"
+    with architext._uow as transaction:
+        template = transaction.world_templates.get_world_template_by_id(create_template_result.template_id)
+        assert template is not None
+        original_text = architext.query(WorldToText(world_id="outer", format="encoded"), client_user_id="oliver").text_representation
+        assert template.world_encoded_json == original_text
+        assert template.author_id == "oliver"
+        assert template.name == "My new template"
+        assert template.description == "I just made this template"
 
 
 def test_unauthorized_user_cant_create_template(architext: Architext):

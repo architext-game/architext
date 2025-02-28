@@ -18,10 +18,10 @@ def test_request_world_import_success(architext: Architext):
         format='encoded'
     ), client_user_id="oliver")
 
-    fake_uow = cast(FakeUnitOfWork, architext._uow)
-    external_events = cast(FakeExternalEventPublisher, architext._uow.external_events)
-    creation_request_event = next((event for event in external_events.published_events if type(event) == WorldCreationRequested), None)
-    assert creation_request_event is not None
-    assert creation_request_event.format == 'encoded'
-    assert creation_request_event.user_id == "oliver"
-    assert creation_request_event.text_representation == ENCODED_TEMPLATE
+    with architext._uow as transaction:
+        external_events = cast(FakeExternalEventPublisher, transaction.external_events)
+        creation_request_event = next((event for event in external_events.published_events if type(event) == WorldCreationRequested), None)
+        assert creation_request_event is not None
+        assert creation_request_event.format == 'encoded'
+        assert creation_request_event.user_id == "oliver"
+        assert creation_request_event.text_representation == ENCODED_TEMPLATE

@@ -9,16 +9,17 @@ from ..authorization import isUserAuthorizedInWorld
 
 
 def create_template(uow: UnitOfWork, command: CreateTemplate, client_user_id: str) -> CreateTemplateResult:
-    with uow:
-        if not isUserAuthorizedInWorld(uow, client_user_id, command.base_world_id):
+    world_to_text_result = uow.queries.query(WorldToText(
+        format='encoded', world_id=command.base_world_id
+    ), client_user_id)
+    
+    with uow as transaction:
+        if not isUserAuthorizedInWorld(transaction, client_user_id, command.base_world_id):
             raise PermissionError("User is not authorized to create a template from that world.")
         
-        user = uow.users.get_user_by_id(client_user_id)
+        user = transaction.users.get_user_by_id(client_user_id)
         assert user is not None
         
-        world_to_text_result = uow.queries.query(WorldToText(
-            format='encoded', world_id=command.base_world_id
-        ), client_user_id)
         text_representation = world_to_text_result.text_representation
         
         template = WorldTemplate(
@@ -28,9 +29,9 @@ def create_template(uow: UnitOfWork, command: CreateTemplate, client_user_id: st
             author_id=user.id,
             world_encoded_json=text_representation
         )
-        uow.world_templates.save_world_template(template)
+        transaction.world_templates.save_world_template(template)
         
-        uow.commit()
+        transaction.commit()
 
     return CreateTemplateResult(
         template_id=template.id

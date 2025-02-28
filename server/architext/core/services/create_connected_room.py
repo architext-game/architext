@@ -7,16 +7,16 @@ from uuid import uuid4
 from ..authorization import getUserAuthorizedInCurrentWorld
 
 def create_connected_room(uow: UnitOfWork, command: CreateConnectedRoom, client_user_id: str) -> CreateConnectedRoomResult:
-    with uow:
-        user = getUserAuthorizedInCurrentWorld(uow, client_user_id)
+    with uow as transaction:
+        user = getUserAuthorizedInCurrentWorld(transaction, client_user_id)
         if not user:
             raise PermissionError("User is not in a world where she is authorized.")
         if user.room_id is None:
             raise ValueError("User needs to be in a room to create a connected room.")
-        old_room = uow.rooms.get_room_by_id(user.room_id)
+        old_room = transaction.rooms.get_room_by_id(user.room_id)
         assert old_room is not None
         new_room = Room(name=command.name, description=command.description, id=str(uuid4()), world_id=old_room.world_id)
-        uow.rooms.save_room(new_room)
+        transaction.rooms.save_room(new_room)
         old_room.add_exit(Exit(  # With changes
             name=command.exit_to_new_room_name, 
             description=command.exit_to_new_room_description, 
@@ -28,10 +28,10 @@ def create_connected_room(uow: UnitOfWork, command: CreateConnectedRoom, client_
             destination_room_id=old_room.id, 
         ))
 
-        uow.rooms.save_room(old_room)
-        uow.rooms.save_room(new_room)
+        transaction.rooms.save_room(old_room)
+        transaction.rooms.save_room(new_room)
 
-        uow.commit()
+        transaction.commit()
 
     return CreateConnectedRoomResult(
         room_id=new_room.id

@@ -69,7 +69,7 @@ if __name__ == "__main__":
     channel = SocketIOMessagingChannel(sio, user_id_to_socket_id=sid_to_user_id.inverse)
     uow = SQLAlchemyUnitOfWork(session_factory=db_connection(at='file'))
     architext = Architext(uow=uow)    
-    architext._uow.notifier = MultiNotifier(
+    architext._uow._notifier = MultiNotifier(
         multi_notifier_mapping_factory(
             chatbot=ChatbotNotifier(channel),
             web=SioNotifier(sio=sio, user_id_to_socket_id=sid_to_user_id.inverse)

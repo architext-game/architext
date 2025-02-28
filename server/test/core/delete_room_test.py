@@ -17,8 +17,9 @@ def test_delete_room_deletes_room(architext: Architext) -> None:
     architext.handle(command, "oliver")
 
     uow = cast(FakeUnitOfWork, architext._uow)
-    room = uow.rooms.get_room_by_id("olivers")
-    assert room is None
+    with uow as transaction:
+        room = transaction.rooms.get_room_by_id("olivers")
+        assert room is None
 
 
 def test_delete_room_deletes_connected_exits(architext: Architext) -> None:
@@ -26,9 +27,10 @@ def test_delete_room_deletes_connected_exits(architext: Architext) -> None:
     architext.handle(command, "oliver")
 
     uow = cast(FakeUnitOfWork, architext._uow)
-    rooms = uow.rooms.list_rooms()
-    for room in rooms:
-        assert next((exit for exit in room.exits.values() if exit.destination_room_id == "olivers"), None) is None
+    with uow as transaction:
+        rooms = transaction.rooms.list_rooms()
+        for room in rooms:
+            assert next((exit for exit in room.exits.values() if exit.destination_room_id == "olivers"), None) is None
 
 
 def test_delete_room_moves_users_to_initial_room(architext: Architext) -> None:
@@ -36,7 +38,8 @@ def test_delete_room_moves_users_to_initial_room(architext: Architext) -> None:
     architext.handle(command, "oliver")
     uow = cast(FakeUnitOfWork, architext._uow)
 
-    user = uow.users.get_user_by_id("oliver")
+    with uow as transaction:
+        user = transaction.users.get_user_by_id("oliver")
     assert user is not None
     assert user.room_id == "space"
 

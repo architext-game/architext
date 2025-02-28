@@ -4,14 +4,15 @@ from architext.core.domain.events import UserBecameActive
 
 
 def notify_other_became_active(uow: UnitOfWork, event: UserBecameActive):
-    users = uow.users.get_users_in_room(event.room_id)
-    
-    for user in users:
-        if user.id == event.user_id:
-            continue
-        uow.notifier.notify(user.id, UserEnteredRoomNotification(
-            user_name=event.user_name,
-            movement="reconnected",
-            through_exit_name=None
-        ))
+    with uow as transaction:
+        users = transaction.users.get_users_in_room(event.room_id)
+        
+        for user in users:
+            if user.id == event.user_id:
+                continue
+            transaction.notifier.notify(user.id, UserEnteredRoomNotification(
+                user_name=event.user_name,
+                movement="reconnected",
+                through_exit_name=None
+            ))
         

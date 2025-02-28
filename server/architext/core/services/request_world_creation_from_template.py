@@ -4,15 +4,15 @@ from architext.core.commands import RequestWorldCreationFromTemplate, RequestWor
 import uuid
 
 def request_world_creation_from_template(uow: UnitOfWork, command: RequestWorldCreationFromTemplate, client_user_id: str) -> RequestWorldCreationFromTemplateResult:
-    with uow:
-        user = uow.users.get_user_by_id(client_user_id)
+    with uow as transaction:
+        user = transaction.users.get_user_by_id(client_user_id)
         assert user is not None
-        template = uow.world_templates.get_world_template_by_id(command.template_id)
+        template = transaction.world_templates.get_world_template_by_id(command.template_id)
         assert template is not None
 
         future_world_id = str(uuid.uuid4())
 
-        uow.external_events.publish(WorldCreationRequested(
+        transaction.external_events.publish(WorldCreationRequested(
             future_world_id=future_world_id,
             user_id=user.id,
             world_name=command.name,
@@ -23,7 +23,7 @@ def request_world_creation_from_template(uow: UnitOfWork, command: RequestWorldC
             visibility='private',
         ))
 
-        uow.commit()
+        transaction.commit()
 
     return RequestWorldCreationFromTemplateResult(
         future_world_id=future_world_id

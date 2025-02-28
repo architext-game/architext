@@ -52,10 +52,11 @@ def test_look_room_dont_show_hidden_exits(session: Session):
     # if the secret exit is removed from the fixtures,
     # so let'd check that it's still there
     uow = cast(FakeUnitOfWork, session.architext._uow)
-    room = uow.rooms.get_room_by_id("olivers")
-    assert room is not None
-    exit = room.exits.get("Secret exit")
-    assert exit is not None
+    with uow as transaction:
+        room = transaction.rooms.get_room_by_id("olivers")
+        assert room is not None
+        exit = room.exits.get("Secret exit")
+        assert exit is not None
 
 
 def test_look_room_dont_show_visible_exits(session: Session):

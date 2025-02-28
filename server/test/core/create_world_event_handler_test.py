@@ -22,13 +22,14 @@ def test_import_the_monks_riddle(architext: Architext):
         future_world_id=world_id,
         visibility='private',
     ))
-    world = get_by_name("The Monk's Riddleasdf", architext._uow.worlds.list_worlds())
-    assert world.name == "The Monk's Riddleasdf"
-    assert len(architext._uow.rooms.list_rooms_by_world(world.id)) == 35
-    initial_room = architext._uow.rooms.get_room_by_id(world.initial_room_id)
-    assert initial_room is not None
-    assert "a poster" in initial_room.items
-    assert "a traslucent portal" in initial_room.exits
+    with architext._uow as transaction:
+        world = get_by_name("The Monk's Riddleasdf", transaction.worlds.list_worlds())
+        assert world.name == "The Monk's Riddleasdf"
+        assert len(transaction.rooms.list_rooms_by_world(world.id)) == 35
+        initial_room = transaction.rooms.get_room_by_id(world.initial_room_id)
+        assert initial_room is not None
+        assert "a poster" in initial_room.items
+        assert "a traslucent portal" in initial_room.exits
 
 
 def test_world_created_event_is_published(architext: Architext):
@@ -44,11 +45,12 @@ def test_world_created_event_is_published(architext: Architext):
         visibility='private',
     ))
     uow = cast(FakeUnitOfWork, architext._uow)
-    external_events = cast(FakeExternalEventPublisher, architext._uow.external_events)
-    world_created_event = next((event for event in external_events.published_events if type(event) == WorldCreated), None)
-    assert world_created_event is not None
-    assert world_created_event.owner_id == "oliver"
-    world_id = world_created_event.world_id
-    world = uow.worlds.get_world_by_id(world_id)
-    assert world is not None
-    assert world.name == "The Monk's Riddle"
+    with uow as transaction:
+        external_events = cast(FakeExternalEventPublisher, transaction.external_events)
+        world_created_event = next((event for event in external_events.published_events if type(event) == WorldCreated), None)
+        assert world_created_event is not None
+        assert world_created_event.owner_id == "oliver"
+        world_id = world_created_event.world_id
+        world = transaction.worlds.get_world_by_id(world_id)
+        assert world is not None
+        assert world.name == "The Monk's Riddle"

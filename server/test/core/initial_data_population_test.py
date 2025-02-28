@@ -19,23 +19,23 @@ def architext() -> Architext:
 def test_setup_command_populates_initial_data(architext: Architext):
     architext.handle(Setup())
     uow = architext._uow
-    with uow:
-        assert len(uow.worlds.list_worlds()) == 1
-        assert uow.worlds.get_world_by_id(world_id="monks_riddle") is not None
-        assert len(uow.world_templates.list_world_templates()) == 1
-        assert uow.world_templates.get_world_template_by_id(world_template_id="empty_template") is not None
+    with uow as transaction:
+        assert len(transaction.worlds.list_worlds()) == 1
+        assert transaction.worlds.get_world_by_id(world_id="monks_riddle") is not None
+        assert len(transaction.world_templates.list_world_templates()) == 1
+        assert transaction.world_templates.get_world_template_by_id(world_template_id="empty_template") is not None
         for mission in default_missions().all:
-            assert uow.missions.get_mission_by_id(mission.id) is not None
+            assert transaction.missions.get_mission_by_id(mission.id) is not None
 
 
 def test_setup_command_is_idempotent(architext: Architext):
     architext.handle(Setup())
     architext.handle(Setup())
     uow = architext._uow
-    with uow:
-        assert len(uow.worlds.list_worlds()) == 1
-        assert len(uow.world_templates.list_world_templates()) == 1
-        assert len(uow.missions.list_missions()) == len(default_missions().all)
+    with uow as transaction:
+        assert len(transaction.worlds.list_worlds()) == 1
+        assert len(transaction.world_templates.list_world_templates()) == 1
+        assert len(transaction.missions.list_missions()) == len(default_missions().all)
         
 
 def test_tutorial_world_is_created_for_each_user(architext: Architext):
@@ -55,7 +55,7 @@ def test_tutorial_world_is_created_for_each_user(architext: Architext):
     )
     architext.handle(command)
 
-    with architext._uow:
-        assert len(architext._uow.users.list_users()) == 2
-        assert len(architext._uow.worlds.list_worlds()) == 2
+    with architext._uow as transaction:
+        assert len(transaction.users.list_users()) == 2
+        assert len(transaction.worlds.list_worlds()) == 2
 

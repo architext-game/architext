@@ -16,9 +16,10 @@ def test_traverse_exit_success(architext: Architext):
     out: TraverseExitResult = architext.handle(TraverseExit(exit_name="To Alice's Room"), client_user_id="oliver")
 
     assert out.new_room_id == "alices"
-    user = architext._uow.users.get_user_by_id("oliver")
-    assert user is not None
-    assert user.room_id == "alices" 
+    with architext._uow as transaction:
+        user = transaction.users.get_user_by_id("oliver")
+        assert user is not None
+        assert user.room_id == "alices" 
 
 
 def test_traverse_exit_user_not_in_room(architext: Architext):
@@ -47,7 +48,7 @@ def test_user_changed_room_event_gets_invoked(architext: Architext):
 
 def test_should_notify_user_entered_room(architext: Architext) -> None:
     notifier = FakeNotifier()
-    architext._uow.notifier = notifier
+    architext._uow._notifier = notifier
 
     architext.handle(
         command=TraverseExit(
@@ -66,7 +67,7 @@ def test_should_notify_user_entered_room(architext: Architext) -> None:
 
 def test_should_notify_user_left_room(architext: Architext) -> None:
     notifier = FakeNotifier()
-    architext._uow.notifier = notifier
+    architext._uow._notifier = notifier
     
     architext.handle(
         command=TraverseExit(

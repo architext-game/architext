@@ -29,10 +29,11 @@ def test_create_user_success(architext: Architext):
     result: CreateUserResult = out
     assert cast(FakeUnitOfWork, architext._uow).committed
     assert result.user_id is not None
-    saved_user = architext._uow.users.get_user_by_id(result.user_id)
-    assert saved_user is not None
-    assert saved_user.name == command.name
-    assert saved_user.email == command.email
+    with architext._uow as transaction:
+        saved_user = transaction.users.get_user_by_id(result.user_id)
+        assert saved_user is not None
+        assert saved_user.name == command.name
+        assert saved_user.email == command.email
 
 
 def test_create_user_missing_fields(architext: Architext):
@@ -88,8 +89,8 @@ def test_create_user_list_users(architext: Architext):
         )
     )
 
-    with architext._uow:
-        users = architext._uow.users.list_users()
+    with architext._uow as transaction:
+        users = transaction.users.list_users()
         user_names = [user.name for user in users]
         print(user_names)
         assert len(users) == 10

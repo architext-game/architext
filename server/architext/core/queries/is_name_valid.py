@@ -21,40 +21,41 @@ class IsNameValidQueryHandler(QueryHandler[IsNameValid, IsNameValidResult]):
 
 class UOWIsNameValidQueryHandler(UOWQueryHandler, IsNameValidQueryHandler):
     def query(self, query: IsNameValid, client_user_id: str) -> IsNameValidResult:
-        assertUserIsLoggedIn(self._uow, client_user_id)
-        assertUserIsAuthorizedInCurrentWorld(self._uow, client_user_id)
+        with self._uow as transaction:
+            assertUserIsLoggedIn(transaction, client_user_id)
+            assertUserIsAuthorizedInCurrentWorld(transaction, client_user_id)
 
-        user = self._uow.users.get_user_by_id(client_user_id)
-        if user is None:
-            raise Exception(f'User {client_user_id} not found')
-        
-        if query.in_room_id:
-            room = self._uow.rooms.get_room_by_id(query.in_room_id)
-            if room is None:
-                raise Exception(f'Room {query.in_room_id} not found')
-        else:
-            if user.room_id is None:
-                raise Exception(f'Room is not provided and user is not in a room')
-            room = self._uow.rooms.get_room_by_id(user.room_id)
-            if room is None:
-                raise Exception(f'User\'s room id is invalid: {user.room_id}')
-        
-        error: Optional[Literal['duplicated']]
-        try:
-            room.can_add_item(Item(
-                name=query.name,
-                description="Dummy description",
-                visibility='auto'
-            ))
-            valid = True
-            error = None
-        except DuplicatedNameInRoom:
-            valid = False
-            error = 'duplicated'
+            user = transaction.users.get_user_by_id(client_user_id)
+            if user is None:
+                raise Exception(f'User {client_user_id} not found')
+            
+            if query.in_room_id:
+                room = transaction.rooms.get_room_by_id(query.in_room_id)
+                if room is None:
+                    raise Exception(f'Room {query.in_room_id} not found')
+            else:
+                if user.room_id is None:
+                    raise Exception(f'Room is not provided and user is not in a room')
+                room = transaction.rooms.get_room_by_id(user.room_id)
+                if room is None:
+                    raise Exception(f'User\'s room id is invalid: {user.room_id}')
+            
+            error: Optional[Literal['duplicated']]
+            try:
+                room.can_add_item(Item(
+                    name=query.name,
+                    description="Dummy description",
+                    visibility='auto'
+                ))
+                valid = True
+                error = None
+            except DuplicatedNameInRoom:
+                valid = False
+                error = 'duplicated'
 
-        print("EXIT NAME", query.name, "IS VALID IN", query.in_room_id, "?", valid)
+            print("EXIT NAME", query.name, "IS VALID IN", query.in_room_id, "?", valid)
 
-        return IsNameValidResult(
-            is_valid=valid,
-            error=error,
-        )
+            return IsNameValidResult(
+                is_valid=valid,
+                error=error,
+            )

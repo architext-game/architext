@@ -29,8 +29,9 @@ def test_raze_success(session_factory: Callable[[str], Session]):
     assert 'I don\'t understand that'
 
     uow = session.architext._uow
-    olivers = uow.rooms.get_room_by_id("olivers")
-    assert olivers is None
+    with uow as transaction:
+        olivers = transaction.rooms.get_room_by_id("olivers")
+        assert olivers is None
 
 
 def test_raze_bad_confirmation(session_factory: Callable[[str], Session]):
@@ -50,7 +51,8 @@ def test_raze_bad_confirmation(session_factory: Callable[[str], Session]):
     assert 'I don\'t understand that'
 
     uow = session.architext._uow
-    olivers = uow.rooms.get_room_by_id("olivers")
+    with uow as transaction:
+        olivers = transaction.rooms.get_room_by_id("olivers")
     assert olivers is not None
 
 

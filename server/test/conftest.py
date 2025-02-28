@@ -7,6 +7,7 @@ from architext.chatbot.session import Session
 from architext.core.adapters.fake_notifier import FakeNotifier
 from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.adapters.multi_notifier import MultiNotifier, multi_notifier_mapping_factory
+from architext.core.adapters.sqlalchemy.uow import SQLAlchemyUnitOfWork
 from architext.core.facade import Architext
 from architext.core.ports.unit_of_work import UnitOfWork
 from test.fixtures import createTestUow
@@ -28,7 +29,7 @@ def channel() -> FakeMessagingChannel:
 def uow(channel: FakeMessagingChannel, request: pytest.FixtureRequest) -> UnitOfWork:
     use_db = request.config.getoption("--db")
     uow = createTestUow(db=use_db)
-    uow.notifier = MultiNotifier(multi_notifier_mapping_factory(
+    uow._notifier = MultiNotifier(multi_notifier_mapping_factory(
         chatbot=ChatbotNotifier(channel=channel),
         web=FakeNotifier()
     ))
@@ -46,4 +47,4 @@ def session_factory(architext: Architext, channel: FakeMessagingChannel) -> Call
 
 @pytest.fixture
 def notifier(architext: Architext) -> FakeNotifier:
-    return cast(FakeNotifier, architext._uow.notifier)
+    return cast(FakeNotifier, architext._uow._notifier)

@@ -19,13 +19,14 @@ class GetWorldTemplateQueryHandler(QueryHandler[GetWorldTemplate, GetWorldTempla
 
 class UOWGetWorldTemplateQueryHandler(UOWQueryHandler, GetWorldTemplateQueryHandler):
     def query(self, query: GetWorldTemplate, client_user_id: str) -> GetWorldTemplateResult:
-        assertUserIsLoggedIn(self._uow, client_user_id)
-        template = self._uow.world_templates.get_world_template_by_id(query.template_id)
-        if template is None:
-            raise Exception(f"Template {query.template_id} not found")
-        return GetWorldTemplateResult(
-            id=template.id,
-            description=template.description,
-            name=template.name,
-            owner=template.author_id
-        )
+        with self._uow as transaction:
+            assertUserIsLoggedIn(transaction, client_user_id)
+            template = transaction.world_templates.get_world_template_by_id(query.template_id)
+            if template is None:
+                raise Exception(f"Template {query.template_id} not found")
+            return GetWorldTemplateResult(
+                id=template.id,
+                description=template.description,
+                name=template.name,
+                owner=template.author_id
+            )

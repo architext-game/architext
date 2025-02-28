@@ -19,9 +19,10 @@ def test_delete_item_success(channel: FakeMessagingChannel, session_factory: Cal
     assert "I don't understand that." in sent_text
 
     uow = session.architext._uow
-    olivers = uow.rooms.get_room_by_id("olivers")
-    assert olivers is not None
-    assert olivers.items.get("A toroid") is None
+    with uow as transaction:
+        olivers = transaction.rooms.get_room_by_id("olivers")
+        assert olivers is not None
+        assert olivers.items.get("A toroid") is None
 
 
 def test_delete_exit_success(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):
@@ -37,9 +38,10 @@ def test_delete_exit_success(channel: FakeMessagingChannel, session_factory: Cal
     assert "I don't understand that." in sent_text
 
     uow = session.architext._uow
-    olivers = uow.rooms.get_room_by_id("olivers")
-    assert olivers is not None
-    assert olivers.exits.get("To the spaceship") is None
+    with uow as transaction:
+        olivers = transaction.rooms.get_room_by_id("olivers")
+        assert olivers is not None
+        assert olivers.exits.get("To the spaceship") is None
 
 
 def test_unauthorized_user_cannot_delete(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):

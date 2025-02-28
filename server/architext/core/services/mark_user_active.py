@@ -4,8 +4,8 @@ from architext.core.domain.events import UserBecameActive, UserBecameInactive
 
 
 def mark_user_active(uow: UnitOfWork, command: MarkUserActive, client_user_id: str) -> MarkUserActiveResult:
-    with uow:
-        user = uow.users.get_user_by_id(user_id=client_user_id)
+    with uow as transaction:
+        user = transaction.users.get_user_by_id(user_id=client_user_id)
 
         if user is None:
             raise ValueError("User does not exist.")
@@ -14,24 +14,24 @@ def mark_user_active(uow: UnitOfWork, command: MarkUserActive, client_user_id: s
             raise ValueError("User is not in a room.")
         
         if user.active == False and command.active == True:
-            uow.publish_events([UserBecameActive(
+            transaction.publish_events([UserBecameActive(
                 user_id=user.id,
                 room_id=user.room_id,
                 user_name=user.name,
             )])
             user.active=command.active
-            uow.users.save_user(user)
+            transaction.users.save_user(user)
         elif user.active == True and command.active == False:
-            uow.publish_events([UserBecameInactive(
+            transaction.publish_events([UserBecameInactive(
                 user_id=user.id,
                 room_id=user.room_id,
                 user_name=user.name,
             )])
             user.active=command.active
-            uow.users.save_user(user)
+            transaction.users.save_user(user)
 
         user.active=command.active
-        uow.users.save_user(user)
-        uow.commit()
+        transaction.users.save_user(user)
+        transaction.commit()
 
     return MarkUserActiveResult()

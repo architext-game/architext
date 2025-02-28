@@ -11,9 +11,9 @@ from pydantic import BaseModel, EmailStr, Field
 def create_user(uow: UnitOfWork, command: CreateUser, client_user_id: str = "") -> CreateUserResult:
     user = User(id=command.id, name=command.name, email=command.email)
 
-    with uow:
-        uow.users.save_user(user)
-        uow.publish_events([UserCreated(user_id=user.id)])
-        uow.commit()
+    with uow as transaction:
+        transaction.users.save_user(user)
+        transaction.publish_events([UserCreated(user_id=user.id)])
+        transaction.commit()
 
     return CreateUserResult(user_id=user.id)

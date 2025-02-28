@@ -20,12 +20,13 @@ def test_link_success(channel: FakeMessagingChannel, session_factory: Callable[[
 
     assert "Your new exits are ready!" in sent_text
     uow = session.architext._uow
-    olivers = uow.rooms.get_room_by_id("olivers")
-    assert olivers is not None
-    alices = uow.rooms.get_room_by_id("alices")
-    assert alices is not None
-    assert olivers.exits.get("The new exit to alices") is not None
-    assert alices.exits.get("The new exit to olivers") is not None
+    with uow as transaction:
+        olivers = transaction.rooms.get_room_by_id("olivers")
+        assert olivers is not None
+        alices = transaction.rooms.get_room_by_id("alices")
+        assert alices is not None
+        assert olivers.exits.get("The new exit to alices") is not None
+        assert alices.exits.get("The new exit to olivers") is not None
 
 
 def test_link_with_room_in_other_world_fails(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):

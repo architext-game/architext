@@ -54,6 +54,13 @@ def encode_dict(dict):
     b64string = b64bytes.decode()
     return b64string
 
+def encode_text(text: str) -> str:
+    bytes = text.encode('utf-8')
+    compressed_bytes = zlib.compress(bytes)
+    b64bytes = base64.b64encode(compressed_bytes)
+    b64string = b64bytes.decode()
+    return b64string
+
 def normalize(data: Union[Dict, List]):
     """Recursively sorts all lists inside a JSON structure to make it order-independent."""
     if isinstance(data, dict):
@@ -66,32 +73,32 @@ def normalize(data: Union[Dict, List]):
 
 class UOWWorldToTextQueryHandler(UOWQueryHandler, WorldToTextQueryHandler):
     def query(self, query: WorldToText, client_user_id: str) -> WorldToTextResult:
+        with self._uow as transaction:
+            world = transaction.worlds.get_world_by_id(query.world_id)
+            rooms = transaction.rooms.list_rooms_by_world(query.world_id)
 
-        world = self._uow.worlds.get_world_by_id(query.world_id)
-        rooms = self._uow.rooms.list_rooms_by_world(query.world_id)
+            assert world is not None
 
-        assert world is not None
+            world_dict = {
+                "original_name": world.name,
+                "original_description": world.description,
+                "initial_room_id": world.initial_room_id,
+                "rooms": [room_to_dict(room) for room in rooms]
+            }
 
-        world_dict = {
-            "original_name": world.name,
-            "original_description": world.description,
-            "initial_room_id": world.initial_room_id,
-            "rooms": [room_to_dict(room) for room in rooms]
-        }
+            world_dict = normalize(world_dict)
 
-        world_dict = normalize(world_dict)
+            if query.format == "plain":
+                text_representation = json.dumps(
+                    world_dict, 
+                    indent=4,
+                    separators=(',', ': ')
+                )
+            elif query.format == "encoded":
+                text_representation = encode_dict(world_dict)
 
-        if query.format == "plain":
-            text_representation = json.dumps(
-                world_dict, 
-                indent=4,
-                separators=(',', ': ')
+            return WorldToTextResult(
+                world_id=query.world_id,
+                format=query.format,
+                text_representation=text_representation
             )
-        elif query.format == "encoded":
-            text_representation = encode_dict(world_dict)
-
-        return WorldToTextResult(
-            world_id=query.world_id,
-            format=query.format,
-            text_representation=text_representation
-        )

@@ -22,9 +22,10 @@ def test_edit_room_name_success(channel: FakeMessagingChannel, session_factory: 
         assert "I don't understand that." in channel.unread
 
         uow = session.architext._uow
-        olivers = uow.rooms.get_room_by_id("olivers")
-        assert olivers is not None
-        assert olivers.name == "MY COOL ROOM!"
+        with uow as transaction:
+            olivers = transaction.rooms.get_room_by_id("olivers")
+            assert olivers is not None
+            assert olivers.name == "MY COOL ROOM!"
     except:
         print(channel.all)
         raise
@@ -44,9 +45,10 @@ def test_edit_room_description_success(channel: FakeMessagingChannel, session_fa
         assert "I don't understand that." in channel.unread
 
         uow = session.architext._uow
-        olivers = uow.rooms.get_room_by_id("olivers")
-        assert olivers is not None
-        assert olivers.description == "There is a poster that reads \"2112\""
+        with uow as transaction:
+            olivers = transaction.rooms.get_room_by_id("olivers")
+            assert olivers is not None
+            assert olivers.description == "There is a poster that reads \"2112\""
     except:
         print(channel.all)
         raise

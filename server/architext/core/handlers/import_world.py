@@ -79,7 +79,7 @@ def replace_ids(game_data: WorldDict):
             exit_["destination_room_id"] = get_new_id(dest_id)
 
 def import_world(uow: UnitOfWork, event: WorldCreationRequested):
-    with uow:
+    with uow as transaction:
         world_id = event.future_world_id
 
         if event.format == "encoded":
@@ -118,14 +118,14 @@ def import_world(uow: UnitOfWork, event: WorldCreationRequested):
             ) for item in room["items"]}
         ) for room in world_dict["rooms"]]
 
-        uow.worlds.save_world(world)
+        transaction.worlds.save_world(world)
         for room in rooms:
-            uow.rooms.save_room(room)
+            transaction.rooms.save_room(room)
 
-        uow.external_events.publish(WorldCreated(
+        transaction.external_events.publish(WorldCreated(
             owner_id=event.user_id,
             world_id=world.id
         ))
 
-        uow.commit()
+        transaction.commit()
 

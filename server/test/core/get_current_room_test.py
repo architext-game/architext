@@ -65,8 +65,9 @@ def test_hidden_exit_does_not_appear(architext: Architext):
     # if the secret exit is removed from the fixtures,
     # so let'd check that it's still there
     uow = cast(FakeUnitOfWork, architext._uow)
-    room = uow.rooms.get_room_by_id("olivers")
-    assert room is not None
-    exit = room.exits.get("Secret exit")
-    assert exit is not None
+    with uow as transaction:
+        room = transaction.rooms.get_room_by_id("olivers")
+        assert room is not None
+        exit = room.exits.get("Secret exit")
+        assert exit is not None
     
