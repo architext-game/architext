@@ -26,6 +26,5 @@ def complete_mission(uow: UnitOfWork, command: CompleteMission, client_user_id: 
             user_id=client_user_id,
             completed_at=datetime.now()
         ))
-        transaction.commit()
 
     return CompleteMissionResult()

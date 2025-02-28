@@ -14,6 +14,5 @@ def create_user(uow: UnitOfWork, command: CreateUser, client_user_id: str = "") 
     with uow as transaction:
         transaction.users.save_user(user)
         transaction.publish_events([UserCreated(user_id=user.id)])
-        transaction.commit()
 
     return CreateUserResult(user_id=user.id)

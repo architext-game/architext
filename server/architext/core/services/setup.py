@@ -45,10 +45,8 @@ def setup(uow: UnitOfWork, command: Setup, client_user_id: str) -> SetupResult:
             transaction.world_templates.save_world_template(emptytemplate)
             for mission in default_missions().all:
                 transaction.missions.save_mission(mission)
-            transaction.commit()
         else:
             print("STARTUP: Initial data found")
-            transaction.commit()
 
     return SetupResult()
 

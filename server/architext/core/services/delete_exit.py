@@ -25,6 +25,4 @@ def delete_exit(uow: UnitOfWork, command: DeleteExit, client_user_id: str) -> De
         room.remove_exit(exit)
         transaction.rooms.save_room(room)
 
-        transaction.commit()
-
     return DeleteExitResult()

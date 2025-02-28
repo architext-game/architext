@@ -126,6 +126,3 @@ def import_world(uow: UnitOfWork, event: WorldCreationRequested):
             owner_id=event.user_id,
             world_id=world.id
         ))
-
-        transaction.commit()
-

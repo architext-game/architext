@@ -24,6 +24,4 @@ def delete_item(uow: UnitOfWork, command: DeleteItem, client_user_id: str) -> De
         room.remove_item(item)
         transaction.rooms.save_room(room)
 
-        transaction.commit()
-
     return DeleteItemResult()

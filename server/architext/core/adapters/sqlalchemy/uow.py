@@ -41,6 +41,7 @@ class SQLAlchemyUnitOfWork(UnitOfWork):
     def _commit(self):
         self.committed = True
         self.db_session.commit()
+        print("SQL COMMIT")
 
     def __enter__(self) -> Transaction:
         self.committed = False

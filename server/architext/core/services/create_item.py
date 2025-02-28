@@ -26,6 +26,5 @@ def create_item(uow: UnitOfWork, command: CreateItem, client_user_id: str = "") 
         room.add_item(item)
 
         transaction.rooms.save_room(room)
-        transaction.commit()
 
         return CreateItemResult()

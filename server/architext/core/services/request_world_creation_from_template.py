@@ -23,8 +23,6 @@ def request_world_creation_from_template(uow: UnitOfWork, command: RequestWorldC
             visibility='private',
         ))
 
-        transaction.commit()
-
     return RequestWorldCreationFromTemplateResult(
         future_world_id=future_world_id
     )

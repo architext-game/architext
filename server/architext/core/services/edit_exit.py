@@ -32,6 +32,4 @@ def edit_exit(uow: UnitOfWork, command: EditExit, client_user_id: str) -> EditEx
         room.replace_exit(exit, new_exit)
         transaction.rooms.save_room(room)
 
-        transaction.commit()
-
     return EditExitResult()

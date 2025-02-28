@@ -20,8 +20,6 @@ def request_world_import(uow: UnitOfWork, command: RequestWorldImport, client_us
             visibility='private',
         ))
 
-        transaction.commit()
-
     return RequestWorldImportResult(
         future_world_id=future_world_id
     )

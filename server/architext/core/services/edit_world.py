@@ -23,6 +23,5 @@ def edit_world(uow: UnitOfWork, command: EditWorld, client_user_id: str) -> Edit
             world.description = command.description
 
         transaction.worlds.save_world(world)
-        transaction.commit()
 
     return EditWorldResult()

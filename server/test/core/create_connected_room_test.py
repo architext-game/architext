@@ -37,10 +37,6 @@ def test_create_connected_room_success(architext: Architext):
         assert old_room.exits["Door to living room"].description == "A door leading to the living room"
     assert uow.committed
 
-    sqluow = cast(SQLAlchemyUnitOfWork, architext._uow)
-    sqluow.session_factory()
-    
-
 
 def test_unauthorized_user_fails(architext: Architext):
     command = CreateConnectedRoom(

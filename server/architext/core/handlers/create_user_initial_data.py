@@ -14,4 +14,3 @@ def create_user_initial_data(uow: UnitOfWork, event: UserCreated):
             format="plain",
             visibility="private",
         )])
-        uow.commit()

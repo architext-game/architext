@@ -21,6 +21,5 @@ def edit_room(uow: UnitOfWork, command: EditRoom, client_user_id: str) -> EditRo
         room.description = command.new_description if command.new_description else room.description
 
         transaction.rooms.save_room(room)
-        transaction.commit()
 
     return EditRoomResult()

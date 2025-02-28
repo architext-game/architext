@@ -36,6 +36,5 @@ def traverse_exit(uow: UnitOfWork, command: TraverseExit, client_user_id: str) -
             room_entered_id=destination_id,
             room_left_id=previous_room.id
         )])
-        transaction.commit()
 
         return TraverseExitResult(new_room_id=new_room.id)

@@ -34,6 +34,5 @@ def enter_world(uow: UnitOfWork, command: EnterWorld, client_user_id: str) -> En
             room_entered_id=initial_room.id,
             room_left_id=previous_room_id
         )])
-        transaction.commit()
 
     return EnterWorldResult()

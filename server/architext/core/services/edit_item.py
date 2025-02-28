@@ -31,6 +31,4 @@ def edit_item(uow: UnitOfWork, command: EditItem, client_user_id: str) -> EditIt
         room.replace_item(item, new_item)
         transaction.rooms.save_room(room)
 
-        transaction.commit()
-
     return EditItemResult()

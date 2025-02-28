@@ -36,6 +36,4 @@ def delete_room(uow: UnitOfWork, command: DeleteRoom, client_user_id: str) -> De
         transaction.rooms.delete_room(room_id)
         transaction.rooms.delete_all_exits_leading_to_room(room_id)
 
-        transaction.commit()
-
     return DeleteRoomResult()

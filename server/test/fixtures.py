@@ -380,7 +380,6 @@ def add_test_data(uow: UnitOfWork):
         transaction.users.save_user(rabbit)
         transaction.users.save_user(hunter)
         transaction.missions.save_mission_log(alice_completed_tutorial_mission)
-        transaction.commit()
 
 def createTestUow(db: bool = False) -> UnitOfWork:
     uow: UnitOfWork

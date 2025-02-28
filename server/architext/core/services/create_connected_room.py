@@ -31,8 +31,6 @@ def create_connected_room(uow: UnitOfWork, command: CreateConnectedRoom, client_
         transaction.rooms.save_room(old_room)
         transaction.rooms.save_room(new_room)
 
-        transaction.commit()
-
     return CreateConnectedRoomResult(
         room_id=new_room.id
     )

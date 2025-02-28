@@ -32,6 +32,5 @@ def create_exit(uow: UnitOfWork, command: CreateExit, client_user_id: str = "") 
         room.add_exit(exit)
 
         transaction.rooms.save_room(room)
-        transaction.commit()
 
         return CreateExitResult()

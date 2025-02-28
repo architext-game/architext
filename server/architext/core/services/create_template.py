@@ -31,8 +31,6 @@ def create_template(uow: UnitOfWork, command: CreateTemplate, client_user_id: st
         )
         transaction.world_templates.save_world_template(template)
         
-        transaction.commit()
-
     return CreateTemplateResult(
         template_id=template.id
     )

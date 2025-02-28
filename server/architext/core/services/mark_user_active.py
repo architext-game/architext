@@ -32,6 +32,5 @@ def mark_user_active(uow: UnitOfWork, command: MarkUserActive, client_user_id: s
 
         user.active=command.active
         transaction.users.save_user(user)
-        transaction.commit()
 
     return MarkUserActiveResult()
