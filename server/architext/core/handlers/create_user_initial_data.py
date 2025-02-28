@@ -9,7 +9,7 @@ def create_user_initial_data(uow: UnitOfWork, event: UserCreated):
             future_world_id=str(uuid.uuid4()),
             user_id=event.user_id,
             world_name="Tutorial World",
-            world_description="Here you will learn the basics of Architext in just five minutes. Also, this world is your exclusive property, so you can use it to give building something a try!",
+            world_description="In Architext you can create and explore typing a simple set of text commands. Press Enter Now to learn everything you need to know!",
             text_representation=TUTORIAL,
             format="plain",
             visibility="private",

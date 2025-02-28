@@ -74,7 +74,7 @@ export function WorldsListItem({
     <div id={worldId} onClick={toggleOpen} className={clsx("flex flex-col cursor-pointer px-3 overflow-hidden rounded-md transition hover:bg-backgroundHighlight", expanded && "bg-backgroundHighlight")}>
       <div className="flex justify-between p-3 w-full">
         <div className="flex gap-3">
-          <div>{isPublic ? "🌍" : "🔒"}</div>
+          <div>{isPublic ? "🌍" : "🔓"}</div>
           <div>{name}</div>
         </div>
         <div className="flex gap-3">
@@ -98,10 +98,10 @@ export function WorldsListItem({
               )}
               <div className="">{description}</div>
               <div className="flex gap-4">
-                <Button onPress={enterWorld}>Enter Now</Button>
+                <Button onPress={enterWorld}>🚪 Enter Now</Button>
                 <Button onPress={codeToClipboard} className="relative">
                   <span className={clsx("transition-opacity", copied ? "opacity-0" : "opacity-100")}>
-                    Copy Code
+                  🔑 Copy Code
                   </span>
                   <span className={clsx("absolute inset-0 flex items-center justify-center transition-opacity", copied ? "opacity-100" : "opacity-0")}>
                     Copied!

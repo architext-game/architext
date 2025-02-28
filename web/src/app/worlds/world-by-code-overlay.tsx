@@ -23,7 +23,8 @@ export function WorldByCodeOverlay({
           error &&
           <div className="text-sm">{error}</div>
         }
-        <label htmlFor="worldcode">Enter a world by its code</label>
+        <label htmlFor="worldcode">Enter a world by its code.</label>
+        <div className="text-base opacity-60">Tip: Share a world code with friends and play with them!</div>
         <input
           id="worldcode"
           type="text"

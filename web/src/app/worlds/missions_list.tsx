@@ -64,9 +64,9 @@ interface MissionListItemProps {
 
 export function MissionListItem({ id, name, description, onMissionCompleted, link }: MissionListItemProps) {
   let defaultLink: string | undefined = undefined;
-  if(id == "tutorial"){
-    defaultLink = "#outer"
-  }
+  // if(id == "tutorial"){
+  //   defaultLink = "#outer"
+  // }
   link = link || defaultLink;
 
   return (

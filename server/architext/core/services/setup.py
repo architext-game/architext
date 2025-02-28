@@ -29,15 +29,15 @@ def setup(uow: UnitOfWork, command: Setup, client_user_id: str) -> SetupResult:
                 future_world_id='monks_riddle',
                 user_id=None,
                 world_name="The Monk's Riddle",
-                world_description="An abandonded monastery where a mystery waits to be unraveled. Good to play with friends or alone in about 30 minutes.",
+                world_description="An abandoned monastery where a mystery waits to be unraveled. Great for playing with friends or solo, in about 30 minutes.",
                 text_representation=THE_MONKS_RIDDLE_ENCODED,
                 format='encoded',
                 visibility='public',
             ))
             emptytemplate = WorldTemplate(
                 id="empty_template",
-                name="New World",
-                description="Create an empty world for you to build on.",
+                name="Empty World",
+                description="Will it be a futuristic sci-fi realm, a mystical fantasy land, or a bustling city full of secrets? The possibilities are endless! Press Enter Now to create your own brand new world.",
                 author_id=None,
                 world_encoded_json=EMPTY_WORLD_ENCODED,
                 visibility="public"

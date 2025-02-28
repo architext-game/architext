@@ -95,7 +95,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center text-text font-mono  text-lg pb-40">
-      <Header/>
+      <Header className="mx-auto max-w-screen-md"/>
       {
         showCodeOverlay &&
         <WorldByCodeOverlay 
@@ -128,7 +128,7 @@ export default function Home() {
       }
       <main className="flex flex-col gap-8 row-start-2 max-w-screen-md items-stretch">
         <Card>
-        Welcome to Architext. This is a place where you can create and explore worlds made of words! Enter the Architexture Museum for a five minute tutorial.
+        Welcome to Architext! This is a place where you can create and explore worlds made of words. <br/><br/> You might encounter some bugs and typos along the way. If you do, I’d really appreciate it if you could let me know. Thanks for playing!
         </Card>
 
         { authenticated &&  // should not try to load worlds until socket is authenticated
@@ -142,7 +142,7 @@ export default function Home() {
             onOpenSettings={handleOpenSettings}
             right={
               <div className="flex gap-3 items-center">
-                { true &&
+                { false &&
                   <>
                   <button onClick={() => setShowImportOverlay(true)} className="transition hover:underline text-sm"> 
                     Import world
@@ -151,7 +151,7 @@ export default function Home() {
                   </>
                 }
                 <button onClick={() => setShowCodeOverlay(true)} className="transition hover:underline text-sm"> 
-                  I have a Code
+                 I have a Code 🔑
                 </button>
               </div>
             } 

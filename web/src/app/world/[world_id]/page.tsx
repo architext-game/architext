@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef, use } from 'react'
+import { useState, useEffect, useRef, use, RefObject } from 'react'
 import classNames from 'classnames'
 import { Message } from './Message';
 import _ from 'lodash';
@@ -13,6 +13,70 @@ import { Overlay } from '@/components/overlay';
 import { EditWorldForm } from './edit_world_form';
 import { CreateTemplateForm } from './create_template_form';
 import useHeartbeat from '../heartbeat';
+
+const usePageScrolledToBottom = () => {
+  const [isAtBottom, setIsAtBottom] = useState(false);
+
+  const handleScroll = () => {
+    // Comprueba si el usuario ha llegado al final de la página
+    if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 10) {
+      setIsAtBottom(true);
+    } else {
+      setIsAtBottom(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+
+    // Comprobación inicial
+    handleScroll();
+
+    // Cleanup: elimina el listener al desmontar el componente
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  return isAtBottom;
+};
+
+const useIsScrolledToBottom = (ref: RefObject<HTMLDivElement | null>) => {
+  const [isAtBottom, setIsAtBottom] = useState(false);
+
+  useEffect(() => {
+    console.log("USEEFFECT")
+    const handleScroll = () => {
+      console.log("Scrolling")
+      if (!ref.current) return;
+
+      const { scrollTop, scrollHeight, clientHeight } = ref.current;
+      if (scrollTop + clientHeight >= scrollHeight - 10) {
+        setIsAtBottom(true);
+      } else {
+        setIsAtBottom(false);
+      }
+    };
+
+    const element = ref.current;
+    if (element) {
+      console.log("adding listener")
+      element.addEventListener('scroll', handleScroll);
+    }
+
+    // Comprobación inicial por si el contenido ya está scrolleado al cargar
+    handleScroll();
+
+    // Cleanup: elimina el listener al desmontar el componente
+    return () => {
+      if (element) {
+        element.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [ref]);
+
+  return isAtBottom;
+};
 
 interface Message {
   text: string,
@@ -103,7 +167,8 @@ function App({ params, searchParams }: {
   const me = useStore((state) => state.me)
   const [messages, setMessages] = useState<Message[]>([])
   const [inputValue, setInputValue] = useState('')
-  const [scrolledBottom, setScrolledBottom] = useState<boolean>(false)
+  // const [scrolledBottom, setScrolledBottom] = useState<boolean>(false)
+  const scrolledBottom = usePageScrolledToBottom()
   const [charsWidth, setCharsWidth] = useState<number>(0)
   const [charAspectRatio, setCharAspectRatio] = useState<number>(1)
   const [previousLastSection, setPreviousLastSection] = useState<number>(-1)
@@ -227,7 +292,7 @@ function App({ params, searchParams }: {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setScrolledBottom(entry.isIntersecting);
+        // setScrolledBottom(entry.isIntersecting);
       },
     );
     if(bottomRef.current){
@@ -398,7 +463,7 @@ function App({ params, searchParams }: {
                 />
               )
               })}
-            <div ref={bottomRef}/>
+            <div id="bottom" ref={bottomRef} className="h-2 w-2 bg-pink"></div>
             <div style={{height: textInputContainerRef.current?.clientHeight}}/> {/* Fill height blocked by textInput */}
             <div ref={characterMeasureRef} className="h-0 w-fit overflow-hidden">W</div>
           </div>

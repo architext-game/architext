@@ -67,14 +67,14 @@ if __name__ == "__main__":
 
     # App config
     channel = SocketIOMessagingChannel(sio, user_id_to_socket_id=sid_to_user_id.inverse)
-    uow = SQLAlchemyUnitOfWork(session_factory=db_connection(at='file'))
-    architext = Architext(uow=uow)    
-    architext._uow._notifier = MultiNotifier(
+    notifier = MultiNotifier(
         multi_notifier_mapping_factory(
             chatbot=ChatbotNotifier(channel),
             web=SioNotifier(sio=sio, user_id_to_socket_id=sid_to_user_id.inverse)
         )
     )
+    uow = SQLAlchemyUnitOfWork(session_factory=db_connection(at='file'), notifier=notifier)
+    architext = Architext(uow=uow)    
 
     architext.handle(Setup(uow=uow, client_user_id=None))
 
