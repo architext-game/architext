@@ -10,7 +10,7 @@ from architext.core.adapters.multi_notifier import MultiNotifier, multi_notifier
 from architext.core.adapters.sqlalchemy.uow import SQLAlchemyUnitOfWork
 from architext.core.facade import Architext
 from architext.core.ports.unit_of_work import UnitOfWork
-from test.fixtures import createTestUow
+from test.fixtures import add_test_data, createTestUow
 
 import pytest
 
@@ -37,6 +37,7 @@ def uow(channel: FakeMessagingChannel, request: pytest.FixtureRequest) -> UnitOf
 
 @pytest.fixture
 def architext(uow: FakeUnitOfWork):
+    add_test_data(uow)
     return Architext(uow)
 
 @pytest.fixture

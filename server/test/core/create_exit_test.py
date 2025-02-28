@@ -5,13 +5,7 @@ from architext.core.commands import CreateExit
 from architext.core import Architext
 
 from architext.core.adapters.fake_uow import FakeUnitOfWork
-from architext.core.domain.entities.room import DEFAULT_ROOM, DuplicatedNameInRoom
-from test.fixtures import createTestArchitext
-
-
-@pytest.fixture
-def architext() -> Architext:
-    return createTestArchitext()
+from architext.core.domain.entities.room import DuplicatedNameInRoom
 
 
 def test_create_exit_success(architext: Architext) -> None:

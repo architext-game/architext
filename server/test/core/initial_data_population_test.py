@@ -1,20 +1,17 @@
 from typing import cast
 import pytest # type: ignore
 from architext.core.adapters.fake_uow import FakeUnitOfWork
-from architext.core.adapters.sqlalchemy.uow import SQLAlchemyUnitOfWork
-from architext.core.commands import CreateUser, CreateUserResult, Setup
-from pydantic import ValidationError
+from architext.core.commands import CreateUser, Setup
 from architext.core import Architext
 
-from architext.core.adapters.fake_uow import FakeUnitOfWork
+from architext.core.ports.unit_of_work import UnitOfWork
 from architext.core.domain.entities.mission import default_missions
-from test.fixtures import createTestArchitext
 
 from uuid import uuid4
 
 @pytest.fixture
-def architext() -> Architext:
-    return Architext(uow=FakeUnitOfWork())
+def architext(uow: UnitOfWork) -> Architext:
+    return Architext(uow=uow)
 
 def test_setup_command_populates_initial_data(architext: Architext):
     architext.handle(Setup())

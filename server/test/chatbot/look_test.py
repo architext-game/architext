@@ -1,4 +1,4 @@
-from typing import cast
+from typing import Callable, cast
 from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChannel
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
@@ -16,7 +16,8 @@ def session() -> Session:
     architext = createTestArchitext()
     return Session(architext=architext, messaging_channel=FakeMessagingChannel(), logger=StdOutLogger(), user_id="oliver") 
 
-def test_look_room_shows_name_and_description(session: Session):
+def test_look_room_shows_name_and_description(session_factory: Callable[[str], Session]):
+    session = session_factory("oliver")
     session.process_message("look")
     assert isinstance(session.sender.channel, FakeMessagingChannel)
     sender: FakeMessagingChannel = session.sender.channel
@@ -27,7 +28,8 @@ def test_look_room_shows_name_and_description(session: Session):
     assert "This is Oliver's Room" in sent_text
 
 
-def test_look_room_shows_exits(session: Session):
+def test_look_room_shows_exits(session_factory: Callable[[str], Session]):
+    session = session_factory("oliver")
     session.process_message("look")
     assert isinstance(session.sender.channel, FakeMessagingChannel)
     sender: FakeMessagingChannel = session.sender.channel
@@ -39,7 +41,8 @@ def test_look_room_shows_exits(session: Session):
     assert "To Bob's Room" in sent_text
 
 
-def test_look_room_dont_show_hidden_exits(session: Session):
+def test_look_room_dont_show_hidden_exits(session_factory: Callable[[str], Session]):
+    session = session_factory("oliver")
     session.process_message("look")
     assert isinstance(session.sender.channel, FakeMessagingChannel)
     sender: FakeMessagingChannel = session.sender.channel
@@ -59,7 +62,8 @@ def test_look_room_dont_show_hidden_exits(session: Session):
         assert exit is not None
 
 
-def test_look_room_dont_show_visible_exits(session: Session):
+def test_look_room_dont_show_visible_exits(session_factory: Callable[[str], Session]):
+    session = session_factory("oliver")
     session.process_message("look")
     assert isinstance(session.sender.channel, FakeMessagingChannel)
     sender: FakeMessagingChannel = session.sender.channel
@@ -69,7 +73,8 @@ def test_look_room_dont_show_visible_exits(session: Session):
     assert "Visible door to bathroom" not in sent_text
 
 
-def test_look_room_dont_show_auto_visibility_exits_mentioned_in_room_description(session: Session):
+def test_look_room_dont_show_auto_visibility_exits_mentioned_in_room_description(session_factory: Callable[[str], Session]):
+    session = session_factory("oliver")
     session.process_message("look")
     assert isinstance(session.sender.channel, FakeMessagingChannel)
     sender: FakeMessagingChannel = session.sender.channel
@@ -82,7 +87,8 @@ def test_look_room_dont_show_auto_visibility_exits_mentioned_in_room_description
     assert "Auto door to bathroom" not in after_room_description
 
 
-def test_look_room_shows_items(session: Session):
+def test_look_room_shows_items(session_factory: Callable[[str], Session]):
+    session = session_factory("oliver")
     session.process_message("look")
     assert isinstance(session.sender.channel, FakeMessagingChannel)
     sender: FakeMessagingChannel = session.sender.channel

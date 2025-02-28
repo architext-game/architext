@@ -1,8 +1,6 @@
-from architext.core.adapters.fake_uow import FakeUnitOfWork
-from architext.core.commands import EnterWorld, TraverseExit
+from architext.core.commands import EnterWorld
 from architext.core import Architext
 import pytest # type: ignore
-from architext.core.messagebus import MessageBus
 
 
 def test_enter_world_for_the_first_time_puts_user_in_starting_room(architext: Architext):

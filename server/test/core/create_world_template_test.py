@@ -3,13 +3,6 @@ from architext.core.queries.world_to_text import WorldToText
 import pytest # type: ignore
 from architext.core import Architext
 
-from test.fixtures import createTestArchitext
-
-
-@pytest.fixture
-def architext() -> Architext:
-    return createTestArchitext()
-
 
 def test_create_template_success(architext: Architext):
     create_template_result = architext.handle(CreateTemplate(

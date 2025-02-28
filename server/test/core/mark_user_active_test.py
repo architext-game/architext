@@ -5,12 +5,6 @@ from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.commands import MarkUserActive
 from architext.core import Architext
 from architext.core.ports.notifier import UserEnteredRoomNotification
-from test.fixtures import createTestArchitext
-
-
-@pytest.fixture
-def architext() -> Architext:
-    return createTestArchitext()
 
 
 def test_mark_user_active_success(architext: Architext) -> None:

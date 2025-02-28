@@ -2,12 +2,6 @@ from architext.core.queries.list_worlds import ListWorlds
 import pytest # type: ignore
 from architext.core import Architext
 
-from test.fixtures import createTestArchitext
-
-
-@pytest.fixture
-def architext() -> Architext:
-    return createTestArchitext()
 
 def test_list_worlds(architext: Architext):
     out = architext.query(ListWorlds(), client_user_id="oliver")

@@ -1,17 +1,11 @@
 from typing import cast
-from architext.core.adapters.sqlalchemy.uow import SQLAlchemyUnitOfWork
 from architext.core.facade import Architext
 import pytest # type: ignore
 from architext.core.adapters.fake_uow import FakeUnitOfWork
-from architext.core.messagebus import MessageBus
 from architext.core.services.create_connected_room import CreateConnectedRoom, CreateConnectedRoomResult
 from architext.core.commands import CreateConnectedRoom
+from architext.core.domain.entities.room import DuplicatedNameInRoom
 
-from architext.core.domain.entities.room import DuplicatedNameInRoom, Room
-from architext.core.domain.entities.user import User
-from architext.core.domain.entities.world import DEFAULT_WORLD, World
-
-from test.fixtures import createTestArchitext
 
 
 def test_create_connected_room_success(architext: Architext):

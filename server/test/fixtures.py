@@ -387,7 +387,6 @@ def createTestUow(db: bool = False) -> UnitOfWork:
         uow = SQLAlchemyUnitOfWork(session_factory=db_connection())
     else:
         uow = FakeUnitOfWork()
-    add_test_data(uow)
     return uow
 
 def createTestArchitext(db: bool = False) -> Architext:

@@ -1,12 +1,6 @@
 from architext.core.queries.get_world import GetWorld
 import pytest # type: ignore
 from architext.core import Architext
-from test.fixtures import createTestArchitext
-
-
-@pytest.fixture
-def architext() -> Architext:
-    return createTestArchitext()
 
 
 def test_get_world_query_success(architext: Architext):

@@ -2,36 +2,6 @@ from architext.core.queries.get_room_details import GetRoomDetails
 import pytest # type: ignore
 from architext.core import Architext
 from architext.core.queries.get_thing_in_room import GetThingInRoom
-from test.fixtures import createTestArchitext
-
-
-@pytest.fixture
-def architext() -> Architext:
-    return createTestArchitext()
-
-
-"""
-Me preocupa que se pueda cheesear y descubrir cosas ocultas
-poniendo cosas como
-
-look a
-
-y repetir con todas las letras del alfabeto.
-
-Podría obligar a matchear al menos una palabra completa.
-Pero sería fácil cheesearlo usando artículos (Un, una, la, el, etc.).
-
-Cuando haya duda entre visibles y no visibles, ignorar los no visibles.
-
-Cuando haya duda entre invisibles, hacer como que no hay nada.
-Es peligroso, los diseñadores tendrán que tenerlo en cuenta.
-
-Cuando se escriba el nombre parcial de una invisible:
-  - los matches tienen que ser de palabras completas.
-  - los matches tienen que ser de al menos el 35% de los caracteres
-  del nombre, sin contar espacios en blanco. Si no, se hará como
-  que no hay nada.
-"""
 
 
 def test_get_item_in_room(architext: Architext):

@@ -1,10 +1,8 @@
 from typing import Callable
 from architext.chatbot import strings
 from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChannel
-from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
 from architext.core.settings import EXIT_NAME_MAX_LENGTH
-import pytest # type: ignore
 
 
 def test_link_success(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):

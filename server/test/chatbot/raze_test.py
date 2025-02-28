@@ -6,13 +6,6 @@ import pytest # type: ignore
 from test.fixtures import createTestArchitext
 
 
-@pytest.fixture
-def session_factory() -> Callable[[str], Session]:
-    def factory(user_id: str):
-        architext = createTestArchitext()
-        return Session(architext=architext, messaging_channel=FakeMessagingChannel(), logger=StdOutLogger(), user_id=user_id) 
-    return factory
-
 def test_raze_success(session_factory: Callable[[str], Session]):
     session = session_factory("oliver")
 

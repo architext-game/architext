@@ -1,18 +1,9 @@
 from typing import cast
 from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.domain.entities.world import DEFAULT_WORLD
-from architext.core.messagebus import MessageBus
-from architext.core.queries.get_current_room import GetCurrentRoom, GetCurrentRoomResult
+from architext.core.queries.get_current_room import GetCurrentRoom
 import pytest # type: ignore
-from architext.core.domain.entities.user import User
-from architext.core.domain.entities.room import Room
 from architext.core import Architext
-from test.fixtures import createTestArchitext
-
-
-@pytest.fixture
-def architext() -> Architext:
-    return createTestArchitext()
 
 
 def test_get_current_room_success(architext: Architext):

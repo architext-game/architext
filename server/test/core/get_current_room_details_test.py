@@ -2,12 +2,6 @@ from architext.chatbot.util import get_by_name
 from architext.core.queries.get_room_details import GetRoomDetails
 import pytest # type: ignore
 from architext.core import Architext
-from test.fixtures import createTestArchitext
-
-
-@pytest.fixture
-def architext() -> Architext:
-    return createTestArchitext()
 
 
 def test_get_room_success(architext: Architext):

@@ -1,4 +1,4 @@
-from typing import cast
+from typing import Callable, cast
 from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChannel
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
@@ -11,12 +11,8 @@ from architext.core.domain.entities.room import Room
 from test.fixtures import createTestArchitext
 
 
-@pytest.fixture
-def session() -> Session:
-    architext = createTestArchitext()
-    return Session(architext=architext, messaging_channel=FakeMessagingChannel(), logger=StdOutLogger(), user_id="oliver") 
-
-def test_exits_verb(session: Session):
+def test_exits_verb(session_factory: Callable[[str], Session]):
+    session = session_factory("oliver")
     session.process_message("exits")
     assert isinstance(session.sender.channel, FakeMessagingChannel)
     sender: FakeMessagingChannel = session.sender.channel

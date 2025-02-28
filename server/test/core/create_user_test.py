@@ -1,19 +1,11 @@
 from typing import cast
 import pytest # type: ignore
 from architext.core.adapters.fake_uow import FakeUnitOfWork
-from architext.core.adapters.sqlalchemy.uow import SQLAlchemyUnitOfWork
 from architext.core.commands import CreateUser, CreateUserResult
 from pydantic import ValidationError
 from architext.core import Architext
-
 from architext.core.adapters.fake_uow import FakeUnitOfWork
-from test.fixtures import createTestArchitext
-
 from uuid import uuid4
-
-@pytest.fixture
-def architext() -> Architext:
-    return createTestArchitext()
 
 
 def test_create_user_success(architext: Architext):
