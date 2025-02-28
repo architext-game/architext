@@ -20,13 +20,12 @@ def test_world_import_integration_success(architext: Architext):
         format='encoded'
     ), client_user_id="oliver")
 
-    uow = cast(FakeUnitOfWork, architext._uow)
-    external_events = cast(FakeExternalEventPublisher, architext._uow._external_events)
-    creation_request_event = next((event for event in external_events.published_events if type(event) == WorldCreationRequested), None)
-    assert creation_request_event is not None
-    assert creation_request_event.format == 'encoded'
-    assert creation_request_event.user_id == "oliver"
-    assert creation_request_event.text_representation == ENCODED_TEMPLATE
-    with uow as transaction:
+    with architext._uow as transaction:
+        external_events = cast(FakeExternalEventPublisher, transaction.external_events)
+        creation_request_event = next((event for event in external_events.published_events if type(event) == WorldCreationRequested), None)
+        assert creation_request_event is not None
+        assert creation_request_event.format == 'encoded'
+        assert creation_request_event.user_id == "oliver"
+        assert creation_request_event.text_representation == ENCODED_TEMPLATE
         new_world = get_by_name("new world", transaction.worlds.list_worlds())
         assert len(transaction.rooms.list_rooms_by_world(new_world.id)) == 6

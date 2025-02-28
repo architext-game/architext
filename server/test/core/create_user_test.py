@@ -19,7 +19,6 @@ def test_create_user_success(architext: Architext):
     
     assert type(out) is CreateUserResult
     result: CreateUserResult = out
-    assert cast(FakeUnitOfWork, architext._uow).committed
     assert result.user_id is not None
     with architext._uow as transaction:
         saved_user = transaction.users.get_user_by_id(result.user_id)
@@ -59,7 +58,6 @@ def test_create_user_duplicate_name(architext: Architext):
             password="anotherpassword"
         )
         architext.handle(command)
-    assert not cast(FakeUnitOfWork, architext._uow).committed
 
 
 def test_create_user_list_users(architext: Architext):

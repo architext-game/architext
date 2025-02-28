@@ -3,7 +3,6 @@ from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChann
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
 import pytest # type: ignore
-from test.fixtures import createTestArchitext
 
 
 def test_raze_success(session_factory: Callable[[str], Session]):

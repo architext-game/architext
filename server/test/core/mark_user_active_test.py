@@ -20,8 +20,8 @@ def test_mark_user_active_success(architext: Architext) -> None:
         assert oliver.active is True
 
 
-def test_mark_user_active_notifies_others_in_room(architext: Architext) -> None:
-    architext._uow._notifier = FakeNotifier()
+def test_mark_user_active_notifies_others_in_room(fake_notifier_architext: Architext, fake_notifier: FakeNotifier) -> None:
+    architext = fake_notifier_architext
     with architext._uow as transaction:
 
         command = MarkUserActive(
@@ -29,8 +29,8 @@ def test_mark_user_active_notifies_others_in_room(architext: Architext) -> None:
         )
         architext.handle(command, "evan")
 
-        notifications = architext._uow._notifier.get(notification_type=UserEnteredRoomNotification, user_id="bob")
-        print(architext._uow._notifier.sent)
+        notifications = fake_notifier.get(notification_type=UserEnteredRoomNotification, user_id="bob")
+        print(fake_notifier.sent)
         assert len(notifications) == 1
         notification = notifications[0]
         assert notification.movement == "reconnected"

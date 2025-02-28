@@ -381,16 +381,5 @@ def add_test_data(uow: UnitOfWork):
         transaction.users.save_user(hunter)
         transaction.missions.save_mission_log(alice_completed_tutorial_mission)
 
-def createTestUow(db: bool = False) -> UnitOfWork:
-    uow: UnitOfWork
-    if db:
-        uow = SQLAlchemyUnitOfWork(session_factory=db_connection())
-    else:
-        uow = FakeUnitOfWork()
-    return uow
-
-def createTestArchitext(db: bool = False) -> Architext:
-    uow = createTestUow(db)
-    return Architext(uow,)
 
 

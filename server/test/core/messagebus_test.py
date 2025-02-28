@@ -1,3 +1,4 @@
+from architext.core.adapters.fake_notifier import FakeNotifier
 from architext.core.adapters.fake_uow import FakeUnitOfWork
 from architext.core.messagebus import MessageBus
 from architext.core.commands import Command
@@ -11,19 +12,19 @@ def test_command_handler_is_called() -> None:
 
     fakeHandler = Mock()
     bus = MessageBus(command_handlers={SomeCommand: fakeHandler})
-    bus.handle(FakeUnitOfWork(), SomeCommand())
+    bus.handle(FakeUnitOfWork(notifier=FakeNotifier()), SomeCommand())
 
     assert fakeHandler.called
 
 
-def test_command_without_handlers_raises_exception():
+def test_command_without_handlers_raises_exception() -> None:
     class SomeCommand(Command[str]):
         pass
     
     bus = MessageBus({})
 
     with pytest.raises(KeyError):
-        bus.handle(FakeUnitOfWork(), SomeCommand())
+        bus.handle(FakeUnitOfWork(notifier=FakeNotifier()), SomeCommand())
 
 
 @pytest.mark.skip(reason="to do")

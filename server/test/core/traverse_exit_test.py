@@ -9,7 +9,6 @@ import pytest # type: ignore
 from architext.core.domain.events import ShouldNotifyUserEnteredRoom, ShouldNotifyUserLeftRoom, UserChangedRoom
 from architext.core.messagebus import MessageBus
 from architext.core import Architext
-from test.fixtures import createTestArchitext, createTestUow
 
 
 def test_traverse_exit_success(architext: Architext):
@@ -46,18 +45,15 @@ def test_user_changed_room_event_gets_invoked(architext: Architext):
     assert spy.called
 
 
-def test_should_notify_user_entered_room(architext: Architext) -> None:
-    notifier = FakeNotifier()
-    architext._uow._notifier = notifier
-
-    architext.handle(
+def test_should_notify_user_entered_room(fake_notifier_architext: Architext, fake_notifier: FakeNotifier) -> None:
+    fake_notifier_architext.handle(
         command=TraverseExit(
             exit_name="To Oliver's Room"
         ),
         client_user_id="alice"
     )
 
-    notifications = notifier.get(notification_type=UserEnteredRoomNotification, user_id="oliver")
+    notifications = fake_notifier.get(notification_type=UserEnteredRoomNotification, user_id="oliver")
     assert len(notifications) == 1
     notification = notifications[0]
     assert notification.movement == "used_exit"
@@ -65,18 +61,15 @@ def test_should_notify_user_entered_room(architext: Architext) -> None:
     assert notification.through_exit_name == "To Alice's Room"
 
 
-def test_should_notify_user_left_room(architext: Architext) -> None:
-    notifier = FakeNotifier()
-    architext._uow._notifier = notifier
-    
-    architext.handle(
+def test_should_notify_user_left_room(fake_notifier_architext: Architext, fake_notifier: FakeNotifier) -> None:
+    fake_notifier_architext.handle(
         command=TraverseExit(
             exit_name="To Oliver's Room"
         ),
         client_user_id="dave"
     )
 
-    notifications = notifier.get(notification_type=UserLeftRoomNotification, user_id="bob")
+    notifications = fake_notifier.get(notification_type=UserLeftRoomNotification, user_id="bob")
 
     assert len(notifications) == 1
     notification = notifications[0]

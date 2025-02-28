@@ -27,27 +27,9 @@ class Transaction:
     def commit(self) -> None:
         self._uow._commit()
 
-"""
-Objetivo del refactor: 
- - modifical la interfaz de unit of work para que no se puedan usar sin iniciar una transacción:
-   - los repositorios
-   - las queries
-   - el notifier
-   - los external events
- - cambiar TODAS las transacciones para hacer uso de with uow as ... para usar la nueva interfaz.
- - que la interfaz de cara al messagebus sea igual, es decir, publish events debe funcionar desde
-  el uow
-"""
 
 class UnitOfWork(Protocol):
-    _rooms: RoomRepository
-    _users: UserRepository
-    _worlds: WorldRepository
-    _world_templates: WorldTemplateRepository
-    _missions: MissionRepository
     queries: QueryManager
-    _notifier: Notifier
-    _external_events: ExternalEventPublisher
     _events: List[Event] = []
 
     def __exit__(self, exc_type, exc_value, traceback) -> None:
@@ -58,16 +40,7 @@ class UnitOfWork(Protocol):
         # the exception will be propagated
 
     def __enter__(self) -> Transaction:
-        return Transaction(
-            external_events=self._external_events,
-            missions=self._missions,
-            notifier=self._notifier,
-            rooms=self._rooms,
-            users=self._users,
-            worlds=self._worlds,
-            world_templates=self._world_templates,
-            _uow=self,
-        )
+        pass
 
     def publish_events(self, events: List[Event]) -> None:
         self._events += events

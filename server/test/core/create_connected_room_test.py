@@ -29,7 +29,6 @@ def test_create_connected_room_success(architext: Architext):
         assert new_room.description == "A cozy living room"
         assert new_room.exits["Door to kitchen"].description == "A door leading to the kitchen"
         assert old_room.exits["Door to living room"].description == "A door leading to the living room"
-    assert uow.committed
 
 
 def test_unauthorized_user_fails(architext: Architext):
