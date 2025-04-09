@@ -12,7 +12,7 @@ worlds_table = Table(
     Column("id", String, primary_key=True),
     Column("name", String, nullable=False),
     Column("description", String, nullable=False, default=""),
-    Column("initial_room_id", String, ForeignKey("rooms.id"), nullable=False),
+    Column("initial_room_id", String, ForeignKey("rooms.id", deferrable=True, initially="DEFERRED"), nullable=False),
     Column("owner_user_id", String, ForeignKey("users.id"), nullable=True),
     Column("visibility", String, nullable=False, default="private"),
     Column("base_template_id", String, ForeignKey("world_templates.id"), nullable=True),

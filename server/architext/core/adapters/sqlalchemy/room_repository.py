@@ -15,22 +15,22 @@ rooms_table = Table(
     "rooms", metadata,
     Column("id", String, primary_key=True),
     Column("name", String, nullable=False),
-    Column("world_id", String, ForeignKey("worlds.id"), nullable=False),
+    Column("world_id", String, ForeignKey("worlds.id", deferrable=True, initially="DEFERRED"), nullable=False),
     Column("description", String, nullable=False, default=""),
 )
 
 exits_table = Table(
     "exits", metadata,
-    Column("room_id", String, ForeignKey("rooms.id"), primary_key=True),
+    Column("room_id", String, ForeignKey("rooms.id", deferrable=True, initially="DEFERRED"), primary_key=True),
     Column("name", String, nullable=False, primary_key=True),
     Column("description", String, nullable=False, default=""),
-    Column("destination_room_id", String, ForeignKey("rooms.id")),
+    Column("destination_room_id", String, ForeignKey("rooms.id", deferrable=True, initially="DEFERRED")),
     Column("visibility", String, nullable=False),
 )
 
 items_table = Table(
     "items", metadata,
-    Column("room_id", String, ForeignKey("rooms.id"), primary_key=True),
+    Column("room_id", String, ForeignKey("rooms.id", deferrable=True, initially="DEFERRED"), primary_key=True),
     Column("name", String, nullable=False, primary_key=True),
     Column("description", String, nullable=False, default=""),
     Column("visibility", String, nullable=False),
