@@ -18,3 +18,5 @@ pytest
 sqlalchemy
 sqlalchemy[mypy]
 clerk-backend-api
+py-writes-ts==1.0.1
+psycopg2-binary

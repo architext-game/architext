@@ -4,6 +4,8 @@ python3 -m entrypoints.socketio.server
 add --types to generate types
 """
 
+import json
+import os
 from typing import Dict, Type
 import eventlet
 from eventlet.greenthread import GreenThread
@@ -52,12 +54,10 @@ if __name__ == "__main__":
 
     load_dotenv()
 
-    # allowed = json.loads(os.environ['ALLOWED_ORIGINS'])
-    # allowed = ['http://207.180.194.96:3000', 'http://amritb.github.io', 'https://firecamp.dev']
-    sio = socketio.Server(cors_allowed_origins='*')
+    allowed = json.loads(os.environ['CORS_ALLOWED_ORIGINS'])
+    sio = socketio.Server(cors_allowed_origins=allowed)
+
     # dictionary relating authenticated sockets with their user ids
-
-
     sid_to_user_id: bidict[str, str] = bidict()
     def auth(socket: str, user_id: str):
         """Links a socket with an user_id"""
@@ -73,7 +73,9 @@ if __name__ == "__main__":
             web=SioNotifier(sio=sio, user_id_to_socket_id=sid_to_user_id.inverse)
         )
     )
-    uow = SQLAlchemyUnitOfWork(session_factory=db_connection(at='file'), notifier=notifier)
+
+    db_url = f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
+    uow = SQLAlchemyUnitOfWork(session_factory=db_connection(at='url', url=db_url), notifier=notifier)
     architext = Architext(uow=uow)    
 
     architext.handle(Setup(uow=uow, client_user_id=None))

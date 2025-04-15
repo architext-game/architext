@@ -3,7 +3,13 @@ import type {} from '@redux-devtools/extension' // required for devtools typing
 import { io, Socket } from 'socket.io-client'
 import { GetMeResponse } from './architextSDK';
 
-const socket = io("http://207.180.194.96:5000");
+const architextBackendUrl = process.env.NEXT_PUBLIC_ARCHITEXT_BACKEND_URL;
+
+if (!architextBackendUrl) {
+  throw new Error("❌ NEXT_PUBLIC_ARCHITEXT_BACKEND_URL is not defined");
+}
+
+const socket = io(architextBackendUrl);
 
 interface StoreState {
   me: GetMeResponse | null,
