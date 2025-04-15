@@ -47,6 +47,9 @@ class SQLAlchemyUserRepository(UserRepository):
     def get_user_by_email(self, user_email: str) -> Optional[User]:
         return self.db_session.query(User).filter_by(email=user_email).first()
 
+    def get_user_by_name(self, username: str) -> Optional[User]:
+        return self.db_session.query(User).filter_by(name=username).first()
+
     def save_user(self, user: User) -> None:
         self.db_session.merge(user)
 

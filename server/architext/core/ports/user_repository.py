@@ -9,6 +9,9 @@ class UserRepository(Protocol):
     def get_user_by_email(self, user_email: str) -> Optional[User]:
         pass
 
+    def get_user_by_name(self, username: str) -> Optional[User]:
+        pass
+
     def save_user(self, user: User) -> None:
         pass
 

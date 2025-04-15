@@ -229,6 +229,17 @@ export interface CompleteMissionResponse {
     error: string | null;
 }
 
+export interface UpdateUserSettingsParams {
+    new_name: string | null;
+}
+
+export interface UpdateUserSettingsResponse {
+    success: boolean;
+    data: {
+    } | null;
+    error: string | null;
+}
+
 export interface Message {
     text: string;
     options: {
@@ -434,6 +445,17 @@ export async function completeMission(
 ): Promise<CompleteMissionResponse> {
     return new Promise((resolve, reject) => {
         socket.emit("complete_mission", params, (response: CompleteMissionResponse) => {
+            resolve(response)
+        });
+    });
+}
+
+export async function updateUserSettings(
+    socket: Socket,
+    params: UpdateUserSettingsParams
+): Promise<UpdateUserSettingsResponse> {
+    return new Promise((resolve, reject) => {
+        socket.emit("update_user_settings", params, (response: UpdateUserSettingsResponse) => {
             resolve(response)
         });
     });

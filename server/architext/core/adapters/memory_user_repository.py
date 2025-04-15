@@ -14,6 +14,9 @@ class MemoryUserRepository(UserRepository):
     def get_user_by_email(self, user_email: str) -> Optional[User]:
         return copy.deepcopy(next((user for user in self._users.values() if user.email == user_email), None))
 
+    def get_user_by_name(self, username: str) -> Optional[User]:
+        return copy.deepcopy(next((user for user in self._users.values() if user.name == username), None))
+
     def save_user(self, user: User) -> None:
         self._users[user.id] = copy.deepcopy(user)
 

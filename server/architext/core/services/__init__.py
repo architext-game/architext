@@ -29,6 +29,7 @@ from architext.core.commands import (
     EditRoom,
     MarkUserActive,
     CompleteMission,
+    UpdateUserSettings,
 )
 
 from architext.core.services.setup import setup
@@ -51,6 +52,7 @@ from architext.core.services.delete_room import delete_room
 from architext.core.services.edit_room import edit_room
 from architext.core.services.mark_user_active import mark_user_active
 from architext.core.services.complete_mission import complete_mission
+from architext.core.services.update_user_settings import update_user_settings
 
 from typing import Dict, Type, Callable
 
@@ -75,4 +77,5 @@ COMMAND_HANDLERS: Dict[Type[Command], Callable] = {
     MarkUserActive: mark_user_active,
     Setup: setup,
     CompleteMission: complete_mission,
+    UpdateUserSettings: update_user_settings,
 }

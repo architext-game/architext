@@ -218,3 +218,11 @@ class CompleteMissionResult:
 
 class CompleteMission(Command[CompleteMissionResult]):
     mission_id: str
+
+
+@dataclass
+class UpdateUserSettingsResult:
+    pass
+
+class UpdateUserSettings(Command[UpdateUserSettingsResult]):
+    new_name: Optional[str] = Field(min_length=1, max_length=USER_NAME_MAX_LENGTH)

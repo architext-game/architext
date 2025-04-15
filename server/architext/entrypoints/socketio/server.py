@@ -109,7 +109,7 @@ if __name__ == "__main__":
             architext.handle(CreateUser(
                 id=user.id,
                 email=user.email,
-                name=user.username,
+                name=user.email.split('@')[0],
             ))
         auth(sid, user_id)
         if user_id not in user_id_to_session:
@@ -229,6 +229,11 @@ if __name__ == "__main__":
 
     @event(sio=sio, on='complete_mission', In=CompleteMission, Out=ResponseModel[CompleteMissionResult])
     def complete_mission_event(sid, input: CompleteMission) -> CompleteMissionResult:
+        client_user_id = sid_to_user_id[sid]
+        return architext.handle(input, client_user_id)
+
+    @event(sio=sio, on='update_user_settings', In=UpdateUserSettings, Out=ResponseModel[UpdateUserSettingsResult])
+    def update_user_settings_event(sid, input: UpdateUserSettings) -> UpdateUserSettingsResult:
         client_user_id = sid_to_user_id[sid]
         return architext.handle(input, client_user_id)
 
