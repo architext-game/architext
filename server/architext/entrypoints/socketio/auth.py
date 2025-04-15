@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 from clerk_backend_api import Clerk
 from clerk_backend_api.jwks_helpers.verifytoken import VerifyTokenOptions, verify_token
-
-from architext.core.settings import CLERK_SECRET_KEY
+from architext.entrypoints.socketio.settings import CLERK_SECRET_KEY
 
 
 def user_id_from_clerk_token(token: str) -> str:

@@ -12,3 +12,5 @@ venv
 server/.env
 server/database.db-journal
 .env
+.env.development
+.env.production

@@ -1,5 +1,6 @@
 from functools import wraps
 from pydantic import BaseModel
+from pydantic_core import ValidationError
 from architext.entrypoints.socketio.models import ResponseModel
 from typing import Type, Optional, List, Dict, Any
 from socketio import Server
@@ -47,6 +48,13 @@ def event(
                     input_data = In(**data)
                     response_data = func(sid, input_data)
                 response = Out(success=True, data=response_data, error=None)
+            except ValidationError as error:
+                print(traceback.format_exc())
+                errors = error.errors()
+                if len(errors) > 0:
+                    response = Out(success=False, error=str(errors[0]['msg']), data=None)
+                else:
+                    response = Out(success=False, error=str(error), data=None)
             except Exception as error:
                 print(traceback.format_exc())
                 response = Out(success=False, error=str(error), data=None)

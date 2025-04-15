@@ -10,7 +10,7 @@ services:
     #   - ./volumes/architext/logs:/usr/src/app/logs
     #   - ./server/en_config.yml:/usr/src/app/config.yml
     env_file:
-      - server/.env
+      - server/.env.production
 
   architext-web:
     build:
@@ -20,7 +20,7 @@ services:
     expose:
       - "3000"
     env_file:
-      - web/.env.local
+      - web/.env.production
 
   architext-db:
     image: postgres

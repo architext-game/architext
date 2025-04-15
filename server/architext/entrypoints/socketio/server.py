@@ -38,24 +38,21 @@ from architext.core.commands import (
     CompleteMission, CompleteMissionResult, CreateTemplate, CreateTemplateResult, CreateUser, EditWorld, EditWorldResult, EnterWorld, EnterWorldResult,
     CreateConnectedRoom, CreateConnectedRoomResult, MarkUserActive, RequestWorldCreationFromTemplate,
     RequestWorldCreationFromTemplateResult, RequestWorldImport, RequestWorldImportResult, Setup,
-    TraverseExit, TraverseExitResult,
+    TraverseExit, TraverseExitResult, UpdateUserSettings, UpdateUserSettingsResult,
 )
 from architext.entrypoints.socketio.models import ResponseModel
 from architext.entrypoints.socketio.sio_event import event, endpoints
 import argparse
 from bidict import bidict
 from dataclasses import dataclass
-
+from architext.entrypoints.socketio.settings import USE_MEMORY_DB, DB_URL, CORS_ALLOWED_ORIGINS
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--types', action='store_true', help='Generate typescript types')
     args = parser.parse_args()
 
-    load_dotenv()
-
-    allowed = json.loads(os.environ['CORS_ALLOWED_ORIGINS'])
-    sio = socketio.Server(cors_allowed_origins=allowed)
+    sio = socketio.Server(cors_allowed_origins=CORS_ALLOWED_ORIGINS)
 
     # dictionary relating authenticated sockets with their user ids
     sid_to_user_id: bidict[str, str] = bidict()
@@ -74,7 +71,10 @@ if __name__ == "__main__":
         )
     )
 
-    db_url = f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
+    if USE_MEMORY_DB:
+        db_url = 'sqlite:///:memory:'
+    else:
+        db_url = DB_URL
     uow = SQLAlchemyUnitOfWork(session_factory=db_connection(at='url', url=db_url), notifier=notifier)
     architext = Architext(uow=uow)    
 
