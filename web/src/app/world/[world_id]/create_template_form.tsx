@@ -48,8 +48,9 @@ export const CreateTemplateForm = ({ id, onClose }: CreateTemplateFormProps) => 
 
   return (
     <div className="flex flex-col items-stretch gap-4 text-base sm:text-lg">
-      <Input value={nameInput} onChange={(e) => setNameInput(e.target.value)} placeholder="Name" label="Name" />
-      <Input multiline value={descriptionInput} onChange={(e) => setDescriptionInput(e.target.value)} placeholder="Description" label="Description" />
+      A template allows you to create new copies of the original world. You can also share templates with other players.
+      <Input value={nameInput} onChange={(e) => setNameInput(e.target.value)} placeholder="Name" label="Template Name" />
+      <Input multiline value={descriptionInput} onChange={(e) => setDescriptionInput(e.target.value)} placeholder="Description" label="Template Description" />
       {
         message &&
         <div>{message}</div>
