@@ -1,0 +1,36 @@
+services:
+  # architext-backend:
+  #   build: 
+  #     context: .
+  #     dockerfile: ./server/architext/entrypoints/socketio/Dockerfile
+  #   restart: always
+  #   ports:
+  #    - "5000:5000"
+  #   # volumes:
+  #   #   - ./volumes/architext/logs:/usr/src/app/logs
+  #   #   - ./server/en_config.yml:/usr/src/app/config.yml
+  #   env_file:
+  #     - server/.env.development
+
+  # architext-web:
+  #   build:
+  #     context: ./web/
+  #     dockerfile: Dockerfile
+  #   restart: always
+  #   ports:
+  #     - "3000:3000"
+  #   env_file:
+  #     - web/.env.development
+
+  architext-db:
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    volumes:
+      - ./volumes/db_data:/var/lib/postgresql/data
+      # to backup the database, run:
+      # docker exec -t architext-db-1 pg_dumpall -U postgres > backup.sql
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
