@@ -88,8 +88,8 @@ export function Header({ className }: HeaderProps) {
                   )}
                 </div>
               ) : (
-                <div><Link href="/login" className="hover:underline">
-                  Sign in
+                <div><Link href="/signup" className="hover:underline">
+                  Sign up
                 </Link>
                 </div>
               )}
