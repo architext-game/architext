@@ -11,8 +11,8 @@ interface FaqProps {
 
 export const Faq: React.FC<FaqProps> = ({ className }) => {
   return (
-    <div className={clsx("p-4 max-w-4xl w-full mx-auto", className)}>
-      <h2 id="faq" className="text-3xl font-bold mb-6">Frecuently Asked Questions</h2>
+    <div className={clsx("sm:px-4 py-4 max-w-4xl w-full mx-auto", className)}>
+      <h2 id="faq" className="text-xl sm:text-3xl font-bold mb-2 sm:mb-6">Frecuently Asked Questions</h2>
       <FaqItem 
         question="How much does this cost?" 
         answer={(
@@ -81,7 +81,7 @@ const FaqItem: React.FC<FaqItemProps> = ({ question, answer }) => {
         onClick={toggleOpen} 
         className="w-full flex justify-between items-center text-left focus:outline-none"
       >
-        <span className="text-lg font-semibold">{question}</span>
+        <span className="text-base sm:text-lg font-semibold">{question}</span>
         <Icon 
           icon={isOpen ? "mdi:chevron-up" : "mdi:chevron-down"} 
           className="text-xl"
@@ -96,7 +96,7 @@ const FaqItem: React.FC<FaqItemProps> = ({ question, answer }) => {
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
-            <p className="mt-2 opacity-80">{answer}</p>
+            <p className="text-base mt-2 opacity-80">{answer}</p>
           </motion.div>
         )}
       </AnimatePresence>

@@ -412,7 +412,7 @@ function App({ params, searchParams }: {
   }, [textAreaRef, inputValue]);
   
   return (
-    <div className="bg-bg min-h-screen w-full flex flex-col justify-end text-white font-mono break-words text-lg">
+    <div className="bg-bg min-h-screen w-screen max-w-full overflow-x-hidden flex flex-col justify-end text-white font-mono break-words text-sm md:text-lg">
         <HamburgerMenu>
           <Link href="/worlds" className="py-3 px-6 rounded-lg hover:bg-backgroundHighlight">
             Go to world selection
@@ -444,7 +444,7 @@ function App({ params, searchParams }: {
           className="flex-1 px-3 sm:px-6 whitespace-pre-wrap overflow-auto flex"
           ref={scrollRef}
         >
-          <div className="grow shrink-0 basis-auto mx-auto max-w-screen-md flex flex-col justify-end" ref={messageListRef}>
+          <div className="grow shrink-0 basis-auto mx-auto w-full max-w-screen-md flex flex-col justify-end" ref={messageListRef}>
             {messages.map((message, index, array) => {
               return (
                 <Message
@@ -475,7 +475,7 @@ function App({ params, searchParams }: {
             <div ref={characterMeasureRef} className="h-0 w-fit overflow-hidden">W</div>
           </div>
         </div>
-        <div className="bg-bg fixed bottom-0 w-full p-4f flex justify-center py-4 px-2" ref={textInputContainerRef}>
+        <div className="bg-bg fixed bottom-0 w-full p-4f flex justify-center py-4 px-2 text-base" ref={textInputContainerRef}>
           {
             privateInput ? 
             <input 

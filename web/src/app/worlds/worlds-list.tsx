@@ -40,7 +40,7 @@ export function WorldsList({
   return (
     <div className="flex flex-col">
       <div className="flex justify-between">
-        <div className="text-xl py-2">Worlds</div>
+        <div className="text-lg sm:text-xl py-2">Worlds</div>
         {right}
       </div>
       {

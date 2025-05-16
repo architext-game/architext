@@ -7,7 +7,7 @@ interface FeatureRowProps {
 
 export const FeatureRow: React.FC<FeatureRowProps> = ({ children, className }) => {
   return (
-    <div className={clsx("flex gap-8", className)}>
+    <div className={clsx("flex flex-col sm:flex-row gap-20 sm:gap-8", className)}>
       {children}
     </div>
   )

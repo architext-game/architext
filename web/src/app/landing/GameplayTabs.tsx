@@ -59,10 +59,13 @@ interface GameplayTabsPros {
 }
 
 const GameplayTabs: React.FC<GameplayTabsPros> = ({ className }) => {
+  // Originally the tabs were set to cycle automatically
+  // to recover that behavior, set the manualOverride to false
+  // and progress to 0
   const [activeTab, setActiveTab] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [manualOverride, setManualOverride] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [manualOverride, setManualOverride] = useState(true);
+  const [progress, setProgress] = useState(100);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -96,7 +99,7 @@ const GameplayTabs: React.FC<GameplayTabsPros> = ({ className }) => {
 
   return (
     <div 
-      className={clsx("w-full mx-auto mt-10 p-4 rounded-lg relative text-white", className)}
+      className={clsx("w-full mx-auto p-4 rounded-lg relative text-white", className)}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -107,7 +110,7 @@ const GameplayTabs: React.FC<GameplayTabsPros> = ({ className }) => {
             key={tab.id}
             onClick={() => handleTabClick(tab.id)}
             className={classNames(
-              "py-2 px-4 transition-all duration-300 focus:outline-none relative",
+              "py-2 px-4 transition-all duration-300 focus:outline-none relative text-sm sm:text-base",
               {
                 "text-white font-semibold": activeTab === tab.id,
                 "text-white opacity-50": activeTab !== tab.id
@@ -141,10 +144,9 @@ const GameplayTabs: React.FC<GameplayTabsPros> = ({ className }) => {
         ))}
       </div>
 
-      {/* Emoji Display */}
-      <div className="text-center mt-20 max-w-lg mx-auto">
+      <div className="text-center mt-12 sm:mt-20 max-w-lg mx-auto px-4">
         <div
-          key={activeTab} // Key is used to trigger re-animation
+          key={activeTab}
           className="text-6xl transition-transform duration-500 ease-in-out transform scale-125"
         >
           {tabs[activeTab].component}

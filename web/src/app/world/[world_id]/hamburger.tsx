@@ -13,7 +13,7 @@ export const HamburgerMenu = ({ children }: HamburguerMenuProps) => {
     <>
       {/* Icono de Hamburguesa con Animación */}
       <button
-        className="fixed top-4 left-4 z-50 p-2 text-white opacity-40 hover:opacity-100 rounded-full"
+        className="fixed top-4 left-4 z-50 p-2 text-white opacity-70 hover:opacity-100 rounded-full"
         onClick={() => setIsOpen(!isOpen)}
       >
         <motion.div

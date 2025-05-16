@@ -41,7 +41,7 @@ export function TemplatesList({ router, expandedItem, onToggleExpanded }: Worlds
   
   return (
     <div className="flex flex-col">
-      <div className="text-xl py-2">Create a New World</div>
+      <div className="text-lg sm:text-xl py-2">Create a New World</div>
       {
         getTemplatesResponse?.data?.templates.map(template => (
           <WorldsListItem 

@@ -71,13 +71,13 @@ export function WorldsListItem({
   }
 
   return (
-    <div id={worldId} onClick={toggleOpen} className={clsx("flex flex-col cursor-pointer px-3 overflow-hidden rounded-md transition hover:bg-backgroundHighlight", expanded && "bg-backgroundHighlight")}>
-      <div className="flex justify-between p-3 w-full">
-        <div className="flex gap-3">
+    <div id={worldId} onClick={toggleOpen} className={clsx("-mx-3 sm:mx-0 text-xs md:text-lg flex flex-col cursor-pointer px-2 sm:px-3 overflow-hidden rounded-md transition hover:bg-backgroundHighlight", expanded && "bg-backgroundHighlight")}>
+      <div className="flex justify-between py-3 sm:px-3 w-full">
+        <div className="flex gap-3 my-auto">
           <div>{isPublic ? "🌍" : "🔓"}</div>
           <div>{name}</div>
         </div>
-        <div className="flex gap-3">
+        <div className="flex sm:gap-3 flex-col-reverse gap-1 sm:flex-row text-right">
           <div>{author}</div>
           { connectedPlayers !== undefined && <div>👤 {connectedPlayers}</div> }
         </div>
@@ -97,7 +97,7 @@ export function WorldsListItem({
                 <div className="text-sm">Based on {templateName} by {templateAuthorName || "Architext"}</div>
               )}
               <div className="">{description}</div>
-              <div className="flex gap-4">
+              <div className="flex gap-4 flex-wrap">
                 <Button onPress={enterWorld}>🚪 Enter Now</Button>
                 <Button onPress={codeToClipboard} className="relative">
                   <span className={clsx("transition-opacity", copied ? "opacity-0" : "opacity-100")}>

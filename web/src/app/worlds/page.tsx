@@ -94,8 +94,8 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col items-center text-text font-mono  text-lg pb-40">
-      <Header className="mx-auto max-w-screen-md"/>
+    <div className="flex flex-col items-center text-text font-mono  text-lg pb-40 px-4 sm:px-6">
+      <Header className="mx-auto max-w-screen-md mb-8 sm:mb-10"/>
       {
         showCodeOverlay &&
         <WorldByCodeOverlay 
@@ -127,7 +127,7 @@ export default function Home() {
         />
       }
       <main className="flex flex-col gap-8 row-start-2 max-w-screen-md items-stretch">
-        <Card>
+        <Card className="text-sm">
         Welcome to Architext! This is a place where you can create and explore worlds made of words. <br/><br/> You might encounter some bugs and typos along the way. If you do, I’d really appreciate it if you could let me know. Thanks for playing!
         </Card>
 

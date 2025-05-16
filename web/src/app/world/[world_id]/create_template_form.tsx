@@ -47,9 +47,9 @@ export const CreateTemplateForm = ({ id, onClose }: CreateTemplateFormProps) => 
   }  
 
   return (
-    <div className="flex flex-col items-stretch gap-4">
+    <div className="flex flex-col items-stretch gap-4 text-base sm:text-lg">
       <Input value={nameInput} onChange={(e) => setNameInput(e.target.value)} placeholder="Name" label="Name" />
-      <Input value={descriptionInput} onChange={(e) => setDescriptionInput(e.target.value)} placeholder="Description" label="Description" />
+      <Input multiline value={descriptionInput} onChange={(e) => setDescriptionInput(e.target.value)} placeholder="Description" label="Description" />
       {
         message &&
         <div>{message}</div>

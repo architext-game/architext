@@ -1,39 +1,60 @@
 import React from "react";
 import clsx from "clsx";
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+type CommonProps = {
   label?: string;
-}
+  className?: string;
+  id?: string;
+  multiline?: boolean;
+};
 
-export function Input({
-  className,
-  type = "text",
-  placeholder,
-  value,
-  onChange,
-  id,
-  label,
-  ...props
-}: InputProps) {
+type InputProps =
+  | (CommonProps &
+      React.InputHTMLAttributes<HTMLInputElement> & {
+        multiline?: false;
+      })
+  | (CommonProps &
+      React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
+        multiline: true;
+        rows?: number;
+      });
+
+export function Input(props: InputProps) {
+  const {
+    label,
+    className,
+    id,
+    multiline,
+    ...rest
+  } = props;
+
   return (
     <div className="flex flex-col gap-2">
-      { label && 
+      {label && (
         <label htmlFor={id}>
           {label}
         </label>
-      }
-      <input
-        id={id}
-        type={type}
-        className={clsx(
-          "border border-gray-300 px-3 py-2 rounded bg-background hover:bg-backgroundHighlight",
-          className
-        )}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        {...props}
-      />
+      )}
+
+      {multiline ? (
+        <textarea
+          id={id}
+          className={clsx(
+            "border border-gray-300 px-3 py-2 rounded bg-background hover:bg-backgroundHighlight resize-y",
+            className
+          )}
+          {...(rest as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
+        />
+      ) : (
+        <input
+          id={id}
+          className={clsx(
+            "border border-gray-300 px-3 py-2 rounded bg-background hover:bg-backgroundHighlight",
+            className
+          )}
+          {...(rest as React.InputHTMLAttributes<HTMLInputElement>)}
+        />
+      )}
     </div>
   );
 }
