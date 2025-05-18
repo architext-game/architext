@@ -1,11 +1,7 @@
-import { editWorld, getWorld } from "@/architextSDK";
-import { useStore } from "@/state";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Pencil } from "lucide-react";
-import { Button } from "@/components/button";
 
 interface WorldDetailProps {
-  id: string;
   name: string;
   description: string;
   worldShareCode: string;
@@ -14,10 +10,11 @@ interface WorldDetailProps {
   saveResultMessage: string;
   onClose: () => void;
   onSaveChanges: (name: string, description: string) => void;
+  onEnterWorld: () => void;
+  onCreateTemplate: () => void;
 }
 
 export const WorldDetail = ({ 
-  id,
   name,
   description,
   worldShareCode,
@@ -26,6 +23,8 @@ export const WorldDetail = ({
   saveResultMessage,
   onClose,
   onSaveChanges,
+  onEnterWorld,
+  onCreateTemplate,
  }: WorldDetailProps) => {
   const [nameValue, setName] = useState(name);
   const [descriptionValue, setDescription] = useState(description);
@@ -108,30 +107,26 @@ export const WorldDetail = ({
         Author: {author}<br/>
       </div>
 
-      {/* <div className="flex gap-2">
+      <div className="flex gap-2">
         Actions
         <div className="flex-1 border h-0 my-auto opacity-40"></div>
       </div>
 
       <div className="flex flex-wrap gap-6 items-center">
         <button
+          onClick={onEnterWorld}
           className="self-start text-sm underline text-primary hover:text-primary/80"
         >
           Enter World
         </button>
 
         <button
+          onClick={onCreateTemplate}
           className="self-start text-sm underline text-primary hover:text-primary/80"
         >
           Create Template
         </button>
-
-        <button
-          className="self-start text-sm underline text-primary hover:text-primary/80"
-        >
-          Delete World
-        </button>
-      </div> */}
+      </div>
 
       <button
         onClick={onClose}

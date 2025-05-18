@@ -13,13 +13,9 @@ interface WorldsListItemProps {
   templateAuthorName?: string | null;
   worldId: string;
   expanded?: boolean;
-  showSettings?: boolean;
-  showCreateTemplate?: boolean;
   showOpenWorldDetail?: boolean;
   onEnter: (worldId: string) => void;
   onToggleOpen: (key: string) => void;
-  onOpenSettings?: (key: string) => void;
-  onOpenCreateTemplate?: (key: string) => void;
   onOpenWorldDetail?: (key: string) => void;
 }
 
@@ -35,11 +31,7 @@ export function WorldsListItem({
   onEnter,
   onToggleOpen,
   worldId,
-  onOpenCreateTemplate,
-  onOpenSettings,
   onOpenWorldDetail,
-  showSettings,
-  showCreateTemplate,
   showOpenWorldDetail,
 }: WorldsListItemProps) {
   const [copied, setCopied] = useState(false);
@@ -50,18 +42,6 @@ export function WorldsListItem({
 
   function enterWorld(){
     onEnter(worldId);
-  }
-
-  function openSettings(){
-    if(onOpenSettings){
-      onOpenSettings(worldId);
-    }
-  }
-
-  function openCreateTemplate(){
-    if(onOpenCreateTemplate){
-      onOpenCreateTemplate(worldId);
-    }
   }
 
   function openWorldDetail(){

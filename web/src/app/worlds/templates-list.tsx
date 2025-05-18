@@ -7,37 +7,23 @@ import { WorldsListItem } from "./worlds-list-item";
 interface WorldsListProps {
   router: AppRouterInstance,
   expandedItem?: string | null,
+  getTemplatesResponse: GetWorldTemplatesResponse,
   onToggleExpanded: (key: string) => void,
+  onEnterTemplate: (templateId: string) => void,
 }
 
-export function TemplatesList({ router, expandedItem, onToggleExpanded }: WorldsListProps) {
+export function TemplatesList({ 
+  router,
+  expandedItem,
+  getTemplatesResponse,
+  onToggleExpanded,
+  onEnterTemplate,
+}: WorldsListProps) {
   const socket = useStore((state) => state.socket)
-  
-  const [getTemplatesResponse, setGetTemplatesResponse] = useState<GetWorldTemplatesResponse>()
-
-  async function updateTemplates(){
-    setGetTemplatesResponse(await getWorldTemplates(socket, {}))
-  }
 
   async function handleEnterTemplate(templateId: string){
-    const template = getTemplatesResponse?.data?.templates.find((template) => template.id == templateId)
-    if(!template){
-      console.log(`handleEnterTemplate error: Template ${templateId} not found`)
-      return
-    }
-    const response = await requestWorldCreationFromTemplate(socket, {
-      name: template.name,
-      description: template.description,
-      template_id: template.id,
-      // fixDuplicatedName: true
-    })
-    console.log(response)
-    router.push(`/world/${response.data?.future_world_id}?future=true`)
+    onEnterTemplate(templateId)
   }
-
-  useEffect(() => {
-    updateTemplates();
-  }, [])
   
   return (
     <div className="flex flex-col">

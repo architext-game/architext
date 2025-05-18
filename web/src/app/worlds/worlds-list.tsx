@@ -10,9 +10,8 @@ interface WorldsListProps {
   right: React.ReactNode,
   expandedItem?: string | null,
   onToggleExpanded: (key: string) => void,
-  onOpenCreateTemplate: (key: string) => void,
-  onOpenSettings: (key: string) => void,
   onOpenWorldDetail: (key: string) => void,
+  onEnterWorld: (worldId: string) => void,
 }
 
 export function WorldsList({ 
@@ -21,14 +20,13 @@ export function WorldsList({
   right,
   expandedItem,
   onToggleExpanded,
-  onOpenCreateTemplate,
-  onOpenSettings,
   onOpenWorldDetail,
+  onEnterWorld,
 }: WorldsListProps) {
   const socket = useStore((state) => state.socket)
   
   async function handleEnterWorld(worldId: string){
-    router.push(`/world/${worldId}`)
+    onEnterWorld(worldId)
   }
 
   return (
@@ -52,11 +50,7 @@ export function WorldsList({
             worldId={world.id}
             templateAuthorName={world.base_template_author}
             templateName={world.base_template_name}
-            showSettings={world.you_authorized}
-            showCreateTemplate={world.you_authorized}
             showOpenWorldDetail={world.you_authorized}
-            onOpenCreateTemplate={onOpenCreateTemplate}
-            onOpenSettings={onOpenSettings}
             onOpenWorldDetail={onOpenWorldDetail}
           />
         ))
