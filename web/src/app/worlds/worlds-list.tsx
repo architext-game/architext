@@ -5,38 +5,32 @@ import { useEffect, useState } from "react";
 import { WorldsListItem } from "./worlds-list-item";
 
 interface WorldsListProps {
+  getWorldsResponse: GetWorldsResponse,
   router: AppRouterInstance,
   right: React.ReactNode,
   expandedItem?: string | null,
   onToggleExpanded: (key: string) => void,
   onOpenCreateTemplate: (key: string) => void,
   onOpenSettings: (key: string) => void,
+  onOpenWorldDetail: (key: string) => void,
 }
 
 export function WorldsList({ 
+  getWorldsResponse,
   router,
   right,
   expandedItem,
   onToggleExpanded,
   onOpenCreateTemplate,
   onOpenSettings,
+  onOpenWorldDetail,
 }: WorldsListProps) {
   const socket = useStore((state) => state.socket)
   
-  const [getWorldsResponse, setGetWorldsResponse] = useState<GetWorldsResponse>()
-
-  async function updateWorlds(){
-    setGetWorldsResponse(await getWorlds(socket, {}))
-  }
-
   async function handleEnterWorld(worldId: string){
     router.push(`/world/${worldId}`)
   }
 
-  useEffect(() => {
-    updateWorlds();
-  }, [])
-  
   return (
     <div className="flex flex-col">
       <div className="flex justify-between">
@@ -60,8 +54,10 @@ export function WorldsList({
             templateName={world.base_template_name}
             showSettings={world.you_authorized}
             showCreateTemplate={world.you_authorized}
+            showOpenWorldDetail={world.you_authorized}
             onOpenCreateTemplate={onOpenCreateTemplate}
             onOpenSettings={onOpenSettings}
+            onOpenWorldDetail={onOpenWorldDetail}
           />
         ))
       }

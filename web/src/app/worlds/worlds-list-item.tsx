@@ -15,10 +15,12 @@ interface WorldsListItemProps {
   expanded?: boolean;
   showSettings?: boolean;
   showCreateTemplate?: boolean;
+  showOpenWorldDetail?: boolean;
   onEnter: (worldId: string) => void;
   onToggleOpen: (key: string) => void;
   onOpenSettings?: (key: string) => void;
   onOpenCreateTemplate?: (key: string) => void;
+  onOpenWorldDetail?: (key: string) => void;
 }
 
 export function WorldsListItem({ 
@@ -35,8 +37,10 @@ export function WorldsListItem({
   worldId,
   onOpenCreateTemplate,
   onOpenSettings,
+  onOpenWorldDetail,
   showSettings,
   showCreateTemplate,
+  showOpenWorldDetail,
 }: WorldsListItemProps) {
   const [copied, setCopied] = useState(false);
 
@@ -57,6 +61,12 @@ export function WorldsListItem({
   function openCreateTemplate(){
     if(onOpenCreateTemplate){
       onOpenCreateTemplate(worldId);
+    }
+  }
+
+  function openWorldDetail(){
+    if(onOpenWorldDetail){
+      onOpenWorldDetail(worldId);
     }
   }
 
@@ -107,11 +117,8 @@ export function WorldsListItem({
                     Copied!
                   </span>
                 </Button>
-                {showSettings && 
-                  <Button onPress={openSettings}>Settings</Button>
-                }
-                {showCreateTemplate && 
-                  <Button onPress={openCreateTemplate}>Create Template</Button>
+                {showOpenWorldDetail &&
+                  <Button onPress={openWorldDetail}>More...</Button>
                 }
               </div>
             </div>

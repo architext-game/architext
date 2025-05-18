@@ -23,7 +23,6 @@ export function MissionsList({ router }: MissionsListProps) {
 
   async function updateMissions(){
     const response = await getAvailableMissions(socket, {})
-    console.log("getAvailableMissions", response)
     setGetMissionsResponse(response)
   }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { requestWorldCreationFromTemplate, enterWorld, getWorldTemplate, requestWorldImport } from "@/architextSDK";
+import { requestWorldCreationFromTemplate, enterWorld, getWorldTemplate, requestWorldImport, GetWorldsResponse, getWorlds, editWorld } from "@/architextSDK";
 import { useStore } from "@/state";
 import { useRouter } from 'next/navigation';
 import { Header } from "@/components/header";
@@ -14,6 +14,7 @@ import { EditWorldForm } from "../world/[world_id]/edit_world_form";
 import { CreateTemplateForm } from "../world/[world_id]/create_template_form";
 import { ImportWorldOverlay } from "./import-world-overlay";
 import { MissionsList } from "./missions_list";
+import { WorldDetail } from "@/components/WorldDetail";
 
 
 export default function Home() {
@@ -25,13 +26,28 @@ export default function Home() {
   const [expandedItem, setExpandedItem] = useState<string>()
   const [showEditWorldOverlay, setShowEditWorldOverlay] = useState(false)
   const [showCreateTemplateOverlay, setShowCreateTemplateOverlay] = useState(false)
+  const [showWorldDetailOverlay, setShowWorldDetailOverlay] = useState(false)
   // import state
   const [showImportOverlay, setShowImportOverlay] = useState(false)
   const [importName, setImportName] = useState('')
   const [importDescription, setImportDescription] = useState('')
   const [importText, setImportText] = useState('')
   const [importError, setImportError] = useState('')
+  // world detail state
+  const [editWorldMessage, setEditWorldMessage] = useState('')
+
   const authenticated = useStore((state) => state.authenticated)
+  const [getWorldsResponse, setGetWorldsResponse] = useState<GetWorldsResponse>()
+
+  async function updateWorlds(){
+    setGetWorldsResponse(await getWorlds(socket, {}))
+  }
+  
+  useEffect(() => {
+    if(authenticated){
+      updateWorlds();
+    }
+  }, [authenticated])
 
   async function handleEnterTemplate({ name, description, id }: { name: string, description: string, id: string}){
     const response = await requestWorldCreationFromTemplate(socket, {
@@ -77,6 +93,17 @@ export default function Home() {
     // }
   }
 
+  function saveWorldChanges(id: string, newName: string, newDescription: string) {
+    editWorld(socket, { world_id: id, name: newName, description: newDescription }).then(response => {
+      if (response.success) {
+        setEditWorldMessage("Changes saved.");
+      } else {
+        setEditWorldMessage("Error saving changes.");
+      }
+      updateWorlds();
+    });
+  }
+
   function handleExpandedItem(key: string){
     if(key === expandedItem){
       setExpandedItem("")
@@ -91,6 +118,10 @@ export default function Home() {
 
   function handleOpenSettings(key: string){
     setShowEditWorldOverlay(true)
+  }
+
+  function handleOpenWorldDetail(key: string){
+    setShowWorldDetailOverlay(true)
   }
 
   return (
@@ -134,28 +165,32 @@ export default function Home() {
         { authenticated &&  // should not try to load worlds until socket is authenticated
           <>
           <MissionsList router={router} />
-          <WorldsList 
-            router={router} 
-            expandedItem={expandedItem} 
-            onToggleExpanded={handleExpandedItem}
-            onOpenCreateTemplate={handleOpenCreateTemplate}
-            onOpenSettings={handleOpenSettings}
-            right={
-              <div className="flex gap-3 items-center">
-                { false &&
-                  <>
-                  <button onClick={() => setShowImportOverlay(true)} className="transition hover:underline text-sm"> 
-                    Import world
+          { getWorldsResponse &&
+            <WorldsList 
+              getWorldsResponse={getWorldsResponse}
+              router={router} 
+              expandedItem={expandedItem} 
+              onToggleExpanded={handleExpandedItem}
+              onOpenCreateTemplate={handleOpenCreateTemplate}
+              onOpenSettings={handleOpenSettings}
+              onOpenWorldDetail={handleOpenWorldDetail}
+              right={
+                <div className="flex gap-3 items-center">
+                  { false &&
+                    <>
+                    <button onClick={() => setShowImportOverlay(true)} className="transition hover:underline text-sm"> 
+                      Import world
+                    </button>
+                    <div>-</div>
+                    </>
+                  }
+                  <button onClick={() => setShowCodeOverlay(true)} className="transition hover:underline text-sm"> 
+                  I have a Code 🔑
                   </button>
-                  <div>-</div>
-                  </>
-                }
-                <button onClick={() => setShowCodeOverlay(true)} className="transition hover:underline text-sm"> 
-                 I have a Code 🔑
-                </button>
-              </div>
-            } 
-          />
+                </div>
+              } 
+            />
+          }
           <TemplatesList 
             router={router}
             expandedItem={expandedItem}
@@ -174,6 +209,22 @@ export default function Home() {
         showCreateTemplateOverlay && expandedItem &&
         <Overlay onClose={() => setShowCreateTemplateOverlay(false)}>
           <CreateTemplateForm id={expandedItem} onClose={() => setShowCreateTemplateOverlay(false)} />
+        </Overlay>
+      }
+      {
+        showWorldDetailOverlay && expandedItem &&
+        <Overlay onClose={() => setShowWorldDetailOverlay(false)}>
+          <WorldDetail 
+            id={expandedItem}
+            author={getWorldsResponse?.data?.worlds.find(world => world.id === expandedItem)?.owner_name || "Architext"}
+            connectedPlayers={getWorldsResponse?.data?.worlds.find(world => world.id === expandedItem)?.connected_players_count || 0}
+            name={getWorldsResponse?.data?.worlds.find(world => world.id === expandedItem)?.name || ""}
+            description={getWorldsResponse?.data?.worlds.find(world => world.id === expandedItem)?.description || ""}
+            worldShareCode={getWorldsResponse?.data?.worlds.find(world => world.id === expandedItem)?.id || ""}
+            saveResultMessage={editWorldMessage}
+            onClose={() => setShowWorldDetailOverlay(false)}
+            onSaveChanges={(name, description) => saveWorldChanges(expandedItem, name, description)}
+          />
         </Overlay>
       }
     </div>
