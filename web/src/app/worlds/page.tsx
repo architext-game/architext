@@ -152,6 +152,11 @@ export default function Home() {
                 onOpenWorldDetail={() =>
                   openOverlay(
                     <WorldDetail
+                      allowEdit
+                      allowDelete
+                      allowCreateTemplate
+                      allowEnterWorld
+                      showCloseButton
                       author={
                         getWorldsResponse?.data?.worlds.find((w) => w.id === expandedItem)?.owner_name || "Architext"
                       }

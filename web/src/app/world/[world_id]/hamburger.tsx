@@ -13,7 +13,7 @@ export const HamburgerMenu = ({ children }: HamburguerMenuProps) => {
     <>
       {/* Icono de Hamburguesa con Animación */}
       <button
-        className="fixed top-4 left-4 z-50 p-2 text-white opacity-70 hover:opacity-100 rounded-full"
+        className="fixed top-4 left-4 z-50 p-2 text-white opacity-70 hover:opacity-100 rounded-full max-w-full"
         onClick={() => setIsOpen(!isOpen)}
       >
         <motion.div
@@ -39,7 +39,7 @@ export const HamburgerMenu = ({ children }: HamburguerMenuProps) => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0.5, x: -100 }}
             transition={{ duration: 0.3 }}
-            className="fixed top-0 left-0 w-fit h-full bg-black/10 backdrop-blur-lg text-white z-40 flex flex-col px-8 pt-20"
+            className="fixed top-0 left-0 w-fit max-w-full h-full max-h-full bg-black/10 backdrop-blur-lg text-white z-40 flex flex-col pt-20"
           >
             { children }
           </motion.div>

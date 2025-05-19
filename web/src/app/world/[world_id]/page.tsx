@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, use, RefObject } from 'react'
 import classNames from 'classnames'
 import { Message } from './Message';
 import _ from 'lodash';
-import { onChatbotServerMessage, chatbotMessage, Message as ReceivedMessage, authenticate, enterWorld, getMe, getWorld, GetWorldResponse, getWorlds, onWorldCreatedNotification } from '@/architextSDK';
+import { onChatbotServerMessage, chatbotMessage, Message as ReceivedMessage, authenticate, enterWorld, getMe, getWorld, GetWorldResponse, getWorlds, onWorldCreatedNotification, editWorld } from '@/architextSDK';
 import { useStore } from '@/state';
 import { useRouter } from 'next/navigation';
 import { HamburgerMenu } from './hamburger';
@@ -191,13 +191,17 @@ function App({ params, searchParams }: {
 
   useHeartbeat(socket)
 
+  function updateWorld(){
+    getWorld(socket, { world_id: worldId }).then(response => {
+      setWorld(response)
+    })
+  }
+
   useEffect(() => {
-    if(worldId){
-      getWorld(socket, { world_id: worldId }).then(response => {
-        setWorld(response)
-      })
+    if(worldId && authenticated){
+      updateWorld()
     }
-  }, [worldId])
+  }, [worldId, authenticated])
   
   const privileged = world?.data?.you_authorized
 
@@ -247,7 +251,7 @@ function App({ params, searchParams }: {
       shouldEnterWorld.current = false
       gameSetup(worldId)
     }
-  }, [socket, worldId, worldIsNew])
+  }, [socket, worldId, worldIsNew, authenticated])
 
   const updateCharWidth = () => {
     if(messageListRef.current && characterMeasureRef.current){
@@ -410,58 +414,61 @@ function App({ params, searchParams }: {
       textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`; // Set to scroll height
     }
   }, [textAreaRef, inputValue]);
+
+  const [editWorldMessage, setEditWorldMessage] = useState("");
+
+  function saveWorldChanges(id: string, newName: string, newDescription: string) {
+    editWorld(socket, { world_id: id, name: newName, description: newDescription }).then((response) => {
+      setEditWorldMessage(response.success ? "Changes saved." : "Error saving changes.");
+      updateWorld();
+    });
+  }
   
   return (
     <div className="bg-bg min-h-screen w-screen max-w-full overflow-x-hidden flex flex-col justify-end text-white font-mono break-words text-sm md:text-lg">
         <HamburgerMenu>
-          <Link href="/worlds" className="py-3 px-6 rounded-lg hover:bg-backgroundHighlight">
-            Go to world selection
-          </Link>
-          { privileged && 
-            <>
-            <div onClick={() => setShowEditWorldOverlay(true)} className="py-3 px-6 rounded-lg hover:bg-backgroundHighlight cursor-pointer">
-              Edit World Details
+          <div className='relative max-w-full sm:max-w-md flex flex-col h-full'>
+              {/* <div onClick={() => setShowEditWorldOverlay(true)} className="py-3 px-6 rounded-lg hover:bg-backgroundHighlight cursor-pointer">
+                Edit World Details
+              </div> */}
+              {/* <div onClick={() => setShowCreateTemplateOverlay(true)} className="py-3 px-6 rounded-lg hover:bg-backgroundHighlight cursor-pointer">
+                Create Template from this World
+              </div> */}
+              <div className="overflow-y-auto flex-1 pb-36 px-8">
+                <WorldDetail
+                  allowEdit={!!privileged}
+                  allowDelete={false}
+                  allowCreateTemplate={false}
+                  allowEnterWorld={false}
+                  showCloseButton={false}
+                  author={
+                    world?.data?.owner_name || "Architext"
+                  }
+                  connectedPlayers={
+                    world?.data?.connected_players_count || 0
+                  }
+                  name={world?.data?.name || ""}
+                  description={world?.data?.description || ""}
+                  worldShareCode={world?.data?.id || ""}
+                  saveResultMessage={editWorldMessage}
+                  onClose={() => {}}
+                  onSaveChanges={(name, description) => saveWorldChanges(worldId, name, description)}
+                  onEnterWorld={() => {}}
+                  onCreateTemplate={() =>
+                    {}
+                  }
+                  onDeleteWorld={() => {}}
+                />
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 px-2 pb-4">
+                <Link href="/worlds">
+                  <div className="py-3 px-6 mx-3 rounded-lg hover:bg-backgroundHighlight mb-6 backdrop-blur-lg bg-muted/20">
+                      Go to world selection
+                  </div>
+                </Link>
+              </div>
             </div>
-            <div onClick={() => setShowCreateTemplateOverlay(true)} className="py-3 px-6 rounded-lg hover:bg-backgroundHighlight cursor-pointer">
-              Create Template from this World
-            </div>
-            <WorldDetail
-              author={
-                world.data?.owner_name || "Architext"
-              }
-              connectedPlayers={
-                world.data?.connected_players_count || 0
-              }
-              name={world.data?.name || ""}
-              description={world.data?.description || ""}
-              worldShareCode={world.data?.id || ""}
-              saveResultMessage={""}
-              onClose={() => {}}
-              onSaveChanges={(name, desc) => {}}
-              onEnterWorld={() => {}}
-              onCreateTemplate={() =>
-                {}
-              }
-            />
-            </>
-
-          }
         </HamburgerMenu>
-        {
-          showEditWorldOverlay &&
-          <Overlay onClose={() => setShowEditWorldOverlay(false)}>
-            <EditWorldForm id={worldId} onClose={() => setShowEditWorldOverlay(false)} />
-          </Overlay>
-        }
-        {
-          showCreateTemplateOverlay &&
-          <Overlay onClose={() => setShowCreateTemplateOverlay(false)}>
-            <CreateTemplateForm 
-              id={worldId}
-              onClose={() => setShowCreateTemplateOverlay(false)}
-            />
-          </Overlay>
-        }
         <div
           className="flex-1 px-3 sm:px-6 whitespace-pre-wrap overflow-auto flex"
           ref={scrollRef}
@@ -473,7 +480,7 @@ function App({ params, searchParams }: {
                   charAspectRatio={charAspectRatio}
                   key={index}
                   className={classNames(
-                    "text-left",
+                    "text-left text-base",
                     { 'text-soft border-muted pb-4 pt-2': message.type == 'user' },
                     { 'pb-2': message.type === 'server' && message.display !== 'underline' && message.display !== 'box' },
                     { 'text-soft': scrolledBottom ? !highlightedMessages[index] : false && message.visible === false },
