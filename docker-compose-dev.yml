@@ -3,7 +3,6 @@ services:
   #   build: 
   #     context: .
   #     dockerfile: ./server/architext/entrypoints/socketio/Dockerfile
-  #   restart: always
   #   ports:
   #    - "5000:5000"
   #   # volumes:
@@ -16,7 +15,6 @@ services:
   #   build:
   #     context: ./web/
   #     dockerfile: Dockerfile
-  #   restart: always
   #   ports:
   #     - "3000:3000"
   #   env_file:
@@ -24,7 +22,6 @@ services:
 
   architext-db:
     image: postgres
-    restart: always
     shm_size: 128mb
     volumes:
       - ./volumes/db_data:/var/lib/postgresql/data

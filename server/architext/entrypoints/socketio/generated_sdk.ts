@@ -134,6 +134,17 @@ export interface EditWorldResponse {
     error: string | null;
 }
 
+export interface DeleteWorldParams {
+    world_id: string;
+}
+
+export interface DeleteWorldResponse {
+    success: boolean;
+    data: {
+    } | null;
+    error: string | null;
+}
+
 export interface GetMeParams {
 }
 
@@ -368,6 +379,17 @@ export async function editWorld(
 ): Promise<EditWorldResponse> {
     return new Promise((resolve, reject) => {
         socket.emit("edit_world", params, (response: EditWorldResponse) => {
+            resolve(response)
+        });
+    });
+}
+
+export async function deleteWorld(
+    socket: Socket,
+    params: DeleteWorldParams
+): Promise<DeleteWorldResponse> {
+    return new Promise((resolve, reject) => {
+        socket.emit("delete_world", params, (response: DeleteWorldResponse) => {
             resolve(response)
         });
     });

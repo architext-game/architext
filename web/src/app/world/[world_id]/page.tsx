@@ -13,6 +13,7 @@ import { Overlay } from '@/components/overlay';
 import { EditWorldForm } from './edit_world_form';
 import { CreateTemplateForm } from './create_template_form';
 import useHeartbeat from '../heartbeat';
+import { WorldDetail } from '@/components/WorldDetail';
 
 const usePageScrolledToBottom = () => {
   const [isAtBottom, setIsAtBottom] = useState(false);
@@ -187,7 +188,6 @@ function App({ params, searchParams }: {
   const worldIsNew = use(searchParams).future;  // so it may not exist yet
   const shouldEnterWorld = useRef(true);
   const authenticated = useStore((state) => state.authenticated)
-
 
   useHeartbeat(socket)
 
@@ -425,7 +425,26 @@ function App({ params, searchParams }: {
             <div onClick={() => setShowCreateTemplateOverlay(true)} className="py-3 px-6 rounded-lg hover:bg-backgroundHighlight cursor-pointer">
               Create Template from this World
             </div>
+            <WorldDetail
+              author={
+                world.data?.owner_name || "Architext"
+              }
+              connectedPlayers={
+                world.data?.connected_players_count || 0
+              }
+              name={world.data?.name || ""}
+              description={world.data?.description || ""}
+              worldShareCode={world.data?.id || ""}
+              saveResultMessage={""}
+              onClose={() => {}}
+              onSaveChanges={(name, desc) => {}}
+              onEnterWorld={() => {}}
+              onCreateTemplate={() =>
+                {}
+              }
+            />
             </>
+
           }
         </HamburgerMenu>
         {
@@ -437,7 +456,10 @@ function App({ params, searchParams }: {
         {
           showCreateTemplateOverlay &&
           <Overlay onClose={() => setShowCreateTemplateOverlay(false)}>
-            <CreateTemplateForm id={worldId} onClose={() => setShowCreateTemplateOverlay(false)} />
+            <CreateTemplateForm 
+              id={worldId}
+              onClose={() => setShowCreateTemplateOverlay(false)}
+            />
           </Overlay>
         }
         <div

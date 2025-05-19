@@ -180,6 +180,22 @@ class DeleteItem(Command[DeleteItemResult]):
 
 
 @dataclass
+class DeleteWorldResult:
+    pass
+
+class DeleteWorld(Command[DeleteWorldResult]):
+    world_id: str
+
+
+@dataclass
+class DeleteTemplateResult:
+    pass
+
+class DeleteTemplate(Command[DeleteTemplateResult]):
+    template_id: str
+
+
+@dataclass
 class DeleteRoomResult:
     pass
 

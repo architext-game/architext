@@ -55,3 +55,47 @@ cd web/
 npm install
 npm run dev
 ```
+
+# Migrations
+
+DB migratios are done using [alembic](https://alembic.sqlalchemy.org/en/latest/).
+
+To set up alembic I have run the following command:
+
+```
+cd server
+pip install alembic
+alembic init alembic
+```
+
+Alembic needs access to the running DB as well as the current SQLAlchemy models.
+Currently the `alembic/env.py` file is configured to use the `DB_URL` configuration variable.
+
+```
+from architext.entrypoints.socketio.settings import DB_URL
+config.set_main_option('sqlalchemy.url', DB_URL) 
+```
+
+The metadata is also imported in the `alembic/env.py` file.
+
+```
+from architext.core.adapters.sqlalchemy.config import metadata
+target_metadata = metadata
+```
+
+To run migrations, run the following command:
+
+```
+alembic upgrade head
+```
+
+This will run all the migrations that have not been run yet.
+
+To generate a new migration, run the following command:
+
+```
+alembic revision --autogenerate
+```
+
+Alembic should be installed in the venv. Currently it is included as a dependency
+in the `requirements.txt` file.

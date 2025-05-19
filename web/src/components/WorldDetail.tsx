@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Pencil } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface WorldDetailProps {
   name: string;
@@ -12,6 +13,7 @@ interface WorldDetailProps {
   onSaveChanges: (name: string, description: string) => void;
   onEnterWorld: () => void;
   onCreateTemplate: () => void;
+  onDeleteWorld: () => void;
 }
 
 export const WorldDetail = ({ 
@@ -25,14 +27,22 @@ export const WorldDetail = ({
   onSaveChanges,
   onEnterWorld,
   onCreateTemplate,
+  onDeleteWorld,
  }: WorldDetailProps) => {
   const [nameValue, setName] = useState(name);
   const [descriptionValue, setDescription] = useState(description);
   const [isEditingName, setIsEditingName] = useState(false);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteConfirmed, setDeleteConfirmed] = useState(false);
 
   function saveChanges(newName: string, newDescription: string) {
     onSaveChanges(newName, newDescription);
+  }
+
+  function handleConfirmDelete() {
+    onDeleteWorld();
+    setDeleteConfirmed(true);
   }
 
   return (
@@ -69,7 +79,7 @@ export const WorldDetail = ({
         )}
       </div>
 
-      {/* Descripción en línea */}
+      {/* Descripción */}
       <div className="relative">
         {isEditingDescription ? (
           <textarea
@@ -112,20 +122,73 @@ export const WorldDetail = ({
         <div className="flex-1 border h-0 my-auto opacity-40"></div>
       </div>
 
-      <div className="flex flex-wrap gap-6 items-center">
-        <button
-          onClick={onEnterWorld}
-          className="self-start text-sm underline text-primary hover:text-primary/80"
-        >
-          Enter World
-        </button>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-wrap gap-6 items-center">
+          <button
+            onClick={onEnterWorld}
+            className="self-start text-sm underline text-primary hover:text-primary/80"
+          >
+            Enter World
+          </button>
 
-        <button
-          onClick={onCreateTemplate}
-          className="self-start text-sm underline text-primary hover:text-primary/80"
-        >
-          Create Template
-        </button>
+          <button
+            onClick={onCreateTemplate}
+            className="self-start text-sm underline text-primary hover:text-primary/80"
+          >
+            Create Template
+          </button>
+
+          {!showDeleteConfirm && !deleteConfirmed && (
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              className="self-start text-sm underline text-primary hover:text-primary/80"
+            >
+              Delete World
+            </button>
+          )}
+        </div>
+
+        <AnimatePresence>
+          {showDeleteConfirm && !deleteConfirmed && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+              className="flex flex-col gap-2"
+            >
+              <div className="text-sm text-red-600">
+                Are you sure you want to delete this world?
+              </div>
+              <div className="flex gap-4">
+                <button
+                  onClick={handleConfirmDelete}
+                  className="text-sm text-red-600 underline hover:text-red-500"
+                >
+                  Confirm Delete
+                </button>
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="text-sm text-primary underline hover:text-primary/80"
+                >
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {deleteConfirmed && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+              className="text-sm text-green-500"
+            >
+              World deleted successfully.
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <button

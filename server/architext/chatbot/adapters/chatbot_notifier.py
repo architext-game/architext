@@ -7,6 +7,7 @@ class ChatbotNotifier(Notifier):
         self.channel = channel
 
     def notify(self, user_id: str, notification: Notification):
+        text = ""
         if isinstance(notification, UserEnteredRoomNotification):
             if notification.movement in ["entered_world", "teleported", "reconnected"]:
                 text = _('Poof! {user_who_entered} appeared here.').format(

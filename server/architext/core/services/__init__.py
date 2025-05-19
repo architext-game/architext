@@ -30,6 +30,7 @@ from architext.core.commands import (
     MarkUserActive,
     CompleteMission,
     UpdateUserSettings,
+    DeleteWorld,
 )
 
 from architext.core.services.setup import setup
@@ -53,6 +54,7 @@ from architext.core.services.edit_room import edit_room
 from architext.core.services.mark_user_active import mark_user_active
 from architext.core.services.complete_mission import complete_mission
 from architext.core.services.update_user_settings import update_user_settings
+from architext.core.services.delete_world import delete_world
 
 from typing import Dict, Type, Callable
 
@@ -72,6 +74,7 @@ COMMAND_HANDLERS: Dict[Type[Command], Callable] = {
     DeleteItem: delete_item,
     DeleteExit: delete_exit,
     DeleteRoom: delete_room,
+    DeleteWorld: delete_world,
     EditRoom: edit_room,
     SendSocialInteraction: send_social_interaction,
     MarkUserActive: mark_user_active,

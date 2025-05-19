@@ -35,7 +35,7 @@ import atexit
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from architext.core.commands import (
-    CompleteMission, CompleteMissionResult, CreateTemplate, CreateTemplateResult, CreateUser, EditWorld, EditWorldResult, EnterWorld, EnterWorldResult,
+    CompleteMission, CompleteMissionResult, CreateTemplate, CreateTemplateResult, CreateUser, DeleteWorld, DeleteWorldResult, EditWorld, EditWorldResult, EnterWorld, EnterWorldResult,
     CreateConnectedRoom, CreateConnectedRoomResult, MarkUserActive, RequestWorldCreationFromTemplate,
     RequestWorldCreationFromTemplateResult, RequestWorldImport, RequestWorldImportResult, Setup,
     TraverseExit, TraverseExitResult, UpdateUserSettings, UpdateUserSettingsResult,
@@ -78,7 +78,7 @@ if __name__ == "__main__":
     uow = SQLAlchemyUnitOfWork(session_factory=db_connection(at='url', url=db_url), notifier=notifier)
     architext = Architext(uow=uow)    
 
-    architext.handle(Setup(uow=uow, client_user_id=None))
+    architext.handle(Setup())
 
     user_id_to_session: Dict[str, Session] = {}
 
@@ -197,6 +197,11 @@ if __name__ == "__main__":
         client_user_id = sid_to_user_id[sid]
         return architext.handle(input, client_user_id)
 
+    @event(sio=sio, on='delete_world', In=DeleteWorld, Out=ResponseModel[DeleteWorldResult])
+    def delete_world(sid, input: DeleteWorld) -> DeleteWorldResult:
+        client_user_id = sid_to_user_id[sid]
+        return architext.handle(input, client_user_id)
+
     @event(sio=sio, on='get_me', In=Me, Out=ResponseModel[MeResult])
     def get_me_event(sid, input: Me) -> MeResult:
         client_user_id = sid_to_user_id[sid]
@@ -271,12 +276,12 @@ if __name__ == "__main__":
         import shutil
         shutil.copy(
             './architext/entrypoints/socketio/generated_sdk.ts',
-            '/home/oliver/vps/apps/architext/server/test/e2e/architextSDK.ts'
+            './test/e2e/architextSDK.ts'
         )  # too lazy to copy it myself
 
         shutil.copy(
             './architext/entrypoints/socketio/generated_sdk.ts',
-            '/home/oliver/vps/apps/architext/web/src/architextSDK.ts'
+            '../web/src/architextSDK.ts'
         )  # too lazy to copy it myself
         
         print("Done")
@@ -288,4 +293,4 @@ if __name__ == "__main__":
         app = socketio.WSGIApp(sio)
         
         # Use eventlet or gevent for asynchronous server
-        eventlet.wsgi.server(eventlet.listen(('', 5000)), app)
+        eventlet.wsgi.server(eventlet.listen(('', 5000)), app)  # type: ignore

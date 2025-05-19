@@ -1,0 +1,6 @@
+import architext.core.adapters.sqlalchemy.user_repository
+import architext.core.adapters.sqlalchemy.mission_repository
+import architext.core.adapters.sqlalchemy.room_repository
+import architext.core.adapters.sqlalchemy.user_repository
+import architext.core.adapters.sqlalchemy.world_repository
+import architext.core.adapters.sqlalchemy.world_template_repository

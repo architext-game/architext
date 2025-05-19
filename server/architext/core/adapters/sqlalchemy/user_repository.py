@@ -13,7 +13,7 @@ users_table = Table(
     "users", metadata,
     Column("id", String, primary_key=True),
     Column("name", String, nullable=False, unique=True),
-    Column("world_id", String, ForeignKey("worlds.id"), nullable=True, default=None),
+    Column("world_id", String, ForeignKey("worlds.id", ondelete="SET NULL"), nullable=True, default=None),
     Column("active", Boolean, nullable=False, server_default=text("false")),
     Column("email", String, nullable=True, default=None, unique=True),
 )
@@ -21,7 +21,7 @@ users_table = Table(
 world_visit_records_table = Table(
     "world_visit_records", metadata,
     Column("user_id", String, ForeignKey("users.id"), primary_key=True),
-    Column("world_id", String, ForeignKey("worlds.id"), primary_key=True),
+    Column("world_id", String, ForeignKey("worlds.id", ondelete="CASCADE"), primary_key=True),
     Column("last_room_id", String, ForeignKey("rooms.id"), nullable=False),
 )
 

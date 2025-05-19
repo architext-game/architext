@@ -43,7 +43,7 @@ export function Header({ className }: HeaderProps) {
   }, []);
 
   return (
-    <header className={clsx(className, "w-full pt-4 font-mono relative")}>
+    <header className={clsx(className, "w-full pt-4 sm:pt-6 md:pt-8 font-mono relative")}>
       <div className="max-w-screen-lg mx-auto flex flex-col sm:flex-row gap-4 sm:gap-6">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl sm:text-5xl hover:underline">

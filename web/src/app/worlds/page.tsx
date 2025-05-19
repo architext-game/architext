@@ -10,6 +10,7 @@ import {
   editWorld,
   getWorldTemplates,
   GetWorldTemplatesResponse,
+  deleteWorld,
 } from "@/architextSDK";
 import { useStore } from "@/state";
 import { useRouter } from "next/navigation";
@@ -100,6 +101,13 @@ export default function Home() {
     });
   }
 
+  function handleDeleteWorld(id: string) {
+    deleteWorld(socket, { world_id: id }).then((response) => {
+      console.log("World deleted")
+      updateWorlds();
+    });
+  }
+
   function handleExpandedItem(key: string) {
     setExpandedItem(key === expandedItem ? "" : key);
   }
@@ -153,6 +161,7 @@ export default function Home() {
                           />
                         )
                       }
+                      onDeleteWorld={() => handleDeleteWorld(expandedItem!)}
                     />
                   )
                 }
