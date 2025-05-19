@@ -35,7 +35,7 @@ import atexit
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from architext.core.commands import (
-    CompleteMission, CompleteMissionResult, CreateTemplate, CreateTemplateResult, CreateUser, DeleteWorld, DeleteWorldResult, EditWorld, EditWorldResult, EnterWorld, EnterWorldResult,
+    CompleteMission, CompleteMissionResult, CreateTemplate, CreateTemplateResult, CreateUser, DeleteTemplate, DeleteTemplateResult, DeleteWorld, DeleteWorldResult, EditTemplate, EditTemplateResult, EditWorld, EditWorldResult, EnterWorld, EnterWorldResult,
     CreateConnectedRoom, CreateConnectedRoomResult, MarkUserActive, RequestWorldCreationFromTemplate,
     RequestWorldCreationFromTemplateResult, RequestWorldImport, RequestWorldImportResult, Setup,
     TraverseExit, TraverseExitResult, UpdateUserSettings, UpdateUserSettingsResult,
@@ -194,6 +194,16 @@ if __name__ == "__main__":
 
     @event(sio=sio, on='edit_world', In=EditWorld, Out=ResponseModel[EditWorldResult])
     def edit_world(sid, input: EditWorld) -> EditWorldResult:
+        client_user_id = sid_to_user_id[sid]
+        return architext.handle(input, client_user_id)
+
+    @event(sio=sio, on='edit_template', In=EditTemplate, Out=ResponseModel[EditTemplateResult])
+    def edit_template(sid, input: EditTemplate) -> EditTemplateResult:
+        client_user_id = sid_to_user_id[sid]
+        return architext.handle(input, client_user_id)
+
+    @event(sio=sio, on='delete_template', In=DeleteTemplate, Out=ResponseModel[DeleteTemplateResult])
+    def delete_template(sid, input: DeleteTemplate) -> DeleteTemplateResult:
         client_user_id = sid_to_user_id[sid]
         return architext.handle(input, client_user_id)
 

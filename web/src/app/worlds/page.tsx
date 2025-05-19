@@ -11,6 +11,8 @@ import {
   getWorldTemplates,
   GetWorldTemplatesResponse,
   deleteWorld,
+  editTemplate,
+  deleteTemplate,
 } from "@/architextSDK";
 import { useStore } from "@/state";
 import { useRouter } from "next/navigation";
@@ -25,6 +27,7 @@ import { CreateTemplateForm } from "../world/[world_id]/create_template_form";
 import { ImportWorldOverlay } from "./import-world-overlay";
 import { MissionsList } from "./missions_list";
 import { WorldDetail } from "@/components/WorldDetail";
+import { TemplateDetail } from "@/components/TemplateDetail";
 
 export default function Home() {
   const socket = useStore((state) => state.socket);
@@ -101,10 +104,22 @@ export default function Home() {
     });
   }
 
+  function saveTemplateChanges(id: string, newName: string, newDescription: string) {
+    editTemplate(socket, { template_id: id, name: newName, description: newDescription }).then((response) => {
+      setEditWorldMessage(response.success ? "Changes saved." : "Error saving changes.");
+      updateTemplates();
+    });
+  }
+
   function handleDeleteWorld(id: string) {
     deleteWorld(socket, { world_id: id }).then((response) => {
-      console.log("World deleted")
       updateWorlds();
+    });
+  }
+
+  function handleDeleteTemplate(id: string) {
+    deleteTemplate(socket, { template_id: id }).then((response) => {
+      updateTemplates();
     });
   }
 
@@ -204,6 +219,22 @@ export default function Home() {
                 getTemplatesResponse={getTemplatesResponse}
                 onEnterTemplate={handleEnterTemplate}
                 onToggleExpanded={handleExpandedItem}
+                onOpenTemplateDetail={() =>
+                  openOverlay(
+                    <TemplateDetail
+                      author={
+                        getTemplatesResponse?.data?.templates.find((w) => w.id === expandedItem)?.author_name || "Architext"
+                      }
+                      name={getTemplatesResponse?.data?.templates.find((w) => w.id === expandedItem)?.name || ""}
+                      description={getTemplatesResponse?.data?.templates.find((w) => w.id === expandedItem)?.description || ""}
+                      templateShareCode={getTemplatesResponse?.data?.templates.find((w) => w.id === expandedItem)?.id || ""}
+                      saveResultMessage={editWorldMessage}
+                      onClose={closeOverlay}
+                      onSaveChanges={(name, desc) => saveTemplateChanges(expandedItem!, name, desc)}
+                      onEnterTemplate={() => handleEnterTemplate(expandedItem!)}
+                      onDeleteTemplate={() => handleDeleteTemplate(expandedItem!)}
+                    />
+                  )}
               />
             }
           </>

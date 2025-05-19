@@ -10,6 +10,7 @@ interface WorldsListProps {
   getTemplatesResponse: GetWorldTemplatesResponse,
   onToggleExpanded: (key: string) => void,
   onEnterTemplate: (templateId: string) => void,
+  onOpenTemplateDetail: (key: string) => void,
 }
 
 export function TemplatesList({ 
@@ -18,6 +19,7 @@ export function TemplatesList({
   getTemplatesResponse,
   onToggleExpanded,
   onEnterTemplate,
+  onOpenTemplateDetail
 }: WorldsListProps) {
   const socket = useStore((state) => state.socket)
 
@@ -40,6 +42,8 @@ export function TemplatesList({
             name={template.name}
             key={template.id}
             worldId={template.id}
+            showOpenWorldDetail={template.you_authorized}
+            onOpenWorldDetail={onOpenTemplateDetail}
           />
         ))
       }

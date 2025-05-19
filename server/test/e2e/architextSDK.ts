@@ -134,6 +134,30 @@ export interface EditWorldResponse {
     error: string | null;
 }
 
+export interface EditTemplateParams {
+    template_id: string;
+    name: string | null;
+    description: string | null;
+}
+
+export interface EditTemplateResponse {
+    success: boolean;
+    data: {
+    } | null;
+    error: string | null;
+}
+
+export interface DeleteTemplateParams {
+    template_id: string;
+}
+
+export interface DeleteTemplateResponse {
+    success: boolean;
+    data: {
+    } | null;
+    error: string | null;
+}
+
 export interface DeleteWorldParams {
     world_id: string;
 }
@@ -379,6 +403,28 @@ export async function editWorld(
 ): Promise<EditWorldResponse> {
     return new Promise((resolve, reject) => {
         socket.emit("edit_world", params, (response: EditWorldResponse) => {
+            resolve(response)
+        });
+    });
+}
+
+export async function editTemplate(
+    socket: Socket,
+    params: EditTemplateParams
+): Promise<EditTemplateResponse> {
+    return new Promise((resolve, reject) => {
+        socket.emit("edit_template", params, (response: EditTemplateResponse) => {
+            resolve(response)
+        });
+    });
+}
+
+export async function deleteTemplate(
+    socket: Socket,
+    params: DeleteTemplateParams
+): Promise<DeleteTemplateResponse> {
+    return new Promise((resolve, reject) => {
+        socket.emit("delete_template", params, (response: DeleteTemplateResponse) => {
             resolve(response)
         });
     });

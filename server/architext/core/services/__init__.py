@@ -31,6 +31,8 @@ from architext.core.commands import (
     CompleteMission,
     UpdateUserSettings,
     DeleteWorld,
+    EditTemplate,
+    DeleteTemplate,
 )
 
 from architext.core.services.setup import setup
@@ -55,6 +57,8 @@ from architext.core.services.mark_user_active import mark_user_active
 from architext.core.services.complete_mission import complete_mission
 from architext.core.services.update_user_settings import update_user_settings
 from architext.core.services.delete_world import delete_world
+from architext.core.services.edit_template import edit_template
+from architext.core.services.delete_template import delete_template
 
 from typing import Dict, Type, Callable
 
@@ -66,6 +70,8 @@ COMMAND_HANDLERS: Dict[Type[Command], Callable] = {
     RequestWorldCreationFromTemplate: request_world_creation_from_template,
     RequestWorldImport: request_world_import,
     CreateTemplate: create_template,
+    EditTemplate: edit_template,
+    DeleteTemplate: delete_template,
     EditWorld: edit_world,
     CreateExit: create_exit,
     EditExit: edit_exit,
