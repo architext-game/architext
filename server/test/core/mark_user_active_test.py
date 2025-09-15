@@ -1,7 +1,7 @@
 from typing import cast
 import pytest # type: ignore
-from architext.core.adapters.fake_notifier import FakeNotifier
-from architext.core.adapters.fake_uow import FakeUnitOfWork
+from architext.core.adapters.fake.notifier import FakeNotifier
+from architext.core.adapters.fake.uow import FakeUnitOfWork
 from architext.core.commands import MarkUserActive
 from architext.core import Architext
 from architext.core.ports.notifier import UserEnteredRoomNotification

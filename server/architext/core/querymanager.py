@@ -1,3 +1,7 @@
+"""
+This module defines the QueryManager class, which is used to handle queries
+and return their results.
+"""
 
 from typing import Type, TypeVar, Mapping, TYPE_CHECKING
 from architext.core.queries.available_missions import AvailableMissions, UOWAvailableMissionsQueryHandler
@@ -19,7 +23,15 @@ else:
 
 T = TypeVar('T')
 
+# At the moment every query handler uses the UOW to access the data
+# through the repositories.
+# In the future I plan to make raw SQL queries versions of queries that
+# need to be optimized.
 def uow_query_handlers_factory(uow: UnitOfWork) -> Mapping[Type[Query], QueryHandler]:
+    """
+    Factory method used to create a mapping of query types to query handlers,
+    injecting a UnitOfWork into every handler.
+    """
     return {
         ListWorlds: UOWListWorldsQueryHandler(uow),
         WorldToText: UOWWorldToTextQueryHandler(uow),
@@ -42,4 +54,7 @@ class QueryManager:
         self._query_handlers = query_handlers
 
     def query(self, query: Query[T], client_user_id: str = "") -> T:
+        """
+        Receives a query and returns its result.
+        """
         return self._query_handlers[type(query)].query(query, client_user_id)

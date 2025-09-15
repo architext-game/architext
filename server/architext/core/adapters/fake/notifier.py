@@ -1,7 +1,6 @@
-from typing import Generic, TypeVar
+from typing import TypeVar
 from dataclasses import dataclass
-from typing import Iterable, List, Mapping, Protocol, Type, Union
-from architext.chatbot.ports.messaging_channel import MessagingChannel
+from typing import List, Type
 from architext.core.ports.notifier import Notifier, Notification
 
 

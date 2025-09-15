@@ -1,6 +1,6 @@
 from typing import cast
-from architext.core.adapters.fake_external_event_publisher import FakeExternalEventPublisher
-from architext.core.adapters.fake_uow import FakeUnitOfWork
+from architext.core.adapters.fake.external_event_publisher import FakeExternalEventPublisher
+from architext.core.adapters.fake.uow import FakeUnitOfWork
 from architext.core.commands import RequestWorldCreationFromTemplate
 from architext.core.domain.entities.world_template import WorldTemplate
 import pytest # type: ignore

@@ -1,11 +1,12 @@
 from ast import List
 from dataclasses import dataclass, asdict
 from architext.core.domain.events import ShouldNotifyUserLeftRoom, ShouldNotifyWorldCreated, UserChangedRoom, WorldCreated
+from architext.core.ports.notifier import Notification
 from architext.core.ports.unit_of_work import UnitOfWork
 
 
 @dataclass
-class WorldCreatedNotification:
+class WorldCreatedNotification(Notification):
     world_id: str
     world_name: str
 

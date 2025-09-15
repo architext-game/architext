@@ -2,7 +2,7 @@ from typing import Callable, cast
 from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChannel
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
-from architext.core.adapters.fake_uow import FakeUnitOfWork
+from architext.core.adapters.fake.uow import FakeUnitOfWork
 from architext.core.domain.entities.world import DEFAULT_WORLD
 from architext.core import Architext
 import pytest # type: ignore

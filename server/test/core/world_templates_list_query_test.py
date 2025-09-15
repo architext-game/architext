@@ -1,4 +1,4 @@
-from architext.core.adapters.fake_uow import FakeUnitOfWork
+from architext.core.adapters.fake.uow import FakeUnitOfWork
 from architext.core.domain.entities.world import World
 from architext.core.domain.entities.world_template import WorldTemplate
 from architext.core.queries.list_world_templates import ListWorldTemplates

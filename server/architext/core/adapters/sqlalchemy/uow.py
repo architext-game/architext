@@ -1,10 +1,10 @@
 from typing import Callable, List
-from architext.core.adapters.fake_external_event_publisher import FakeExternalEventPublisher
-from architext.core.adapters.sqlalchemy.room_repository import SQLAlchemyRoomRepository
-from architext.core.adapters.sqlalchemy.user_repository import SQLAlchemyUserRepository
-from architext.core.adapters.sqlalchemy.world_repository import SQLAlchemyWorldRepository
-from architext.core.adapters.sqlalchemy.world_template_repository import SQLAlchemyWorldTemplateRepository
-from architext.core.adapters.sqlalchemy.mission_repository import SQLAlchemyMissionRepository
+from architext.core.adapters.fake.external_event_publisher import FakeExternalEventPublisher
+from architext.core.adapters.sqlalchemy.repository.rooms import SQLAlchemyRoomRepository
+from architext.core.adapters.sqlalchemy.repository.users import SQLAlchemyUserRepository
+from architext.core.adapters.sqlalchemy.repository.worlds import SQLAlchemyWorldRepository
+from architext.core.adapters.sqlalchemy.repository.world_templates import SQLAlchemyWorldTemplateRepository
+from architext.core.adapters.sqlalchemy.repository.missions import SQLAlchemyMissionRepository
 from architext.core.domain.events import Event
 from architext.core.messagebus import MessageBus
 from architext.core.ports.notifier import Notifier

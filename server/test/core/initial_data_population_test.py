@@ -1,6 +1,6 @@
 from typing import cast
 import pytest # type: ignore
-from architext.core.adapters.fake_uow import FakeUnitOfWork
+from architext.core.adapters.fake.uow import FakeUnitOfWork
 from architext.core.commands import CreateUser, Setup
 from architext.core import Architext
 

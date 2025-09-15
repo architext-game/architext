@@ -1,10 +1,10 @@
 from typing import List, cast
 from architext.core.domain.entities.mission import default_missions
 import pytest # type: ignore
-from architext.core.adapters.fake_uow import FakeUnitOfWork
+from architext.core.adapters.fake.uow import FakeUnitOfWork
 from architext.core.commands import CompleteMission
 from architext.core import Architext
-from architext.core.adapters.fake_uow import FakeUnitOfWork
+from architext.core.adapters.fake.uow import FakeUnitOfWork
 from architext.core.queries.available_missions import AvailableMissions
 from architext.core.services.complete_mission import MissionUnavailable
 

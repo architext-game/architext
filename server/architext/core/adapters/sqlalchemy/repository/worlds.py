@@ -1,6 +1,6 @@
 from typing import List, Optional
 from architext.core.domain.entities.world import World
-from architext.core.ports.world_repository import WorldRepository
+from architext.core.ports.repository.worlds import WorldRepository
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from sqlalchemy import Column, ForeignKey, String, Table

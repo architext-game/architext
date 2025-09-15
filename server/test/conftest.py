@@ -4,8 +4,8 @@ from architext.chatbot.adapters.chatbot_notifier import ChatbotNotifier
 from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChannel
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
-from architext.core.adapters.fake_notifier import FakeNotifier
-from architext.core.adapters.fake_uow import FakeUnitOfWork
+from architext.core.adapters.fake.notifier import FakeNotifier
+from architext.core.adapters.fake.uow import FakeUnitOfWork
 from architext.core.adapters.multi_notifier import MultiNotifier, multi_notifier_mapping_factory
 from architext.core.adapters.sqlalchemy.session import db_connection
 from architext.core.adapters.sqlalchemy.uow import SQLAlchemyUnitOfWork

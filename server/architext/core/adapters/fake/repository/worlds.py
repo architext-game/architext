@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional
 from architext.core.domain.entities.world import World
-from architext.core.ports.world_repository import WorldRepository
+from architext.core.ports.repository.worlds import WorldRepository
 from copy import deepcopy
 
 

@@ -86,6 +86,8 @@ def import_world(uow: UnitOfWork, event: WorldCreationRequested):
             world_text = decode_text(event.text_representation)
         elif event.format == "plain":
             world_text = event.text_representation
+        else:
+            raise Exception(f"Unknown format {event.format}")
 
         # This will fail for invalid input
         world_dict = world_dict_type_adapter.validate_python(json.loads(world_text))

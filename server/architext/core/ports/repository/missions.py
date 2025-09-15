@@ -4,19 +4,19 @@ from architext.core.domain.entities.mission import Mission, MissionLog
 
 class MissionRepository(Protocol):
     def get_mission_by_id(self, mission_id: str) -> Optional[Mission]:
-        pass
+        ...
 
     def save_mission(self, mission: Mission) -> None:
-        pass
+        ...
 
     def list_missions(self) -> List[Mission]:
-        pass
+        ...
 
     def get_mission_log(self, mission_id: str, user_id: str) -> Optional[MissionLog]:
-        pass
+        ...
 
     def list_mission_logs_by_user_id(self, user_id: str) -> List[MissionLog]:
-        pass
+        ...
 
     def save_mission_log(self, mission_log: MissionLog):
-        pass
+        ...

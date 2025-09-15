@@ -2,8 +2,8 @@ from sqlalchemy.orm import Session
 from typing import Optional, List
 from architext.core.domain.entities.mission import Mission, MissionLog, MissionRequirement
 from architext.core.domain.entities.user import User, WorldVisitRecord
-from architext.core.ports.mission_repository import MissionRepository
-from architext.core.ports.user_repository import UserRepository
+from architext.core.ports.repository.missions import MissionRepository
+from architext.core.ports.repository.users import UserRepository
 from sqlalchemy import Column, DateTime, String, Boolean, ForeignKey, Table, and_, text
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.collections import attribute_mapped_collection  # type: ignore

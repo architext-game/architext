@@ -8,4 +8,4 @@ JSONSerializable = Union[str, int, float, bool, None, Mapping[str, 'JSONSerializ
 
 class ExternalEventPublisher(Protocol):
     def publish(self, event: Event):
-        pass
+        ...

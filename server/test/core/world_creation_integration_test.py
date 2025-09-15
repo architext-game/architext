@@ -1,7 +1,7 @@
 from typing import cast
 from architext.chatbot.util import get_by_name
-from architext.core.adapters.fake_external_event_publisher import FakeExternalEventPublisher
-from architext.core.adapters.fake_uow import FakeUnitOfWork
+from architext.core.adapters.fake.external_event_publisher import FakeExternalEventPublisher
+from architext.core.adapters.fake.uow import FakeUnitOfWork
 from architext.core.commands import RequestWorldImport
 import pytest # type: ignore
 from architext.core.domain.entities.user import User

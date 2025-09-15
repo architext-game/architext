@@ -1,5 +1,9 @@
+"""
+This module defines the Notifier port, which is used to notify users of events that happened in the game.
+"""
+
 from dataclasses import dataclass
-from typing import Iterable, Literal, Mapping, Optional, Protocol, Union
+from typing import Literal, Optional, Protocol
 
 @dataclass
 class Notification(Protocol):
@@ -29,4 +33,4 @@ class SocialInteractionNotification(Notification):
     
 class Notifier(Protocol):
     def notify(self, user_id: str, notification: Notification):
-        pass
+        ...

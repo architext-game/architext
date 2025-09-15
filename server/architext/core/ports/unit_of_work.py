@@ -1,13 +1,20 @@
+"""
+This module defines the UnitOfWork port, which is used as a context manager
+to access all the functionality needed to alter the state of the game and
+produce other side effects needed to handle commands and events, with
+commit/rollback functionality.
+"""
+
 from dataclasses import dataclass
 from typing import Generator, Protocol, List
 from architext.core.ports.external_event_publisher import ExternalEventPublisher
-from architext.core.ports.mission_repository import MissionRepository
+from architext.core.ports.repository.missions import MissionRepository
 from architext.core.ports.notifier import Notifier
-from architext.core.ports.room_repository import RoomRepository
-from architext.core.ports.user_repository import UserRepository
+from architext.core.ports.repository.rooms import RoomRepository
+from architext.core.ports.repository.users import UserRepository
 from architext.core.domain.events import Event
-from architext.core.ports.world_repository import WorldRepository
-from architext.core.ports.world_template_repository import WorldTemplateRepository
+from architext.core.ports.repository.worlds import WorldRepository
+from architext.core.ports.repository.world_templates import WorldTemplateRepository
 from architext.core.querymanager import QueryManager
 
 @dataclass
@@ -41,6 +48,11 @@ class Transaction:
 
 
 class UnitOfWork(Protocol):
+    """
+    UnitOfWork is a context manager that can be used to access all the functionality
+    needed to alter the state of the game and produce other side effects needed to
+    handle commands and events, with commit/rollback functionality.
+    """
     queries: QueryManager
     _events: List[Event] = []
 
@@ -65,7 +77,7 @@ class UnitOfWork(Protocol):
         self._commit()
 
     def _commit(self) -> None:
-        pass
+        ...
     
     def rollback(self):
-        pass
+        ...

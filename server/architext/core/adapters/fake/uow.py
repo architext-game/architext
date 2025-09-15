@@ -1,13 +1,13 @@
 from typing import List
 
-from architext.core.adapters.fake_external_event_publisher import FakeExternalEventPublisher
-from architext.core.adapters.fake_notifier import FakeNotifier
-from architext.core.adapters.memory_mission_repository import MemoryMissionRepository
-from architext.core.adapters.memory_world_repository import MemoryWorldRepository
-from architext.core.adapters.memory_world_template_repository import MemoryWorldTemplateRepository
+from architext.core.adapters.fake.external_event_publisher import FakeExternalEventPublisher
+from architext.core.adapters.fake.notifier import FakeNotifier
+from architext.core.adapters.fake.repository.missions import MemoryMissionRepository
+from architext.core.adapters.fake.repository.worlds import MemoryWorldRepository
+from architext.core.adapters.fake.repository.world_templates import MemoryWorldTemplateRepository
 from architext.core.domain.events import Event
-from architext.core.adapters.memory_room_repository import MemoryRoomRepository
-from architext.core.adapters.memory_user_repository import MemoryUserRepository
+from architext.core.adapters.fake.repository.rooms import MemoryRoomRepository
+from architext.core.adapters.fake.repository.users import MemoryUserRepository
 from architext.core.messagebus import MessageBus
 from architext.core.ports.notifier import Notifier
 from architext.core.ports.unit_of_work import UnitOfWork, Transaction

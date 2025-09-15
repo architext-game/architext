@@ -1,7 +1,7 @@
 from typing import List, cast
 from unittest.mock import Mock
-from architext.core.adapters.fake_notifier import FakeNotifier
-from architext.core.adapters.fake_uow import FakeUnitOfWork
+from architext.core.adapters.fake.notifier import FakeNotifier
+from architext.core.adapters.fake.uow import FakeUnitOfWork
 from architext.core.commands import TraverseExit, TraverseExitResult
 from architext.core.ports.notifier import UserEnteredRoomNotification, UserLeftRoomNotification
 from architext.core.ports.unit_of_work import UnitOfWork

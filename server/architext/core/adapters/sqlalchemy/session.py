@@ -2,11 +2,11 @@ import os
 from typing import Literal
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from architext.core.adapters.sqlalchemy import user_repository
-from architext.core.adapters.sqlalchemy import room_repository
-from architext.core.adapters.sqlalchemy import world_repository
-from architext.core.adapters.sqlalchemy import world_template_repository
-from architext.core.adapters.sqlalchemy import mission_repository
+from architext.core.adapters.sqlalchemy.repository import users
+from architext.core.adapters.sqlalchemy.repository import rooms
+from architext.core.adapters.sqlalchemy.repository import worlds
+from architext.core.adapters.sqlalchemy.repository import world_templates
+from architext.core.adapters.sqlalchemy.repository import missions
 from architext.core.adapters.sqlalchemy.config import metadata
 from sqlalchemy.orm import clear_mappers
 
@@ -20,10 +20,10 @@ def db_connection(at: Literal['memory', 'file', 'url'] = 'memory', url: str = ""
 
     session_factory = sessionmaker(engine)
     clear_mappers()
-    user_repository.map_entities()
-    room_repository.map_entities()
-    world_repository.map_entities()
-    world_template_repository.map_entities()
-    mission_repository.map_entities()
+    users.map_entities()
+    rooms.map_entities()
+    worlds.map_entities()
+    world_templates.map_entities()
+    missions.map_entities()
     metadata.create_all(engine)
     return session_factory
