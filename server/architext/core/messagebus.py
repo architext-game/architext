@@ -1,21 +1,19 @@
 """
 # Messagebus module
 
- - This is the facade of the `core` module, along with the `commands` module.
- - The `MessageBus` `handle` method is the method used by external systems to
- drive the `core` module.
+ - The `MessageBus` `handle` method drives the `core` module's functionality
  - It will be passed one or more Commands (see `commands` module) and a `UnitOfWork`.
  - For each command handled by the `MessageBus`, it will also handle all events
  reported by the `UnitOfWork`.
- - Commands and events are different concepts and handled differently.
- - Commands capture intent to change our system from an outside system.
- - They are stated in imperative mood.
- - They return information on success and prevent other messages from being handled
- if they fail.
- - Events capture things that have happened in the system.
- - They are stated in a declarative past way.
- - They don't return information on success.
- - They fail silently and don't prevent other events from being handled.
+ - `Commands` capture intent to change our system from an outside system and .
+    - They are stated in imperative mood.
+    - They return information on success and prevent other messages from being handled
+    if they fail.
+ - `Events` capture things that have happened in the system.
+    - They are stated in a declarative past way, since they describe things that happened
+    in the past.
+    - They don't return information on success.
+    - They fail silently and don't prevent other events from being handled.
 """
 
 from typing import List, Dict, Callable, Type, TypeVar, Union, Any
@@ -33,6 +31,23 @@ Message = Union[Event, Command]
 T = TypeVar("T")
 
 class MessageBus:
+    """
+    - The `MessageBus` `handle` method drives the `core` module's functionality
+    - It will be passed one or more Commands (see `commands` module) and a `UnitOfWork`.
+    - For each command handled by the `MessageBus`, it will also handle all events
+    reported by the `UnitOfWork`.
+    - `Commands` capture intent to change our system from an outside system.
+        - They are stated in imperative mood.
+        - They return information on success.
+        - They fail noisily stopping the request and preventing generated events from being handled.
+        - Each command has exactly one handler.
+    - `Events` capture things that have happened in the system during the handling of commands or other events.
+        - They may have zero, one or multiple handlers.
+        - They are stated in a declarative past way, since they describe things that happened
+        in the past.
+        - They don't return information on success.
+        - They fail silently with just a log, letting other events be handled.
+    """
     def __init__(
             self,
             event_handlers: Dict[Type, List[Callable]] = EVENT_HANDLERS,
@@ -43,11 +58,7 @@ class MessageBus:
 
     def handle(self, uow: UnitOfWork, command: Command[T], client_user_id: str = "") -> T:
         """
-        Handler for events and commands. Both are handled a bit differently:
-        - Commands: Fail noisily stopping the request and notify on success.
-            Each command has a single known handler.
-        - Events: Fail silently with just a log. Let other events execute.
-            Each event may have zero or multiple handlers.
+        Handler for events and commands.
         """
         results = []
         queue: List[Union[Event, Command[Any]]] = [command]

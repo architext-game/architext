@@ -1,5 +1,5 @@
-from dataclasses import dataclass, field
-from typing import Generator, Literal, Optional, Protocol, List
+from dataclasses import dataclass
+from typing import Generator, Protocol, List
 from architext.core.ports.external_event_publisher import ExternalEventPublisher
 from architext.core.ports.mission_repository import MissionRepository
 from architext.core.ports.notifier import Notifier
@@ -12,6 +12,18 @@ from architext.core.querymanager import QueryManager
 
 @dataclass
 class Transaction:
+    """
+    Object returned by the UnitOfWork's __enter__ method.
+    It is used to access all the functionality needed to alter the state
+    of the game and produce other side effects needed to handle commands and
+    events. Those functions are:
+    - Repositories to access and modify the game's state.
+    - Notifiers to notify users of events that happened in the game.
+    - ExternalEventPublisher to publish events to external systems such as
+    workers executing jobs in the background.
+    - The `publish_events` method to publish events that happened during the
+    transaction, so they can be handled by the appropriate handlers.
+    """
     rooms: RoomRepository
     users: UserRepository
     worlds: WorldRepository
@@ -22,7 +34,7 @@ class Transaction:
     _uow: 'UnitOfWork'
 
     def publish_events(self, events: List[Event]) -> None:
-        self._uow.publish_events(events)
+        self._uow._publish_events(events)
 
     def commit(self) -> None:
         self._uow._commit()
@@ -40,9 +52,9 @@ class UnitOfWork(Protocol):
         # the exception will be propagated
 
     def __enter__(self) -> Transaction:
-        pass
+        raise Exception("UnitOfWork __enter__ method not implemented, cannot be used as a context manager.")
 
-    def publish_events(self, events: List[Event]) -> None:
+    def _publish_events(self, events: List[Event]) -> None:
         self._events += events
 
     def collect_new_events(self) -> Generator[Event, None, None]:

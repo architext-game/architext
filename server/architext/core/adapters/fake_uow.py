@@ -37,8 +37,8 @@ class FakeUnitOfWork(UnitOfWork):
         self.queries = QueryManager(uow_query_handlers_factory(self))
         self.published_events: List[Event] = []  # to keep track of published events in tests
 
-    def publish_events(self, events: List[Event]) -> None:
-        super().publish_events(events)
+    def _publish_events(self, events: List[Event]) -> None:
+        super()._publish_events(events)
         self.published_events += events
 
     def _commit(self):

@@ -5,7 +5,7 @@ from architext.core.domain.events import UserCreated, WorldCreationRequested
 
 def create_user_initial_data(uow: UnitOfWork, event: UserCreated):
     with uow as transaction:
-        uow.publish_events([WorldCreationRequested(
+        transaction.publish_events([WorldCreationRequested(
             future_world_id=str(uuid.uuid4()),
             user_id=event.user_id,
             world_name="Tutorial World",

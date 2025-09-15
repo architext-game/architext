@@ -1,16 +1,11 @@
 from typing import Callable, List
 from architext.core.adapters.fake_external_event_publisher import FakeExternalEventPublisher
-from architext.core.adapters.fake_notifier import FakeNotifier
-from architext.core.adapters.memory_world_repository import MemoryWorldRepository
-from architext.core.adapters.memory_world_template_repository import MemoryWorldTemplateRepository
 from architext.core.adapters.sqlalchemy.room_repository import SQLAlchemyRoomRepository
 from architext.core.adapters.sqlalchemy.user_repository import SQLAlchemyUserRepository
 from architext.core.adapters.sqlalchemy.world_repository import SQLAlchemyWorldRepository
 from architext.core.adapters.sqlalchemy.world_template_repository import SQLAlchemyWorldTemplateRepository
 from architext.core.adapters.sqlalchemy.mission_repository import SQLAlchemyMissionRepository
 from architext.core.domain.events import Event
-from architext.core.adapters.memory_room_repository import MemoryRoomRepository
-from architext.core.adapters.memory_user_repository import MemoryUserRepository
 from architext.core.messagebus import MessageBus
 from architext.core.ports.notifier import Notifier
 from architext.core.ports.unit_of_work import Transaction, UnitOfWork
@@ -23,14 +18,13 @@ class SQLAlchemyUnitOfWork(UnitOfWork):
         self.session_factory = session_factory
         self.db_session: Session = self.session_factory()
         self.queries = QueryManager(uow_query_handlers_factory(self))
-        self.messagebus = MessageBus()
         self._external_events = FakeExternalEventPublisher(self)
         self._notifier = notifier
         self.published_events: List[Event] = []  # to keep track of published events in tests
 
 
-    def publish_events(self, events: List[Event]) -> None:
-        super().publish_events(events)
+    def _publish_events(self, events: List[Event]) -> None:
+        super()._publish_events(events)
         self.published_events += events
 
     def _commit(self):

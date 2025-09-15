@@ -19,5 +19,5 @@ class FakeExternalEventPublisher(ExternalEventPublisher):
         # idea: handle external events as internal in testing
         # would need to setup handlers in a way that does not make sense
         # for production
-        self.uow.publish_events([event])
+        self.uow._publish_events([event])
         self.published_events.append(event)
