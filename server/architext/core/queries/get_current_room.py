@@ -42,18 +42,6 @@ class GetCurrentRoom(Query[GetCurrentRoomResult]):
 class GetCurrentRoomQueryHandler(QueryHandler[GetCurrentRoom, GetCurrentRoomResult]):
     pass
 
-def should_be_listed(exit: Union[Item, Exit], room: Room) -> bool:
-    if exit.visibility == "auto":
-        if exit.name.lower() in room.description.lower():
-            return False
-        else:
-            return True
-    elif exit.visibility == "unlisted":
-        return False
-    elif exit.visibility == "listed":
-        return True
-    else:  # exit is hidden, this won't be in the query results
-        return False  
 
 class UOWGetCurrentRoomQueryHandler(UOWQueryHandler, GetCurrentRoomQueryHandler):
     def query(self, query: GetCurrentRoom, client_user_id: str) -> GetCurrentRoomResult:
@@ -74,12 +62,12 @@ class UOWGetCurrentRoomQueryHandler(UOWQueryHandler, GetCurrentRoomQueryHandler)
                 exits_in_room = [ExitInRoom(
                     name=exit.name, 
                     description=exit.description,
-                    list_in_room_description=should_be_listed(exit, current_room),
+                    list_in_room_description=current_room.should_be_listed(exit_or_item_name=exit.name),
                 ) for exit in current_room.exits.values() if exit.visibility != "hidden"]
                 items_in_room = [ItemInRoom(
                     name=item.name, 
                     description=item.description,
-                    list_in_room_description=should_be_listed(item, current_room),
+                    list_in_room_description=current_room.should_be_listed(exit_or_item_name=item.name),
                 ) for item in current_room.items.values() if item.visibility != "hidden"]
                 output = GetCurrentRoomResult(
                     current_room=CurrentRoom(

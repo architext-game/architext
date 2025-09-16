@@ -18,7 +18,7 @@ class WorldToText(Query[WorldToTextResult]):
     world_id: str
     format: Literal['plain', 'encoded']
 
-class WorldToTextQueryHandler(QueryHandler[WorldToTextResult, WorldToTextResult]):
+class WorldToTextQueryHandler(QueryHandler[WorldToText, WorldToTextResult]):
     pass
 
 
@@ -96,6 +96,8 @@ class UOWWorldToTextQueryHandler(UOWQueryHandler, WorldToTextQueryHandler):
                 )
             elif query.format == "encoded":
                 text_representation = encode_dict(world_dict)
+            else:
+                raise Exception("Wrong world to text format requested.")
 
             return WorldToTextResult(
                 world_id=query.world_id,

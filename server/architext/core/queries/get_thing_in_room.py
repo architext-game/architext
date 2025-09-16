@@ -48,24 +48,12 @@ class UOWGetThingInRoomQueryHandler(UOWQueryHandler, GetThingInRoomQueryHandler)
             if current_room is None:
                 raise ValueError(f"Room with id {user.room_id} not found")
 
-            things: List[Union[Item, Exit]]
-            if query.restrict_to == 'exits':
-                things = list(current_room.exits.values()) 
-            elif query.restrict_to == 'items':
-                things = list(current_room.items.values())
-            else:
-                things = list(current_room.items.values()) + list(current_room.exits.values())
-            match = complete_name_match(query.partial_name, things)
+            matches = current_room.find(query.partial_name)
 
-            if match:
-                item_match = isinstance(match, Item)
-                return GetThingInRoomResult(
-                    status="item_matched" if item_match else "exit_matched",
-                    item_match=match if item_match else None,
-                    exit_match=match if not item_match else None,
-                )
-
-            matches = visible_name_match(query.partial_name, things)
+            if query.restrict_to == "exits":
+                matches = [m for m in matches if isinstance(m, Exit)]
+            elif query.restrict_to == "items":
+                matches = [m for m in matches if isinstance(m, Item)]
 
             if len(matches) > 1:
                 return GetThingInRoomResult(
@@ -73,27 +61,31 @@ class UOWGetThingInRoomQueryHandler(UOWQueryHandler, GetThingInRoomQueryHandler)
                     multiple_matches=[m.name for m in matches]
                 )
             
-            if len(matches) == 1:
-                match = matches[0]
-                item_match = isinstance(match, Item)
+            if len(matches) == 0:
                 return GetThingInRoomResult(
-                    status="item_matched" if item_match else "exit_matched",
-                    item_match=match if item_match else None,
-                    exit_match=match if not item_match else None,
+                    status='none_found'
                 )
+            
+            match = matches[0]
 
-            matches = hidden_name_match(query.partial_name, things)
-
-            if len(matches) == 1:
-                match = matches[0]
-                item_match = isinstance(match, Item)
+            if isinstance(match, Item):
                 return GetThingInRoomResult(
-                    status="item_matched" if item_match else "exit_matched",
-                    item_match=match if item_match else None,
-                    exit_match=match if not item_match else None,
+                    status="item_matched",
+                    item_match=ItemInRoom(
+                        name=match.name,
+                        description=match.description
+                    ),
+                    exit_match=None,
                 )
-
-            # Nothing matched or many hidden matched
-            return GetThingInRoomResult(
-                status='none_found'
-            )
+            
+            if isinstance(match, Exit):
+                return GetThingInRoomResult(
+                    status="exit_matched",
+                    item_match=None,
+                    exit_match=ExitInRoom(
+                        name=match.name,
+                        description=match.description
+                    ),
+                )
+            
+            raise Exception("room.find returned something different from an item or exit.")

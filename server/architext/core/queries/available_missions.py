@@ -1,15 +1,8 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal, List, Optional, Union
+from typing import List
 from architext.core.authorization import assertUserIsLoggedIn
-from architext.core.domain.entities.exit import Exit
-from architext.core.domain.entities.item import Item
-from architext.core.domain.entities.room import Room
+from architext.core.domain.entities.mission import is_mission_available
 from architext.core.queries.base import Query, QueryHandler, UOWQueryHandler
-if TYPE_CHECKING:
-    from architext.core.ports.unit_of_work import UnitOfWork, Transaction
-else:
-    UnitOfWork = object()
-    Transaction = object()
 
 @dataclass
 class AvailableMission:
@@ -26,38 +19,6 @@ class AvailableMissions(Query[AvailableMissionsResult]):
 
 class AvailableMissionsQueryHandler(QueryHandler[AvailableMissions, AvailableMissionsResult]):
     pass
-
-def should_be_listed(exit: Union[Item, Exit], room: Room) -> bool:
-    if exit.visibility == "auto":
-        if exit.name.lower() in room.description.lower():
-            return False
-        else:
-            return True
-    elif exit.visibility == "unlisted":
-        return False
-    elif exit.visibility == "listed":
-        return True
-    else:  # exit is hidden, this won't be in the query results
-        return False  
-
-def is_mission_completed(transaction: Transaction, mission_id: str, user_id: str):
-    log = transaction.missions.get_mission_log(mission_id=mission_id, user_id=user_id)
-    return log is not None and log.completed_at is not None
-
-def is_mission_available(transaction: Transaction, mission_id: str, user_id: str):
-    mission = transaction.missions.get_mission_by_id(mission_id=mission_id)
-    if mission is None:
-        return False
-    
-    if is_mission_completed(transaction=transaction, mission_id=mission_id, user_id=user_id):
-        return False
-
-    for required_mission in mission.requirements:
-        log = transaction.missions.get_mission_log(mission_id=required_mission.complete_mission_with_id, user_id=user_id)
-        if log is None or log.completed_at is None:
-            return False
-    
-    return True
 
 class UOWAvailableMissionsQueryHandler(UOWQueryHandler, AvailableMissionsQueryHandler):
     def query(self, query: AvailableMissions, client_user_id: str) -> AvailableMissionsResult:
@@ -77,9 +38,8 @@ class UOWAvailableMissionsQueryHandler(UOWQueryHandler, AvailableMissionsQueryHa
                     name=mission.name,
                     description=mission.description
                 ) for mission in missions if is_mission_available(
-                    transaction=transaction,
-                    mission_id=mission.id,
-                    user_id=client_user_id
+                    mission=mission,
+                    user_mission_logs=logs,
                 )
             ]
 

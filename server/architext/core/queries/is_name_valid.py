@@ -53,8 +53,6 @@ class UOWIsNameValidQueryHandler(UOWQueryHandler, IsNameValidQueryHandler):
                 valid = False
                 error = 'duplicated'
 
-            print("EXIT NAME", query.name, "IS VALID IN", query.in_room_id, "?", valid)
-
             return IsNameValidResult(
                 is_valid=valid,
                 error=error,

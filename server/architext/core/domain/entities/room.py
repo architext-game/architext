@@ -1,9 +1,9 @@
 from types import MappingProxyType
-from typing import List, Dict, Optional
+from typing import List, Dict, Literal, Optional, Tuple, Union
 from dataclasses import dataclass, field
 from architext.core.domain.entities.exit import Exit
 from architext.core.domain.entities.item import Item
-from architext.core.domain.names import duplicates
+from architext.core.domain.names import complete_name_match, duplicates, hidden_name_match, visible_name_match
 
 @dataclass
 class Room:
@@ -55,6 +55,46 @@ class Room:
 
     def remove_item(self, item_to_delete: Item) -> None:
         del self.items[item_to_delete.name]
+
+    def should_be_listed(self, exit_or_item_name: str = "") -> bool:
+        exit = self.exits.get(exit_or_item_name, None)
+        item = self.items.get(exit_or_item_name, None)
+
+        entity = exit or item
+        
+        if entity is None:
+            return False
+        elif entity.visibility == "auto":
+            if entity.name.lower() in self.description.lower():
+                return False
+            else:
+                return True
+        elif entity.visibility == "unlisted":
+            return False
+        elif entity.visibility == "listed":
+            return True
+        else:  # exit is hidden, this won't be in the query results
+            return False
+        
+    def find(self, name: str) -> List[Union[Item, Exit]]:
+        """
+        Finds items and exists in the room from a name that may be incomplete
+        """
+        things = list(self.items.values()) + list(self.exits.values())
+        
+        match = complete_name_match(name, things)
+        if match is not None:
+            return [match]
+
+        match = visible_name_match(name, things)
+        if len(match) > 0:
+            return match
+        
+        match = hidden_name_match(name, things)
+        # ambiguous lookup of hidden items does not yield results
+        if len(match) > 1:
+            return []
+        return match
 
 
 DEFAULT_ROOM = Room(

@@ -24,6 +24,24 @@ class MissionLog:
     user_id: str
     completed_at: date
 
+def is_mission_completed(mission_id: str, user_mission_logs: List[MissionLog]) -> bool:
+    return any(log.completed_at is not None for log in user_mission_logs if log.mission_id == mission_id)
+
+def is_mission_available(mission: Mission, user_mission_logs: List[MissionLog]) -> bool:
+    if is_mission_completed(mission_id=mission.id, user_mission_logs=user_mission_logs):
+        return False
+    
+    completed_mission_ids = [log.mission_id for log in user_mission_logs if log.completed_at is not None]
+    
+    unmet_mission_requirement = [requirement for requirement in mission.requirements 
+                                 if requirement.complete_mission_with_id not in completed_mission_ids]
+
+    if unmet_mission_requirement:
+        return False
+    
+    return True
+
+
 # using a factory method because sqlalchemy does not like
 # instances of entities being created before the mappers are registered
 def default_missions():
