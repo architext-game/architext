@@ -1,4 +1,4 @@
-from architext.core.commands import EnterWorld
+from architext.core.application.commands import EnterWorld
 from architext.core import Architext
 import pytest # type: ignore
 

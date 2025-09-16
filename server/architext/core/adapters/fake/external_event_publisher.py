@@ -1,10 +1,10 @@
 from typing import TYPE_CHECKING, Union, Mapping, Iterable, List
 
 from architext.core.domain.events import Event
-from architext.core.ports.external_event_publisher import ExternalEventPublisher
+from architext.core.application.ports.external_event_publisher import ExternalEventPublisher
 
 if TYPE_CHECKING:
-    from architext.core.ports.unit_of_work import UnitOfWork
+    from architext.core.application.ports.unit_of_work import UnitOfWork
 else:
     UnitOfWork = object()
 

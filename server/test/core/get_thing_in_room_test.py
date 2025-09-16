@@ -1,7 +1,7 @@
-from architext.core.queries.get_room_details import GetRoomDetails
+from architext.core.application.queries.get_room_details import GetRoomDetails
 import pytest # type: ignore
 from architext.core import Architext
-from architext.core.queries.get_thing_in_room import GetThingInRoom
+from architext.core.application.queries.get_thing_in_room import GetThingInRoom
 
 
 def test_get_item_in_room(architext: Architext):

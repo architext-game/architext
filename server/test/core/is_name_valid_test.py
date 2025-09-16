@@ -1,5 +1,5 @@
 from typing import cast
-from architext.core.queries.is_name_valid import IsNameValid
+from architext.core.application.queries.is_name_valid import IsNameValid
 from architext.core import Architext
 
 

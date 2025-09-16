@@ -2,8 +2,8 @@ from gettext import gettext as _
 
 from architext.chatbot.sender import Sender, MessageOptions
 from architext.core import Architext
-from architext.core.queries.get_current_room import GetCurrentRoom
-from architext.core.queries.get_thing_in_room import GetThingInRoom
+from architext.core.application.queries.get_current_room import GetCurrentRoom
+from architext.core.application.queries.get_thing_in_room import GetThingInRoom
 from .verb import Verb
 from .. import strings
 

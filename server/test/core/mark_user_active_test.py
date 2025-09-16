@@ -2,9 +2,9 @@ from typing import cast
 import pytest # type: ignore
 from architext.core.adapters.fake.notifier import FakeNotifier
 from architext.core.adapters.fake.uow import FakeUnitOfWork
-from architext.core.commands import MarkUserActive
+from architext.core.application.commands import MarkUserActive
 from architext.core import Architext
-from architext.core.ports.notifier import UserEnteredRoomNotification
+from architext.core.application.ports.notifier import UserEnteredRoomNotification
 
 
 def test_mark_user_active_success(architext: Architext) -> None:

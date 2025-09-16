@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import dataclasses
 from typing import Iterable, List, Mapping, Protocol, Union
-from architext.core.ports.notifier import Notifier, Notification
+from architext.core.application.ports.notifier import Notifier, Notification
 from socketio import Server
 import re
 

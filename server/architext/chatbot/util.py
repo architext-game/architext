@@ -8,7 +8,7 @@ import unicodedata
 import json, zlib, base64, binascii
 import typing
 
-from architext.core.queries.get_room_details import ExitInRoomDetails, RoomDetails, ItemInRoomDetails
+from architext.core.application.queries.get_room_details import ExitInRoomDetails, RoomDetails, ItemInRoomDetails
 
 
 # username to be used by the ghost session (see ghost_session.py)

@@ -2,12 +2,12 @@ from gettext import gettext as _
 
 from typing import Literal, Optional, TYPE_CHECKING
 
-from architext.core.commands import CreateConnectedRoom
-from architext.core.queries.get_room_details import GetRoomDetails
-from architext.core.queries.is_name_valid import IsNameValid
-from architext.core.settings import ROOM_NAME_MAX_LENGTH, ROOM_DESCRIPTION_MAX_LENGTH, EXIT_NAME_MAX_LENGTH
+from architext.core.application.commands import CreateConnectedRoom
+from architext.core.application.queries.get_room_details import GetRoomDetails
+from architext.core.application.queries.is_name_valid import IsNameValid
+from architext.core.application.settings import ROOM_NAME_MAX_LENGTH, ROOM_DESCRIPTION_MAX_LENGTH, EXIT_NAME_MAX_LENGTH
 from architext.core import Architext
-from architext.core.queries.get_current_room import CurrentRoom, GetCurrentRoom, GetCurrentRoomResult
+from architext.core.application.queries.get_current_room import CurrentRoom, GetCurrentRoom, GetCurrentRoomResult
 
 from . import verb
 import architext.chatbot.strings as strings

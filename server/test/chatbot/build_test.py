@@ -2,7 +2,7 @@ from typing import Callable
 from architext.chatbot import strings
 from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChannel
 from architext.chatbot.session import Session
-from architext.core.settings import EXIT_NAME_MAX_LENGTH, ROOM_DESCRIPTION_MAX_LENGTH, ROOM_NAME_MAX_LENGTH
+from architext.core.application.settings import EXIT_NAME_MAX_LENGTH, ROOM_DESCRIPTION_MAX_LENGTH, ROOM_NAME_MAX_LENGTH
 
 
 def test_build_success(channel: FakeMessagingChannel, session_factory: Callable[[str], Session]):

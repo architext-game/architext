@@ -2,7 +2,7 @@ from gettext import gettext as _
 
 from .verb import Verb
 
-from architext.core.commands import SendSocialInteraction
+from architext.core.application.commands import SendSocialInteraction
 
 class Say(Verb):
     """Allows the user to travel between rooms, using their exits."""

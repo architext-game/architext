@@ -2,10 +2,10 @@ from gettext import gettext as _
 
 from typing import Literal, Optional, TYPE_CHECKING
 
-from architext.core.commands import CreateItem
+from architext.core.application.commands import CreateItem
 from architext.core.domain.primitives import Visibility
-from architext.core.queries.is_name_valid import IsNameValid
-from architext.core.settings import ITEM_DESCRIPTION_MAX_LENGTH, ITEM_NAME_MAX_LENGTH
+from architext.core.application.queries.is_name_valid import IsNameValid
+from architext.core.application.settings import ITEM_DESCRIPTION_MAX_LENGTH, ITEM_NAME_MAX_LENGTH
 
 from . import verb
 import architext.chatbot.strings as strings

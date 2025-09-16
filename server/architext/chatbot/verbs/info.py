@@ -8,7 +8,7 @@ import architext.chatbot.strings as strings
 from gettext import gettext as _
 
 from architext.core.domain.primitives import Visibility
-from architext.core.queries.get_room_details import GetRoomDetails
+from architext.core.application.queries.get_room_details import GetRoomDetails
 
 
 class Info(verb.Verb):

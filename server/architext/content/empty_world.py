@@ -1,4 +1,4 @@
-from architext.core.queries.world_to_text import encode_text
+from architext.core.application.queries.world_to_text.handler import encode_text
 
 
 EMPTY_WORLD = """{

@@ -1,7 +1,7 @@
 from architext.core.adapters.fake.notifier import FakeNotifier
 from architext.core.adapters.fake.uow import FakeUnitOfWork
-from architext.core.messagebus import MessageBus
-from architext.core.commands import Command
+from architext.core.application.messagebus import MessageBus
+from architext.core.application.commands import Command
 from unittest.mock import Mock
 import pytest # type: ignore
 

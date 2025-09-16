@@ -2,12 +2,12 @@ from typing import List, cast
 from unittest.mock import Mock
 from architext.core.adapters.fake.notifier import FakeNotifier
 from architext.core.adapters.fake.uow import FakeUnitOfWork
-from architext.core.commands import TraverseExit, TraverseExitResult
-from architext.core.ports.notifier import UserEnteredRoomNotification, UserLeftRoomNotification
-from architext.core.ports.unit_of_work import UnitOfWork
+from architext.core.application.commands import TraverseExit, TraverseExitResult
+from architext.core.application.ports.notifier import UserEnteredRoomNotification, UserLeftRoomNotification
+from architext.core.application.ports.unit_of_work import UnitOfWork
 import pytest # type: ignore
 from architext.core.domain.events import ShouldNotifyUserEnteredRoom, ShouldNotifyUserLeftRoom, UserChangedRoom
-from architext.core.messagebus import MessageBus
+from architext.core.application.messagebus import MessageBus
 from architext.core import Architext
 
 

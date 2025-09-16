@@ -6,10 +6,10 @@ from architext.core.adapters.sqlalchemy.repository.worlds import SQLAlchemyWorld
 from architext.core.adapters.sqlalchemy.repository.world_templates import SQLAlchemyWorldTemplateRepository
 from architext.core.adapters.sqlalchemy.repository.missions import SQLAlchemyMissionRepository
 from architext.core.domain.events import Event
-from architext.core.messagebus import MessageBus
-from architext.core.ports.notifier import Notifier
-from architext.core.ports.unit_of_work import Transaction, UnitOfWork
-from architext.core.querymanager import QueryManager, uow_query_handlers_factory
+from architext.core.application.messagebus import MessageBus
+from architext.core.application.ports.notifier import Notifier
+from architext.core.application.ports.unit_of_work import Transaction, UnitOfWork
+from architext.core.application.queries.querymanager import QueryManager, uow_query_handlers_factory
 from sqlalchemy.orm import Session, sessionmaker
 
 

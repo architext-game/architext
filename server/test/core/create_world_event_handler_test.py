@@ -4,7 +4,7 @@ from architext.core.adapters.fake.external_event_publisher import FakeExternalEv
 from architext.core.adapters.fake.uow import FakeUnitOfWork
 from architext.core.domain.events import WorldCreated, WorldCreationRequested
 from architext.core import Architext
-from architext.core.handlers.import_world import import_world
+from architext.core.application.event_handlers.import_world import import_world
 import uuid
 from architext.content.the_monks_riddle import THE_MONKS_RIDDLE
 

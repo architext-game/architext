@@ -1,6 +1,6 @@
 from typing import Literal, TYPE_CHECKING
-from architext.core.queries.get_current_room import GetCurrentRoom
-from architext.core.commands import DeleteRoom
+from architext.core.application.queries.get_current_room import GetCurrentRoom
+from architext.core.application.commands import DeleteRoom
 from architext.core import Architext
 from . import verb
 from gettext import gettext as _

@@ -4,7 +4,7 @@ from architext.chatbot import strings
 from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChannel
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
-from architext.core.settings import ROOM_DESCRIPTION_MAX_LENGTH, ROOM_NAME_MAX_LENGTH
+from architext.core.application.settings import ROOM_DESCRIPTION_MAX_LENGTH, ROOM_NAME_MAX_LENGTH
 import pytest # type: ignore
 
 

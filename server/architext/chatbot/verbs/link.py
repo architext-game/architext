@@ -3,13 +3,13 @@ from architext.chatbot.verbs import verb
 import architext.chatbot.strings as strings
 from gettext import gettext as _
 
-from architext.core.commands import CreateExit
+from architext.core.application.commands import CreateExit
 from architext.core.domain.entities.room import Room
 from architext.core.facade import Architext
-from architext.core.queries.get_room_details import GetRoomDetails, RoomDetails
-from architext.core.queries.is_name_valid import IsNameValid
-from architext.core.queries.me import Me
-from architext.core.settings import EXIT_NAME_MAX_LENGTH
+from architext.core.application.queries.get_room_details import GetRoomDetails, RoomDetails
+from architext.core.application.queries.is_name_valid import IsNameValid
+from architext.core.application.queries.me import Me
+from architext.core.application.settings import EXIT_NAME_MAX_LENGTH
 
 if TYPE_CHECKING:
     from architext.chatbot.session import Session

@@ -1,7 +1,7 @@
 from typing import Iterable, List, Mapping, Protocol, Type, Union
 from architext.chatbot.adapters.chatbot_notifier import ChatbotNotifier
 from architext.core.adapters.sio_notifier import SioNotifier
-from architext.core.ports.notifier import Notifier, Notification, SocialInteractionNotification, UserEnteredRoomNotification, UserLeftRoomNotification, WorldCreatedNotification
+from architext.core.application.ports.notifier import Notifier, Notification, SocialInteractionNotification, UserEnteredRoomNotification, UserLeftRoomNotification, WorldCreatedNotification
 
 def multi_notifier_mapping_factory(
         web: Notifier, chatbot: Notifier

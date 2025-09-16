@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional
 from architext.core.domain.entities.user import User
-from architext.core.ports.repository.users import UserRepository
+from architext.core.application.ports.repository.users import UserRepository
 import copy
 
 

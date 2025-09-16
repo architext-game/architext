@@ -21,7 +21,7 @@ import pytest # type: ignore
 from architext.core.adapters.sqlalchemy.uow import SQLAlchemyUnitOfWork
 from architext.core.adapters.sqlalchemy.session import db_connection
 
-from architext.core.ports.unit_of_work import UnitOfWork
+from architext.core.application.ports.unit_of_work import UnitOfWork
 
 def add_test_data(uow: UnitOfWork):
     emptytemplate = WorldTemplate(

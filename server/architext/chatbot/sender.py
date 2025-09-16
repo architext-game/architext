@@ -3,9 +3,9 @@ import textwrap
 
 from architext.chatbot.ports.messaging_channel import MessagingChannel, Message, MessageOptions
 from architext.core.facade import Architext
-from architext.core.messagebus import MessageBus
-from architext.core.ports.unit_of_work import UnitOfWork
-from architext.core.queries.get_current_room import GetCurrentRoom
+from architext.core.application.messagebus import MessageBus
+from architext.core.application.ports.unit_of_work import UnitOfWork
+from architext.core.application.queries.get_current_room import GetCurrentRoom
 from architext.chatbot import strings
 
 class Sender(abc.ABC):

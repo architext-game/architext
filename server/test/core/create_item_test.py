@@ -2,7 +2,7 @@ from typing import cast
 from architext.core.domain.entities.room import DuplicatedNameInRoom
 import pytest # type: ignore
 from architext.core.adapters.fake.uow import FakeUnitOfWork
-from architext.core.commands import CreateItem
+from architext.core.application.commands import CreateItem
 from architext.core import Architext
 from architext.core.adapters.fake.uow import FakeUnitOfWork
 

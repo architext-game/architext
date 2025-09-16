@@ -1,7 +1,7 @@
 from typing import cast
 import pytest # type: ignore
 from architext.core.adapters.fake.uow import FakeUnitOfWork
-from architext.core.commands import CreateUser, CreateUserResult
+from architext.core.application.commands import CreateUser, CreateUserResult
 from pydantic import ValidationError
 from architext.core import Architext
 from architext.core.adapters.fake.uow import FakeUnitOfWork

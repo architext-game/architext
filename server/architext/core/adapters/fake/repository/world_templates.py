@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional
 from architext.core.domain.entities.world_template import WorldTemplate
-from architext.core.ports.repository.world_templates import WorldTemplateRepository
+from architext.core.application.ports.repository.world_templates import WorldTemplateRepository
 from copy import deepcopy
 
 

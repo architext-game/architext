@@ -1,4 +1,4 @@
-from architext.core.queries.get_template import GetWorldTemplate
+from architext.core.application.queries.get_template import GetWorldTemplate
 import pytest # type: ignore
 from architext.core import Architext
 

@@ -1,10 +1,10 @@
 from typing import cast
 import pytest # type: ignore
 from architext.core.adapters.fake.uow import FakeUnitOfWork
-from architext.core.commands import CreateUser, Setup
+from architext.core.application.commands import CreateUser, Setup
 from architext.core import Architext
 
-from architext.core.ports.unit_of_work import UnitOfWork
+from architext.core.application.ports.unit_of_work import UnitOfWork
 from architext.core.domain.entities.mission import default_missions
 
 from uuid import uuid4

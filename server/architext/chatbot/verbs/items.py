@@ -1,4 +1,4 @@
-from architext.core.queries.get_current_room import GetCurrentRoom
+from architext.core.application.queries.get_current_room import GetCurrentRoom
 from .verb import Verb
 from gettext import gettext as _
 

@@ -1,5 +1,5 @@
 from architext.chatbot.ports.messaging_channel import Message, MessageOptions, MessagingChannel
-from architext.core.ports.notifier import Notification, Notifier, SocialInteractionNotification, UserEnteredRoomNotification, UserLeftRoomNotification
+from architext.core.application.ports.notifier import Notification, Notifier, SocialInteractionNotification, UserEnteredRoomNotification, UserLeftRoomNotification
 from gettext import gettext as _
 
 class ChatbotNotifier(Notifier):

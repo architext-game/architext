@@ -1,6 +1,6 @@
 from gettext import gettext as _
 from architext.core import Architext
-from architext.core.queries.me import Me
+from architext.core.application.queries.me import Me
 from .. import util
 
 from typing import TYPE_CHECKING, Literal

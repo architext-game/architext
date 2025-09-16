@@ -6,11 +6,11 @@ should interact with it only through the Architext class defined below.
 """
 
 from typing import TypeVar
-from architext.core.authorization import AuthorizationManager
-from architext.core.commands import Command
-from architext.core.messagebus import MessageBus
-from architext.core.ports.unit_of_work import UnitOfWork
-from architext.core.queries.base import Query
+from architext.core.application.authorization import AuthorizationManager
+from architext.core.application.commands.base import Command
+from architext.core.application.messagebus import MessageBus
+from architext.core.application.ports.unit_of_work import UnitOfWork
+from architext.core.application.queries.base import Query
 
 T = TypeVar("T")
 

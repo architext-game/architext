@@ -8,10 +8,10 @@ from architext.core.adapters.fake.repository.world_templates import MemoryWorldT
 from architext.core.domain.events import Event
 from architext.core.adapters.fake.repository.rooms import MemoryRoomRepository
 from architext.core.adapters.fake.repository.users import MemoryUserRepository
-from architext.core.messagebus import MessageBus
-from architext.core.ports.notifier import Notifier
-from architext.core.ports.unit_of_work import UnitOfWork, Transaction
-from architext.core.querymanager import QueryManager, uow_query_handlers_factory
+from architext.core.application.messagebus import MessageBus
+from architext.core.application.ports.notifier import Notifier
+from architext.core.application.ports.unit_of_work import UnitOfWork, Transaction
+from architext.core.application.queries.querymanager import QueryManager, uow_query_handlers_factory
 
 
 class FakeUnitOfWork(UnitOfWork):

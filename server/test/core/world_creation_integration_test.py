@@ -2,7 +2,7 @@ from typing import cast
 from architext.chatbot.util import get_by_name
 from architext.core.adapters.fake.external_event_publisher import FakeExternalEventPublisher
 from architext.core.adapters.fake.uow import FakeUnitOfWork
-from architext.core.commands import RequestWorldImport
+from architext.core.application.commands import RequestWorldImport
 import pytest # type: ignore
 from architext.core.domain.entities.user import User
 from architext.core.domain.events import WorldCreationRequested

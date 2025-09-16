@@ -2,8 +2,8 @@ from typing import cast
 from architext.core.facade import Architext
 import pytest # type: ignore
 from architext.core.adapters.fake.uow import FakeUnitOfWork
-from architext.core.services.create_connected_room import CreateConnectedRoom, CreateConnectedRoomResult
-from architext.core.commands import CreateConnectedRoom
+from architext.core.application.commands.create_connected_room import CreateConnectedRoom, CreateConnectedRoomResult
+from architext.core.application.commands import CreateConnectedRoom
 from architext.core.domain.entities.room import DuplicatedNameInRoom
 
 

@@ -1,7 +1,7 @@
 from typing import TypeVar
 from dataclasses import dataclass
 from typing import List, Type
-from architext.core.ports.notifier import Notifier, Notification
+from architext.core.application.ports.notifier import Notifier, Notification
 
 
 @dataclass

@@ -1,5 +1,5 @@
 from architext.content.new_tutorial import NEW_TUTORIAL_ENCODED
-from architext.core.handlers.import_world import decode_text
+from architext.core.application.event_handlers.import_world import decode_text
 import pprint
 import json
 

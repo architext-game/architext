@@ -1,4 +1,4 @@
-from architext.core.queries.list_worlds import ListWorlds
+from architext.core.application.queries.list_worlds import ListWorlds
 import pytest # type: ignore
 from architext.core import Architext
 

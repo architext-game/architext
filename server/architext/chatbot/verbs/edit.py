@@ -1,10 +1,10 @@
 from architext.chatbot.ports.messaging_channel import MessageOptions
-from architext.core.commands import Command, EditExit as EditExitCommand, EditItem as EditItemCommand
+from architext.core.application.commands import Command, EditExit as EditExitCommand, EditItem as EditItemCommand
 from architext.core.facade import Architext
-from architext.core.queries.get_room_details import GetRoomDetails, RoomDetails
-from architext.core.queries.get_thing_in_room import GetThingInRoom, ExitInRoom, ItemInRoom
-from architext.core.queries.is_name_valid import IsNameValid
-from architext.core.settings import EXIT_DESCRIPTION_MAX_LENGTH, EXIT_NAME_MAX_LENGTH, ITEM_DESCRIPTION_MAX_LENGTH, ITEM_NAME_MAX_LENGTH
+from architext.core.application.queries.get_room_details import GetRoomDetails, RoomDetails
+from architext.core.application.queries.get_thing_in_room import GetThingInRoom, ExitInRoom, ItemInRoom
+from architext.core.application.queries.is_name_valid import IsNameValid
+from architext.core.application.settings import EXIT_DESCRIPTION_MAX_LENGTH, EXIT_NAME_MAX_LENGTH, ITEM_DESCRIPTION_MAX_LENGTH, ITEM_NAME_MAX_LENGTH
 from . import verb
 import architext.chatbot.strings as strings
 from gettext import gettext as _

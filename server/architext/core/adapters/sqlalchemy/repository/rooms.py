@@ -2,7 +2,7 @@ from typing import List, Optional
 from architext.core.domain.entities.exit import Exit
 from architext.core.domain.entities.item import Item
 from architext.core.domain.entities.room import Room
-from architext.core.ports.repository.rooms import RoomRepository
+from architext.core.application.ports.repository.rooms import RoomRepository
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from sqlalchemy import Column, String, ForeignKey, Table

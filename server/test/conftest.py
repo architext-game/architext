@@ -10,8 +10,8 @@ from architext.core.adapters.multi_notifier import MultiNotifier, multi_notifier
 from architext.core.adapters.sqlalchemy.session import db_connection
 from architext.core.adapters.sqlalchemy.uow import SQLAlchemyUnitOfWork
 from architext.core.facade import Architext
-from architext.core.ports.notifier import Notifier
-from architext.core.ports.unit_of_work import UnitOfWork
+from architext.core.application.ports.notifier import Notifier
+from architext.core.application.ports.unit_of_work import UnitOfWork
 from test.fixtures import add_test_data
 
 import pytest

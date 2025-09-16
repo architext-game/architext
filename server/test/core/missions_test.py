@@ -2,11 +2,11 @@ from typing import List, cast
 from architext.core.domain.entities.mission import default_missions
 import pytest # type: ignore
 from architext.core.adapters.fake.uow import FakeUnitOfWork
-from architext.core.commands import CompleteMission
+from architext.core.application.commands.complete_mission import CompleteMission
 from architext.core import Architext
 from architext.core.adapters.fake.uow import FakeUnitOfWork
-from architext.core.queries.available_missions import AvailableMissions
-from architext.core.services.complete_mission import MissionUnavailable
+from architext.core.application.queries.available_missions.handler import AvailableMissions
+from architext.core.application.commands.complete_mission import MissionUnavailable
 
 MISSIONS=default_missions()
 

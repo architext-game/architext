@@ -1,6 +1,6 @@
-from architext.core.queries.get_room_details import ExitInRoomDetails, GetRoomDetails
-from architext.core.commands import DeleteItem as DeleteItemCommand, DeleteExit as DeleteExitCommand
-from architext.core.queries.get_thing_in_room import GetThingInRoom, ItemInRoom, ExitInRoom
+from architext.core.application.queries.get_room_details import ExitInRoomDetails, GetRoomDetails
+from architext.core.application.commands import DeleteItem as DeleteItemCommand, DeleteExit as DeleteExitCommand
+from architext.core.application.queries.get_thing_in_room import GetThingInRoom, ItemInRoom, ExitInRoom
 from . import verb
 from gettext import gettext as _
 from architext.chatbot import strings

@@ -3,7 +3,7 @@ from architext.chatbot import strings
 from architext.chatbot.adapters.fake_messaging_channel import FakeMessagingChannel
 from architext.chatbot.adapters.stdout_logger import StdOutLogger
 from architext.chatbot.session import Session
-from architext.core.settings import EXIT_NAME_MAX_LENGTH, EXIT_DESCRIPTION_MAX_LENGTH
+from architext.core.application.settings import EXIT_NAME_MAX_LENGTH, EXIT_DESCRIPTION_MAX_LENGTH
 import pytest # type: ignore
 
 

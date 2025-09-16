@@ -39,7 +39,7 @@ class Session:
         if self.user is not None:
             self.user.reload()
             if self.user.user_id != self.user_id:  # another session has been opened for the same user
-                self.send_to_client('Otra sesión ha sido abierta para el mismo usuario. Tu sesión ha sido cerrada.')
+                self.sender.send(self.user_id, 'Otra sesión ha sido abierta para el mismo usuario. Tu sesión ha sido cerrada.')
                 self.disconnect()
                 return
 
@@ -71,6 +71,6 @@ class Session:
     def disconnect(self):
         if self.user is not None and self.user.user_id == self.user_id:
             if not self.user.master_mode:
-                self.send_to_others_in_room(_("Whoop! {player_name} has gone.").format(player_name=self.user.name))
+                self.sender.send_to_others_in_room(self.user_id, _("Whoop! {player_name} has gone.").format(player_name=self.user.name))
             self.user.disconnect()
-        self.user_id = None
+        # self.user_id = None

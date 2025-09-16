@@ -1,6 +1,6 @@
 from typing import List, Optional
 from architext.core.domain.entities.world_template import WorldTemplate
-from architext.core.ports.repository.world_templates import WorldTemplateRepository
+from architext.core.application.ports.repository.world_templates import WorldTemplateRepository
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from typing import Optional, List

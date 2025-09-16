@@ -24,9 +24,9 @@ def get_clerk_user_details(user_id: str) -> ClerkUserDetails:
         bearer_auth=CLERK_SECRET_KEY,
     ) as clerk:
         res = clerk.users.get(user_id=user_id)
-        mail_res = clerk.email_addresses.get(email_address_id=res.primary_email_address_id)
+        mail_res = clerk.email_addresses.get(email_address_id=res and res.primary_email_address_id or "")
         return ClerkUserDetails(
             id=user_id,
-            username=res.username,
-            email=mail_res.email_address
+            username=res and res.username or "",
+            email=mail_res and mail_res.email_address or ""
         )

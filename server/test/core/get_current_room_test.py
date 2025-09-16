@@ -1,7 +1,7 @@
 from typing import cast
 from architext.core.adapters.fake.uow import FakeUnitOfWork
 from architext.core.domain.entities.world import DEFAULT_WORLD
-from architext.core.queries.get_current_room import GetCurrentRoom
+from architext.core.application.queries.get_current_room import GetCurrentRoom
 import pytest # type: ignore
 from architext.core import Architext
 

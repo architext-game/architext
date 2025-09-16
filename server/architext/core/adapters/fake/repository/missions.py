@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional
 from collections import defaultdict
 from architext.core.domain.entities.mission import Mission, MissionLog
-from architext.core.ports.repository.missions import MissionRepository
+from architext.core.application.ports.repository.missions import MissionRepository
 from copy import deepcopy
 
 

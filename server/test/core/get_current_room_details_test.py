@@ -1,5 +1,5 @@
 from architext.chatbot.util import get_by_name
-from architext.core.queries.get_room_details import GetRoomDetails
+from architext.core.application.queries.get_room_details import GetRoomDetails
 import pytest # type: ignore
 from architext.core import Architext
 

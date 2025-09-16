@@ -1,8 +1,8 @@
 from architext.chatbot.ports.messaging_channel import MessageOptions
-from architext.core.commands import EditRoom as EditRoomCommand
+from architext.core.application.commands import EditRoom as EditRoomCommand
 from architext.core.facade import Architext
-from architext.core.queries.get_room_details import GetRoomDetails
-from architext.core.settings import ROOM_DESCRIPTION_MAX_LENGTH, ROOM_NAME_MAX_LENGTH
+from architext.core.application.queries.get_room_details import GetRoomDetails
+from architext.core.application.settings import ROOM_DESCRIPTION_MAX_LENGTH, ROOM_NAME_MAX_LENGTH
 from . import verb
 import architext.chatbot.strings as strings
 from gettext import gettext as _

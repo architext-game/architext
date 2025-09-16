@@ -1,4 +1,4 @@
-from architext.core.queries.get_world import GetWorld
+from architext.core.application.queries.get_world import GetWorld
 import pytest # type: ignore
 from architext.core import Architext
 

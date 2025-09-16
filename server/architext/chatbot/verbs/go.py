@@ -1,13 +1,13 @@
 from gettext import gettext as _
 
-from architext.core.queries.get_current_room import GetCurrentRoom
-from architext.core.queries.get_thing_in_room import GetThingInRoom
+from architext.core.application.queries.get_current_room import GetCurrentRoom
+from architext.core.application.queries.get_thing_in_room import GetThingInRoom
 from .verb import Verb
 from .look import show_current_room
 from .. import util
 from .. import strings
 
-from architext.core.commands import TraverseExit
+from architext.core.application.commands import TraverseExit
 
 class Go(Verb):
     """Allows the user to travel between rooms, using their exits."""

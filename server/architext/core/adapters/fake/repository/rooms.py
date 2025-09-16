@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional
 from architext.core.domain.entities.room import Room
-from architext.core.ports.repository.rooms import RoomRepository
+from architext.core.application.ports.repository.rooms import RoomRepository
 
 
 class MemoryRoomRepository(RoomRepository):

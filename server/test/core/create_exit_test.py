@@ -1,7 +1,7 @@
 from typing import cast
 import pytest # type: ignore
 from architext.core.adapters.fake.uow import FakeUnitOfWork
-from architext.core.commands import CreateExit
+from architext.core.application.commands import CreateExit
 from architext.core import Architext
 
 from architext.core.adapters.fake.uow import FakeUnitOfWork

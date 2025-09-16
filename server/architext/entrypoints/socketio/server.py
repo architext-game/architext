@@ -19,14 +19,14 @@ from architext.core.adapters.sio_notifier import SioNotifier
 from architext.core.adapters.sqlalchemy.session import db_connection
 from architext.core.adapters.sqlalchemy.uow import SQLAlchemyUnitOfWork
 from architext.core.facade import Architext
-from architext.core.ports.notifier import Notification, WorldCreatedNotification
-from architext.core.ports.unit_of_work import UnitOfWork
-from architext.core.queries.available_missions import AvailableMissions, AvailableMissionsResult
-from architext.core.queries.get_template import GetWorldTemplate, GetWorldTemplateResult
-from architext.core.queries.list_world_templates import ListWorldTemplates, ListWorldTemplatesResult, WorldTemplateListItem
-from architext.core.queries.me import Me, MeResult, UserNotFound
-from architext.core.queries.get_world import GetWorld, GetWorldResult
-from architext.core.queries.list_worlds import ListWorlds, ListWorldsResult
+from architext.core.application.ports.notifier import Notification, WorldCreatedNotification
+from architext.core.application.ports.unit_of_work import UnitOfWork
+from architext.core.application.queries.available_missions.handler import AvailableMissions, AvailableMissionsResult
+from architext.core.application.queries.get_template import GetWorldTemplate, GetWorldTemplateResult
+from architext.core.application.queries.list_world_templates import ListWorldTemplates, ListWorldTemplatesResult, WorldTemplateListItem
+from architext.core.application.queries.me import Me, MeResult, UserNotFound
+from architext.core.application.queries.get_world import GetWorld, GetWorldResult
+from architext.core.application.queries.list_worlds import ListWorlds, ListWorldsResult
 from architext.entrypoints.socketio.auth import get_clerk_user_details, user_id_from_clerk_token
 from test.fixtures import add_test_data
 eventlet.monkey_patch(socket=True, time=True)
@@ -34,7 +34,7 @@ import socketio
 import atexit
 from dotenv import load_dotenv
 from pydantic import BaseModel
-from architext.core.commands import (
+from architext.core.application.commands import (
     CompleteMission, CompleteMissionResult, CreateTemplate, CreateTemplateResult, CreateUser, DeleteTemplate, DeleteTemplateResult, DeleteWorld, DeleteWorldResult, EditTemplate, EditTemplateResult, EditWorld, EditWorldResult, EnterWorld, EnterWorldResult,
     CreateConnectedRoom, CreateConnectedRoomResult, MarkUserActive, RequestWorldCreationFromTemplate,
     RequestWorldCreationFromTemplateResult, RequestWorldImport, RequestWorldImportResult, Setup,
