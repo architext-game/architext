@@ -1,13 +1,9 @@
-from functools import wraps
-from urllib import response
-from pydantic import BaseModel
-from architext.entrypoints.socketio.models import ResponseModel
 from typing import Type, Optional, List, Dict, Any
-from socketio import Server
-import traceback
 import dataclasses
-from types import new_class
-from py_writes_ts import generate_typescript_interfaces, rename_interfaces, generate_typescript_function, generate_typescript_import, ts_name
+from py_writes_ts import (
+    generate_typescript_interfaces, rename_interfaces, generate_typescript_function, 
+    generate_typescript_import, ts_name
+)
 
 
 @dataclasses.dataclass
@@ -48,8 +44,6 @@ def replace_type_names(ts_code: str, endpoints: List[Endpoint]):
     return renamed_code
 
 
-
-
 def generate_endpoint_function(event_name: str, expected_input: Any, output: Any, valid_refs: List[Any]):
     function_name = snake_to_camel(event_name)
 
@@ -60,7 +54,6 @@ return new Promise((resolve, reject) => {{
     }});
 }});
 """
-    
     ts_code = generate_typescript_function(
         function_name=function_name,
         parameters={
@@ -82,7 +75,6 @@ def generate_event_function(event_name: str, data: Any, valid_refs: List[Any]):
     function_body = f"""
 socket.on('{event_name}', callback)
 """
-    
     ts_code = generate_typescript_function(
         function_name=function_name,
         parameters={

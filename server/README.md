@@ -1,40 +1,41 @@
-# PYTHON VERSION 3.12.8
+# Run locally for development
 
-# Clean refactor
+```bash
+# local database
+# from project root
+docker-compose -f docker-compose-dev.yml up -d
 
-A brief overview of what I'm doing so I don't get lost.
+# backend
+# from /server
+source venv/bin/activate
+pip install -r requirements.txt
+python -m architext.entrypoints.socketio.server
+
+# web
+# from /web
+npm install
+npm run dev
+```
+
+# Test
+
+```bash
+source venv/bin/activate
+
+# run all tests using memory repositories
+pytest
+
+# run using in memory sql database
+pytest --db
+
+# run tests in folder
+pytest tests/core/
+
+# run specific test
+pytest -k <test_name>
+```
 
 
-# Tooling
+# Other info
+- Tested and compatible with Python 3.12.8
 
-I'm using mypy for static type checking and pytest for tests.
-
-
-# Project structure
-
-I'll be adding docstrings to modules, check them out.
-
-
-## Core
-
-The business logic. See its docstrings.
-
-
-## Ports
-
-Defines the interfaces used by the `Core` to access the outside world.
-
-
-## Adapters
-
-Containts implementations for the `Ports`.
-
-
-## Entrypoints
-
-This contains the modules that initialize the `Adapters` and drive the `Core`.
-
-
-# Concerns
-
- - Not sure if I should be using ABC instead of Protocol.
