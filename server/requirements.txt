@@ -17,7 +17,7 @@ Babel
 pytest
 sqlalchemy
 sqlalchemy[mypy]
-clerk-backend-api
+clerk-backend-api==2.2.0
 py-writes-ts==1.0.1
 psycopg2-binary
 alembic
