@@ -21,9 +21,9 @@ from architext.core.application.queries.querymanager import QueryManager
 class Transaction:
     """
     Object returned by the UnitOfWork's __enter__ method.
-    It is used to access all the functionality needed to alter the state
-    of the game and produce other side effects needed to handle commands and
-    events. Those functions are:
+    It is used to manage transactions and to access all the functionality 
+    needed to alter the state of the game and produce other side effects
+    needed to handle commands and events. Those functions are:
     - Repositories to access and modify the game's state.
     - Notifiers to notify users of events that happened in the game.
     - ExternalEventPublisher to publish events to external systems such as
