@@ -17,7 +17,8 @@
   - [Chatbot module](#chatbot-module)
   - [Entrypoints](#entrypoints)
     - [SocketIO entrypoint](#socketio-entrypoint)
-- [How can we scale?](#how-can-we-scale)
+  - [How can we scale?](#how-can-we-scale)
+- [Methodology](#methodology)
 
 # Overview
 **Architext** is a multiplayer *virtual reality* text game that allows you to explore **and create** worlds entirely made of words (pun intended). And because of the huge expressive power of words, there is no limit to what you can build.
@@ -468,3 +469,23 @@ It is unlikely that I will ever need to scale the system beyond a single instanc
 - We could use DB read-only replicas to reduce the load on the main database.
 - We could shard the database by world, so that each instance serves a subset of the worlds.
 - We could index the database!
+
+# Methodology
+
+## Test-Driven Development
+
+I am developing Architext using Test Driven Development (TDD). I tend to keep only use-case tests. They ensure that the system behaves as expected while allowing me to change the inner workings of the system without having to update the tests. And because of the Ports & Adapters architecture I can easily test whole use cases without worrying about infrastructure or mocks.
+
+The way I write a new functionality usually follows this pattern:
+
+1. Write tests covering the functionality you want to implement. In the case of a new use case, I would write a test that covers the entire flow of the use case.
+
+2. Design the new pieces of code needed to implement the functionality, and write unit tests for them. Most of these unit tests will be deleted once the use-case tests pass. They are only here to help me describe the functionality and as acceptance tests.
+
+3. Implement the functionality until the unit tests pass. Return to step 2 until the use-case tests pass.
+
+4. Remove most of the unit tests created in step 2. The use-case tests already check that the modules do their job, so they are not needed anymore. Only keep unit tests for complex functionality that could easily break.
+
+> I use small throwaway tests to aid myself while developing. Why not keep them? I don't want to make the system more rigid than it needs to be and maintaining tests of code that is likely to change often.
+> 
+> What doesn’t often change are the requirements of the use cases, so those are the tests that I keep. They ensure the system is still working as expected while letting me change most of the inner workings of the system without having to update them.
